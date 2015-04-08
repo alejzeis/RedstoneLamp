@@ -29,6 +29,6 @@ public class ServerLogger {
 
 	public void fatal(String message) {
 		System.out.println(sdf.format(cal.getTime()) + " [FATAL] " + message);
-		System.exit(1);
+		RedstoneLamp.server.stop(true);
 	}
 }
