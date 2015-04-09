@@ -8,16 +8,17 @@ import redstonelamp.logger.ServerLogger;
 
 @SuppressWarnings("unused")
 public class Server {
-	private String address, name, generator_settings, level_name, seed, level_type, rcon_pass;
+	private String address, name, motd, generator_settings, level_name, seed, level_type, rcon_pass;
 	private int port, spawn_protection, max_players, gamemode, difficulty;
 	private boolean whitelist, announce_player_achievements, allow_cheats, spawn_animals, spawn_mobs, force_gamemode, hardcore, pvp, query, rcon, auto_save;
 	
 	private boolean running = false;
 	
-	public Server(String name, int port, boolean whitelist, boolean announce_player_achievements, int spawn_protection, int max_players, boolean allow_cheats, boolean spawn_animals, boolean spawn_mobs, int gamemode, boolean force_gamemode, boolean hardcore, boolean pvp, int difficulty, String generator_settings, String level_name, String seed, String level_type, boolean query, boolean rcon, String rcon_pass, boolean auto_save) {
+	public Server(String name, String motd, int port, boolean whitelist, boolean announce_player_achievements, int spawn_protection, int max_players, boolean allow_cheats, boolean spawn_animals, boolean spawn_mobs, int gamemode, boolean force_gamemode, boolean hardcore, boolean pvp, int difficulty, String generator_settings, String level_name, String seed, String level_type, boolean query, boolean rcon, String rcon_pass, boolean auto_save) {
 		if(!this.running) {
 			Thread.currentThread().setName("RedstoneLamp");
 			this.name = name;
+			this.motd = motd;
 			this.port = port;
 			this.whitelist = whitelist;
 			this.announce_player_achievements = announce_player_achievements;
@@ -64,18 +65,73 @@ public class Server {
 		return this.port;
 	}
 	
+	public String getName() {
+		return this.name;
+	}
+	
+	public String getMOTD() {
+		return this.motd;
+	}
+	
+	public boolean isWhitelisted() {
+		return this.whitelist;
+	}
+	
+	public int getMaxPlayers() {
+		return this.max_players;
+	}
+	
+	public boolean cheatsEnabled() {
+		return this.allow_cheats;
+	}
+	
+	public boolean spawnAnimals() {
+		return this.spawn_animals;
+	}
+	
+	public boolean spawnMobs() {
+		return this.spawn_mobs;
+	}
+	
+	public int getGamemode() {
+		return this.gamemode;
+	}
+	
+	public boolean isHardcore() {
+		return this.hardcore;
+	}
+	
+	public boolean isPvPEnabled() {
+		return this.pvp;
+	}
+	
+	public int getDifficulty() {
+		return this.difficulty;
+	}
+	
+	public String getLevelName() {
+		return this.level_name;
+	}
+	
+	public String getSeed() {
+		return this.seed;
+	}
+	
+	public boolean isAutoSaveEnabled() {
+		return this.auto_save;
+	}
+	
 	public void stop() {
 		if(this.running) {
 			new File("./plugins/in_use/").delete();
-			System.exit(1); //ToDo: Stop server properly
 		}
+		System.exit(1);
 	}
 	
 	public void stop(boolean force) {
-		if(this.running) {
-			System.exit(1); //ToDo: Stop server properly
-		} else if(force)
-			System.exit(1);
+		if(!force)
+			this.stop();
+		System.exit(1);
 	}
 
 	public ServerLogger getLogger() {

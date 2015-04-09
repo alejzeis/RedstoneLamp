@@ -16,7 +16,7 @@ public class RedstoneLamp {
 	public static Server server;
 	
 	public static void main(String[] args) {
-		server = new Server("RedstoneLamp Server", 19132, false, true, 16, 20, false, true, true, 0, false, false, true, 1, null, "world", null, "DEFAULT", true, false, null, true);
+		server = new Server("RedstoneLamp Server", "Welcome to this server!", 19132, false, true, 16, 20, false, true, true, 0, false, false, true, 1, null, "world", null, "DEFAULT", true, false, null, true);
 
 		File folder = new File("./plugins");
 		if(!folder.exists())
