@@ -14,6 +14,9 @@ public class Server {
 	
 	private boolean running = false;
 	
+	/*
+	 * Initialize the server if it is not running
+	 */
 	public Server(String name, String motd, int port, boolean whitelist, boolean announce_player_achievements, int spawn_protection, int max_players, boolean allow_cheats, boolean spawn_animals, boolean spawn_mobs, int gamemode, boolean force_gamemode, boolean hardcore, boolean pvp, int difficulty, String generator_settings, String level_name, String seed, String level_type, boolean query, boolean rcon, String rcon_pass, boolean auto_save) {
 		if(!this.running) {
 			Thread.currentThread().setName("RedstoneLamp");
@@ -53,74 +56,128 @@ public class Server {
 		}
 	}
 	
+	/*
+	 * Used to start the server (Maybe open the socket?)
+	 */
 	private void start() {
 		
 	}
 	
+	/*
+	 * Returns the servers IP
+	 */
 	public String getAddress() {
 		return this.address;
 	}
 	
+	/*
+	 * Returns the servers Port
+	 */
 	public int getPort() {
 		return this.port;
 	}
 	
+	/*
+	 * Returns the servers name
+	 */
 	public String getName() {
 		return this.name;
 	}
 	
+	/*
+	 * Returns the servers Message of The Day
+	 */
 	public String getMOTD() {
 		return this.motd;
 	}
 	
+	/*
+	 * Returns true if server is whitelisted
+	 */
 	public boolean isWhitelisted() {
 		return this.whitelist;
 	}
 	
+	/*
+	 * Returns number of players that can join total (not open slots)
+	 */
 	public int getMaxPlayers() {
 		return this.max_players;
 	}
 	
+	/*
+	 * Returns true if players can fly without creative mode
+	 */
 	public boolean cheatsEnabled() {
 		return this.allow_cheats;
 	}
 	
+	/*
+	 * Returns true if spawn_animals is enabled
+	 */
 	public boolean spawnAnimals() {
 		return this.spawn_animals;
 	}
 	
+	/*
+	 * Returns true is spawn_mobs is enabled
+	 */
 	public boolean spawnMobs() {
 		return this.spawn_mobs;
 	}
 	
+	/*
+	 * Returns the gamemode integer
+	 */
 	public int getGamemode() {
 		return this.gamemode;
 	}
 	
+	/*
+	 * Returns true if Hardcore is enabled (Ban on death)
+	 */
 	public boolean isHardcore() {
 		return this.hardcore;
 	}
 	
+	/*
+	 * Returns true if pvp is enabled
+	 */
 	public boolean isPvPEnabled() {
 		return this.pvp;
 	}
 	
+	/*
+	 * Returns difficulty integer
+	 */
 	public int getDifficulty() {
 		return this.difficulty;
 	}
 	
+	/*
+	 * Returns level_name
+	 */
 	public String getLevelName() {
 		return this.level_name;
 	}
 	
+	/*
+	 * Returns the seed used
+	 */
 	public String getSeed() {
 		return this.seed;
 	}
 	
+	/*
+	 * Returns true if auto_save is enabled
+	 */
 	public boolean isAutoSaveEnabled() {
 		return this.auto_save;
 	}
 	
+	/*
+	 * Stops the server
+	 */
 	public void stop() {
 		if(this.running) {
 			new File("./plugins/in_use/").delete();
@@ -128,12 +185,18 @@ public class Server {
 		System.exit(1);
 	}
 	
+	/*
+	 * Forces the software to close (ie if crashed) if force equals true
+	 */
 	public void stop(boolean force) {
 		if(!force)
 			this.stop();
 		System.exit(1);
 	}
 
+	/*
+	 * Returns the ServerLogger class
+	 */
 	public ServerLogger getLogger() {
 		return new ServerLogger();
 	}
