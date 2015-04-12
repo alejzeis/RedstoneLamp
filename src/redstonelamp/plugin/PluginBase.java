@@ -29,7 +29,6 @@ public abstract class PluginBase implements Plugin {
 	
 	private String name;
 	
-	
 	/*
 	 * Do something when the plugin is loading
 	 */
@@ -117,7 +116,7 @@ public abstract class PluginBase implements Plugin {
 	
 	@Override
 	public PluginLoader getPluginLoader() {
-		return null;
+		return loader;
 	}
 
 	@Override
