@@ -29,6 +29,7 @@ public abstract class PluginBase implements Plugin {
 	
 	private String name;
 	
+	
 	/*
 	 * Do something when the plugin is loading
 	 */
