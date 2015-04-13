@@ -4,30 +4,16 @@ import java.util.ArrayList;
 
 import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
-import redstonelamp.logger.PlugginLogger;
-
+import redstonelamp.logger.Logger;
 
 public abstract class PluginBase implements Plugin {
-	
-	private boolean enabled ;
-	
+	private boolean enabled;
 	private boolean initialzed = false;
-	
 	private PluginDescription description;
-	
-	private String dataFolder;
-	
-	private String configFile;
-	
-	private PlugginLogger logger; 
-	
+	private String dataFolder, configFile, file, name;
+	private Logger logger;
 	private PluginLoader loader;
-	
 	private Server server;
-
-	private String file;
-	
-	private String name;
 	
 	/*
 	 * Do something when the plugin is loading
@@ -39,7 +25,6 @@ public abstract class PluginBase implements Plugin {
 	 */
 	public void onEnable() {}
 	
-
 	/*
 	 * Do something when the plugin is disabled
 	 */
@@ -47,14 +32,16 @@ public abstract class PluginBase implements Plugin {
 	
 	@Override
 	public boolean isEnabled() {
-    	return (enabled == true);
+		return (enabled == true);
 	}
 	
 	public void setEnabled(final boolean enabled ) {
 		if(this.enabled != enabled) {
 			this.enabled = enabled;
-			if(this.enabled) onEnable();
-			else onDisable();
+			if(this.enabled)
+				onEnable();
+			else
+				onDisable();
 		}
 	}
 	
@@ -62,34 +49,34 @@ public abstract class PluginBase implements Plugin {
 	public boolean isDisabled() {
 		return enabled == false;
 	}
-
+	
 	@Override
 	public String getDataFolder() {
 		return this.dataFolder;
 	}
-
+	
 	@Override
 	public PluginDescription getDescription() {
 		return this.description;
 	}
-
+	
 	public void init(final PluginLoader loder, Server server, PluginDescription description, final String datafolder, final String file) {
 		if(this.initialzed == false) {
 			this.initialzed  = true;
 			this.loader      = loader;
 			this.server      = server;
 			this.description = description;
-			this.logger      = new PlugginLogger();
+			this.logger      = new Logger();
 			this.dataFolder  = dataFolder;
 			this.file        = file;
 		}
 	}
 	
 	@Override
-	public PlugginLogger getLogger() {
+	public Logger getLogger() {
 		return logger;
 	}
-
+	
 	public boolean isInitialized() {
 		return this.initialzed;
 	}
@@ -100,7 +87,7 @@ public abstract class PluginBase implements Plugin {
 	public Server getServer() {
 		return RedstoneLamp.server;
 	}
-
+	
 	public String getBaseFolderName() {
 		return null;
 	}
@@ -109,7 +96,7 @@ public abstract class PluginBase implements Plugin {
 	public String getName() {
 		return this.description.getName();
 	}
-
+	
 	public String getFile() {
 		return file;
 	}
@@ -118,17 +105,14 @@ public abstract class PluginBase implements Plugin {
 	public PluginLoader getPluginLoader() {
 		return loader;
 	}
-
+	
 	@Override
 	public String getResource(String file) {
 		return null;
 	}
-
-
+	
 	@Override
 	public ArrayList<String> getResources() {
 		return null;
 	}
-	
-	
 }

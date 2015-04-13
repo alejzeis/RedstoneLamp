@@ -5,7 +5,7 @@ import java.util.Calendar;
 
 import redstonelamp.RedstoneLamp;
 
-public class ServerLogger {
+public class Logger {
 	private static Calendar cal = Calendar.getInstance();
 	private static SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 	
@@ -26,7 +26,6 @@ public class ServerLogger {
 		System.out.println(sdf.format(cal.getTime()) + " [ERROR] " + message);
 	}
 	
-
 	public void fatal(String message) {
 		System.out.println(sdf.format(cal.getTime()) + " [FATAL] " + message);
 		RedstoneLamp.server.stop(true);

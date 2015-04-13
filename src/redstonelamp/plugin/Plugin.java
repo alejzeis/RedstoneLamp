@@ -1,14 +1,11 @@
- 
-  package redstonelamp.plugin;
+package redstonelamp.plugin;
 
 import java.util.ArrayList;
 
 import redstonelamp.Server;
-import redstonelamp.logger.PlugginLogger;
-import redstonelamp.logger.ServerLogger;
+import redstonelamp.logger.Logger;
 
-  public interface Plugin {
-	
+public interface Plugin {
 	public PluginDescription getDescription();
 	
 	public String getDataFolder();
@@ -21,13 +18,11 @@ import redstonelamp.logger.ServerLogger;
 	
 	public String getName();
 	
-	public PlugginLogger getLogger();
+	public Logger getLogger();
 	
 	public PluginLoader getPluginLoader();
 	
 	public boolean isEnabled();
 	
 	public boolean isDisabled();
-	
-	
-  }
+}

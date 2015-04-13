@@ -4,7 +4,7 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import redstonelamp.logger.ServerLogger;
+import redstonelamp.logger.Logger;
 
 @SuppressWarnings("unused")
 public class Server {
@@ -197,7 +197,7 @@ public class Server {
 	/*
 	 * Returns the ServerLogger class
 	 */
-	public ServerLogger getLogger() {
-		return new ServerLogger();
+	public Logger getLogger() {
+		return new Logger();
 	}
 }
