@@ -1,4 +1,4 @@
-package redstonelamp.player;
+package redstonelamp;
 
 public class Player {
 	

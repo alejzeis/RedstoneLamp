@@ -16,18 +16,14 @@ import java.util.jar.JarFile;
 import redstonelamp.RedstoneLamp;
 
 public class PluginLoader {
-
 	private String folder = "./plugins/"; // default plug-in folder name
-
 	private HashMap<String, URLClassLoader> pluginMap = new HashMap<String, URLClassLoader>();
 
 	/*
 	 * Loads a plug-in by its name
 	 */
 	public void loadPlugin(String plugin) {
-
 		RedstoneLamp.server.getLogger().debug("..inside loadPlugin() method..");
-
 		try {
 			URL classUrl;
 			URL pluginURL = new File(folder + plugin).toURL();
@@ -45,9 +41,7 @@ public class PluginLoader {
 				m.invoke(object, null);
 			}
 		} catch (Exception e) {
-			RedstoneLamp.server.getLogger().info(
-					"Unable to load plugin " + plugin
-							+ " (Plugins not supported)");
+			RedstoneLamp.server.getLogger().info("Unable to load plugin " + plugin + " (Plugins not supported)");
 		}
 	}
 
@@ -81,11 +75,9 @@ public class PluginLoader {
 		while (e.hasMoreElements()) {
 			JarEntry entry = e.nextElement();
 			if (entry.getName().endsWith("class")) {
-				String className = entry.getName().substring(0,
-						entry.getName().length() - 6);
+				String className = entry.getName().substring(0, entry.getName().length() - 6);
 				className = className.replace('/', '.');
 				// checks whether the class is valid plug-in, if yes then load
-
 				pluginMap.put("pluginname", cl);
 			}
 		}
@@ -97,14 +89,12 @@ public class PluginLoader {
 		InputStream is = null;
 		try {
 			jar = new JarFile(f);
-			is = jar.getInputStream(jar.getEntry("plugin.yaml"));
+			is = jar.getInputStream(jar.getEntry("plugin.yml"));
 			description = new PluginDescription();
 			description.setStream(is);
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return description;
 	}
-
 }
