@@ -4,12 +4,12 @@ package redstonelamp.command;
 public class CommandRegistrationManager {
 
 	private String  command;
-	private String  descr;
+	private String  description;
 	private boolean console;
 	
-	public void register(String command, String descr, boolean conosole) {
+	public void registerCommand(String command, String description, boolean conosole) {
 		this.command = command;
-		this.descr   = descr;
+		this.description   = description;
 		this.console = console;
 	}
 	

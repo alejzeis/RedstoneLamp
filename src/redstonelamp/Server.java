@@ -5,10 +5,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import redstonelamp.command.CommandRegistrationManager;
-import redstonelamp.logger.ServerLogger;
+import redstonelamp.logger.Logger;
 import redstonelamp.plugin.PluginManager;
 
-@SuppressWarnings("unused")
 public class Server {
 	private String address, name, motd, generator_settings, level_name, seed, level_type, rcon_pass;
 	private int port, spawn_protection, max_players, gamemode, difficulty;
@@ -208,8 +207,8 @@ public class Server {
 	/*
 	 * Returns the ServerLogger class
 	 */
-	public ServerLogger getLogger() {
-		return new ServerLogger();
+	public Logger getLogger() {
+		return new Logger();
 	}
 	
 	/*

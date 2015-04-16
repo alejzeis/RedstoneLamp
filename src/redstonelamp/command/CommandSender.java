@@ -1,10 +1,10 @@
  
  package redstonelamp.command;
 
- import redstonelamp.Server;
+ import redstonelamp.Player;
+import redstonelamp.Server;
 
  public interface CommandSender {
-	
 	/*
 	 * @param String message
 	 */
@@ -20,4 +20,8 @@
 	 */
 	public String getName();
 	
+	/*
+	 * @return Player
+	 */
+	public Player getPlayer();
  }
