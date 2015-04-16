@@ -4,14 +4,22 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import redstonelamp.logger.Logger;
+import redstonelamp.command.CommandRegistrationManager;
+import redstonelamp.logger.ServerLogger;
+import redstonelamp.plugin.PluginManager;
 
+@SuppressWarnings("unused")
 public class Server {
 	private String address, name, motd, generator_settings, level_name, seed, level_type, rcon_pass;
 	private int port, spawn_protection, max_players, gamemode, difficulty;
 	private boolean whitelist, announce_player_achievements, allow_cheats, spawn_animals, spawn_mobs, force_gamemode, hardcore, pvp, query, rcon, auto_save;
 	
 	private boolean running = false;
+	
+	private CommandRegistrationManager commandManager;
+	
+	private PluginManager pluginManager;
+	
 	
 	/*
 	 * Initialize the server if it is not running
@@ -42,6 +50,10 @@ public class Server {
 			this.rcon = rcon;
 			this.rcon_pass = rcon_pass;
 			this.auto_save = auto_save;
+			
+			//// register command registration manager
+			commandManager = new CommandRegistrationManager();
+			
 			try {
 				InetAddress ip = InetAddress.getLocalHost();
 				this.address = ip.getHostAddress();
@@ -196,7 +208,22 @@ public class Server {
 	/*
 	 * Returns the ServerLogger class
 	 */
-	public Logger getLogger() {
-		return new Logger();
+	public ServerLogger getLogger() {
+		return new ServerLogger();
 	}
+	
+	/*
+	 * returns command registration manager
+	 */
+	public CommandRegistrationManager getCommandRegistrationManager() {
+		return commandManager;
+	}
+	
+	/*
+	 * returns plug in manager
+	 */
+	public PluginManager getPluginManager() {
+		return pluginManager;
+	}
+	
 }
