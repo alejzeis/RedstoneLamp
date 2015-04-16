@@ -3,7 +3,6 @@ package redstonelamp.plugin;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,6 +10,8 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -24,44 +25,56 @@ import redstonelamp.RedstoneLamp;
 
 public class PluginLoader {
 
-	private String PLUGIN_FOLDER                      = "";
-	private String PLUGIN_FOLDER_CLASSES              = "";
-	private String PLUGIN_FILE                        = ""; 
-	private String JAVA_SDK                           = "";
-	private HashMap<String, URLClassLoader> pluginMap = new HashMap<String, URLClassLoader>();
+	private String PLUGIN_CLASS_FOLDER = "";
+	private String PLUGIN_FILE = "";
+	private String JAVA_SDK = "";
+	private HashMap<String, Object> pluginMap = new HashMap<String, Object>();
 	private Iterable<String> options;
-	private final String JAVA_HOME                    = "java.home";
-	
+	private final String JAVA_HOME = "java.home";
+	private URL pluginURL;
+	private HashMap<String, String> pkgMap = new HashMap<String, String>();
+	private Set<String> clsNames = new TreeSet<String>();
+
 	/*
-	 * Loads a plug-in by its name
+	 * Loads a plug-in by its name.
 	 */
 	public void loadPlugin(String plugin) {
 		RedstoneLamp.server.getLogger().debug(": inside loadPlugin() method ");
 		try {
-			URL classUrl;
-			URL pluginURL      = new File(PLUGIN_FOLDER_CLASSES + plugin).toURL();
-			classUrl           = new URL(pluginURL.toExternalForm());
-			URL[] classUrls    = { pluginURL };
+			URL[] classUrls = { pluginURL };
 			URLClassLoader ucl = new URLClassLoader(classUrls);
-			Class<?> c         = ucl.loadClass(plugin);
-			Object object      = c.newInstance();
-			Object [] args     = new Object[] {};
-			for (Field f : c.getDeclaredFields()) {
-				RedstoneLamp.server.getLogger().info(": Field name" + f.getName());
+			RedstoneLamp.server.getLogger().debug(": loading " + plugin);
+			Class<?> c = ucl.loadClass(plugin);
+			// checks loaded plug-in is a valid type,
+			if (Plugin.class.isAssignableFrom(c)) {
+				pluginMap.put(plugin, c);
+				// following lines of code only for testing
+				Object object = c.newInstance();
+				Object[] args = new Object[] {};
+				for (Method m : c.getDeclaredMethods()) {
+					RedstoneLamp.server.getLogger().info(
+							": Method name " + m.getName());
+					m.invoke(object, args);
+				}
+				// close class loader
+				ucl.close();
+			} else {
+				// / invalid plug-in, so logs the reason
+				RedstoneLamp.server
+						.getLogger()
+						.info(
+								": "
+										+ plugin
+										+ " is not a valid plugin. It should implement Plugin interface ");
 			}
-			
-			for (Method m : c.getDeclaredMethods()) {
-				RedstoneLamp.server.getLogger().info(": Method name" + m.getName());
-				m.invoke(object, null);
-			}
-			ucl.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			RedstoneLamp.server.getLogger().error(
 					"Unable to load plugin " + plugin
 							+ " (Plugins not supported)");
 		}
-		RedstoneLamp.server.getLogger().debug(": returns from loadPlugin() method ");
+		RedstoneLamp.server.getLogger().debug(
+				": returns from loadPlugin() method ");
 	}
 
 	/*
@@ -87,7 +100,7 @@ public class PluginLoader {
 		URLClassLoader cl = null;
 		try {
 			URL[] urls = { new URL("jar:file:" + file + "!/") };
-			cl         = URLClassLoader.newInstance(urls);
+			cl = URLClassLoader.newInstance(urls);
 		} catch (MalformedURLException ex) {
 			ex.printStackTrace();
 		}
@@ -102,17 +115,17 @@ public class PluginLoader {
 			}
 		}
 	}
-	
+
 	/*
 	 * loads plug-in description file.
 	 */
 	public PluginDescription loadPluginDescription(final File f) {
 		PluginDescription description = null;
-		JarFile jar    = null;
+		JarFile jar = null;
 		InputStream is = null;
 		try {
 			jar = new JarFile(f);
-			is  = jar.getInputStream(jar.getEntry(PLUGIN_FILE));
+			is = jar.getInputStream(jar.getEntry(PLUGIN_FILE));
 			description = new PluginDescription();
 			description.setStream(is);
 
@@ -121,39 +134,99 @@ public class PluginLoader {
 		}
 		return description;
 	}
-	
+
 	/*
-	 * Compiles .java file and class file is generated in in-use folder for further loading
+	 * Compiles .java file and class file is generated in in-use folder
 	 */
-	public void loadPluginJavaFile(final File file) {
+	private void generatePluginJavaClassFile(final File file) {
 		System.setProperty(JAVA_HOME, JAVA_SDK);
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-	    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
-	    StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
-	    Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromStrings(Arrays.asList(file.getPath()));
-	    JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, options,
-	        null, compilationUnits);
-	    boolean success = task.call();
-	    try {
+		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(
+				diagnostics, null, null);
+		Iterable<? extends JavaFileObject> compilationUnits = fileManager
+				.getJavaFileObjectsFromStrings(Arrays.asList(file.getPath()));
+		JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager,
+				diagnostics, options, null, compilationUnits);
+		boolean success = task.call();
+		try {
 			fileManager.close();
-			} catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if(success) {
+		if (success) {
 			RedstoneLamp.server.getLogger().info(" :Compilation Success");
-			RedstoneLamp.server.getLogger().info(" :Class files are generated in in-use folder");
-			// loading user plug-in
-			loadPlugin(file.getName().substring(0, file.getName().length() - 5).trim());
+			RedstoneLamp.server.getLogger().info(
+					" :Class files are generated in in-use folder");
+		} else {
+			RedstoneLamp.server.getLogger().error(" :Compilation Failed");
+			throw new IllegalArgumentException(" Compilation failed.....");
 		}
 	}
-	
+
 	/*
-	 * sets JAVA SDK location 
+	 * loads fully plug-ins from class folder
 	 */
-    public void setPluginOption(final String pfolder, final String folder, final String sdk) {
-    	PLUGIN_FOLDER         = pfolder;
-    	PLUGIN_FOLDER_CLASSES = folder;
-    	options               = Arrays.asList( new String[] { "-d", folder} );
-    	JAVA_SDK              = sdk;
-    }
+	public void loadJavaPlugins() {
+		getFullyQualifiedName();
+		for (String plugin : clsNames)
+			loadPlugin(plugin);
+	}
+	
+    /*
+     * compile java plug-in to generate class file
+     */
+	public void preparePluginFiles(File file) {
+		generatePluginJavaClassFile(file);
+	}
+
+	/*
+	 * sets JAVA SDK location
+	 */
+	@SuppressWarnings("deprecation")
+	public void setPluginOption(final String pfolder, final String folder,
+			final String sdk) {
+		PLUGIN_CLASS_FOLDER = folder;
+		options = Arrays.asList(new String[] { "-d", folder });
+		JAVA_SDK = sdk;
+		try {
+			pluginURL = new File(PLUGIN_CLASS_FOLDER).toURL();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * gets fully qualified name of a class file and stores
+	 */
+	private void getFullyQualifiedName() {
+		File f = new File(PLUGIN_CLASS_FOLDER);
+		String path = f.getAbsolutePath();
+		listFiles(path, path);
+		RedstoneLamp.server.getLogger().info(
+				" fully qualified plugins " + clsNames);
+	}
+	
+    /*
+     * constructs package name and stores
+     */
+	private void listFiles(String path, String orig) {
+		File root = new File(path);
+		File[] list = root.listFiles();
+		if (list == null)
+			return;
+		for (File f : list) {
+			if (f.isDirectory()) {
+				listFiles(f.getAbsolutePath(), orig);
+			} else if (f.isFile()) {
+				String dir = f.getAbsolutePath();
+				String pkg = dir.substring(dir.indexOf(orig) + orig.length()
+						+ 1, dir.length());
+				pkg = pkg.substring(0, pkg.indexOf(".class")).replaceAll(
+						"\\\\", ".");
+				clsNames.add(pkg);
+			}
+		}
+	}
+
 }
