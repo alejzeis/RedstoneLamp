@@ -24,7 +24,6 @@ import javax.tools.ToolProvider;
 import redstonelamp.RedstoneLamp;
 
 public class PluginLoader {
-
 	private String PLUGIN_CLASS_FOLDER = "";
 	private String PLUGIN_FILE = "";
 	private String JAVA_SDK = "";
@@ -45,43 +44,34 @@ public class PluginLoader {
 			URLClassLoader ucl = new URLClassLoader(classUrls);
 			RedstoneLamp.server.getLogger().debug(": loading " + plugin);
 			Class<?> c = ucl.loadClass(plugin);
-			// checks loaded plug-in is a valid type,
-			if (Plugin.class.isAssignableFrom(c)) {
+			//checks loaded plug-in is a valid type,
+			if(Plugin.class.isAssignableFrom(c)) {
 				pluginMap.put(plugin, c);
-				// following lines of code only for testing
+				//following lines of code only for testing
 				Object object = c.newInstance();
 				Object[] args = new Object[] {};
-				for (Method m : c.getDeclaredMethods()) {
-					RedstoneLamp.server.getLogger().info(
-							": Method name " + m.getName());
+				for(Method m : c.getDeclaredMethods()) {
+					RedstoneLamp.server.getLogger().info(": Method name " + m.getName());
 					m.invoke(object, args);
 				}
-				// close class loader
+				//close class loader
 				ucl.close();
 			} else {
-				// / invalid plug-in, so logs the reason
-				RedstoneLamp.server
-						.getLogger()
-						.info(
-								": "
-										+ plugin
-										+ " is not a valid plugin. It should implement Plugin interface ");
+				//invalid plug-in, so logs the reason
+				RedstoneLamp.server.getLogger().info(": " + plugin + " is not a valid plugin. It should implement Plugin interface ");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			RedstoneLamp.server.getLogger().error(
-					"Unable to load plugin " + plugin
-							+ " (Plugins not supported)");
+			RedstoneLamp.server.getLogger().error("Unable to load plugin " + plugin + " (Plugins not supported)");
 		}
-		RedstoneLamp.server.getLogger().debug(
-				": returns from loadPlugin() method ");
+		RedstoneLamp.server.getLogger().debug(": returns from loadPlugin() method ");
 	}
 
 	/*
 	 * Loads .jar file that contains all the Plug-ins
 	 */
 	public JarFile loadPluginJar(final File file) {
-		if (file == null || file.exists() == false)
+		if(file == null || file.exists() == false)
 			throw new IllegalStateException(" jar file is empty...");
 		JarFile jarFile = null;
 		try {
@@ -101,14 +91,13 @@ public class PluginLoader {
 		try {
 			URL[] urls = { new URL("jar:file:" + file + "!/") };
 			cl = URLClassLoader.newInstance(urls);
-		} catch (MalformedURLException ex) {
+		} catch(MalformedURLException ex) {
 			ex.printStackTrace();
 		}
-		while (e.hasMoreElements()) {
+		while(e.hasMoreElements()) {
 			JarEntry entry = e.nextElement();
-			if (entry.getName().endsWith("class")) {
-				String className = entry.getName().substring(0,
-						entry.getName().length() - 6);
+			if(entry.getName().endsWith("class")) {
+				String className = entry.getName().substring(0, entry.getName().length() - 6);
 				className = className.replace('/', '.');
 				// checks whether the class is valid plug-in, if yes then load
 				pluginMap.put("pluginname", cl);
@@ -128,7 +117,6 @@ public class PluginLoader {
 			is = jar.getInputStream(jar.getEntry(PLUGIN_FILE));
 			description = new PluginDescription();
 			description.setStream(is);
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -142,22 +130,18 @@ public class PluginLoader {
 		System.setProperty(JAVA_HOME, JAVA_SDK);
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
-		StandardJavaFileManager fileManager = compiler.getStandardFileManager(
-				diagnostics, null, null);
-		Iterable<? extends JavaFileObject> compilationUnits = fileManager
-				.getJavaFileObjectsFromStrings(Arrays.asList(file.getPath()));
-		JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager,
-				diagnostics, options, null, compilationUnits);
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
+		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromStrings(Arrays.asList(file.getPath()));
+		JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits);
 		boolean success = task.call();
 		try {
 			fileManager.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if (success) {
+		if(success) {
 			RedstoneLamp.server.getLogger().info(" :Compilation Success");
-			RedstoneLamp.server.getLogger().info(
-					" :Class files are generated in in-use folder");
+			RedstoneLamp.server.getLogger().info(" :Class files are generated in in-use folder");
 		} else {
 			RedstoneLamp.server.getLogger().error(" :Compilation Failed");
 			throw new IllegalArgumentException(" Compilation failed.....");
@@ -169,7 +153,7 @@ public class PluginLoader {
 	 */
 	public void loadJavaPlugins() {
 		getFullyQualifiedName();
-		for (String plugin : clsNames)
+		for(String plugin : clsNames)
 			loadPlugin(plugin);
 	}
 	
@@ -184,8 +168,7 @@ public class PluginLoader {
 	 * sets JAVA SDK location
 	 */
 	@SuppressWarnings("deprecation")
-	public void setPluginOption(final String pfolder, final String folder,
-			final String sdk) {
+	public void setPluginOption(final String pfolder, final String folder, final String sdk) {
 		PLUGIN_CLASS_FOLDER = folder;
 		options = Arrays.asList(new String[] { "-d", folder });
 		JAVA_SDK = sdk;
@@ -203,8 +186,7 @@ public class PluginLoader {
 		File f = new File(PLUGIN_CLASS_FOLDER);
 		String path = f.getAbsolutePath();
 		listFiles(path, path);
-		RedstoneLamp.server.getLogger().info(
-				" fully qualified plugins " + clsNames);
+		RedstoneLamp.server.getLogger().info(" fully qualified plugins " + clsNames);
 	}
 	
     /*
@@ -213,20 +195,17 @@ public class PluginLoader {
 	private void listFiles(String path, String orig) {
 		File root = new File(path);
 		File[] list = root.listFiles();
-		if (list == null)
+		if(list == null)
 			return;
-		for (File f : list) {
-			if (f.isDirectory()) {
+		for(File f : list) {
+			if(f.isDirectory()) {
 				listFiles(f.getAbsolutePath(), orig);
-			} else if (f.isFile()) {
+			} else if(f.isFile()) {
 				String dir = f.getAbsolutePath();
-				String pkg = dir.substring(dir.indexOf(orig) + orig.length()
-						+ 1, dir.length());
-				pkg = pkg.substring(0, pkg.indexOf(".class")).replaceAll(
-						"\\\\", ".");
+				String pkg = dir.substring(dir.indexOf(orig) + orig.length() + 1, dir.length());
+				pkg = pkg.substring(0, pkg.indexOf(".class")).replaceAll("\\\\", ".");
 				clsNames.add(pkg);
 			}
 		}
 	}
-
 }

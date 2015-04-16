@@ -6,7 +6,6 @@ import java.net.UnknownHostException;
 
 import redstonelamp.logger.Logger;
 
-@SuppressWarnings("unused")
 public class Server {
 	private String address, name, motd, generator_settings, level_name, seed, level_type, rcon_pass;
 	private int port, spawn_protection, max_players, gamemode, difficulty;
