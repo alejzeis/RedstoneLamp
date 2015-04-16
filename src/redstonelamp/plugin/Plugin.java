@@ -4,7 +4,7 @@ package redstonelamp.plugin;
 import java.util.ArrayList;
 
 import redstonelamp.Server;
-import redstonelamp.command.CommandExecutor;
+import redstonelamp.cmd.CommandExecutor;
 import redstonelamp.logger.Logger;
 
 public interface Plugin extends CommandExecutor {

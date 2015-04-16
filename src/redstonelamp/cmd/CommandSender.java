@@ -1,5 +1,5 @@
  
- package redstonelamp.command;
+ package redstonelamp.cmd;
 
  import redstonelamp.Player;
 import redstonelamp.Server;

@@ -1,4 +1,4 @@
-package redstonelamp.command;
+package redstonelamp.cmd;
 
 public class CommandRegistrationManager {
 	private String  command;

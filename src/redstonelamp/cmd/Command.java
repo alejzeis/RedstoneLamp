@@ -1,4 +1,4 @@
-package redstonelamp.command;
+package redstonelamp.cmd;
 
 public abstract class Command {
 	public String getName() {

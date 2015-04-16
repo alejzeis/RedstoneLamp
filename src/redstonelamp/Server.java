@@ -4,7 +4,7 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import redstonelamp.command.CommandRegistrationManager;
+import redstonelamp.cmd.CommandRegistrationManager;
 import redstonelamp.logger.Logger;
 import redstonelamp.plugin.PluginManager;
 

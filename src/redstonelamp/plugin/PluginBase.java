@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
-import redstonelamp.command.Command;
-import redstonelamp.command.CommandRegistrationManager;
+import redstonelamp.cmd.Command;
+import redstonelamp.cmd.CommandRegistrationManager;
 import redstonelamp.logger.Logger;
 
 public abstract class PluginBase implements Plugin {

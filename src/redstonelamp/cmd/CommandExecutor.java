@@ -1,4 +1,4 @@
-package redstonelamp.command;
+package redstonelamp.cmd;
 
 import java.util.List;
 
