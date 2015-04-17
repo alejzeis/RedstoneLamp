@@ -17,7 +17,8 @@ public abstract class PluginBase implements Plugin {
 	private Logger logger;
 	private PluginLoader loader;
 	private Server server;
-
+	private String name;
+	
 	/*
 	 * Do something when the plug-in is loading
 	 */
@@ -110,7 +111,7 @@ public abstract class PluginBase implements Plugin {
 
 	@Override
 	public String getName() {
-		return this.description.getName();
+		return this.name;
 	}
 
 	public String getFile() {
@@ -142,5 +143,8 @@ public abstract class PluginBase implements Plugin {
 	public List<String> getCommands(){
 		return null;
 	}
-	
+
+	public void setName(final String name){
+		this.name = name;
+	}
 }

@@ -47,9 +47,11 @@ public class PluginLoader {
 			if(Plugin.class.isAssignableFrom(c)) {
 				RedstoneLamp.server.getLogger().info(": Loading "  + plugin);
 				base = (PluginBase) c.newInstance();
+				String name = removeDotFromString(plugin);
+			    base.setName(name);
 				initPlugin(base);
 				enablePlugin(base);
-				pluginMap.put(removeDotFromString(plugin), base);
+				pluginMap.put(name, base);
 				ucl.close();
 			} else {
 				RedstoneLamp.server.getLogger().info(": " + plugin + " is not a valid plugin. It should implement Plugin interface ");	
