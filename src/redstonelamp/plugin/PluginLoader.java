@@ -7,10 +7,13 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
+import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
@@ -33,12 +36,12 @@ public class PluginLoader {
 	public void loadPlugin(String plugin) {
 		RedstoneLamp.server.getLogger().debug(": inside loadPlugin() method ");
 		try {
-			URL[] classUrls = { pluginURL };
+			URL[] classUrls    = { pluginURL };
 			URLClassLoader ucl = new URLClassLoader(classUrls);
-			Class<?> c = ucl.loadClass(plugin);
+			Class<?> c         = ucl.loadClass(plugin);
 			//checks loaded plug-in is a valid type,
 			if(Plugin.class.isAssignableFrom(c)) {
-				RedstoneLamp.server.getLogger().info(": Loading " + plugin);
+				RedstoneLamp.server.getLogger().info(": Loading "  + plugin);
 				PluginBase base = (PluginBase) c.newInstance();
 				initPlugin(base);
 				enablePlugin(base);
@@ -84,11 +87,14 @@ public class PluginLoader {
 	private void generatePluginJavaClassFile(final File file) {
 		System.setProperty(JAVA_HOME, JAVA_SDK);
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		PluginDiagnosticListener plistener = new PluginDiagnosticListener();
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
 		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromStrings(Arrays.asList(file.getPath()));
-		JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits);
+		JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, plistener, options, null, compilationUnits);
 		boolean success = task.call();
+	
+
 		try {
 			fileManager.close();
 		} catch (IOException e) {
@@ -124,10 +130,10 @@ public class PluginLoader {
 	@SuppressWarnings("deprecation")
 	public void setPluginOption(final String pfolder, final String folder, final String sdk) {
 		PLUGIN_CLASS_FOLDER = folder;
-		options = Arrays.asList(new String[] { "-d", folder });
-		JAVA_SDK = sdk;
+		options             = Arrays.asList(new String[] { "-d", folder});
+		JAVA_SDK            = sdk;
 		try {
-			pluginURL = new File(PLUGIN_CLASS_FOLDER).toURL();
+			pluginURL       = new File(PLUGIN_CLASS_FOLDER).toURL();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -137,7 +143,7 @@ public class PluginLoader {
 	 * gets fully qualified name of a class file
 	 */
 	private void getFullyQualifiedName() {
-		File f = new File(PLUGIN_CLASS_FOLDER);
+		File f      = new File(PLUGIN_CLASS_FOLDER);
 		String path = f.getAbsolutePath();
 		listFiles(path, path);
 		RedstoneLamp.server.getLogger().info(" fully qualified plugins " + clsNames);
@@ -147,7 +153,7 @@ public class PluginLoader {
 	 * constructs package name and stores
 	 */
 	private void listFiles(String path, String orig) {
-		File root = new File(path);
+		File root   = new File(path);
 		File[] list = root.listFiles();
 		if(list == null)
 			return;
@@ -160,6 +166,25 @@ public class PluginLoader {
 				pkg = pkg.substring(0, pkg.indexOf(".class")).replaceAll("\\\\", ".");
 				clsNames.add(pkg);
 			}
+		}
+	}
+	
+	class PluginDiagnosticListener implements DiagnosticListener {
+
+		@Override
+		public void report(Diagnostic diagnostic) {
+			System.out.println("Code->" +  diagnostic.getCode());
+				        System.out.println("Column Number->" + diagnostic.getColumnNumber());
+				        System.out.println("End Position->" + diagnostic.getEndPosition());
+				        System.out.println("Kind->" + diagnostic.getKind());
+				        System.out.println("Line Number->" + diagnostic.getLineNumber());
+				        System.out.println("Message->"+ diagnostic.getMessage(Locale.ENGLISH));
+				        System.out.println("Position->" + diagnostic.getPosition());
+				        System.out.println("Source" + diagnostic.getSource());
+				        System.out.println("Start Position->" + diagnostic.getStartPosition());
+				        	        System.out.println("\n");
+
+			
 		}
 	}
 }
