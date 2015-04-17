@@ -9,4 +9,8 @@ public abstract class Command {
 	public Command(final String name) {
 		this.name  = this.label = name;
 	}
+	
+	public String getName() {
+		return this.name;
+	}
 }

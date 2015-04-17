@@ -7,9 +7,9 @@ public class CommandRegistrationManager {
 	private String  descr;
 	private boolean console;
 	
-	public void register(String command, String descr, boolean conosole) {
+	public void registerCommand(String command, String description, boolean console) {
 		this.command = command;
-		this.descr   = descr;
+		this.descr   = description;
 		this.console = console;
 	}
 	

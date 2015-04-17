@@ -13,12 +13,13 @@ public class Help implements CommandExecutor {
 		RedstoneLamp.server.getCommandRegistrationManager().registerCommand("help", "Shows a list of all server commands", true);
 	}
 	
-	public void onCommand(CommandSender sender, Command cmd, String label, List<String> args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label, List<String> args) {
 		switch(cmd.getName()) {
 			case "help":
 			case "?":
 				//TODO: Get all commands
 			break;
 		}
+		return true;
 	}
 }

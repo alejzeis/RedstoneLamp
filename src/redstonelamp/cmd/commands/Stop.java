@@ -13,11 +13,12 @@ public class Stop implements CommandExecutor {
 		RedstoneLamp.server.getCommandRegistrationManager().registerCommand("stop", "Stops the server", true);
 	}
 	
-	public void onCommand(CommandSender sender, Command cmd, String label, List<String> args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label, List<String> args) {
 		switch(cmd.getName()) {
 			case "stop":
 				RedstoneLamp.server.stop();
 			break;
 		}
+		return true;
 	}
 }
