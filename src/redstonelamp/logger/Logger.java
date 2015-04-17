@@ -19,7 +19,11 @@ public class Logger {
 	}
 	
 	public void warn(String message) {
-		System.out.println(sdf.format(cal.getTime()) + " [WARN] " + message);
+		System.out.println(sdf.format(cal.getTime()) + " [WARNING] " + message);
+	}
+	
+	public void warning(String message) {
+		System.out.println(sdf.format(cal.getTime()) + " [WARNING] " + message);
 	}
 
 	public void error(String message) {

@@ -50,7 +50,7 @@ public class Server {
 			this.rcon_pass = rcon_pass;
 			this.auto_save = auto_save;
 			
-			//// register command registration manager
+			//register command registration manager
 			commandManager = new CommandRegistrationManager();
 			
 			try {
@@ -189,9 +189,8 @@ public class Server {
 	 * Stops the server
 	 */
 	public void stop() {
-		if(this.running) {
+		if(this.running)
 			new File("./plugins/in_use/").delete();
-		}
 		System.exit(1);
 	}
 	

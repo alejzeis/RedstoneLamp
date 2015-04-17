@@ -1,4 +1,3 @@
-
 package redstonelamp.plugin;
 
 import java.util.ArrayList;
@@ -8,7 +7,6 @@ import redstonelamp.cmd.CommandExecutor;
 import redstonelamp.logger.Logger;
 
 public interface Plugin extends CommandExecutor {
-
 	public PluginDescription getDescription();
 
 	public String getDataFolder();

@@ -65,10 +65,8 @@ public abstract class PluginBase implements Plugin {
 		return this.description;
 	}
 
-	public void init( PluginLoader loder, Server server,
-			PluginDescription description, final String datafolder,
-			final String file) {
-		if (this.initialzed == false) {
+	public void init( PluginLoader loder, Server server, PluginDescription description, final String datafolder, final String file) {
+		if(!this.initialzed) {
 			this.initialzed = true;
 			this.loader = loader;
 			this.server = server;
@@ -76,9 +74,7 @@ public abstract class PluginBase implements Plugin {
 			this.logger = new Logger();
 			this.dataFolder = dataFolder;
 			this.file = file;
-			
 			System.out.println(" .... inside init method.....");
-			
 		}
 	}
 

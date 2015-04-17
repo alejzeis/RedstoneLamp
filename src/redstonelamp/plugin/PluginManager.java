@@ -3,8 +3,6 @@ package redstonelamp.plugin;
 import java.util.ArrayList;
 
 public class PluginManager {
-	
-
 	private ArrayList<Plugin> plugins = new ArrayList<Plugin>();
 	
 	/*

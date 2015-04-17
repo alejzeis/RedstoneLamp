@@ -33,12 +33,12 @@ public class PluginLoader {
 	public void loadPlugin(String plugin) {
 		RedstoneLamp.server.getLogger().debug(": inside loadPlugin() method ");
 		try {
-			URL[] classUrls    = { pluginURL };
+			URL[] classUrls = { pluginURL };
 			URLClassLoader ucl = new URLClassLoader(classUrls);
-			Class<?> c         = ucl.loadClass(plugin);
+			Class<?> c = ucl.loadClass(plugin);
 			//checks loaded plug-in is a valid type,
 			if(Plugin.class.isAssignableFrom(c)) {
-				RedstoneLamp.server.getLogger().info(": Loading "  + plugin);
+				RedstoneLamp.server.getLogger().info(": Loading " + plugin);
 				PluginBase base = (PluginBase) c.newInstance();
 				initPlugin(base);
 				enablePlugin(base);
@@ -124,10 +124,10 @@ public class PluginLoader {
 	@SuppressWarnings("deprecation")
 	public void setPluginOption(final String pfolder, final String folder, final String sdk) {
 		PLUGIN_CLASS_FOLDER = folder;
-		options             = Arrays.asList(new String[] { "-d", folder });
-		JAVA_SDK            = sdk;
+		options = Arrays.asList(new String[] { "-d", folder });
+		JAVA_SDK = sdk;
 		try {
-			pluginURL       = new File(PLUGIN_CLASS_FOLDER).toURL();
+			pluginURL = new File(PLUGIN_CLASS_FOLDER).toURL();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -137,7 +137,7 @@ public class PluginLoader {
 	 * gets fully qualified name of a class file
 	 */
 	private void getFullyQualifiedName() {
-		File f      = new File(PLUGIN_CLASS_FOLDER);
+		File f = new File(PLUGIN_CLASS_FOLDER);
 		String path = f.getAbsolutePath();
 		listFiles(path, path);
 		RedstoneLamp.server.getLogger().info(" fully qualified plugins " + clsNames);
@@ -147,7 +147,7 @@ public class PluginLoader {
 	 * constructs package name and stores
 	 */
 	private void listFiles(String path, String orig) {
-		File root   = new File(path);
+		File root = new File(path);
 		File[] list = root.listFiles();
 		if(list == null)
 			return;
