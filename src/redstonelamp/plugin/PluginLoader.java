@@ -5,8 +5,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
@@ -29,12 +32,13 @@ public class PluginLoader {
 	private final String JAVA_HOME = "java.home";
 	private URL pluginURL;
 	private Set<String> clsNames = new TreeSet<String>();
-
+    
 	/*
-	 * Loads a plug-in by its name.
+	 * Loads a plug-in by its qualified name.
 	 */
-	public void loadPlugin(String plugin) {
+	public Plugin loadPlugin(String plugin) {
 		RedstoneLamp.server.getLogger().debug(": inside loadPlugin() method ");
+		PluginBase base = null;
 		try {
 			URL[] classUrls    = { pluginURL };
 			URLClassLoader ucl = new URLClassLoader(classUrls);
@@ -42,10 +46,10 @@ public class PluginLoader {
 			//checks loaded plug-in is a valid type,
 			if(Plugin.class.isAssignableFrom(c)) {
 				RedstoneLamp.server.getLogger().info(": Loading "  + plugin);
-				PluginBase base = (PluginBase) c.newInstance();
+				base = (PluginBase) c.newInstance();
 				initPlugin(base);
 				enablePlugin(base);
-				pluginMap.put(plugin, base);
+				pluginMap.put(removeDotFromString(plugin), base);
 				ucl.close();
 			} else {
 				RedstoneLamp.server.getLogger().info(": " + plugin + " is not a valid plugin. It should implement Plugin interface ");	
@@ -55,6 +59,7 @@ public class PluginLoader {
 			RedstoneLamp.server.getLogger().error("Unable to load plugin " + plugin + " (Plugins not supported)");
 		}
 		RedstoneLamp.server.getLogger().debug(": returns from loadPlugin() method ");
+		return base;
 	}
 
 	/*
@@ -80,10 +85,39 @@ public class PluginLoader {
 			base.onDisable();
 		}
 	}
-
+	
+	/*
+	 * returns Specific plug-in name;
+	 */
+	public Plugin getPlugin(final String name) {
+		return pluginMap.get(name);
+	}
+	
+	private String removeDotFromString(String str) {
+		if( str.lastIndexOf('.') >0) {
+			str = str.substring(str.lastIndexOf('.') + 1, str.length());
+			return str;
+		}
+		return str;
+	} 
+	
+	public Plugin getPluginCommand(final String command) {
+		 Iterator<String> iter = pluginMap.keySet().iterator();
+		 while(iter.hasNext()) {
+			 String key        = iter.next();
+			 PluginBase base   = (PluginBase)pluginMap.get(key);
+			 List<String> list =  base.getCommands();
+			 for(String s: list) {
+				 if(s.equals(command)) return base; 
+			 }
+		 }
+		return null;
+	}
+	
 	/*
 	 * Compiles .java file and class file is generated in in-use folder
 	 */
+	@SuppressWarnings("unchecked")
 	private void generatePluginJavaClassFile(final File file) {
 		System.setProperty(JAVA_HOME, JAVA_SDK);
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -93,8 +127,6 @@ public class PluginLoader {
 		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromStrings(Arrays.asList(file.getPath()));
 		JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, plistener, options, null, compilationUnits);
 		boolean success = task.call();
-	
-
 		try {
 			fileManager.close();
 		} catch (IOException e) {
@@ -111,10 +143,13 @@ public class PluginLoader {
 	/*
 	 * loads fully plug-ins from class folder
 	 */
-	public void loadJavaPlugins() {
+	public ArrayList<Plugin> loadJavaPlugins() {
 		getFullyQualifiedName();
-		for(String plugin : clsNames)
-			loadPlugin(plugin);
+		ArrayList<Plugin> list = new ArrayList<Plugin>();
+		for(String plugin : clsNames) {
+			list.add(loadPlugin(plugin));
+		}
+		return list;
 	}
 
 	/*

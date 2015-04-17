@@ -1,6 +1,7 @@
 package redstonelamp.plugin;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
@@ -12,7 +13,7 @@ public abstract class PluginBase implements Plugin {
 	private boolean enabled;
 	private boolean initialzed = false;
 	private PluginDescription description;
-	private String dataFolder, configFile, file, name;
+	private String dataFolder, file;
 	private Logger logger;
 	private PluginLoader loader;
 	private Server server;
@@ -65,8 +66,10 @@ public abstract class PluginBase implements Plugin {
 		return this.description;
 	}
 
-	public void init( PluginLoader loder, Server server, PluginDescription description, final String datafolder, final String file) {
-		if(!this.initialzed) {
+	public void init( PluginLoader loder, Server server,
+			PluginDescription description, final String datafolder,
+			final String file) {
+		if (this.initialzed == false) {
 			this.initialzed = true;
 			this.loader = loader;
 			this.server = server;
@@ -74,7 +77,9 @@ public abstract class PluginBase implements Plugin {
 			this.logger = new Logger();
 			this.dataFolder = dataFolder;
 			this.file = file;
+			
 			System.out.println(" .... inside init method.....");
+			
 		}
 	}
 
@@ -89,7 +94,7 @@ public abstract class PluginBase implements Plugin {
 
 	public Command getCommand(final String name) {
 		Command command = this.getCommandRegistrationManager().getPluginCommand(name);
-		return null;
+		return command;
 	}
 	
 	/*
@@ -130,4 +135,12 @@ public abstract class PluginBase implements Plugin {
 	public CommandRegistrationManager getCommandRegistrationManager() {
 	   return getServer().getCommandRegistrationManager();
 	}
+	
+	/*
+	 * This is a work around for storing commands for plug-in
+	 */
+	public List<String> getCommands(){
+		return null;
+	}
+	
 }

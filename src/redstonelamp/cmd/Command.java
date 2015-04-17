@@ -1,7 +1,12 @@
 package redstonelamp.cmd;
 
 public abstract class Command {
-	public String getName() {
-		return null;
+	
+	private String name;
+	
+	private String label;
+	
+	public Command(final String name) {
+		this.name  = this.label = name;
 	}
 }
