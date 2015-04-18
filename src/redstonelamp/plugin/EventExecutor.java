@@ -5,5 +5,9 @@ import redstonelamp.event.EventException;
 import redstonelamp.event.Listener;
 
 public interface EventExecutor {
-public void execute(Listener listener, Event event) throws EventException; 
+	/*
+	 * @param Listener listener
+	 * @param Event event
+	 */
+	public void execute(Listener listener, Event event) throws EventException; 
 }

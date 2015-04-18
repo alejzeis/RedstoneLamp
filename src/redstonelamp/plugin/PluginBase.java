@@ -11,7 +11,7 @@ import redstonelamp.logger.Logger;
 
 public abstract class PluginBase implements Plugin {
 	private boolean enabled;
-	private boolean initialzed = false;
+	private boolean initialized = false;
 	private PluginDescription description;
 	private String dataFolder, file;
 	private Logger logger;
@@ -42,6 +42,9 @@ public abstract class PluginBase implements Plugin {
 		return (enabled == true);
 	}
 
+	/*
+	 * @param boolean enabled
+	 */
 	public void setEnabled(final boolean enabled) {
 		if (this.enabled != enabled) {
 			this.enabled = enabled;
@@ -67,20 +70,16 @@ public abstract class PluginBase implements Plugin {
 		return this.description;
 	}
 
-	public void init( PluginLoader loder, Server server,
-			PluginDescription description, final String datafolder,
-			final String file) {
-		if (this.initialzed == false) {
-			this.initialzed = true;
+	public void init( PluginLoader loder, Server server, PluginDescription description, final String datafolder, final String file) {
+		if (this.initialized == false) {
+			this.initialized = true;
 			this.loader = loader;
 			this.server = server;
 			this.description = description;
 			this.logger = new Logger();
 			this.dataFolder = dataFolder;
 			this.file = file;
-			
 			System.out.println(" .... inside init method.....");
-			
 		}
 	}
 
@@ -89,22 +88,33 @@ public abstract class PluginBase implements Plugin {
 		return logger;
 	}
 
+	/*
+	 * @return boolean initialized
+	 */
 	public boolean isInitialized() {
-		return this.initialzed;
+		return this.initialized;
 	}
 
+	/*
+	 * @param String name
+	 * 
+	 * @return Command
+	 */
 	public Command getCommand(final String name) {
 		Command command = this.getCommandRegistrationManager().getPluginCommand(name);
 		return command;
 	}
 	
 	/*
-	 * Returns the Server instance
+	 * @return Server
 	 */
 	public Server getServer() {
 		return RedstoneLamp.server;
 	}
 
+	/*
+	 * @return String BaseFolder
+	 */
 	public String getBaseFolderName() {
 		return null;
 	}
@@ -114,6 +124,9 @@ public abstract class PluginBase implements Plugin {
 		return this.name;
 	}
 
+	/*
+	 * @return String file
+	 */
 	public String getFile() {
 		return file;
 	}
@@ -133,17 +146,23 @@ public abstract class PluginBase implements Plugin {
 		return null;
 	}
 	
+	/*
+	 * @return CommandRegistrationManager
+	 */
 	public CommandRegistrationManager getCommandRegistrationManager() {
 	   return getServer().getCommandRegistrationManager();
 	}
 	
 	/*
-	 * This is a work around for storing commands for plug-in
+	 * @return List<String> commands
 	 */
 	public List<String> getCommands(){
 		return null;
 	}
 
+	/*
+	 * @param String name
+	 */
 	public void setName(final String name){
 		this.name = name;
 	}

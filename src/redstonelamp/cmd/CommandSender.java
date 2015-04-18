@@ -1,14 +1,12 @@
- 
- package redstonelamp.cmd;
+package redstonelamp.cmd;
 
- import redstonelamp.Server;
+import redstonelamp.Server;
 
- public interface CommandSender {
-	
+public interface CommandSender {
 	/*
 	 * @param String message
 	 */
-	public void sendMessage(String message) ;
+	public void sendMessage(String message);
 	
 	/*
 	 * @return Server
@@ -20,4 +18,4 @@
 	 */
 	public String getName();
 	
- }
+}

@@ -8,7 +8,6 @@ import redstonelamp.cmd.CommandMap;
 import redstonelamp.cmd.SimpleCommandMap;
 
 public class PluginManager {
-	
     private Server server;
     private CommandMap commandMap;
 	private ArrayList<Plugin> plugins = new ArrayList<Plugin>();
@@ -20,14 +19,14 @@ public class PluginManager {
 	}
 	
 	/*
-	 * Register Plug-in loader class
+	 * @param PluginLoader loader
 	 */
 	public void registerPluginLoader(PluginLoader loader) {
 		this.loader = loader;
 	}
 	
 	/*
-	 * Loads all Plug-ins
+	 * @param File folder
 	 */
 	public void loadPlugins(File folder) {
 		File[] listOfFiles = folder.listFiles();
@@ -41,7 +40,9 @@ public class PluginManager {
 	}
 	
 	/*
-	 * return s plug-in
+	 * @param String name
+	 * 
+	 * @return Plugin
 	 */
 	public Plugin getPlugin(final String name) {
 		for(Plugin p : plugins) {
@@ -51,7 +52,7 @@ public class PluginManager {
 	}
 	
 	/*
-	 * Returns all plug-ins
+	 * @return ArrayList<Plugin> plugins
 	 */
 	public ArrayList<Plugin> getPlugins() {
 		return plugins;

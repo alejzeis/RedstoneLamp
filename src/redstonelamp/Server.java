@@ -16,13 +16,8 @@ public class Server {
 	private boolean running = false;
 	
 	private CommandRegistrationManager commandManager;
-	
 	private PluginManager pluginManager;
 	
-	
-	/*
-	 * Initialize the server if it is not running
-	 */
 	public Server(String name, String motd, int port, boolean whitelist, boolean announce_player_achievements, int spawn_protection, int max_players, boolean allow_cheats, boolean spawn_animals, boolean spawn_mobs, int gamemode, boolean force_gamemode, boolean hardcore, boolean pvp, int difficulty, String generator_settings, String level_name, String seed, String level_type, boolean query, boolean rcon, String rcon_pass, boolean auto_save) {
 		if(!this.running) {
 			Thread.currentThread().setName("RedstoneLamp");
@@ -50,7 +45,6 @@ public class Server {
 			this.rcon_pass = rcon_pass;
 			this.auto_save = auto_save;
 			
-			//register command registration manager
 			commandManager = new CommandRegistrationManager();
 			
 			try {
@@ -66,120 +60,117 @@ public class Server {
 		}
 	}
 	
-	/*
-	 * Used to start the server (Maybe open the socket?)
-	 */
 	private void start() {
 		
 	}
 	
 	/*
-	 * Returns the servers IP
+	 * @return String ServerIP
 	 */
 	public String getAddress() {
 		return this.address;
 	}
 	
 	/*
-	 * Returns the servers Port
+	 * @return String ServerPort
 	 */
 	public int getPort() {
 		return this.port;
 	}
 	
 	/*
-	 * Returns the servers name
+	 * @return String ServerName
 	 */
 	public String getName() {
 		return this.name;
 	}
 	
 	/*
-	 * Returns the servers Message of The Day
+	 * @return String MOTD
 	 */
 	public String getMOTD() {
 		return this.motd;
 	}
 	
 	/*
-	 * Returns true if server is whitelisted
+	 * @return boolean Whitelisted
 	 */
 	public boolean isWhitelisted() {
 		return this.whitelist;
 	}
 	
 	/*
-	 * Returns number of players that can join total (not open slots)
+	 * @return int MaxPlayers
 	 */
 	public int getMaxPlayers() {
 		return this.max_players;
 	}
 	
 	/*
-	 * Returns true if players can fly without creative mode
+	 * @return boolean Cheats
 	 */
 	public boolean cheatsEnabled() {
 		return this.allow_cheats;
 	}
 	
 	/*
-	 * Returns true if spawn_animals is enabled
+	 * @return boolean Animals
 	 */
 	public boolean spawnAnimals() {
 		return this.spawn_animals;
 	}
 	
 	/*
-	 * Returns true is spawn_mobs is enabled
+	 * @return boolean Mobs
 	 */
 	public boolean spawnMobs() {
 		return this.spawn_mobs;
 	}
 	
 	/*
-	 * Returns the gamemode integer
+	 * @return int Gamemode
 	 */
 	public int getGamemode() {
 		return this.gamemode;
 	}
 	
 	/*
-	 * Returns true if Hardcore is enabled (Ban on death)
+	 * @return boolean Hardcore
 	 */
 	public boolean isHardcore() {
 		return this.hardcore;
 	}
 	
 	/*
-	 * Returns true if pvp is enabled
+	 * @return boolean PvP
 	 */
 	public boolean isPvPEnabled() {
 		return this.pvp;
 	}
 	
 	/*
-	 * Returns difficulty integer
+	 * @return int Difficulty
 	 */
 	public int getDifficulty() {
 		return this.difficulty;
 	}
 	
 	/*
-	 * Returns level_name
+	 * @return String LevelName
 	 */
 	public String getLevelName() {
 		return this.level_name;
 	}
 	
 	/*
-	 * Returns the seed used
+	 * @return String seed
 	 */
 	public String getSeed() {
 		return this.seed;
 	}
 	
 	/*
-	 * Returns true if auto_save is enabled
+	 * @return boolean AutoSave
 	 */
 	public boolean isAutoSaveEnabled() {
 		return this.auto_save;
@@ -190,12 +181,12 @@ public class Server {
 	 */
 	public void stop() {
 		if(this.running)
-			new File("./plugins/in_use/").delete();
+			new File("./plugins/cache/").delete();
 		System.exit(1);
 	}
 	
 	/*
-	 * Forces the software to close (ie if crashed) if force equals true
+	 * @param boolean force
 	 */
 	public void stop(boolean force) {
 		if(!force)
@@ -204,24 +195,23 @@ public class Server {
 	}
 
 	/*
-	 * Returns the ServerLogger class
+	 * @return Logger
 	 */
 	public Logger getLogger() {
 		return new Logger();
 	}
 	
 	/*
-	 * returns command registration manager
+	 * @return CommandRegistrationManager
 	 */
 	public CommandRegistrationManager getCommandRegistrationManager() {
 		return commandManager;
 	}
 	
 	/*
-	 * returns plug in manager
+	 * @return PluginManager
 	 */
 	public PluginManager getPluginManager() {
 		return pluginManager;
 	}
-	
 }

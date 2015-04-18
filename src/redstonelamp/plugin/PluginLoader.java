@@ -33,9 +33,6 @@ public class PluginLoader {
 	private URL pluginURL;
 	private Set<String> clsNames = new TreeSet<String>();
     
-	/*
-	 * Loads a plug-in by its qualified name.
-	 */
 	public Plugin loadPlugin(String plugin) {
 		RedstoneLamp.server.getLogger().debug(": inside loadPlugin() method ");
 		PluginBase base = null;
@@ -65,14 +62,14 @@ public class PluginLoader {
 	}
 
 	/*
-	 * initializing plug-in
+	 * @param PluginBase base
 	 */
 	private void initPlugin(PluginBase base) {
 		base.onLoad();
 	}
 
 	/*
-	 * enable plug-in
+	 * @param PluginBase base
 	 */
 	public void enablePlugin(PluginBase base) {
 		RedstoneLamp.server.getLogger().debug( ":  Enabling " + base.getName());
@@ -80,7 +77,7 @@ public class PluginLoader {
 	}
 
 	/*
-	 * disable plug-in
+	 * @param PluginBase base
 	 */
 	public void disablePlugin(PluginBase base) {
 		if( base.isEnabled()) {
@@ -89,7 +86,9 @@ public class PluginLoader {
 	}
 	
 	/*
-	 * returns Specific plug-in name;
+	 * @param String name
+	 * 
+	 * @return Plugin
 	 */
 	public Plugin getPlugin(final String name) {
 		return pluginMap.get(name);
@@ -103,6 +102,11 @@ public class PluginLoader {
 		return str;
 	} 
 	
+	/*
+	 * @param String command
+	 * 
+	 * @return Plugin
+	 */
 	public Plugin getPluginCommand(final String command) {
 		 Iterator<String> iter = pluginMap.keySet().iterator();
 		 while(iter.hasNext()) {
@@ -117,7 +121,7 @@ public class PluginLoader {
 	}
 	
 	/*
-	 * Compiles .java file and class file is generated in in-use folder
+	 * @param File file
 	 */
 	@SuppressWarnings("unchecked")
 	private void generatePluginJavaClassFile(final File file) {
@@ -143,7 +147,7 @@ public class PluginLoader {
 	}
 
 	/*
-	 * loads fully plug-ins from class folder
+	 * @return ArrayList<Plugin> list
 	 */
 	public ArrayList<Plugin> loadJavaPlugins() {
 		getFullyQualifiedName();
@@ -155,14 +159,16 @@ public class PluginLoader {
 	}
 
 	/*
-	 * compile java plug-in to generate class file
+	 * @param File file
 	 */
 	public void preparePluginFiles(File file) {
 		generatePluginJavaClassFile(file);
 	}
 
 	/*
-	 * sets JAVA SDK location
+	 * @param String pfolder
+	 * @param String folder
+	 * @param String sdk
 	 */
 	@SuppressWarnings("deprecation")
 	public void setPluginOption(final String pfolder, final String folder, final String sdk) {
@@ -176,9 +182,6 @@ public class PluginLoader {
 		}
 	}
 
-	/*
-	 * gets fully qualified name of a class file
-	 */
 	private void getFullyQualifiedName() {
 		File f      = new File(PLUGIN_CLASS_FOLDER);
 		String path = f.getAbsolutePath();
@@ -186,9 +189,6 @@ public class PluginLoader {
 		RedstoneLamp.server.getLogger().info(" fully qualified plugins " + clsNames);
 	}
 
-	/*
-	 * constructs package name and stores
-	 */
 	private void listFiles(String path, String orig) {
 		File root   = new File(path);
 		File[] list = root.listFiles();
@@ -207,21 +207,18 @@ public class PluginLoader {
 	}
 	
 	class PluginDiagnosticListener implements DiagnosticListener {
-
 		@Override
 		public void report(Diagnostic diagnostic) {
 			System.out.println("Code->" +  diagnostic.getCode());
-				        System.out.println("Column Number->" + diagnostic.getColumnNumber());
-				        System.out.println("End Position->" + diagnostic.getEndPosition());
-				        System.out.println("Kind->" + diagnostic.getKind());
-				        System.out.println("Line Number->" + diagnostic.getLineNumber());
-				        System.out.println("Message->"+ diagnostic.getMessage(Locale.ENGLISH));
-				        System.out.println("Position->" + diagnostic.getPosition());
-				        System.out.println("Source" + diagnostic.getSource());
-				        System.out.println("Start Position->" + diagnostic.getStartPosition());
-				        	        System.out.println("\n");
-
-			
+			System.out.println("Column Number->" + diagnostic.getColumnNumber());
+			System.out.println("End Position->" + diagnostic.getEndPosition());
+			System.out.println("Kind->" + diagnostic.getKind());
+			System.out.println("Line Number->" + diagnostic.getLineNumber());
+			System.out.println("Message->"+ diagnostic.getMessage(Locale.ENGLISH));
+			System.out.println("Position->" + diagnostic.getPosition());
+			System.out.println("Source" + diagnostic.getSource());
+			System.out.println("Start Position->" + diagnostic.getStartPosition());
+			System.out.println("\n");
 		}
 	}
 }

@@ -1,10 +1,9 @@
- package redstonelamp.cmd;
+package redstonelamp.cmd;
 
- import redstonelamp.RedstoneLamp;
- import redstonelamp.Server;
+import redstonelamp.RedstoneLamp;
+import redstonelamp.Server;
 
- public class ConsoleCommandSender implements CommandSender {
-
+public class ConsoleCommandSender implements CommandSender {
 	@Override
 	public String getName() {
 		return "CONSOLE";
@@ -19,5 +18,4 @@
 	public void sendMessage(String message) {
 		RedstoneLamp.server.getLogger().info(message);
 	}
-
 }
