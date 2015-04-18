@@ -22,18 +22,27 @@ public class Player {
 			this.kill();
 		return;
 	}
+	
+	public int getHealth(){
+		return this.health;
+	}
+	
+	public void heal(int value){
+		this.health = this.health + value;
+	}
 
 	public int getMaxHealth(){
 		return this.maxhealth;
 	}
 	
+	public void setMaxHealth(int value){
+		this.maxhealth = value;
+	}
+	
 	private void kill() {
-		if(this.getHealth() > 0)
+		if(this.getHealth() =< 0)
 			this.setHealth(0);
 		//TODO: Kill player
 	}
 	
-	public int getHealth(){
-		return this.health;
-	}
 }
