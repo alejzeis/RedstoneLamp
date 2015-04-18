@@ -40,7 +40,7 @@ public class Player {
 	}
 	
 	private void kill() {
-		if(this.getHealth() =< 0)
+		if(this.getHealth() <= 0)
 			this.setHealth(0);
 		//TODO: Kill player
 	}

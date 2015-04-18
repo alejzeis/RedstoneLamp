@@ -1,14 +1,19 @@
 package redstonelamp;
 
 import java.io.File;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.util.Random;
 
 import redstonelamp.cmd.CommandRegistrationManager;
 import redstonelamp.logger.Logger;
 import redstonelamp.plugin.PluginManager;
 
-public class Server {
+public class Server extends Thread {
 	private String address, name, motd, generator_settings, level_name, seed, level_type, rcon_pass;
 	private int port, spawn_protection, max_players, gamemode, difficulty;
 	private boolean whitelist, announce_player_achievements, allow_cheats, spawn_animals, spawn_mobs, force_gamemode, hardcore, pvp, query, rcon, auto_save;
@@ -18,7 +23,11 @@ public class Server {
 	private CommandRegistrationManager commandManager;
 	private PluginManager pluginManager;
 	
-	public Server(String name, String motd, int port, boolean whitelist, boolean announce_player_achievements, int spawn_protection, int max_players, boolean allow_cheats, boolean spawn_animals, boolean spawn_mobs, int gamemode, boolean force_gamemode, boolean hardcore, boolean pvp, int difficulty, String generator_settings, String level_name, String seed, String level_type, boolean query, boolean rcon, String rcon_pass, boolean auto_save) {
+    public DatagramSocket socket;
+    private DatagramPacket packet;
+    private long serverID;
+	
+	public Server(String name, String motd, int port, boolean whitelist, boolean announce_player_achievements, int spawn_protection, int max_players, boolean allow_cheats, boolean spawn_animals, boolean spawn_mobs, int gamemode, boolean force_gamemode, boolean hardcore, boolean pvp, int difficulty, String generator_settings, String level_name, String seed, String level_type, boolean query, boolean rcon, String rcon_pass, boolean auto_save) throws SocketException {
 		if(!this.running) {
 			Thread.currentThread().setName("RedstoneLamp");
 			this.name = name;
@@ -55,13 +64,18 @@ public class Server {
 			}
 			this.getLogger().info("Starting Minecraft: PE server on " + this.getAddress() + ":" + this.getPort());
 			this.running = true;
+			socket = new DatagramSocket(this.getPort());
+			socket.getBroadcast();
+			serverID = new Random().nextLong();
 			this.start();
 			this.getLogger().info("This server is running " + RedstoneLamp.SOFTWARE + " version " + RedstoneLamp.VERSION + " \"" + RedstoneLamp.CODENAME + "\" (API " + RedstoneLamp.API_VERSION + ")");
 		}
 	}
 	
-	private void start() {
-		
+	public void run() {
+		while(this.running) {
+			
+		}
 	}
 	
 	/*
@@ -78,12 +92,12 @@ public class Server {
 		return this.port;
 	}
 	
-	/*
-	 * @return String ServerName
-	 */
-	public String getName() {
-		return this.name;
-	}
+//	/*
+//	 * @return String ServerName
+//	 */
+//	public String getName() {
+//		return this.name;
+//	}
 	
 	/*
 	 * @return String MOTD
@@ -176,23 +190,23 @@ public class Server {
 		return this.auto_save;
 	}
 	
-	/*
-	 * Stops the server
-	 */
-	public void stop() {
-		if(this.running)
-			new File("./plugins/cache/").delete();
-		System.exit(1);
-	}
-	
-	/*
-	 * @param boolean force
-	 */
-	public void stop(boolean force) {
-		if(!force)
-			this.stop();
-		System.exit(1);
-	}
+//	/*
+//	 * Stops the server
+//	 */
+//	public void stop() {
+//		if(this.running)
+//			new File("./plugins/cache/").delete();
+//		System.exit(1);
+//	}
+//	
+//	/*
+//	 * @param boolean force
+//	 */
+//	public void stop(boolean force) {
+//		if(!force)
+//			this.stop();
+//		System.exit(1);
+//	}
 
 	/*
 	 * @return Logger

@@ -14,7 +14,7 @@ public class Logger {
 	}
 	
 	public void debug(String message) {
-		if(RedstoneLamp.DEGUG)
+		if(RedstoneLamp.DEBUG)
 			System.out.println(sdf.format(cal.getTime()) + " [DEBUG] " + message);
 	}
 	
@@ -32,6 +32,6 @@ public class Logger {
 	
 	public void fatal(String message) {
 		System.out.println(sdf.format(cal.getTime()) + " [FATAL] " + message);
-		RedstoneLamp.server.stop(true);
+		RedstoneLamp.server.stop();
 	}
 }

@@ -3,6 +3,7 @@ package redstonelamp;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketException;
 import java.util.Properties;
 
 import redstonelamp.cmd.CommandSender;
@@ -19,7 +20,7 @@ public class RedstoneLamp {
 	public static String STAGE = "DEVELOPMENT";
 	public static int API_VERSION = 1;
 
-	public static boolean DEGUG = true; // Debug mode for developers
+	public static boolean DEBUG = true; // Debug mode for developers
 
 	public static Server server;
 
@@ -33,7 +34,13 @@ public class RedstoneLamp {
 	private final static String JAVA_SDK = "JAVA_SDK";
 
 	public static void main(String[] args) {
-		server = new Server("RedstoneLamp Server", "Welcome to this server!", 19132, false, true, 16, 20, false, true, true, 0, false, false, true, 1, null, "world", null, "DEFAULT", true, false, null, true);
+		try {
+			server = new Server("RedstoneLamp Server", "Welcome to this server!", 19132, false, true, 16, 20, false, true, true, 0, false, false, true, 1, null, "world", null, "DEFAULT", true, false, null, true);
+		} catch (SocketException e) {
+			if(DEBUG)
+				e.printStackTrace();
+			server.getLogger().fatal("***** COULDN'T BIND TO PORT *****");
+		}
 
 		// load Redstone property file
 		loadProperties();
