@@ -4,11 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Properties;
 
+import redstonelamp.cmd.Command;
 import redstonelamp.cmd.CommandSender;
 import redstonelamp.cmd.ConsoleCommandSender;
+import redstonelamp.cmd.PluginCommand;
 import redstonelamp.cmd.SimpleCommandMap;
+import redstonelamp.event.player.PlayerMoveEvent;
 import redstonelamp.plugin.PluginBase;
 import redstonelamp.plugin.PluginLoader;
 import redstonelamp.plugin.PluginManager;
@@ -56,9 +60,9 @@ public class RedstoneLamp {
 		if (!inuse.exists())
 			inuse.mkdirs();
 		
-	    SimpleCommandMap  simpleCommandMap = new SimpleCommandMap();
-		PluginManager pluginManager        = new PluginManager(server, simpleCommandMap);
-		PluginLoader pluginLoader          = new PluginLoader();
+
+		PluginManager pluginManager = server.getPluginManager();// new
+		PluginLoader pluginLoader  = new PluginLoader();
 		
 		// sets java SDK Location and PLUGIN_FOLDER
 		pluginLoader.setPluginOption(props.getProperty(PLUGIN_FOLDER).trim(), props.getProperty(PLUGIN_CLASS_FILE_FOLDER).trim(), props.getProperty(JAVA_SDK).trim());
@@ -67,14 +71,23 @@ public class RedstoneLamp {
 		pluginManager.loadPlugins(folder);
 		
 		CommandSender sender = new ConsoleCommandSender();
-		//test sample command: Player issues a '/List' command
-		//gets the plug-in for which this command is associated with
-		//call PluginBase.onCommand() with commandSender and other arguments
-		String cmd = "List";
-		PluginBase base = (PluginBase) pluginLoader.getPluginCommand(cmd);
-		if(base != null)
-			base.onCommand(sender, null, cmd, null);
-		//End test command
+		// ////// test sample command: Player issues a '/List' command
+		// // gets the plug-in for which this command is associated with
+		// // call PluginBase.onCommand() with commandSender and other arguments
+		String cmd = "example";
+		ArrayList<Command> cmdList = server.getCommandRegistrationManager()
+				.getPluginCommands(cmd);
+		Player p = new Player();
+		PlayerMoveEvent pme = new PlayerMoveEvent(p);
+		pluginManager.callEvent(pme);
+		for (Command command : cmdList) {
+			PluginCommand pcmd = (PluginCommand) command;
+			PluginBase base = (PluginBase) pcmd.getPlugin();
+			if (base != null)
+				base.onCommand(sender, command, cmd, null);
+		}
+		// ////// End test command
+
 		
 		/*
 		 * Tell the console the server has loaded (Dummy location)

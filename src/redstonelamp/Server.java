@@ -10,6 +10,8 @@ import java.nio.ByteBuffer;
 import java.util.Random;
 
 import redstonelamp.cmd.CommandRegistrationManager;
+import redstonelamp.cmd.PluginIdentifiableCommand;
+import redstonelamp.cmd.SimpleCommandMap;
 import redstonelamp.logger.Logger;
 import redstonelamp.plugin.PluginManager;
 
@@ -22,11 +24,12 @@ public class Server extends Thread {
 	
 	private CommandRegistrationManager commandManager;
 	private PluginManager pluginManager;
+	private SimpleCommandMap simpleCommandMap;
 	
     public DatagramSocket socket;
     private DatagramPacket packet;
     private long serverID;
-	
+    	
 	public Server(String name, String motd, int port, boolean whitelist, boolean announce_player_achievements, int spawn_protection, int max_players, boolean allow_cheats, boolean spawn_animals, boolean spawn_mobs, int gamemode, boolean force_gamemode, boolean hardcore, boolean pvp, int difficulty, String generator_settings, String level_name, String seed, String level_type, boolean query, boolean rcon, String rcon_pass, boolean auto_save) throws SocketException {
 		if(!this.running) {
 			Thread.currentThread().setName("RedstoneLamp");
@@ -54,7 +57,10 @@ public class Server extends Thread {
 			this.rcon_pass = rcon_pass;
 			this.auto_save = auto_save;
 			
-			commandManager = new CommandRegistrationManager();
+			simpleCommandMap = new SimpleCommandMap(this);
+			commandManager = new CommandRegistrationManager(simpleCommandMap);
+			pluginManager = new PluginManager(this, simpleCommandMap);
+
 			
 			try {
 				InetAddress ip = InetAddress.getLocalHost();
@@ -228,4 +234,16 @@ public class Server extends Thread {
 	public PluginManager getPluginManager() {
 		return pluginManager;
 	}
+	
+	/*
+	 * return Plug-in commands
+	 */
+	public PluginIdentifiableCommand getPluginCommand(final String cmd) {
+		return commandManager.getPluginCommand(cmd);
+	}
+
+	public SimpleCommandMap getCommandMap() {
+		return simpleCommandMap;
+	}
+
 }
