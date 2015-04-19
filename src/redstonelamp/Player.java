@@ -42,6 +42,7 @@ public class Player {
 	private void kill() {
 		if(this.getHealth() <= 0)
 			this.setHealth(0);
+			this.sendMessage("Ouch! That looked like  hurt.");
 		//TODO: Kill player
 	}
 	
