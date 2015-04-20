@@ -11,7 +11,7 @@ import redstonelamp.cmd.Command;
 import redstonelamp.cmd.CommandSender;
 import redstonelamp.cmd.ConsoleCommandSender;
 import redstonelamp.cmd.PluginCommand;
-import redstonelamp.cmd.SimpleCommandMap;
+import redstonelamp.event.player.PlayerJoinEvent;
 import redstonelamp.event.player.PlayerMoveEvent;
 import redstonelamp.plugin.PluginBase;
 import redstonelamp.plugin.PluginLoader;
@@ -39,9 +39,12 @@ public class RedstoneLamp {
 
 	public static void main(String[] args) {
 		try {
-			server = new Server("RedstoneLamp Server", "Welcome to this server!", 19132, false, true, 16, 20, false, true, true, 0, false, false, true, 1, null, "world", null, "DEFAULT", true, false, null, true);
+			server = new Server("RedstoneLamp Server",
+					"Welcome to this server!", 19132, false, true, 16, 20,
+					false, true, true, 0, false, false, true, 1, null, "world",
+					null, "DEFAULT", true, false, null, true);
 		} catch (SocketException e) {
-			if(DEBUG)
+			if (DEBUG)
 				e.printStackTrace();
 			server.getLogger().fatal("***** COULDN'T BIND TO PORT *****");
 		}
@@ -56,20 +59,22 @@ public class RedstoneLamp {
 		if (!folder.exists())
 			folder.mkdirs();
 
-		File inuse = new File(props.getProperty(PLUGIN_CLASS_FILE_FOLDER).trim()); // class files are generated in this folder
+		File inuse = new File(props.getProperty(PLUGIN_CLASS_FILE_FOLDER)
+				.trim()); // class files are generated in this folder
 		if (!inuse.exists())
 			inuse.mkdirs();
-		
 
 		PluginManager pluginManager = server.getPluginManager();// new
-		PluginLoader pluginLoader  = new PluginLoader();
-		
+		PluginLoader pluginLoader = new PluginLoader();
+
 		// sets java SDK Location and PLUGIN_FOLDER
-		pluginLoader.setPluginOption(props.getProperty(PLUGIN_FOLDER).trim(), props.getProperty(PLUGIN_CLASS_FILE_FOLDER).trim(), props.getProperty(JAVA_SDK).trim());
-		
+		pluginLoader.setPluginOption(props.getProperty(PLUGIN_FOLDER).trim(),
+				props.getProperty(PLUGIN_CLASS_FILE_FOLDER).trim(), props
+						.getProperty(JAVA_SDK).trim());
+
 		pluginManager.registerPluginLoader(pluginLoader);
 		pluginManager.loadPlugins(folder);
-		
+
 		CommandSender sender = new ConsoleCommandSender();
 		// ////// test sample command: Player issues a '/List' command
 		// // gets the plug-in for which this command is associated with
@@ -77,9 +82,13 @@ public class RedstoneLamp {
 		String cmd = "example";
 		ArrayList<Command> cmdList = server.getCommandRegistrationManager()
 				.getPluginCommands(cmd);
-		Player p = new Player();
-		PlayerMoveEvent pme = new PlayerMoveEvent(p);
+
+		// // call Player Join event
+		PlayerJoinEvent pje = new PlayerJoinEvent(null);
+		PlayerMoveEvent pme = new PlayerMoveEvent(null);
+		pluginManager.callEvent(pje);
 		pluginManager.callEvent(pme);
+
 		for (Command command : cmdList) {
 			PluginCommand pcmd = (PluginCommand) command;
 			PluginBase base = (PluginBase) pcmd.getPlugin();
@@ -88,7 +97,6 @@ public class RedstoneLamp {
 		}
 		// ////// End test command
 
-		
 		/*
 		 * Tell the console the server has loaded (Dummy location)
 		 */
@@ -100,11 +108,13 @@ public class RedstoneLamp {
 	 */
 	private static void loadProperties() {
 		props = new Properties();
-		InputStream is = RedstoneLamp.class.getClassLoader().getResourceAsStream(REDSTONELAMP_PROPERTIES);
+		InputStream is = RedstoneLamp.class.getClassLoader()
+				.getResourceAsStream(REDSTONELAMP_PROPERTIES);
 		try {
 			props.load(is);
 		} catch (IOException ioe) {
-			throw new IllegalStateException(" redstonelamp property file is missing....");
+			throw new IllegalStateException(
+					" redstonelamp property file is missing....");
 		}
 	}
 

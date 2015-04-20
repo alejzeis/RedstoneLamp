@@ -1,7 +1,17 @@
 package redstonelamp.event.player;
 
-import redstonelamp.event.Event;
+import redstonelamp.entity.Player;
+import redstonelamp.event.HandlerList;
 
-public class PlayerInteractEvent extends Event {
+public class PlayerInteractEvent extends PlayerEvent {
+
+	public PlayerInteractEvent(Player player) {
+		super(player);
+	}
+
+	@Override
+	public HandlerList getHandlers() {
+		return null;
+	}
 
 }

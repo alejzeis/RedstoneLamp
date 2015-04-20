@@ -47,7 +47,6 @@ public class SimpleCommandMap implements CommandMap {
 		if (duplicate != null)
 			return false;
 		redstoneCommands.put(prefix + ":" + label, command);
-		System.out.println(redstoneCommands);
 		return true;
 	}
 }

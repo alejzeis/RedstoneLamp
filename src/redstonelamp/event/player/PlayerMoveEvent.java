@@ -1,11 +1,10 @@
 package redstonelamp.event.player;
 
 import redstonelamp.Location;
-import redstonelamp.Player;
-import redstonelamp.event.Event;
+import redstonelamp.entity.Player;
 import redstonelamp.event.HandlerList;
 
-public class PlayerMoveEvent extends Event {
+public class PlayerMoveEvent extends PlayerEvent {
 	private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
     private Location from;

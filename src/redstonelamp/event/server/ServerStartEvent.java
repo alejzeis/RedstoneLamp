@@ -1,7 +1,17 @@
 package redstonelamp.event.server;
 
-import redstonelamp.event.Event;
+import redstonelamp.entity.Player;
+import redstonelamp.event.HandlerList;
 
-public class ServerStartEvent extends Event {
+public class ServerStartEvent extends ServerEvent {
+
+	public ServerStartEvent(Player player) {
+		super();
+	}
+
+	@Override
+	public HandlerList getHandlers() {
+		return null;
+	}
 
 }

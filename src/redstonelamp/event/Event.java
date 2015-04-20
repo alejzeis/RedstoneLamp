@@ -1,21 +1,36 @@
 package redstonelamp.event;
 
-import redstonelamp.Player;
-
 public abstract class Event {
 
-	private Player player;
+	protected String eventName = null;
+	private boolean isCancelled = false;
 
-	public Event(Player player) {
-		this.player = player;
+	public Event() {
+		this(false);
 	}
 
-	public Player getPlayer() {
-		return null;
+	public Event(boolean async) {
 
 	}
 
-	public HandlerList getHandlers() {
-		return null;
+	final public String getEventName() {
+		return this.eventName == null ? this.getClass().getSimpleName()
+				: this.eventName;
+	}
+
+	public abstract HandlerList getHandlers();
+
+	public boolean isCancelled() {
+		if (!(this instanceof Cancellable)) {
+			throw new IllegalArgumentException("Event is not Cancellable");
+		}
+		return this.isCancelled == true;
+	}
+
+	public void setCancelled(boolean value) {
+		if (!(this instanceof Cancellable)) {
+			throw new IllegalArgumentException("Event is not Cancellable");
+		}
+		this.isCancelled = value;
 	}
 }

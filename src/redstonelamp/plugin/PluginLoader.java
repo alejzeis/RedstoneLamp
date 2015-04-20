@@ -155,7 +155,7 @@ public class PluginLoader implements Listener {
 				continue;
 			} else {
 				RedstoneLamp.server.getLogger().info(
-						plugin.getName() + " registered an method signature \""
+						plugin.getName() + " registered a method signature \""
 								+ method.toGenericString() + "\" in "
 								+ listener.getClass());
 			}
