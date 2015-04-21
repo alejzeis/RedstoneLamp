@@ -98,17 +98,18 @@ public class PluginLoader implements Listener {
 	/*
 	 * disable plug-in
 	 */
-	public void disablePlugin(PluginBase base) {
-		if (base.isEnabled()) {
-			base.onDisable();
-		}
+	public void disablePlugin(Plugin base) {
+		((PluginBase)base).setEnabled(false);
 	}
 
 	/*
 	 * returns Specific plug-in name;
 	 */
 	public Plugin getPlugin(final String name) {
+		Plugin plugin = pluginMap.get(name);
+		if( plugin.isEnabled() )
 		return pluginMap.get(name);
+		else return null;
 	}
 
 	private String removeDotFromString(String str) {

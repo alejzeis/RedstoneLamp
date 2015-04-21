@@ -133,4 +133,12 @@ public class PluginManager {
 	public ArrayList<Plugin> getPlugins() {
 		return plugins;
 	}
+	
+	/*
+	 * disable a currently enabled plug-in
+	 */
+	public void disablePlugin(Plugin plugin) {
+		loader.disablePlugin(plugin);
+	}
+	
 }
