@@ -1,49 +1,47 @@
 package redstonelamp;
 
-public class Player {
-	private int health;
-	private int maxhealth = 20;
-	
-	public void sendMessage(String message) {
-		//TODO: Send message to player
-	}
-	
-	public String getName() {
-		return null;
-	}
-	
-	public void setHealth(int health){
-		this.health = health;
-		if(health > this.getMaxHealth())
-			this.health = 20;
-		if(health < 0)
-			this.health = 0;
-		if(health == 0)
-			this.kill();
-		return;
-	}
-	
-	public int getHealth(){
-		return this.health;
-	}
-	
-	public void heal(int value){
-		this.health = this.health + value;
-	}
+import java.net.InetAddress;
 
-	public int getMaxHealth(){
-		return this.maxhealth;
+public class Player {
+	public InetAddress clientAddress;
+	public int clientPort;
+	public int packetCount;
+	public int dataCount;
+	public String name;
+	public int entityID;
+	public float x;
+	public float y;
+	public float z;
+	public float yaw;
+	public float pitch;
+	public long clientID;
+	public short blockID;
+	public short metadata;
+	public boolean isConnected;
+	
+	public Player(InetAddress i, int p, int eid, long cid) {
+		clientAddress = i;
+		clientPort = p;
+		packetCount = 0;
+		dataCount = 0;
+		entityID = eid;
+		clientID = cid;
+		blockID = 0;
+		metadata = 0;
+		yaw = 0;
+		pitch = 0;
+		isConnected = false;
 	}
 	
-	public void setMaxHealth(int value){
-		this.maxhealth = value;
+	public int getPacketCount() {
+		return packetCount++;
 	}
 	
-	private void kill() {
-		if(this.getHealth() <= 0)
-			this.setHealth(0);
-			this.sendMessage("Ouch! That looked like it hurt.");
-		//TODO: Kill player
+	public int getDataCount() {
+		return dataCount++;
 	}
 	
+	public void setClientID(long cid) {
+		clientID = cid;
+	}
 }

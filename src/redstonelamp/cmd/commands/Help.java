@@ -17,7 +17,7 @@ public class Help implements CommandExecutor {
 		switch(cmd.getName()) {
 			case "help":
 			case "?":
-				//TODO: Get all commands
+			//TODO: Get all commands
 			break;
 		}
 		return true;
