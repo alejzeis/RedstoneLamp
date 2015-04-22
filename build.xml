@@ -1,0 +1,28 @@
+<project name="RedstoneLamp" default="dist" basedir=".">
+	<description>
+		Minecraft: PE Server Software
+	</description>
+	
+	<property name="src" location="src"/>
+	<property name="build" location="build"/>
+	<property name="dist"	location="dist"/>
+	
+	<target name="init">
+		<tstamp/>
+		<mkdir dir="${build}"/>
+	</target>
+	
+	<target name="compile" depends="init" description="Compile the source">
+		<javac srcdir="${src}" destdir="${build}"/>
+	</target>
+	
+	<target name="dist" depends="compile" description="Generate the distribution">
+		<mkdir dir="${dist}/builds"/>
+		<jar jarfile="${dist}/builds/Redstonelamp-${DSTAMP}.jar" basedir="${build}"/>
+	</target>
+	
+	<target name="clean" description="Clean up">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+	</target>
+</project>
