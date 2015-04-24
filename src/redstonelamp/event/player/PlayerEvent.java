@@ -20,13 +20,14 @@ public abstract class PlayerEvent extends Event {
 	//
 	//    }
 	//
-	//    /**
-	//     * Returns the player involved in this event
-	//     *
-	//     * @return Player who is involved in this event
-	//     */
-	//    public final Player getPlayer() {
-	//        return player;
-	//    }
+	
+	/**
+	 * Returns the player involved in this event
+	 *
+	 * @return Player who is involved in this event
+	 */
+	public final Player getPlayer() {
+		return player;
+	}
 	
 }
