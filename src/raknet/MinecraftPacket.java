@@ -1,6 +1,7 @@
 package raknet;
 
 public class MinecraftPacket {
+	public static final int RAKNET_PROTOCOL_VERSION = 5;
 	public static final int PROTOCOL_VERSION = 23;
 	
 	//Login Packets
