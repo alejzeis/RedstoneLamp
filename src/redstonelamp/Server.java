@@ -99,25 +99,25 @@ public class Server extends Thread {
 		PluginLoader pluginLoader = new PluginLoader();
 		
 		// sets java SDK Location and PLUGIN_FOLDER
-		pluginLoader.setPluginOption("./plugins/".trim(), "./plugins/cache/".trim(), this.getRedstoneLampProperties().get("JAVA_SDK").trim());
-		pluginManager.registerPluginLoader(pluginLoader);
-		pluginManager.loadPlugins(folder);
+//		pluginLoader.setPluginOption("./plugins/".trim(), "./plugins/cache/".trim(), this.getRedstoneLampProperties().get("JAVA_SDK").trim());
+//		pluginManager.registerPluginLoader(pluginLoader);
+//		pluginManager.loadPlugins(folder);
 		
 		CommandSender sender = new ConsoleCommandSender();
 		
 		PlayerJoinEvent pje = new PlayerJoinEvent(null);
 		PlayerMoveEvent pme = new PlayerMoveEvent(null);
-		pluginManager.callEvent(pje);
-		pluginManager.callEvent(pme);
-		
-		String cmd = null;
-		ArrayList<Command> cmdList = this.getCommandRegistrationManager().getPluginCommands(cmd);
-		for(Command command : cmdList) {
-			PluginCommand pcmd = (PluginCommand) command;
-			PluginBase base = (PluginBase) pcmd.getPlugin();
-			if(base != null)
-				base.onCommand(sender, command, cmd, null);
-		}
+//		pluginManager.callEvent(pje);
+//		pluginManager.callEvent(pme);
+//		
+//		String cmd = null;
+//		ArrayList<Command> cmdList = this.getCommandRegistrationManager().getPluginCommands(cmd);
+//		for(Command command : cmdList) {
+//			PluginCommand pcmd = (PluginCommand) command;
+//			PluginBase base = (PluginBase) pcmd.getPlugin();
+//			if(base != null)
+//				base.onCommand(sender, command, cmd, null);
+//		}
 		
 		socket = new DatagramSocket(StringCast.toInt(port));
 		socket.getBroadcast();

@@ -24,15 +24,14 @@ public class QueryPacket extends Packet {
 	
 	@Override
 	public ByteBuffer getPacket() {
-		String motd = "MCCPP;MINECON;" + RedstoneLamp.server.getMOTD();
-		String name = "MCCPP;Demo;" + RedstoneLamp.server.getServerName();
+		String motd = "MCCPP;MINECON;" + RedstoneLamp.server.getServerName();
 		ByteBuffer response = ByteBuffer.allocate(35 + motd.length());
 		response.put((byte) MinecraftPacket.ID_UNCONNECTED_PING_OPEN_CONNECTIONS_2);
 		response.putLong(this.clientID);
 		response.putLong(this.serverID);
 		response.put(magic);
-		response.putShort((short) RedstoneLamp.server.getMOTD().length());
-		response.put(name.getBytes());
+		response.putShort((short) motd.length());
+		response.put(motd.getBytes());
 		
 		return response;
 	}
