@@ -172,6 +172,10 @@ public class Server extends Thread {
 		return motd;
 	}
 	
+	public String getServerName() {
+		return name;
+	}
+	
 	/**
 	 * @return boolean Whitelisted
 	 */

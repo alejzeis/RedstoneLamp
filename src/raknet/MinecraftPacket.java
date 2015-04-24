@@ -1,4 +1,4 @@
-package redstonelamp.utils;
+package raknet;
 
 public class MinecraftPacket {
 	public static final int PROTOCOL_VERSION = 23;

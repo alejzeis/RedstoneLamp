@@ -11,7 +11,7 @@ import redstonelamp.utils.RedstoneLampProperties;
 import redstonelamp.utils.StringCast;
 
 public class RedstoneLamp implements Runnable {
-	public static String MC_VERSION = "0.11.0";
+	public static String MC_VERSION = "0.11.0 build 6";
 	public static String SOFTWARE = "RedstoneLamp";
 	public static String VERSION = "1.1.0";
 	public static String CODENAME = "Pumpkin Seeds";
@@ -27,7 +27,7 @@ public class RedstoneLamp implements Runnable {
 	public boolean stopped;
 	public ArrayList<Player> players;
 	public HashMap<Integer, Long> entityIDList = new HashMap<Integer, Long>();
-	private int connectedPlayers;
+	public int connectedPlayers;
 	
 	public static boolean DEBUG;
 	public static boolean DEVELOPER;
@@ -72,18 +72,14 @@ public class RedstoneLamp implements Runnable {
 			server = new Server(redstone, rlp.get("name"), rlp.get("motd"), rlp.get("server-port"), rlp.get("whitelist"), rlp.get("announce-player-achievements"), rlp.get("spawn-protection"), rlp.get("max-players"), rlp.get("allow-cheats"), rlp.get("spawn-animals"), rlp.get("spawn-mobs"), rlp.get("gamemode"), rlp.get("force-gamemode"), rlp.get("hardcore"), rlp.get("pvp"), rlp.get("difficulty"), rlp.get("generator-settings"), rlp.get("level-name"), rlp.get("level-seed"), rlp.get("levet-type"), rlp.get("enable-query"), rlp.get("enable-rcon"), rlp.get("rcon.password"), rlp.get("auto-save"));
 			server.start();
 			server.getLogger().info("Done! For help, type \"help\" or \"?\"");
-		} catch(SocketException e) {
+		} catch(SocketException se) {
 			String address = "0.0.0.0";
 			try {
 				InetAddress ip = InetAddress.getLocalHost();
 				address = ip.getHostAddress();
-			} catch(UnknownHostException e2) {
-				if(DEVELOPER)
-					e2.printStackTrace();
+			} catch(UnknownHostException uhe) {
 				logger.fatal("Unable to determine system IP!");
 			}
-			if(DEVELOPER)
-				e.printStackTrace();
 			logger.fatal("***** COULDN'T BIND TO PORT " + address + ":" + StringCast.toInt(rlp.get("server-port")) + " *****\n\t\t Is there a server already running on that port?");
 		}
 		return true;
