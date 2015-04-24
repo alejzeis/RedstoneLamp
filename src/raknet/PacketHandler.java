@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 
+import raknet.packets.JoinPacket;
 import raknet.packets.QueryPacket;
 import raknet.packets.StartLoginPacket;
 import redstonelamp.RedstoneLamp;
@@ -32,15 +33,19 @@ public class PacketHandler implements Runnable {
 			int packetSize = packet.getData().length;
 			switch(packetType) {
 				case MinecraftPacket.ID_CONNECTED_PING_OPEN_CONNECTIONS:
-					pkt = new QueryPacket(packet, network.serverID);
+					pkt = new QueryPacket(packet, network.serverID); //Show server info on Main Menu
 				break;
 				
 				case MinecraftPacket.ID_OPEN_CONNECTION_REQUEST_1:
-					pkt = new StartLoginPacket(packet, network.serverID, clientAddress, clientPort);
+					pkt = new StartLoginPacket(packet, network.serverID, clientAddress, clientPort); //Check RakNet Protocol Version
+				break;
+				
+				case MinecraftPacket.ID_OPEN_CONNECTION_REQUEST_2:
+					pkt = new JoinPacket(packet, network.serverID, clientAddress, ((short) clientPort), network);
 				break;
 				
 				default:
-					this.network.getLogger().info("Unknown packet from: " + clientAddress + ":" + clientPort);
+					this.network.getLogger().info("Unknown packet from: " + clientAddress + ":" + clientPort + " | PacketData - Packet: " + packetType + " Size: " + packetSize);
 				break;
 			}
 			

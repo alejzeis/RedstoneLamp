@@ -85,7 +85,7 @@ public class RedstoneLamp implements Runnable {
 		return true;
 	}
 	
-	public void addPlayer(InetAddress i, int p, Long cid) {
+	public void addPlayer(InetAddress i, int p, long cid) {
 		if(currentPlayer(i, p) == null) {
 			boolean b = false;
 			int entityID = 1009;

@@ -88,7 +88,7 @@ public class PluginLoader {
 	 * enable plug-in
 	 */
 	public void enablePlugin(PluginBase base) {
-		RedstoneLamp.logger.debug(":  Enabling " + base.getName());
+		RedstoneLamp.logger.debug(": Enabling " + base.getName());
 		base.setEnabled(true);
 	}
 	
@@ -169,7 +169,6 @@ public class PluginLoader {
 						e.printStackTrace();
 						RedstoneLamp.logger.error(e.getMessage());
 					}
-					
 				}
 			};
 			eventSet.add(new RegisteredListener(listener, executor, ep, plugin, false));
@@ -201,9 +200,9 @@ public class PluginLoader {
 			RedstoneLamp.logger.error(e.getMessage());
 		}
 		if(success) {
-			RedstoneLamp.logger.info(" :Compilation Success! Class files are generated in in-use folder");
+			RedstoneLamp.logger.info(": Compilation Success! Class files are generated in in-use folder");
 		} else {
-			RedstoneLamp.logger.error(" :Plug-in Compilation Failed");
+			RedstoneLamp.logger.error(": Plug-in Compilation Failed");
 		}
 	}
 	
@@ -251,7 +250,7 @@ public class PluginLoader {
 		File f = new File(PLUGIN_CLASS_FOLDER);
 		String path = f.getAbsolutePath();
 		listFiles(path, path);
-		RedstoneLamp.logger.info(" fully qualified plugins " + clsNames);
+		RedstoneLamp.logger.info("Fully qualified plugins: " + clsNames);
 	}
 	
 	/*
