@@ -37,7 +37,6 @@ public class PluginManager {
 	 * Loads all Plug-ins
 	 */
 	public void loadPlugins(File folder) {
-		deleteClassFiles();
 		File[] listOfFiles = folder.listFiles();
 		for(File file : listOfFiles) {
 			if(file.isFile() && file.getName().toLowerCase().endsWith(".java")) {
@@ -48,10 +47,6 @@ public class PluginManager {
 		plugins = loader.loadJavaPlugins();
 	}
 
-	private void deleteClassFiles() {
-		loader.deleteClassFiles(null);
-	}
-	
 	/*
 	 * this method will be called from plug-ins for registering listeners
 	 */

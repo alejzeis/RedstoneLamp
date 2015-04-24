@@ -291,16 +291,4 @@ public class PluginLoader {
 			RedstoneLamp.logger.info("\n");
 		}
 	}
-
-	/*
-	 * deletes all class files before compilation begins.
-	 */
-	public void deleteClassFiles(String path) {
-	}
-
-	/*
-	 * delete class files not 
-	 */
-	private void deleteClassFile(File file) {
-	}
 }
