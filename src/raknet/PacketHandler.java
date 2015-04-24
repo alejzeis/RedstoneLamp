@@ -31,7 +31,6 @@ public class PacketHandler implements Runnable {
 			int packetSize = packet.getData().length;
 			switch(packetType) {
 				case MinecraftPacket.ID_CONNECTED_PING_OPEN_CONNECTIONS:
-					this.network.getLogger().dev("QueryPacket from: " + clientAddress + ":" + clientPort);
 					pkt = new QueryPacket(packet, network.serverID);
 				break;
 				

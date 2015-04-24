@@ -38,7 +38,6 @@ public class QueryPacket extends Packet {
 
 	@Override
 	public void process(PacketHandler h) {
-		RedstoneLamp.server.getLogger().debug("Sending QueryPacket responce");
 		h.sendPacket(getPacket());
 	}
 }
