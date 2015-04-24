@@ -55,7 +55,7 @@ public abstract class PluginBase implements Plugin {
 		return this.description;
 	}
 	
-	public void init(PluginLoader loder, Server server, PluginDescription description, final String datafolder, final String file) {
+	public void init(PluginLoader loder, Server server, PluginDescription description, String datafolder, String file) {
 		if(this.initialzed == false) {
 			this.initialzed = true;
 			this.loader = loader;
@@ -78,7 +78,7 @@ public abstract class PluginBase implements Plugin {
 	}
 	
 	public Server getServer() {
-		return RedstoneLamp.server;
+		return server;
 	}
 	
 	public String getBaseFolderName() {

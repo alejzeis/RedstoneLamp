@@ -25,6 +25,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import redstonelamp.RedstoneLamp;
+import redstonelamp.Server;
 import redstonelamp.event.Event;
 import redstonelamp.event.EventException;
 import redstonelamp.event.EventHandler;
@@ -39,9 +40,14 @@ public class PluginLoader {
 	private final String JAVA_HOME = "java.home";
 	private URL pluginURL;
 	private Set<String> clsNames = new TreeSet<String>();
+	private Server server;
+	
+	public PluginLoader(final Server server) {
+		this.server = server;
+	}
 	
 	public Plugin loadPlugin(String plugin) {
-		RedstoneLamp.server.getLogger().debug(": inside loadPlugin() method ");
+		RedstoneLamp.logger.debug(": inside loadPlugin() method ");
 		PluginBase base = null;
 		try {
 			URL[] classUrls = {
@@ -50,7 +56,7 @@ public class PluginLoader {
 			URLClassLoader ucl = new URLClassLoader(classUrls);
 			Class<?> c = ucl.loadClass(plugin);
 			if(Plugin.class.isAssignableFrom(c)) {
-				RedstoneLamp.server.getLogger().info(": Loading " + plugin);
+				RedstoneLamp.logger.info(": Loading " + plugin);
 				base = (PluginBase) c.newInstance();
 				String name = removeDotFromString(plugin);
 				base.setName(name);
@@ -59,13 +65,13 @@ public class PluginLoader {
 				pluginMap.put(name, base);
 				ucl.close();
 			} else {
-				RedstoneLamp.server.getLogger().info(": " + plugin + " is not a valid plugin. It should implement Plugin interface ");
+				RedstoneLamp.logger.info(": " + plugin + " is not a valid plugin. It should implement Plugin interface ");
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
-			RedstoneLamp.server.getLogger().error("Unable to load plugin " + plugin + " (Plugins not supported)");
+			RedstoneLamp.logger.error("Unable to load plugin " + plugin + " (Plugins not supported)");
 		}
-		RedstoneLamp.server.getLogger().debug(": returns from loadPlugin() method ");
+		RedstoneLamp.logger.debug(": returns from loadPlugin() method ");
 		return base;
 	}
 	
@@ -73,7 +79,8 @@ public class PluginLoader {
 	 * initializing plug-in
 	 */
 	private void initPlugin(PluginBase base) {
-		RedstoneLamp.server.getCommandRegistrationManager().setPlugin(base);
+		base.init(this, server, null, null, null);
+		server.getCommandRegistrationManager().setPlugin(base);
 		base.onLoad();
 	}
 	
@@ -81,7 +88,7 @@ public class PluginLoader {
 	 * enable plug-in
 	 */
 	public void enablePlugin(PluginBase base) {
-		RedstoneLamp.server.getLogger().debug(":  Enabling " + base.getName());
+		RedstoneLamp.logger.debug(":  Enabling " + base.getName());
 		base.setEnabled(true);
 	}
 	
@@ -124,7 +131,7 @@ public class PluginLoader {
 				methods.add(method);
 			}
 		} catch(NoClassDefFoundError e) {
-			RedstoneLamp.server.getLogger().error("Plugin " + plugin.getName() + " has failed to register events for " + listener.getClass() + " because " + e.getMessage() + " does not exist.");
+			RedstoneLamp.logger.error("Plugin " + plugin.getName() + " has failed to register events for " + listener.getClass() + " because " + e.getMessage() + " does not exist.");
 			return ret;
 		}
 		
@@ -133,10 +140,10 @@ public class PluginLoader {
 			EventPriority ep = EventPriority.HIGH;
 			final Class<?> checkClass;
 			if(method.getParameterTypes().length != 1 || !Event.class.isAssignableFrom(checkClass = method.getParameterTypes()[0])) {
-				//RedstoneLamp.server.getLogger().error(plugin.getName() + " attempted to register an invalid EventHandler method signature \"" + method.toGenericString() + "\" in " + listener.getClass());
+				//RedstoneLamp.logger.error(plugin.getName() + " attempted to register an invalid EventHandler method signature \"" + method.toGenericString() + "\" in " + listener.getClass());
 				continue;
 			} else {
-				RedstoneLamp.server.getLogger().info(plugin.getName() + " registered a method signature \"" + method.toGenericString() + "\" in " + listener.getClass());
+				RedstoneLamp.logger.info(plugin.getName() + " registered a method signature \"" + method.toGenericString() + "\" in " + listener.getClass());
 			}
 			final Class<? extends Event> eventClass = checkClass.asSubclass(Event.class);
 			method.setAccessible(true);
@@ -147,7 +154,6 @@ public class PluginLoader {
 			}
 			
 			EventExecutor executor = new EventExecutor() {
-				
 				@Override
 				public void execute(Listener listener, Event event) throws EventException {
 					try {
@@ -155,10 +161,13 @@ public class PluginLoader {
 						method.invoke(listener, event);
 					} catch(IllegalAccessException e) {
 						e.printStackTrace();
+						RedstoneLamp.logger.error(e.getMessage());
 					} catch(IllegalArgumentException e) {
 						e.printStackTrace();
+						RedstoneLamp.logger.error(e.getMessage());
 					} catch(InvocationTargetException e) {
 						e.printStackTrace();
+						RedstoneLamp.logger.error(e.getMessage());
 					}
 					
 				}
@@ -174,8 +183,11 @@ public class PluginLoader {
 	 */
 	@SuppressWarnings("unchecked")
 	private void generatePluginJavaClassFile(final File file) {
-		System.setProperty(JAVA_HOME, JAVA_SDK);
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		if( compiler == null ) {
+			RedstoneLamp.logger.error(": No Java SDK path is set. Please set one.");
+			return;
+		}
 		PluginDiagnosticListener plistener = new PluginDiagnosticListener();
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
@@ -186,13 +198,12 @@ public class PluginLoader {
 			fileManager.close();
 		} catch(IOException e) {
 			e.printStackTrace();
+			RedstoneLamp.logger.error(e.getMessage());
 		}
 		if(success) {
-			System.out.println(RedstoneLamp.server);
-			RedstoneLamp.server.getLogger().info(" :Compilation Success! Class files are generated in in-use folder");
+			RedstoneLamp.logger.info(" :Compilation Success! Class files are generated in in-use folder");
 		} else {
-			RedstoneLamp.server.getLogger().error(" :Compilation Failed");
-			throw new IllegalArgumentException(" Compilation failed.....");
+			RedstoneLamp.logger.error(" :Plug-in Compilation Failed");
 		}
 	}
 	
@@ -230,6 +241,7 @@ public class PluginLoader {
 		} catch(MalformedURLException e) {
 			e.printStackTrace();
 		}
+		System.setProperty(JAVA_HOME, JAVA_SDK);
 	}
 	
 	/*
@@ -239,7 +251,7 @@ public class PluginLoader {
 		File f = new File(PLUGIN_CLASS_FOLDER);
 		String path = f.getAbsolutePath();
 		listFiles(path, path);
-		RedstoneLamp.server.getLogger().info(" fully qualified plugins " + clsNames);
+		RedstoneLamp.logger.info(" fully qualified plugins " + clsNames);
 	}
 	
 	/*
@@ -267,16 +279,28 @@ public class PluginLoader {
 		
 		@Override
 		public void report(Diagnostic diagnostic) {
-			RedstoneLamp.server.getLogger().info("Code->" + diagnostic.getCode());
-			RedstoneLamp.server.getLogger().info("Column Number->" + diagnostic.getColumnNumber());
-			RedstoneLamp.server.getLogger().info("End Position->" + diagnostic.getEndPosition());
-			RedstoneLamp.server.getLogger().info("Kind->" + diagnostic.getKind());
-			RedstoneLamp.server.getLogger().info("Line Number->" + diagnostic.getLineNumber());
-			RedstoneLamp.server.getLogger().info("Message->" + diagnostic.getMessage(Locale.ENGLISH));
-			RedstoneLamp.server.getLogger().info("Position->" + diagnostic.getPosition());
-			RedstoneLamp.server.getLogger().info("Source" + diagnostic.getSource());
-			RedstoneLamp.server.getLogger().info("Start Position->" + diagnostic.getStartPosition());
-			RedstoneLamp.server.getLogger().info("\n");
+			RedstoneLamp.logger.info("Code->" + diagnostic.getCode());
+			RedstoneLamp.logger.info("Column Number->" + diagnostic.getColumnNumber());
+			RedstoneLamp.logger.info("End Position->" + diagnostic.getEndPosition());
+			RedstoneLamp.logger.info("Kind->" + diagnostic.getKind());
+			RedstoneLamp.logger.info("Line Number->" + diagnostic.getLineNumber());
+			RedstoneLamp.logger.info("Message->" + diagnostic.getMessage(Locale.ENGLISH));
+			RedstoneLamp.logger.info("Position->" + diagnostic.getPosition());
+			RedstoneLamp.logger.info("Source" + diagnostic.getSource());
+			RedstoneLamp.logger.info("Start Position->" + diagnostic.getStartPosition());
+			RedstoneLamp.logger.info("\n");
 		}
+	}
+
+	/*
+	 * deletes all class files before compilation begins.
+	 */
+	public void deleteClassFiles(String path) {
+	}
+
+	/*
+	 * delete class files not 
+	 */
+	private void deleteClassFile(File file) {
 	}
 }

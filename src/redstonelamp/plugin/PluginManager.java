@@ -37,6 +37,7 @@ public class PluginManager {
 	 * Loads all Plug-ins
 	 */
 	public void loadPlugins(File folder) {
+		deleteClassFiles();
 		File[] listOfFiles = folder.listFiles();
 		for(File file : listOfFiles) {
 			if(file.isFile() && file.getName().toLowerCase().endsWith(".java")) {
@@ -45,6 +46,10 @@ public class PluginManager {
 			}
 		}
 		plugins = loader.loadJavaPlugins();
+	}
+
+	private void deleteClassFiles() {
+		loader.deleteClassFiles(null);
 	}
 	
 	/*
@@ -92,6 +97,7 @@ public class PluginManager {
 	private void fireEvent(Event event) {
 		HandlerList handlers = event.getHandlers();
 		RegisteredListener[] listeners = handlers.getRegisteredListeners();
+		if( listeners != null)
 		for(RegisteredListener registration : listeners) {
 			if(!registration.getPlugin().isEnabled()) {
 				continue;
@@ -99,7 +105,6 @@ public class PluginManager {
 			try {
 				registration.callEvent(event);
 			} catch(EventException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
