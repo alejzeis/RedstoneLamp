@@ -101,8 +101,8 @@ public class Server extends Thread {
 		pluginManager    = new PluginManager(this, simpleCommandMap);// new
 		PluginLoader pluginLoader = new PluginLoader(this);
 		
-		// sets java SDK Location and PLUGIN_FOLDER
-		pluginLoader.setPluginOption("./plugins/".trim(), "./plugins/cache/".trim(), this.getRedstoneLampProperties().get("JAVA_SDK").trim());
+		// sets PLUGIN_FOLDER
+		pluginLoader.setPluginOption("./plugins/".trim(), "./plugins/cache/".trim());
 		pluginManager.registerPluginLoader(pluginLoader);
 		pluginManager.loadPlugins(folder);
 		

@@ -34,13 +34,13 @@ import redstonelamp.event.Listener;
 
 public class PluginLoader {
 	private String PLUGIN_CLASS_FOLDER = "";
-	private String JAVA_SDK = "";
 	private HashMap<String, Plugin> pluginMap = new HashMap<String, Plugin>();
 	private Iterable<String> options;
 	private final String JAVA_HOME = "java.home";
 	private URL pluginURL;
 	private Set<String> clsNames = new TreeSet<String>();
 	private Server server;
+	JavaCompiler compiler = null;
 	
 	public PluginLoader(final Server server) {
 		this.server = server;
@@ -88,7 +88,7 @@ public class PluginLoader {
 	 * enable plug-in
 	 */
 	public void enablePlugin(PluginBase base) {
-		RedstoneLamp.logger.debug(": Enabling " + base.getName());
+		RedstoneLamp.logger.debug(":  Enabling " + base.getName());
 		base.setEnabled(true);
 	}
 	
@@ -169,6 +169,7 @@ public class PluginLoader {
 						e.printStackTrace();
 						RedstoneLamp.logger.error(e.getMessage());
 					}
+					
 				}
 			};
 			eventSet.add(new RegisteredListener(listener, executor, ep, plugin, false));
@@ -182,9 +183,7 @@ public class PluginLoader {
 	 */
 	@SuppressWarnings("unchecked")
 	private void generatePluginJavaClassFile(final File file) {
-		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		if( compiler == null ) {
-			RedstoneLamp.logger.error(": No Java SDK path is set. Please set one.");
 			return;
 		}
 		PluginDiagnosticListener plistener = new PluginDiagnosticListener();
@@ -200,9 +199,9 @@ public class PluginLoader {
 			RedstoneLamp.logger.error(e.getMessage());
 		}
 		if(success) {
-			RedstoneLamp.logger.info(": Compilation Success! Class files are generated in in-use folder");
+			RedstoneLamp.logger.info(" :Compilation Success! Class files are generated in in-use folder");
 		} else {
-			RedstoneLamp.logger.error(": Plug-in Compilation Failed");
+			RedstoneLamp.logger.error(" :Plug-in Compilation Failed");
 		}
 	}
 	
@@ -226,21 +225,24 @@ public class PluginLoader {
 	}
 	
 	/*
-	 * sets JAVA SDK location
+	 * sets JAVA SDK location and gets instance of Java built-in compiler 
 	 */
 	@SuppressWarnings("deprecation")
-	public void setPluginOption(final String pfolder, final String folder, final String sdk) {
+	public void setPluginOption(final String pfolder, final String folder) {
 		PLUGIN_CLASS_FOLDER = folder;
 		options = Arrays.asList(new String[]{
 				"-d", folder
 		});
-		JAVA_SDK = sdk;
 		try {
 			pluginURL = new File(PLUGIN_CLASS_FOLDER).toURL();
 		} catch(MalformedURLException e) {
 			e.printStackTrace();
 		}
-		System.setProperty(JAVA_HOME, JAVA_SDK);
+		System.setProperty(JAVA_HOME, System.getenv().get("JAVA_HOME"));
+		compiler = ToolProvider.getSystemJavaCompiler();
+		if( compiler == null) {
+			RedstoneLamp.logger.error(": No Java SDK path is set. Please set one.");
+		}
 	}
 	
 	/*
@@ -250,7 +252,7 @@ public class PluginLoader {
 		File f = new File(PLUGIN_CLASS_FOLDER);
 		String path = f.getAbsolutePath();
 		listFiles(path, path);
-		RedstoneLamp.logger.info("Fully qualified plugins: " + clsNames);
+		RedstoneLamp.logger.info(" fully qualified plugins " + clsNames);
 	}
 	
 	/*
