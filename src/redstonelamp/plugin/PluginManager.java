@@ -3,6 +3,7 @@ package redstonelamp.plugin;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -13,6 +14,7 @@ import redstonelamp.event.Event;
 import redstonelamp.event.EventException;
 import redstonelamp.event.HandlerList;
 import redstonelamp.event.Listener;
+import redstonelamp.permissions.Permission;
 
 public class PluginManager {
 	
@@ -20,6 +22,7 @@ public class PluginManager {
 	private CommandMap commandMap;
 	private ArrayList<Plugin> plugins = new ArrayList<Plugin>();
 	private PluginLoader loader;
+	private List<Permission> permissions;
 	
 	public PluginManager(Server server, SimpleCommandMap commandMap) {
 		this.server = server;
@@ -131,4 +134,29 @@ public class PluginManager {
 		loader.disablePlugin(plugin);
 	}
 	
+	/*
+	 * disable all plug-ins
+	 */
+	public void disablePlugins() {
+		for(Plugin p : plugins) {
+		   disablePlugin(p);
+		}
+	}
+	
+	public void addPermission(Permission permission) {
+		permissions.add(permission);
+	}
+	
+	public List<Permission> getPermissions() {
+		return permissions;
+	}
+	
+	public List<Permission> getPermission(String name) {
+		// TODO
+		/*
+		for(Permission p : permissions) if()
+		return permissions;
+		*/
+		return null;
+	}
 }
