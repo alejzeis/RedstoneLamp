@@ -4,7 +4,6 @@ import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
 
 public class ConsoleCommandSender implements CommandSender {
-	
 	@Override
 	public String getName() {
 		return "Console";
@@ -19,5 +18,4 @@ public class ConsoleCommandSender implements CommandSender {
 	public void sendMessage(String message) {
 		RedstoneLamp.server.getLogger().info(message);
 	}
-	
 }

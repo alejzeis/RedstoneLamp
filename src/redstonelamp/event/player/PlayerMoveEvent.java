@@ -22,11 +22,6 @@ public class PlayerMoveEvent extends PlayerEvent {
 		this.cancel = cancel;
 	}
 	
-	/**
-	 * Gets the location this player moved from
-	 *
-	 * @return Location the player moved from
-	 */
 	public Location getFrom() {
 		return from;
 	}

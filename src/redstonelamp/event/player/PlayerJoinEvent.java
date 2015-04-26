@@ -4,7 +4,6 @@ import redstonelamp.entity.Player;
 import redstonelamp.event.HandlerList;
 
 public class PlayerJoinEvent extends PlayerEvent {
-	
 	private static final HandlerList handlers = new HandlerList();
 	
 	public PlayerJoinEvent(Player player) {
@@ -19,5 +18,4 @@ public class PlayerJoinEvent extends PlayerEvent {
 	public static HandlerList getHandlerList() {
 		return handlers;
 	}
-	
 }

@@ -75,33 +75,21 @@ public class PluginLoader {
 		return base;
 	}
 	
-	/*
-	 * initializing plug-in
-	 */
 	private void initPlugin(PluginBase base) {
 		base.init(this, server, null, null, null);
 		server.getCommandRegistrationManager().setPlugin(base);
 		base.onLoad();
 	}
 	
-	/*
-	 * enable plug-in
-	 */
 	public void enablePlugin(PluginBase base) {
 		RedstoneLamp.logger.debug(":  Enabling " + base.getName());
 		base.setEnabled(true);
 	}
 	
-	/*
-	 * disable plug-in
-	 */
 	public void disablePlugin(Plugin base) {
 		((PluginBase) base).setEnabled(false);
 	}
 	
-	/*
-	 * returns Specific plug-in name;
-	 */
 	public Plugin getPlugin(final String name) {
 		Plugin plugin = pluginMap.get(name);
 		if(plugin.isEnabled())
@@ -178,9 +166,6 @@ public class PluginLoader {
 		return ret;
 	}
 	
-	/*
-	 * Compiles .java file and class file is generated in in-use folder
-	 */
 	@SuppressWarnings("unchecked")
 	private void generatePluginJavaClassFile(final File file) {
 		if(compiler == null) { return; }
@@ -203,9 +188,6 @@ public class PluginLoader {
 		}
 	}
 	
-	/*
-	 * loads fully plug-ins from class folder
-	 */
 	public ArrayList<Plugin> loadJavaPlugins() {
 		getFullyQualifiedName();
 		ArrayList<Plugin> list = new ArrayList<Plugin>();
@@ -215,16 +197,10 @@ public class PluginLoader {
 		return list;
 	}
 	
-	/*
-	 * compile java plug-in to generate class file
-	 */
 	public void preparePluginFiles(File file) {
 		generatePluginJavaClassFile(file);
 	}
 	
-	/*
-	 * sets JAVA SDK location and gets instance of Java built-in compiler
-	 */
 	@SuppressWarnings("deprecation")
 	public void setPluginOption(final String pfolder, final String folder) {
 		PLUGIN_CLASS_FOLDER = folder;
@@ -248,9 +224,6 @@ public class PluginLoader {
 		compiler = ToolProvider.getSystemJavaCompiler();
 	}
 	
-	/*
-	 * gets fully qualified name of a class file
-	 */
 	private void getFullyQualifiedName() {
 		File f = new File(PLUGIN_CLASS_FOLDER);
 		String path = f.getAbsolutePath();
@@ -259,9 +232,6 @@ public class PluginLoader {
 			RedstoneLamp.logger.info("Fully qualified plugins " + clsNames);
 	}
 	
-	/*
-	 * constructs package name and stores
-	 */
 	private void listFiles(String path, String orig) {
 		File root = new File(path);
 		File[] list = root.listFiles();
@@ -279,9 +249,8 @@ public class PluginLoader {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	class PluginDiagnosticListener implements DiagnosticListener {
-		
 		@Override
 		public void report(Diagnostic diagnostic) {
 			RedstoneLamp.logger.info("Code->" + diagnostic.getCode());

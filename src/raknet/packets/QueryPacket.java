@@ -3,10 +3,10 @@ package raknet.packets;
 import java.net.DatagramPacket;
 import java.nio.ByteBuffer;
 
-import raknet.MinecraftPacket;
 import raknet.Packet;
 import raknet.PacketHandler;
 import redstonelamp.RedstoneLamp;
+import redstonelamp.utils.MinecraftPacket;
 
 public class QueryPacket extends Packet {
 	private byte[] magic = new byte[16];
@@ -15,7 +15,7 @@ public class QueryPacket extends Packet {
 	
 	public QueryPacket(DatagramPacket packet, long serverID) {
 		ByteBuffer b = ByteBuffer.wrap(packet.getData());
-		if(!(b.get() == MinecraftPacket.ID_CONNECTED_PING_OPEN_CONNECTIONS))
+		if(!(b.get() == MinecraftPacket.QueryPacket))
 			return;
 		this.serverID = serverID;
 		this.clientID = b.getLong();
@@ -26,7 +26,7 @@ public class QueryPacket extends Packet {
 	public ByteBuffer getPacket() {
 		String motd = "MCCPP;MINECON;" + RedstoneLamp.server.getServerName();
 		ByteBuffer response = ByteBuffer.allocate(35 + motd.length());
-		response.put((byte) MinecraftPacket.ID_UNCONNECTED_PING_OPEN_CONNECTIONS_2);
+		response.put((byte) MinecraftPacket.QueryPacket);
 		response.putLong(this.clientID);
 		response.putLong(this.serverID);
 		response.put(magic);

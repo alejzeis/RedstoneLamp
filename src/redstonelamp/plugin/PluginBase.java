@@ -7,14 +7,12 @@ import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
 import redstonelamp.cmd.CommandRegistrationManager;
 import redstonelamp.cmd.PluginCommand;
-import redstonelamp.logger.Logger;
 
 public abstract class PluginBase implements Plugin {
 	private boolean enabled;
 	private boolean initialzed = false;
 	private PluginDescription description;
 	private String dataFolder, file;
-	private Logger logger;
 	private PluginLoader loader;
 	private Server server;
 	private String name;
@@ -55,13 +53,12 @@ public abstract class PluginBase implements Plugin {
 		return this.description;
 	}
 	
-	public void init(PluginLoader loder, Server server, PluginDescription description, String datafolder, String file) {
+	public void init(PluginLoader loader, Server server, PluginDescription description, String dataFolder, String file) {
 		if(this.initialzed == false) {
 			this.initialzed = true;
 			this.loader = loader;
 			this.server = server;
 			this.description = description;
-			this.logger = new Logger();
 			this.dataFolder = dataFolder;
 			this.file = file;
 			System.out.println(" .... inside init method.....");

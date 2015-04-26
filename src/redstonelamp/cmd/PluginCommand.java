@@ -5,7 +5,6 @@ import java.util.Arrays;
 import redstonelamp.plugin.Plugin;
 
 public class PluginCommand extends Command implements PluginIdentifiableCommand {
-	
 	private Plugin plugin;
 	private CommandExecutor executor;
 	
@@ -37,5 +36,4 @@ public class PluginCommand extends Command implements PluginIdentifiableCommand 
 	public Plugin getPlugin() {
 		return plugin;
 	}
-	
 }

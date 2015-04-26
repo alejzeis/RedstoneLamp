@@ -6,7 +6,6 @@ import redstonelamp.RedstoneLamp;
 import redstonelamp.plugin.Plugin;
 
 public class CommandRegistrationManager {
-	
 	private ArrayList<Command> commands = new ArrayList<Command>();
 	private SimpleCommandMap commandMap;
 	private Plugin plugin;

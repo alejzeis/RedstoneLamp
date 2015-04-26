@@ -1,7 +1,6 @@
 package redstonelamp.event;
 
 public abstract class Event {
-	
 	protected String eventName = null;
 	private boolean isCancelled = false;
 	

@@ -11,7 +11,6 @@ import redstonelamp.plugin.Plugin;
 import redstonelamp.plugin.RegisteredListener;
 
 public class HandlerList {
-	
 	private volatile RegisteredListener[] handlers = null;
 	private final EnumMap<EventPriority, ArrayList<RegisteredListener>> handlerslots;
 	private static ArrayList<HandlerList> allLists = new ArrayList<HandlerList>();
@@ -34,9 +33,6 @@ public class HandlerList {
 		}
 	}
 	
-	/**
-	 * Bake HashMap
-	 */
 	public synchronized void bake() {
 		if(handlers != null)
 			return;
@@ -54,30 +50,18 @@ public class HandlerList {
 		handlerslots.get(listener.getPriority()).add(listener);
 	}
 	
-	/*
-	 * register all listeners
-	 */
 	public void registerAll(Collection<RegisteredListener> listeners) {
 		for(RegisteredListener listener : listeners) {
 			register(listener);
 		}
 	}
 	
-	/*
-	 * remove a listener
-	 */
 	public synchronized void unregister(RegisteredListener listener) {
 		if(handlerslots.get(listener.getPriority()).remove(listener)) {
 			handlers = null;
 		}
 	}
 	
-	/**
-	 * Remove a specific plugin's listeners from this handler
-	 * 
-	 * @param plugin
-	 *            plug-in to remove
-	 */
 	public synchronized void unregister(Plugin plugin) {
 		boolean changed = false;
 		for(List<RegisteredListener> list : handlerslots.values()) {
@@ -92,9 +76,6 @@ public class HandlerList {
 			handlers = null;
 	}
 	
-	/*
-	 * removes a specific listener
-	 */
 	public synchronized void unregister(Listener listener) {
 		boolean changed = false;
 		for(List<RegisteredListener> list : handlerslots.values()) {
@@ -109,9 +90,6 @@ public class HandlerList {
 			handlers = null;
 	}
 	
-	/*
-	 * get all registered listeners
-	 */
 	public RegisteredListener[] getRegisteredListeners() {
 		return handlers;
 	}

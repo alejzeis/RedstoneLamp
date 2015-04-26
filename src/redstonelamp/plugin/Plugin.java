@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import redstonelamp.Server;
 import redstonelamp.cmd.CommandExecutor;
-import redstonelamp.logger.Logger;
 
 public interface Plugin extends CommandExecutor {
 	public void onLoad();

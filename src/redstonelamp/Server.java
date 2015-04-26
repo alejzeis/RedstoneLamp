@@ -83,12 +83,8 @@ public class Server extends Thread {
 		this.getLogger().info("This server is running " + RedstoneLamp.SOFTWARE + " version " + RedstoneLamp.VERSION + " \"" + RedstoneLamp.CODENAME + "\" (API " + RedstoneLamp.API_VERSION + ")");
 		this.getLogger().info(RedstoneLamp.SOFTWARE + " is distributed under the " + RedstoneLamp.LICENSE);
 		
-		/*
-		 * Load each plug-in in the Plug-ins directory and create the directory
-		 * if it doesnt exist
-		 */
 		File folder = new File("./plugins");
-		File inuse = new File("./plugins/cache".trim()); // class files are generated in this folder
+		File inuse = new File("./plugins/cache".trim());
 
 		if(this.enable_plugins) {
 			if(!folder.exists())
@@ -100,10 +96,9 @@ public class Server extends Thread {
 			
 			simpleCommandMap = new SimpleCommandMap(this);
 			commandManager   = new CommandRegistrationManager(simpleCommandMap);
-			pluginManager    = new PluginManager(this, simpleCommandMap);// new
+			pluginManager    = new PluginManager(this, simpleCommandMap);
 			PluginLoader pluginLoader = new PluginLoader(this);
 			
-			// sets PLUGIN_FOLDER
 			pluginLoader.setPluginOption("./plugins/".trim(), "./plugins/cache/".trim());
 			pluginManager.registerPluginLoader(pluginLoader);
 			pluginManager.loadPlugins(folder);
@@ -143,7 +138,7 @@ public class Server extends Thread {
 				socket.receive(packet);
 				socket.setSoTimeout(0);
 				packetSize = packet.getLength();
-			} catch(Exception e) {} //No error messages are needed for this
+			} catch(Exception e) {}
 			
 			if(packetSize > 0) {
 				ByteBuffer b = ByteBuffer.wrap(packet.getData());
@@ -158,23 +153,14 @@ public class Server extends Thread {
 		}
 	}
 	
-	/**
-	 * @return String ServerIP
-	 */
 	public String getAddress() {
 		return address;
 	}
 	
-	/**
-	 * @return String ServerPort
-	 */
 	public int getPort() {
 		return port;
 	}
 	
-	/**
-	 * @return String MOTD
-	 */
 	public String getMOTD() {
 		return motd;
 	}
@@ -183,100 +169,58 @@ public class Server extends Thread {
 		return name;
 	}
 	
-	/**
-	 * @return boolean Whitelisted
-	 */
 	public boolean isWhitelisted() {
 		return whitelist;
 	}
 	
-	/**
-	 * @return int MaxPlayers
-	 */
 	public int getMaxPlayers() {
 		return max_players;
 	}
 	
-	/**
-	 * @return boolean Cheats
-	 */
 	public boolean cheatsEnabled() {
 		return allow_cheats;
 	}
 	
-	/**
-	 * @return boolean Animals
-	 */
 	public boolean spawnAnimals() {
 		return spawn_animals;
 	}
 	
-	/**
-	 * @return boolean Mobs
-	 */
 	public boolean spawnMobs() {
 		return spawn_mobs;
 	}
 	
-	/**
-	 * @return int Gamemode
-	 */
 	public int getGamemode() {
 		return gamemode;
 	}
 	
-	/**
-	 * @return boolean Hardcore
-	 */
 	public boolean isHardcore() {
 		return hardcore;
 	}
 	
-	/**
-	 * @return boolean PvP
-	 */
 	public boolean isPvPEnabled() {
 		return pvp;
 	}
 	
-	/**
-	 * @return int Difficulty
-	 */
 	public int getDifficulty() {
 		return difficulty;
 	}
 	
-	/**
-	 * @return String LevelName
-	 */
 	public String getLevelName() {
 		return level_name;
 	}
 	
-	/**
-	 * @return String seed
-	 */
 	public String getSeed() {
 		return seed;
 	}
 	
-	/**
-	 * @return boolean AutoSave
-	 */
 	public boolean isAutoSaveEnabled() {
 		return auto_save;
 	}
 	
-	/**
-	 * @return long ID
-	 */
 	public long getServerID() {
 		return serverID;
 	}
 	
-	/**
-	 * @return String MC_VERSION
-	 */
 	public String getMCVersion() {
 		return RedstoneLamp.MC_VERSION;
 	}
@@ -285,30 +229,18 @@ public class Server extends Thread {
 		return enable_plugins;
 	}
 	
-	/**
-	 * @return Logger
-	 */
 	public Logger getLogger() {
 		return RedstoneLamp.logger;
 	}
 	
-	/**
-	 * @return CommandRegistrationManager
-	 */
 	public CommandRegistrationManager getCommandRegistrationManager() {
 		return commandManager;
 	}
 	
-	/**
-	 * @return PluginManager
-	 */
 	public PluginManager getPluginManager() {
 		return pluginManager;
 	}
 	
-	/**
-	 * return Plug-in commands
-	 */
 	public PluginIdentifiableCommand getPluginCommand(final String cmd) {
 		return commandManager.getPluginCommand(cmd);
 	}

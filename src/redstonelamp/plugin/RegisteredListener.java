@@ -6,7 +6,6 @@ import redstonelamp.event.EventPriority;
 import redstonelamp.event.Listener;
 
 public class RegisteredListener {
-	
 	private EventPriority priority;
 	private Listener listener;
 	private Plugin plugin;
@@ -25,14 +24,6 @@ public class RegisteredListener {
 		this.ignoreCancelled = ignoreCancelled;
 	}
 	
-	/**
-	 * Calls the event executor
-	 * 
-	 * @param event
-	 *            The event
-	 * @throws EventException
-	 *             If an event handler throws an exception.
-	 */
 	public void callEvent(final Event event) throws EventException {
 		executor.execute(listener, event);
 	}

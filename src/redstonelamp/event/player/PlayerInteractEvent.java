@@ -4,7 +4,6 @@ import redstonelamp.entity.Player;
 import redstonelamp.event.HandlerList;
 
 public class PlayerInteractEvent extends PlayerEvent {
-	
 	public PlayerInteractEvent(Player player) {
 		super(player);
 	}
@@ -13,5 +12,4 @@ public class PlayerInteractEvent extends PlayerEvent {
 	public HandlerList getHandlers() {
 		return null;
 	}
-	
 }

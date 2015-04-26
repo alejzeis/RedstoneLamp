@@ -11,6 +11,7 @@ import raknet.packets.ReadyPacket;
 import raknet.packets.StartLoginPacket;
 import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
+import redstonelamp.utils.MinecraftPacket;
 
 public class PacketHandler implements Runnable {
 	public RedstoneLamp server;
@@ -33,15 +34,15 @@ public class PacketHandler implements Runnable {
 			int packetType = (packet.getData()[0] & 0xFF);
 			int packetSize = packet.getData().length;
 			switch(packetType) {
-				case MinecraftPacket.ID_CONNECTED_PING_OPEN_CONNECTIONS:
+				case MinecraftPacket.QueryPacket:
 					pkt = new QueryPacket(packet, network.serverID); //Show server info on Main Menu
 				break;
 				
-				case MinecraftPacket.ID_OPEN_CONNECTION_REQUEST_1:
+				case MinecraftPacket.StartLoginPacket:
 					pkt = new StartLoginPacket(packet, network.serverID, clientAddress, clientPort); //Check RakNet Protocol Version
 				break;
 				
-				case MinecraftPacket.ID_OPEN_CONNECTION_REQUEST_2:
+				case MinecraftPacket.JoinPacket:
 					pkt = new JoinPacket(packet, network.serverID, clientAddress, ((short) clientPort), network); //Start logging the player in
 				break;
 				

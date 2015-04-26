@@ -4,10 +4,10 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 
-import raknet.MinecraftPacket;
 import raknet.Packet;
 import raknet.PacketHandler;
 import redstonelamp.Server;
+import redstonelamp.utils.MinecraftPacket;
 
 public class JoinPacket extends Packet {
 	private byte[] magic = new byte[16];
@@ -20,7 +20,7 @@ public class JoinPacket extends Packet {
 	
 	public JoinPacket(DatagramPacket p, long serverID, InetAddress clientAddress, short clientPort, Server network) {
 		ByteBuffer b = ByteBuffer.wrap(p.getData());
-		if(!(b.get() == MinecraftPacket.ID_OPEN_CONNECTION_REQUEST_2))
+		if(!(b.get() == MinecraftPacket.JoinPacket))
 			return;
 		b.get(magic);
 		b.get(cookie);
@@ -34,7 +34,7 @@ public class JoinPacket extends Packet {
 	@Override
 	public ByteBuffer getPacket() {
 		ByteBuffer response = ByteBuffer.allocate(30);
-		response.put((byte) MinecraftPacket.ID_OPEN_CONNECTION_REPLY_2);
+		response.put((byte) MinecraftPacket.JoinPacket);
 		response.put(magic);
 		response.putLong(serverID);
 		response.putShort(clientPort);

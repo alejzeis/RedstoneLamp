@@ -15,7 +15,6 @@ import redstonelamp.event.HandlerList;
 import redstonelamp.event.Listener;
 
 public class PluginManager {
-	
 	private Server server;
 	private CommandMap commandMap;
 	private ArrayList<Plugin> plugins = new ArrayList<Plugin>();
@@ -27,16 +26,10 @@ public class PluginManager {
 		this.commandMap = commandMap;
 	}
 	
-	/*
-	 * Register Plug-in loader class
-	 */
 	public void registerPluginLoader(PluginLoader loader) {
 		this.loader = loader;
 	}
 	
-	/*
-	 * Loads all Plug-ins
-	 */
 	public void loadPlugins(File folder) {
 		File[] listOfFiles = folder.listFiles();
 		for(File file : listOfFiles) {
@@ -47,10 +40,7 @@ public class PluginManager {
 		}
 		plugins = loader.loadJavaPlugins();
 	}
-
-	/*
-	 * this method will be called from plug-ins for registering listeners
-	 */
+	
 	public void registerEvents(Listener listener, Plugin plugin) {
 		if(!plugin.isEnabled())
 			throw new IllegalStateException("Plugin attempted to register " + listener + " while not enabled");
@@ -83,9 +73,6 @@ public class PluginManager {
 		}
 	}
 	
-	/*
-	 * calls specified event ex PlayerMoveEvent
-	 */
 	public void callEvent(Event event) {
 		fireEvent(event);
 	}
@@ -107,9 +94,6 @@ public class PluginManager {
 		
 	}
 	
-	/*
-	 * return s plug-in
-	 */
 	public Plugin getPlugin(final String name) {
 		for(Plugin p : plugins) {
 			if(name.equals(p.getName()))
@@ -118,23 +102,14 @@ public class PluginManager {
 		return null;
 	}
 	
-	/*
-	 * Returns all plug-ins
-	 */
 	public ArrayList<Plugin> getPlugins() {
 		return plugins;
 	}
 	
-	/*
-	 * disable a currently enabled plug-in
-	 */
 	public void disablePlugin(Plugin plugin) {
 		loader.disablePlugin(plugin);
 	}
 	
-	/*
-	 * disable all plug-ins
-	 */
 	public void disablePlugins() {
 		for(Plugin p : plugins) {
 		   disablePlugin(p);

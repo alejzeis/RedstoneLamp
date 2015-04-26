@@ -7,7 +7,6 @@ import java.util.Map;
 import redstonelamp.Server;
 
 public class SimpleCommandMap implements CommandMap {
-	
 	protected final Map<String, Command> redstoneCommands = new HashMap<String, Command>();
 	private Server server;
 	
@@ -22,7 +21,6 @@ public class SimpleCommandMap implements CommandMap {
 				register(prefix, c);
 			}
 		}
-		
 	}
 	
 	public boolean register(String prefix, Command command) {

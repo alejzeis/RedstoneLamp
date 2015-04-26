@@ -4,7 +4,6 @@ import redstonelamp.entity.Player;
 import redstonelamp.event.HandlerList;
 
 public class ServerStartEvent extends ServerEvent {
-	
 	public ServerStartEvent(Player player) {
 		super();
 	}
@@ -13,5 +12,4 @@ public class ServerStartEvent extends ServerEvent {
 	public HandlerList getHandlers() {
 		return null;
 	}
-	
 }
