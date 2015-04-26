@@ -183,9 +183,7 @@ public class PluginLoader {
 	 */
 	@SuppressWarnings("unchecked")
 	private void generatePluginJavaClassFile(final File file) {
-		if( compiler == null ) {
-			return;
-		}
+		if(compiler == null) { return; }
 		PluginDiagnosticListener plistener = new PluginDiagnosticListener();
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
@@ -225,7 +223,7 @@ public class PluginLoader {
 	}
 	
 	/*
-	 * sets JAVA SDK location and gets instance of Java built-in compiler 
+	 * sets JAVA SDK location and gets instance of Java built-in compiler
 	 */
 	@SuppressWarnings("deprecation")
 	public void setPluginOption(final String pfolder, final String folder) {
@@ -238,11 +236,16 @@ public class PluginLoader {
 		} catch(MalformedURLException e) {
 			e.printStackTrace();
 		}
-		System.setProperty(JAVA_HOME, System.getenv().get("JAVA_HOME"));
-		compiler = ToolProvider.getSystemJavaCompiler();
-		if( compiler == null) {
+		if(System.getenv().get("JAVA_HOME") != null) {
+			System.setProperty(JAVA_HOME, System.getenv().get("JAVA_HOME"));
+			compiler = ToolProvider.getSystemJavaCompiler();
+			if(compiler == null) {
+				RedstoneLamp.logger.error(": No Java SDK path is set. Please set one.");
+			}
+		} else {
 			RedstoneLamp.logger.error(": No Java SDK path is set. Please set one.");
 		}
+		compiler = ToolProvider.getSystemJavaCompiler();
 	}
 	
 	/*
@@ -252,7 +255,8 @@ public class PluginLoader {
 		File f = new File(PLUGIN_CLASS_FOLDER);
 		String path = f.getAbsolutePath();
 		listFiles(path, path);
-		RedstoneLamp.logger.info(" fully qualified plugins " + clsNames);
+		if(!(compiler == null))
+			RedstoneLamp.logger.info("Fully qualified plugins " + clsNames);
 	}
 	
 	/*
