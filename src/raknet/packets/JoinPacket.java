@@ -46,9 +46,6 @@ public class JoinPacket extends Packet {
 
 	@Override
 	public void process(PacketHandler h) {
-		//TODO: Add player
-		String name = "Steve"; //Dummy player name
-		this.network.getLogger().info("Player " + name + " has joined " + clientAddress);
 		h.sendPacket(getPacket());
 	}	
 }

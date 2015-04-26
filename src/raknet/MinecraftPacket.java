@@ -2,7 +2,7 @@ package raknet;
 
 public class MinecraftPacket {
 	public static final int RAKNET_PROTOCOL_VERSION = 5;
-	public static final int PROTOCOL_VERSION = 23;
+	public static final int PROTOCOL_VERSION = 24;
 	
 	//Login Packets
 	public static final int ID_CONNECTED_PING_OPEN_CONNECTIONS = 0x01;

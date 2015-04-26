@@ -30,7 +30,7 @@ import redstonelamp.utils.StringCast;
 public class Server extends Thread {
 	private String address, name, motd, generator_settings, level_name, seed, level_type, rcon_pass;
 	private int port, spawn_protection, max_players, gamemode, difficulty;
-	private boolean whitelist, announce_player_achievements, allow_cheats, spawn_animals, spawn_mobs, force_gamemode, hardcore, pvp, query, rcon, auto_save;
+	private boolean whitelist, announce_player_achievements, allow_cheats, spawn_animals, spawn_mobs, force_gamemode, hardcore, pvp, query, rcon, auto_save, enable_plugins;
 	
 	private CommandRegistrationManager commandManager;
 	private PluginManager pluginManager;
@@ -45,7 +45,7 @@ public class Server extends Thread {
 	public long start;
 	public Player[] players;
 	
-	public Server(RedstoneLamp redstonelamp, String name, String motd, String port, String whitelist, String announce_player_achievements, String spawn_protection, String max_players, String allow_cheats, String spawn_animals, String spawn_mobs, String gamemode, String force_gamemode, String hardcore, String pvp, String difficulty, String generator_settings, String level_name, String seed, String level_type, String query, String rcon, String rcon_pass, String auto_save) throws SocketException {
+	public Server(RedstoneLamp redstonelamp, String name, String motd, String port, String whitelist, String announce_player_achievements, String spawn_protection, String max_players, String allow_cheats, String spawn_animals, String spawn_mobs, String gamemode, String force_gamemode, String hardcore, String pvp, String difficulty, String generator_settings, String level_name, String seed, String level_type, String query, String rcon, String rcon_pass, String auto_save, String enable_plugins) throws SocketException {
 		isListening = false;
 		Thread.currentThread().setName("RedstoneLamp");
 		this.name = name;
@@ -71,6 +71,7 @@ public class Server extends Thread {
 		this.rcon = StringCast.toBoolean(rcon);
 		this.rcon_pass = rcon_pass;
 		this.auto_save = StringCast.toBoolean(auto_save);
+		this.enable_plugins = StringCast.toBoolean(enable_plugins);
 		this.getLogger().info("Starting Minecraft: PE Server v" + this.getMCVersion());
 		try {
 			InetAddress ip = InetAddress.getLocalHost();
@@ -87,40 +88,43 @@ public class Server extends Thread {
 		 * if it doesnt exist
 		 */
 		File folder = new File("./plugins");
-		if(!folder.exists())
-			folder.mkdirs();
-		
 		File inuse = new File("./plugins/cache".trim()); // class files are generated in this folder
-		if(!inuse.exists())
-			inuse.mkdirs();
-		inuse.deleteOnExit();
-		
 
-		simpleCommandMap = new SimpleCommandMap(this);
-		commandManager   = new CommandRegistrationManager(simpleCommandMap);
-		pluginManager    = new PluginManager(this, simpleCommandMap);// new
-		PluginLoader pluginLoader = new PluginLoader(this);
-		
-		// sets PLUGIN_FOLDER
-		pluginLoader.setPluginOption("./plugins/".trim(), "./plugins/cache/".trim());
-		pluginManager.registerPluginLoader(pluginLoader);
-		pluginManager.loadPlugins(folder);
-		
-		CommandSender sender = new ConsoleCommandSender();
-		
-		PlayerJoinEvent pje = new PlayerJoinEvent(null);
-		PlayerMoveEvent pme = new PlayerMoveEvent(null);
-		pluginManager.callEvent(pje);
-		pluginManager.callEvent(pme);
-		
-		String cmd = null;
-		ArrayList<Command> cmdList = this.getCommandRegistrationManager().getPluginCommands(cmd);
-		for(Command command : cmdList) {
-			PluginCommand pcmd = (PluginCommand) command;
-			PluginBase base = (PluginBase) pcmd.getPlugin();
-			if(base != null)
-				base.onCommand(sender, command, cmd, null);
-		}
+		if(this.enable_plugins) {
+			if(!folder.exists())
+				folder.mkdirs();
+			
+			if(!inuse.exists())
+				inuse.mkdirs();
+			inuse.deleteOnExit();
+			
+			simpleCommandMap = new SimpleCommandMap(this);
+			commandManager   = new CommandRegistrationManager(simpleCommandMap);
+			pluginManager    = new PluginManager(this, simpleCommandMap);// new
+			PluginLoader pluginLoader = new PluginLoader(this);
+			
+			// sets PLUGIN_FOLDER
+			pluginLoader.setPluginOption("./plugins/".trim(), "./plugins/cache/".trim());
+			pluginManager.registerPluginLoader(pluginLoader);
+			pluginManager.loadPlugins(folder);
+			
+			CommandSender sender = new ConsoleCommandSender();
+			
+			PlayerJoinEvent pje = new PlayerJoinEvent(null);
+			PlayerMoveEvent pme = new PlayerMoveEvent(null);
+			pluginManager.callEvent(pje);
+			pluginManager.callEvent(pme);
+			
+			String cmd = null;
+			ArrayList<Command> cmdList = this.getCommandRegistrationManager().getPluginCommands(cmd);
+			for(Command command : cmdList) {
+				PluginCommand pcmd = (PluginCommand) command;
+				PluginBase base = (PluginBase) pcmd.getPlugin();
+				if(base != null)
+					base.onCommand(sender, command, cmd, null);
+			}
+		} else
+			this.getLogger().info("Plugins are not enabled so RedstoneLamp has ignored any exsisting Plugin files!");
 		
 		socket = new DatagramSocket(StringCast.toInt(port));
 		socket.getBroadcast();
@@ -275,6 +279,10 @@ public class Server extends Thread {
 	 */
 	public String getMCVersion() {
 		return RedstoneLamp.MC_VERSION;
+	}
+	
+	public boolean pluginsEnabled() {
+		return enable_plugins;
 	}
 	
 	/**

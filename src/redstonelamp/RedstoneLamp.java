@@ -11,7 +11,7 @@ import redstonelamp.utils.RedstoneLampProperties;
 import redstonelamp.utils.StringCast;
 
 public class RedstoneLamp implements Runnable {
-	public static String MC_VERSION = "0.11.0 build 6";
+	public static String MC_VERSION = "0.11.0 build 7";
 	public static String SOFTWARE = "RedstoneLamp";
 	public static String VERSION = "1.1.0";
 	public static String CODENAME = "Pumpkin Seeds";
@@ -69,9 +69,12 @@ public class RedstoneLamp implements Runnable {
 	
 	private boolean start() {
 		try {
-			server = new Server(redstone, rlp.get("name"), rlp.get("motd"), rlp.get("server-port"), rlp.get("whitelist"), rlp.get("announce-player-achievements"), rlp.get("spawn-protection"), rlp.get("max-players"), rlp.get("allow-cheats"), rlp.get("spawn-animals"), rlp.get("spawn-mobs"), rlp.get("gamemode"), rlp.get("force-gamemode"), rlp.get("hardcore"), rlp.get("pvp"), rlp.get("difficulty"), rlp.get("generator-settings"), rlp.get("level-name"), rlp.get("level-seed"), rlp.get("levet-type"), rlp.get("enable-query"), rlp.get("enable-rcon"), rlp.get("rcon.password"), rlp.get("auto-save"));
+			server = new Server(redstone, rlp.get("name"), rlp.get("motd"), rlp.get("server-port"), rlp.get("whitelist"), rlp.get("announce-player-achievements"), rlp.get("spawn-protection"), rlp.get("max-players"), rlp.get("allow-cheats"), rlp.get("spawn-animals"), rlp.get("spawn-mobs"), rlp.get("gamemode"), rlp.get("force-gamemode"), rlp.get("hardcore"), rlp.get("pvp"), rlp.get("difficulty"), rlp.get("generator-settings"), rlp.get("level-name"), rlp.get("level-seed"), rlp.get("levet-type"), rlp.get("enable-query"), rlp.get("enable-rcon"), rlp.get("rcon.password"), rlp.get("auto-save"), rlp.get("enable-plugins"));
 			server.start();
-			server.getLogger().info("Done! For help, type \"help\" or \"?\"");
+			if(server.pluginsEnabled())
+				server.getLogger().info("Done! For help, type \"help\" or \"?\"");
+			else
+				server.getLogger().info("Done!");
 		} catch(SocketException se) {
 			String address = "0.0.0.0";
 			try {
