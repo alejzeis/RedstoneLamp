@@ -34,7 +34,7 @@ public class StartLoginPacket extends Packet {
 		ByteBuffer response;
 		if(protocol == MinecraftPacket.RakNetProtocolVersion) {
 			response = ByteBuffer.allocate(28);
-			response.put((byte) MinecraftPacket.StartLoginPacketReply);
+			response.put((byte) MinecraftPacket.StartLoginResponse);
 			response.put(magic);
 			response.putLong(serverID);
 			response.put((byte) 0x00);

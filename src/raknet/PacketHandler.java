@@ -7,7 +7,6 @@ import java.nio.ByteBuffer;
 
 import raknet.packets.JoinPacket;
 import raknet.packets.QueryPacket;
-import raknet.packets.ReadyPacket;
 import raknet.packets.StartLoginPacket;
 import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
@@ -46,12 +45,12 @@ public class PacketHandler implements Runnable {
 					pkt = new JoinPacket(packet, network.serverID, clientAddress, ((short) clientPort), network); //Start logging the player in
 				break;
 				
-				case MinecraftPacket.ReadyPacket:
-					//TODO: pkt = new ReadyPacket(); //Client is ready to join
+				case MinecraftPacket.RakNetReliability:
+					encapsulatedDecode();
 				break;
 				
 				default:
-					this.network.getLogger().info("Unknown packet from: " + clientAddress + ":" + clientPort + " | PacketData - Packet: " + packetType + " Size: " + packetSize);
+					this.network.getLogger().warn("Unknown packet from: " + clientAddress + ":" + clientPort + " | PacketData - Packet: " + packetType + " Size: " + packetSize);
 				break;
 			}
 			
@@ -59,7 +58,7 @@ public class PacketHandler implements Runnable {
 				pkt.process(this);
 		}
 	}
-
+	
 	public void sendPacket(ByteBuffer d) {
 		DatagramPacket p = new DatagramPacket(d.array(), d.capacity());
 		p.setAddress(clientAddress);
@@ -69,5 +68,9 @@ public class PacketHandler implements Runnable {
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void encapsulatedDecode() {
+		
 	}
 }

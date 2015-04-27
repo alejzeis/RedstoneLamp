@@ -34,7 +34,7 @@ public class JoinPacket extends Packet {
 	@Override
 	public ByteBuffer getPacket() {
 		ByteBuffer response = ByteBuffer.allocate(30);
-		response.put((byte) MinecraftPacket.JoinPacket);
+		response.put((byte) MinecraftPacket.JoinResponse);
 		response.put(magic);
 		response.putLong(serverID);
 		response.putShort(clientPort);

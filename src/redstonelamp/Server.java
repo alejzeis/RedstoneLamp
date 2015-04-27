@@ -153,103 +153,236 @@ public class Server extends Thread {
 		}
 	}
 	
+	/**
+	 * Returns the Server Address
+	 * 
+	 * @return String
+	 */
 	public String getAddress() {
 		return address;
 	}
 	
+	/**
+	 * Returns the Server Port
+	 * 
+	 * @return int
+	 */
 	public int getPort() {
 		return port;
 	}
 	
+	/**
+	 * Returns the Server MOTD
+	 * 
+	 * @return String
+	 */
 	public String getMOTD() {
 		return motd;
 	}
 	
+	/**
+	 * Returns the Server Name
+	 * 
+	 * @return String
+	 */
 	public String getServerName() {
 		return name;
 	}
 	
+	/**
+	 * Returns true if the server is whitelisted
+	 * 
+	 * @return boolean
+	 */
 	public boolean isWhitelisted() {
 		return whitelist;
 	}
 	
+	/**
+	 * Returns the number of player slots
+	 * 
+	 * @return int
+	 */
 	public int getMaxPlayers() {
 		return max_players;
 	}
 	
+	/**
+	 * Returns true if cheats are enabled
+	 * 
+	 * @return boolean
+	 */
 	public boolean cheatsEnabled() {
 		return allow_cheats;
 	}
 	
+	/**
+	 * Returns true if spawn animals is enabled
+	 * 
+	 * @return boolean
+	 */
 	public boolean spawnAnimals() {
 		return spawn_animals;
 	}
 	
+	/**
+	 * Returns true if spawn mobs is enabled
+	 * 
+	 * @return boolean
+	 */
 	public boolean spawnMobs() {
 		return spawn_mobs;
 	}
 	
+	/**
+	 * Returns the gamemode integer
+	 * 
+	 * @return int
+	 */
 	public int getGamemode() {
 		return gamemode;
 	}
 	
+	/**
+	 * Returns true if hardcore is enabled
+	 * 
+	 * @return boolean
+	 */
 	public boolean isHardcore() {
 		return hardcore;
 	}
 	
+	/**
+	 * Returns true if PvP is enabled
+	 * 
+	 * @return boolean
+	 */
 	public boolean isPvPEnabled() {
 		return pvp;
 	}
 	
+	/**
+	 * Returns the difficulty integer
+	 * 
+	 * @return int
+	 */
 	public int getDifficulty() {
 		return difficulty;
 	}
 	
+	/**
+	 * Returns the default levels name
+	 * 
+	 * @return String
+	 */
 	public String getLevelName() {
 		return level_name;
 	}
 	
+	/**
+	 * Returns the default levels seed
+	 * 
+	 * @return String
+	 */
 	public String getSeed() {
 		return seed;
 	}
 	
+	/**
+	 * Returns true if auto save is enabled
+	 * 
+	 * @return boolean
+	 */
 	public boolean isAutoSaveEnabled() {
 		return auto_save;
 	}
 	
+	/**
+	 * Returns the Server ID
+	 * 
+	 * @return long
+	 */
 	public long getServerID() {
 		return serverID;
 	}
 	
+	/**
+	 * Returns the version of MCPE the server is running on
+	 * 
+	 * @return String
+	 */
 	public String getMCVersion() {
 		return RedstoneLamp.MC_VERSION;
 	}
 	
+	/**
+	 * Returns true if plugins are enabled
+	 * 
+	 * @return boolean
+	 */
 	public boolean pluginsEnabled() {
 		return enable_plugins;
 	}
 	
+	/**
+	 * Returns the Server Logger class
+	 * 
+	 * @return Logger
+	 */
 	public Logger getLogger() {
 		return RedstoneLamp.logger;
 	}
 	
+	/**
+	 * Returns the CommandRegistrationManager class
+	 * 
+	 * @return CommandRegistrationManager
+	 */
 	public CommandRegistrationManager getCommandRegistrationManager() {
 		return commandManager;
 	}
 	
+	/**
+	 * Returns the PluginManager class
+	 * 
+	 * @return PluginManager
+	 */
 	public PluginManager getPluginManager() {
 		return pluginManager;
 	}
 	
+	/**
+	 * @param cmd
+	 * @return PluginIdentifiableCommand
+	 */
 	public PluginIdentifiableCommand getPluginCommand(final String cmd) {
 		return commandManager.getPluginCommand(cmd);
 	}
 	
+	/**
+	 * Returns the SimpleCommandMap class
+	 * 
+	 * @return SimpleCommandMap
+	 */
 	public SimpleCommandMap getCommandMap() {
 		return simpleCommandMap;
 	}
 	
+	/**
+	 * Returns the RedstoneLampProperties class
+	 * 
+	 * @return RedstoneLampProperties
+	 */
 	public RedstoneLampProperties getRedstoneLampProperties() {
 		return new RedstoneLampProperties();
+	}
+	
+	/**
+	 * Returns the StringCast class
+	 * 
+	 * @return StringCast
+	 */
+	public StringCast getStringCast() {
+		return new StringCast();
 	}
 }

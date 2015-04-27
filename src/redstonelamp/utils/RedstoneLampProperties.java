@@ -8,11 +8,10 @@ import redstonelamp.RedstoneLamp;
 
 public class RedstoneLampProperties {
 	private static Properties properties;
-
-	public String get(String property) {
-		return properties.getProperty(property);
-	}
 	
+	/**
+	 * Loads the Server Properties
+	 */
 	public void load() {
 		try {
 			properties = new Properties();
@@ -27,5 +26,15 @@ public class RedstoneLampProperties {
 			if (RedstoneLamp.DEBUG)
 				e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Returns the property requested
+	 * 
+	 * @param String property
+	 * @return String property
+	 */
+	public String get(String property) {
+		return properties.getProperty(property);
 	}
 }

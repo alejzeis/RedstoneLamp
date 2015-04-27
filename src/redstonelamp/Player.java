@@ -33,14 +33,28 @@ public class Player {
 		isConnected = false;
 	}
 	
+	/**
+	 * Returns the Packet Count for a player
+	 * 
+	 * @return int
+	 */
 	public int getPacketCount() {
 		return packetCount++;
 	}
 	
+	/**
+	 * Returns the Data Count for a player
+	 * 
+	 * @return int
+	 */
 	public int getDataCount() {
 		return dataCount++;
 	}
 	
+	/**
+	 * Sets a players Client ID
+	 * @param long cid
+	 */
 	public void setClientID(long cid) {
 		clientID = cid;
 	}

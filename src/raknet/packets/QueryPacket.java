@@ -26,7 +26,7 @@ public class QueryPacket extends Packet {
 	public ByteBuffer getPacket() {
 		String motd = "MCCPP;MINECON;" + RedstoneLamp.server.getServerName();
 		ByteBuffer response = ByteBuffer.allocate(35 + motd.length());
-		response.put((byte) MinecraftPacket.QueryPacket);
+		response.put((byte) MinecraftPacket.ServerQueryResponse);
 		response.putLong(this.clientID);
 		response.putLong(this.serverID);
 		response.put(magic);

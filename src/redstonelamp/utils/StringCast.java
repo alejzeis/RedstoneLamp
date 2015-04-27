@@ -3,12 +3,24 @@ package redstonelamp.utils;
 import redstonelamp.RedstoneLamp;
 
 public class StringCast {
+	/**
+	 * Returns true if the String is a boolean
+	 * 
+	 * @param String string
+	 * @return boolean
+	 */
 	public static boolean isBoolean(String string) {
 		if(string.equals("true") || string.equals("false") || string.equals("on") || string.equals("off") || string.equals("1") || string.equals("0"))
 			return true;
 		return false;
 	}
 	
+	/**
+	 * Returns String->boolean
+	 * 
+	 * @param String string
+	 * @return boolean
+	 */
 	public static boolean toBoolean(String string) {
 		if(string.equals("true") || string.equals("on") || string.equals("1"))
 			return true;
@@ -18,6 +30,12 @@ public class StringCast {
 		return false;
 	}
 	
+	/**
+	 * Returns true if the String is an int
+	 * 
+	 * @param String string
+	 * @return boolean
+	 */
 	public static boolean isInt(String string) {
 		try {
 			Integer.parseInt(string);
@@ -35,6 +53,12 @@ public class StringCast {
 		return true;
 	}
 	
+	/**
+	 * Returns String->int
+	 * 
+	 * @param String string
+	 * @return int
+	 */
 	public static int toInt(String string) {
 		int number = 827492917;
 		try {
