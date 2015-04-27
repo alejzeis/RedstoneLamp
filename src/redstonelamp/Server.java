@@ -85,7 +85,7 @@ public class Server extends Thread {
 		
 		File folder = new File("./plugins");
 		File inuse = new File("./plugins/cache".trim());
-
+		
 		if(this.enable_plugins) {
 			if(!folder.exists())
 				folder.mkdirs();
@@ -95,8 +95,8 @@ public class Server extends Thread {
 			inuse.deleteOnExit();
 			
 			simpleCommandMap = new SimpleCommandMap(this);
-			commandManager   = new CommandRegistrationManager(simpleCommandMap);
-			pluginManager    = new PluginManager(this, simpleCommandMap);
+			commandManager = new CommandRegistrationManager(simpleCommandMap);
+			pluginManager = new PluginManager(this, simpleCommandMap);
 			PluginLoader pluginLoader = new PluginLoader(this);
 			
 			pluginLoader.setPluginOption("./plugins/".trim(), "./plugins/cache/".trim());

@@ -3,7 +3,6 @@ package redstonelamp.cmd;
 import java.util.List;
 
 public abstract class Command {
-	
 	private String name;
 	private String label;
 	private String desciption;

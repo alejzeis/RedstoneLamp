@@ -19,7 +19,6 @@ public class PluginManager {
 	private CommandMap commandMap;
 	private ArrayList<Plugin> plugins = new ArrayList<Plugin>();
 	private PluginLoader loader;
-
 	
 	public PluginManager(Server server, SimpleCommandMap commandMap) {
 		this.server = server;
@@ -80,17 +79,17 @@ public class PluginManager {
 	private void fireEvent(Event event) {
 		HandlerList handlers = event.getHandlers();
 		RegisteredListener[] listeners = handlers.getRegisteredListeners();
-		if( listeners != null)
-		for(RegisteredListener registration : listeners) {
-			if(!registration.getPlugin().isEnabled()) {
-				continue;
+		if(listeners != null)
+			for(RegisteredListener registration : listeners) {
+				if(!registration.getPlugin().isEnabled()) {
+					continue;
+				}
+				try {
+					registration.callEvent(event);
+				} catch(EventException e) {
+					e.printStackTrace();
+				}
 			}
-			try {
-				registration.callEvent(event);
-			} catch(EventException e) {
-				e.printStackTrace();
-			}
-		}
 		
 	}
 	
@@ -112,7 +111,7 @@ public class PluginManager {
 	
 	public void disablePlugins() {
 		for(Plugin p : plugins) {
-		   disablePlugin(p);
+			disablePlugin(p);
 		}
 	}
 }
