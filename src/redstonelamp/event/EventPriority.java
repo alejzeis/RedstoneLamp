@@ -14,6 +14,11 @@ public enum EventPriority {
 		this.slot = slot;
 	}
 	
+	/**
+	 * Returns the slot integer
+	 * 
+	 * @return int
+	 */
 	public int getSlot() {
 		return slot;
 	}

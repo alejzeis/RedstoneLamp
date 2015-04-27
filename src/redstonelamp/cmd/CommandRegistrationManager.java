@@ -14,12 +14,18 @@ public class CommandRegistrationManager {
 		this.commandMap = commandMap;
 	}
 	
+	/**
+	 * Registers a command to the Server
+	 * 
+	 * @param String command
+	 * @param String description
+	 * @param boolean console
+	 */
 	public void registerCommand(String command, String description, boolean console) {
 		registerCommand(command, description);
 	}
 	
 	private void registerCommand(final String command, final String descr) {
-		
 		if(!plugin.isEnabled()) {
 			RedstoneLamp.server.getLogger().info(":Command(s) are not registered as " + plugin.getName() + " is not enabled");
 			return;
@@ -34,6 +40,12 @@ public class CommandRegistrationManager {
 		return null;
 	}
 	
+	/**
+	 * Returns registered plugin commands
+	 * 
+	 * @param String command
+	 * @return ArrayList<Command>
+	 */
 	public ArrayList<Command> getPluginCommands(final String command) {
 		ArrayList<Command> list = new ArrayList<Command>();
 		for(Command cmd : commands) {
@@ -47,6 +59,11 @@ public class CommandRegistrationManager {
 		this.plugin = plugin;
 	}
 	
+	/**
+	 * Sets the command map
+	 * 
+	 * @param SimpleCommandMap simpleCommandMap
+	 */
 	public void setCommandMap(SimpleCommandMap simpleCommandMap) {
 		this.commandMap = simpleCommandMap;
 	}

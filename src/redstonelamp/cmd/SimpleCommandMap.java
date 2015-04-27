@@ -23,10 +23,25 @@ public class SimpleCommandMap implements CommandMap {
 		}
 	}
 	
+	/**
+	 * Registers a command
+	 * 
+	 * @param String prefix
+	 * @param Command command
+	 * @return boolean
+	 */
 	public boolean register(String prefix, Command command) {
 		return register(command.getName(), prefix, command);
 	}
 	
+	/**
+	 * Registers a command
+	 * 
+	 * @param String label
+	 * @param String prefix
+	 * @param Command command
+	 * @return boolean
+	 */
 	public boolean register(String label, String prefix, Command command) {
 		label = label.toLowerCase().trim();
 		if(register(label, command, false, prefix)) {
@@ -36,6 +51,15 @@ public class SimpleCommandMap implements CommandMap {
 		return false;
 	}
 	
+	/**
+	 * Registers a command
+	 * 
+	 * @param String label
+	 * @param Command command
+	 * @param boolean isAlias
+	 * @param String prefix
+	 * @return boolean
+	 */
 	public boolean register(String label, Command command, boolean isAlias, String prefix) {
 		Command duplicate = redstoneCommands.get(label);
 		if(duplicate != null)

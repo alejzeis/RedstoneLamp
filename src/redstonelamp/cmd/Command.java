@@ -20,6 +20,11 @@ public abstract class Command {
 		this.useMessage = useMessage;
 	}
 	
+	/**
+	 * Returns the command sent
+	 * 
+	 * @return String
+	 */
 	public String getName() {
 		return this.name;
 	}
