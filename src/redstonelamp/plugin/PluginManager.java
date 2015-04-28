@@ -40,6 +40,14 @@ public class PluginManager {
 		plugins = loader.loadJavaPlugins();
 	}
 	
+	public void loadPlugin(File file, String pkg) {
+		if(file.isFile() && file.getName().toLowerCase().endsWith(".java")) {
+			server.getLogger().info(": Plug in -> " + file);
+			loader.preparePluginFiles(file);
+		    loader.loadJavaPlugin(file.getAbsolutePath(), pkg);	
+		}
+	}
+
 	public void registerEvents(Listener listener, Plugin plugin) {
 		if(!plugin.isEnabled())
 			throw new IllegalStateException("Plugin attempted to register " + listener + " while not enabled");

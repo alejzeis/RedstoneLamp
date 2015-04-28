@@ -21,6 +21,7 @@ import redstonelamp.cmd.SimpleCommandMap;
 import redstonelamp.event.player.PlayerJoinEvent;
 import redstonelamp.event.player.PlayerMoveEvent;
 import redstonelamp.logger.Logger;
+import redstonelamp.monitor.FileMonitor;
 import redstonelamp.plugin.PluginBase;
 import redstonelamp.plugin.PluginLoader;
 import redstonelamp.plugin.PluginManager;
@@ -102,6 +103,9 @@ public class Server extends Thread {
 			pluginLoader.setPluginOption("./plugins/".trim(), "./plugins/cache/".trim());
 			pluginManager.registerPluginLoader(pluginLoader);
 			pluginManager.loadPlugins(folder);
+			
+			FileMonitor filemonitor = new FileMonitor(this);
+			filemonitor.start();
 			
 			CommandSender sender = new ConsoleCommandSender();
 			

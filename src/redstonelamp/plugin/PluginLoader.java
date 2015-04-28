@@ -197,6 +197,27 @@ public class PluginLoader {
 		return list;
 	}
 	
+	/*
+	 * reloads a plug-in file
+	 */
+	public void loadJavaPlugin(String file, String pkg) {
+		getFullyQualifiedName();
+		file = file.substring(file.lastIndexOf("\\")+1, file.indexOf(".java"));
+		if( pkg != null && pkg.trim().length()>0) {
+			pkg = pkg + "." + file;
+			pkg = pkg.trim();
+		}else {
+			pkg = file;
+			pkg = pkg.trim();
+		}
+		for(String plugin : clsNames) {
+			if( plugin.equals(pkg)) {
+				loadPlugin(plugin);
+				break;
+			}
+		}
+	}
+	
 	public void preparePluginFiles(File file) {
 		generatePluginJavaClassFile(file);
 	}
