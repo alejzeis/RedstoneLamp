@@ -16,8 +16,10 @@ public abstract class PluginBase implements Plugin {
 	private PluginLoader loader;
 	private Server server;
 	private String name;
+	private double version;
 	
-	public void onLoad() {}
+	public void onLoad() {
+	}
 	
 	public void onEnable() {}
 	
@@ -116,5 +118,18 @@ public abstract class PluginBase implements Plugin {
 	
 	public void setName(final String name) {
 		this.name = name;
+	}
+	
+	public final void setVersion(final double version) {
+		if(version > RedstoneLamp.API_VERSION ) {
+			throw new IllegalArgumentException(" Invalid Plug-in version. It has to be "+RedstoneLamp.API_VERSION);
+		}else if(version < RedstoneLamp.API_VERSION) {
+			getServer().getLogger().warn(" :Plug-in version needs to be "+RedstoneLamp.API_VERSION);
+		}
+		this.version = version;
+	}
+	
+	public double getVersion() {
+		return version;
 	}
 }
