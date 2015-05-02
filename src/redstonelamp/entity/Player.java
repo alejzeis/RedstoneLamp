@@ -60,6 +60,13 @@ public interface Player {
 	public void sendRawMessage(String message);
 	
 	/**
+	 * Sends a message to the player
+	 * 
+	 * @param String message
+	 */
+	public void sendMessage(String message);
+	
+	/**
 	 * Kicks the player from the Server
 	 * 
 	 * @param String message

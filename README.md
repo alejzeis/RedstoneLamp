@@ -24,12 +24,12 @@ RedstoneLamo Documentation - http://docs.RedstoneLamp.net
 	- [ ] Send Packets
 		- [ ] Chunk Sending
 		- [ ] Other Needed Packets
-	- [ ] Accept Packets
-	- [ ] Correct Protocol Number
+	- [x] Accept Packets
+	- [x] Correct Protocol Number
 	
 - [ ] Implement Items
 - [ ] Implement Blocks
 - [ ] Level Generation
 - [ ] Plugin Loading
-- [ ] Command Registration
+- [x] Command Registration
 - [ ] Command Handling

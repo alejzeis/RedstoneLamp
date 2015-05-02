@@ -120,7 +120,7 @@ public abstract class PluginBase implements Plugin {
 		this.name = name;
 	}
 	
-	public final void setVersion(final double version) {
+	public final void setAPIVersion(final double version) {
 		if(version > RedstoneLamp.API_VERSION ) {
 			throw new IllegalArgumentException(" Invalid Plug-in version. It has to be "+RedstoneLamp.API_VERSION);
 		}else if(version < RedstoneLamp.API_VERSION) {
@@ -129,7 +129,7 @@ public abstract class PluginBase implements Plugin {
 		this.version = version;
 	}
 	
-	public double getVersion() {
+	public double getAPIVersion() {
 		return version;
 	}
 }
