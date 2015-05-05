@@ -85,7 +85,7 @@ public class SimpleCommandMap<T> implements CommandMap {
         }
   
         try {
-            target.execute(sender, sentCommandLabel, (String[]) Arrays_copyOfRange(args, 1, args.length));
+            //target.execute(sender, sentCommandLabel, (String[]) Arrays_copyOfRange(args, 1, args.length));
         } catch (Exception ex) {
             ex.printStackTrace();
         } catch (Throwable ex) {

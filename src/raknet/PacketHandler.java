@@ -50,10 +50,6 @@ public class PacketHandler implements Runnable {
 				case MinecraftPacket.RakNetReliability:
 					encapsulatedDecode(packet.getData());
 				break;
-
-				case MinecraftPacket.MessagePacket:
-					 processMessage();
-					 break;
 				
 				default:
 					this.network.getLogger().warn("Unknown packet from: " + clientAddress + ":" + clientPort + " | PacketData - Packet: " + packetType + " Size: " + packetSize);
@@ -88,6 +84,9 @@ public class PacketHandler implements Runnable {
 		byte pid = ep.buffer[0];
 		switch(pid){
 			//TODO: Handle here
+			case (byte) MinecraftPacket.MessagePacket:
+				processMessage();
+				break;
 		}
 	}
 
@@ -100,7 +99,7 @@ public class PacketHandler implements Runnable {
 		if(msg != null ) {
 			if(msg.startsWith("/")) msg = msg.substring(msg.indexOf("/")+1, msg.length());
 			Player currentPlayer = this.server.currentPlayer(clientAddress, clientPort);
-			network.dispatchCommand(currentPlayer, msg.trim());
+			//network.dispatchCommand(currentPlayer, msg.trim());
 		}
 	}
 	
