@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
-import raknet.packets.CustomPacket;
-import raknet.packets.JoinPacket;
-import raknet.packets.QueryPacket;
-import raknet.packets.StartLoginPacket;
+import raknet.packets.*;
+import redstonelamp.Player;
 import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
+import redstonelamp.plugin.Plugin;
 import redstonelamp.utils.MinecraftPacket;
 
 public class PacketHandler implements Runnable {
@@ -44,11 +44,16 @@ public class PacketHandler implements Runnable {
 				
 				case MinecraftPacket.JoinPacket:
 					pkt = new JoinPacket(packet, network.serverID, clientAddress, ((short) clientPort), network); //Start logging the player in
+					this.server.addPlayer(clientAddress, clientPort, network.serverID);// add a new player
 				break;
 				
 				case MinecraftPacket.RakNetReliability:
 					encapsulatedDecode(packet.getData());
 				break;
+
+				case MinecraftPacket.MessagePacket:
+					 processMessage();
+					 break;
 				
 				default:
 					this.network.getLogger().warn("Unknown packet from: " + clientAddress + ":" + clientPort + " | PacketData - Packet: " + packetType + " Size: " + packetSize);
@@ -70,13 +75,6 @@ public class PacketHandler implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
-	public void handleDataPacket(CustomPacket.EncapsulatedPacket ep){
-		byte pid = ep.buffer[0];
-		switch(pid){
-			//TODO: Handle here
-		}
-	}
 	
 	public void encapsulatedDecode(byte[] buffer) {
 		CustomPacket pk = CustomPacket.fromBuffer(buffer);
@@ -85,4 +83,26 @@ public class PacketHandler implements Runnable {
 			handleDataPacket(ep);
 		}
 	}
+
+	public void handleDataPacket(CustomPacket.EncapsulatedPacket ep) {
+		byte pid = ep.buffer[0];
+		switch(pid){
+			//TODO: Handle here
+		}
+	}
+
+	/*
+	 * 
+	 */
+	private void processMessage() {
+		MessagePacket msgpkt = new MessagePacket(packet);
+		String msg = msgpkt.getMessage();
+		if(msg != null ) {
+			if(msg.startsWith("/")) msg = msg.substring(msg.indexOf("/")+1, msg.length());
+			Player currentPlayer = this.server.currentPlayer(clientAddress, clientPort);
+			network.dispatchCommand(currentPlayer, msg.trim());
+		}
+	}
+	
+	
 }
