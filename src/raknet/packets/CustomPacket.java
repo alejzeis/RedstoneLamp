@@ -2,7 +2,6 @@ package raknet.packets;
 
 import redstonelamp.utils.MinecraftPacket;
 import redstonelamp.utils.NetworkUtils;
-import sun.nio.ch.Net;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
