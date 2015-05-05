@@ -1,7 +1,10 @@
 package redstonelamp.cmd;
 
 import java.lang.reflect.Array;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -15,8 +18,13 @@ public class SimpleCommandMap<T> implements CommandMap {
 	
 	public SimpleCommandMap(Server server) {
 		this.server = server;
+		setDefaultCommands();
 	}
 	
+    private void setDefaultCommands() {
+    	
+    }
+    
 	@Override
 	public void registerAll(String prefix, List<Command> commands) {
 		if(commands != null) {
@@ -73,8 +81,8 @@ public class SimpleCommandMap<T> implements CommandMap {
 	
 	public boolean dispatch(CommandSender sender, String commandLine)  {
         String[] args = PATTERN_ON_SPACE.split(commandLine);
-
-        if (args.length == 0) {
+   	
+        if ( args.length == 0 ) {
             return false;
         }
 
@@ -100,6 +108,21 @@ public class SimpleCommandMap<T> implements CommandMap {
         return target;
     }
 
+    public synchronized void clearCommands() {
+    	Iterator<String> cmds = redstoneCommands.keySet().iterator();
+    	while( cmds.hasNext() )  {
+    		String key = cmds.next();
+    		Command command = redstoneCommands.get( key );
+    		command.unregister(this);
+    	}
+    	redstoneCommands.clear() ;
+    	setDefaultCommands();
+    }
+    
+    public Collection<Command> getCommands() {
+        return Collections.unmodifiableCollection(redstoneCommands.values());
+    }
+    
     private  T[] Arrays_copyOfRange(String[] args, int start, int end) {
         if (args.length >= start && 0 <= start) {
             if (start <= end) {
