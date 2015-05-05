@@ -105,9 +105,9 @@ public class Server extends Thread {
 			pluginManager.registerPluginLoader(pluginLoader);
 			pluginManager.loadPlugins(folder);
 			
-			FileMonitor filemonitor = new FileMonitor(this);
-			filemonitor.start();
-			
+//			FileMonitor filemonitor = new FileMonitor(this);
+//			filemonitor.start();
+//			
 			CommandSender sender = new ConsoleCommandSender();
 			
 			PlayerJoinEvent pje = new PlayerJoinEvent(null);

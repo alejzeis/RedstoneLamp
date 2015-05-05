@@ -47,7 +47,8 @@ public class PacketHandler implements Runnable {
 				
 				case MinecraftPacket.JoinPacket:
 					pkt = new JoinPacket(packet, network.serverID, clientAddress, ((short) clientPort), network); //Start logging the player in
-					this.server.addPlayer(clientAddress, clientPort, network.serverID);// add a new player
+					// this line added only for testing. This line of code needs to move to Custom Packet or appropriate place
+					this.server.addPlayer(clientAddress, clientPort, network.serverID /* TODO needs to replace with clientID*/); 
 				break;
 				
 				case MinecraftPacket.RakNetReliability:
@@ -91,6 +92,7 @@ public class PacketHandler implements Runnable {
 		String msg = msgpkt.getMessage();
 		if(msg != null ) {
 			if(msg.startsWith("/")) msg = msg.substring(msg.indexOf("/")+1, msg.length());
+			System.out.println(" current player addrss " + clientAddress);
 			Player currentPlayer = this.server.currentPlayer(clientAddress, clientPort);
 			network.dispatchCommand(currentPlayer, msg.trim());
 		}
