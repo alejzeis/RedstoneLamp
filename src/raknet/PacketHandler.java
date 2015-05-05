@@ -6,10 +6,7 @@ import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
-import raknet.packets.JoinPacket;
-import raknet.packets.MessagePacket;
-import raknet.packets.QueryPacket;
-import raknet.packets.StartLoginPacket;
+import raknet.packets.*;
 import redstonelamp.Player;
 import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
@@ -52,12 +49,8 @@ public class PacketHandler implements Runnable {
 				break;
 				
 				case MinecraftPacket.RakNetReliability:
-					encapsulatedDecode();
+					encapsulatedDecode(packet.getData());
 				break;
-
-				case MinecraftPacket.MessagePacket:
-					 processMessage();
-					 break;
 				
 				default:
 					this.network.getLogger().warn("Unknown packet from: " + clientAddress + ":" + clientPort + " | PacketData - Packet: " + packetType + " Size: " + packetSize);
@@ -80,8 +73,22 @@ public class PacketHandler implements Runnable {
 		}
 	}
 	
-	public void encapsulatedDecode() {
-		
+	public void encapsulatedDecode(byte[] buffer) {
+		CustomPacket pk = CustomPacket.fromBuffer(buffer);
+		//TODO: Send ACK, Increment Sequence numbers, etc.
+		for(CustomPacket.EncapsulatedPacket ep : pk.packets){
+			handleDataPacket(ep);
+		}
+	}
+
+	public void handleDataPacket(CustomPacket.EncapsulatedPacket ep) {
+		byte pid = ep.buffer[0];
+		switch(pid){
+			//TODO: Handle here
+			case (byte) MinecraftPacket.MessagePacket:
+				processMessage();
+				break;
+		}
 	}
 
 	/*
@@ -94,7 +101,7 @@ public class PacketHandler implements Runnable {
 			if(msg.startsWith("/")) msg = msg.substring(msg.indexOf("/")+1, msg.length());
 			System.out.println(" current player addrss " + clientAddress);
 			Player currentPlayer = this.server.currentPlayer(clientAddress, clientPort);
-			network.dispatchCommand(currentPlayer, msg.trim());
+			//network.dispatchCommand(currentPlayer, msg.trim());
 		}
 	}
 	
