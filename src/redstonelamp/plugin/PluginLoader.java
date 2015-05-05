@@ -41,6 +41,7 @@ public class PluginLoader {
 	private Set<String> clsNames = new TreeSet<String>();
 	private Server server;
 	JavaCompiler compiler = null;
+	private Set<String> urlClsNames = new TreeSet<String>();
 	
 	public PluginLoader(final Server server) {
 		this.server = server;
@@ -192,7 +193,9 @@ public class PluginLoader {
 		getFullyQualifiedName();
 		ArrayList<Plugin> list = new ArrayList<Plugin>();
 		for(String plugin : clsNames) {
-			list.add(loadPlugin(plugin));
+			Plugin p = loadPlugin(plugin);
+			if(p != null)
+			list.add(p);
 		}
 		return list;
 	}
@@ -266,6 +269,13 @@ public class PluginLoader {
 				String pkg = dir.substring(dir.indexOf(orig) + orig.length() + 1, dir.length());
 				pkg = pkg.substring(0, pkg.indexOf(".class")).replaceAll("\\\\", ".");
 				clsNames.add(pkg);
+//					try {
+//						System.out.println(f.toURL());
+//						urlClsNames.add(refineFilePath(f.toURL().toExternalForm()));
+//					} catch (MalformedURLException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
 			}
 		}
 	}
@@ -285,5 +295,17 @@ public class PluginLoader {
 			RedstoneLamp.logger.info("Start Position->" + diagnostic.getStartPosition());
 			RedstoneLamp.logger.info("\n");
 		}
+	}
+	
+	private String refineFilePath(String str) {
+	   if(str.contains("/./plugins")) {
+	       String f1 = str.substring(0, str.indexOf("/./"));
+	       String f2 = str.substring(str.indexOf("/./")+2, str.length());
+	       String f3 = f1.substring(0, f1.indexOf("/"));
+	       String f4 = f1.substring(f1.indexOf("/") + 1, f1.length());
+	       str = f3+f4+f2;
+	       System.out.println(" str: " + str);
+	   }
+	   return str;
 	}
 }

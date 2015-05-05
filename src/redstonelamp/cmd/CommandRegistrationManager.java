@@ -33,7 +33,8 @@ public class CommandRegistrationManager {
 		
 		Command cmd = new PluginCommand(command, plugin);
 		commands.add(cmd);
-		this.commandMap.register(plugin.getName(), cmd);
+		//this.commandMap.register(plugin.getName(), cmd);
+		this.commandMap.register("", cmd);
 	}
 	
 	public PluginIdentifiableCommand getPluginCommand(final String command) {

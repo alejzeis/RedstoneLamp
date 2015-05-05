@@ -1,12 +1,15 @@
 package redstonelamp.cmd;
 
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import redstonelamp.Server;
 
-public class SimpleCommandMap implements CommandMap {
+public class SimpleCommandMap<T> implements CommandMap {
+	private static final Pattern PATTERN_ON_SPACE = Pattern.compile(" ", Pattern.LITERAL);
 	protected final Map<String, Command> redstoneCommands = new HashMap<String, Command>();
 	private Server server;
 	
@@ -62,12 +65,53 @@ public class SimpleCommandMap implements CommandMap {
 	 */
 	public boolean register(String label, Command command, boolean isAlias, String prefix) {
 		Command duplicate = redstoneCommands.get(label);
-		if(duplicate != null)
-			return false;
-		duplicate = redstoneCommands.get(prefix + ":" + label);
-		if(duplicate != null)
-			return false;
-		redstoneCommands.put(prefix + ":" + label, command);
-		return true;
+			if(duplicate != null)
+				return false;
+			redstoneCommands.put(label, command);
+			return true;
 	}
+	
+	public boolean dispatch(CommandSender sender, String commandLine)  {
+        String[] args = PATTERN_ON_SPACE.split(commandLine);
+
+        if (args.length == 0) {
+            return false;
+        }
+
+        String sentCommandLabel = args[0].toLowerCase();
+        Command target = getCommand(sentCommandLabel);
+        if (target == null) {
+            return false;
+        }
+  
+        try {
+            target.execute(sender, sentCommandLabel, (String[]) Arrays_copyOfRange(args, 1, args.length));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } catch (Throwable ex) {
+        	ex.printStackTrace();
+            throw new IllegalArgumentException("Unhandled exception executing '" + commandLine + "' in " + target, ex);
+        }
+        return true;
+    }
+	
+    public Command getCommand(String name) {
+        Command target = redstoneCommands.get(name.toLowerCase());
+        return target;
+    }
+
+    private  T[] Arrays_copyOfRange(String[] args, int start, int end) {
+        if (args.length >= start && 0 <= start) {
+            if (start <= end) {
+                int length = end - start;
+                int copyLength = Math.min(length, args.length - start);
+                T[] copy = (T[]) Array.newInstance(args.getClass().getComponentType(), length);
+
+                System.arraycopy(args, start, copy, 0, copyLength);
+                return copy;
+            }
+            throw new IllegalArgumentException();
+        }
+        throw new ArrayIndexOutOfBoundsException();
+    }
 }

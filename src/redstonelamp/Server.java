@@ -73,6 +73,7 @@ public class Server extends Thread {
 		this.rcon_pass = rcon_pass;
 		this.auto_save = StringCast.toBoolean(auto_save);
 		this.enable_plugins = StringCast.toBoolean(enable_plugins);
+		this.redstone = redstonelamp;
 		this.getLogger().info("Starting Minecraft: PE Server v" + this.getMCVersion());
 		try {
 			InetAddress ip = InetAddress.getLocalHost();
@@ -85,7 +86,7 @@ public class Server extends Thread {
 		this.getLogger().info(RedstoneLamp.SOFTWARE + " is distributed under the " + RedstoneLamp.LICENSE);
 		
 		File folder = new File("./plugins");
-		File inuse = new File("./plugins/cache".trim());
+		File inuse = new File("./plugins/cache");
 		
 		if(this.enable_plugins) {
 			if(!folder.exists())
@@ -100,7 +101,7 @@ public class Server extends Thread {
 			pluginManager = new PluginManager(this, simpleCommandMap);
 			PluginLoader pluginLoader = new PluginLoader(this);
 			
-			pluginLoader.setPluginOption("./plugins/".trim(), "./plugins/cache/".trim());
+			pluginLoader.setPluginOption("./plugins/", "./plugins/cache/");
 			pluginManager.registerPluginLoader(pluginLoader);
 			pluginManager.loadPlugins(folder);
 			
@@ -114,14 +115,16 @@ public class Server extends Thread {
 			pluginManager.callEvent(pje);
 			pluginManager.callEvent(pme);
 			
-			String cmd = null;
-			ArrayList<Command> cmdList = this.getCommandRegistrationManager().getPluginCommands(cmd);
-			for(Command command : cmdList) {
-				PluginCommand pcmd = (PluginCommand) command;
-				PluginBase base = (PluginBase) pcmd.getPlugin();
-				if(base != null)
-					base.onCommand(sender, command, cmd, null);
-			}
+//			String cmd = null;
+//			ArrayList<Command> cmdList = this.getCommandRegistrationManager().getPluginCommands(cmd);
+//			for(Command command : cmdList) {
+//				PluginCommand pcmd = (PluginCommand) command;
+//				PluginBase base = (PluginBase) pcmd.getPlugin();
+//				if(base != null)
+//					base.onCommand(sender, command, cmd, null);
+//			}
+			
+			//dispatchCommand(sender, "Test");
 		} else
 			this.getLogger().info("Plugins are not enabled so RedstoneLamp has ignored any exsisting Plugin files!");
 		
@@ -389,4 +392,27 @@ public class Server extends Thread {
 	public StringCast getStringCast() {
 		return new StringCast();
 	}
+
+	/*
+	 * generic method will execute plug-in and server commands
+	 */
+	public boolean dispatchCommand(CommandSender sender, String command) {
+		if( !(sender instanceof CommandSender)) {
+			throw new IllegalArgumentException("CommandSender is not valid");
+		}
+		
+		if(this.simpleCommandMap.dispatch(sender, command)){
+			return true;
+		}
+		
+		if( sender instanceof Player ) {
+			sender.sendMessage("Unknown command. Type \"/help\" for help.");
+		}else {
+			sender.sendMessage("Unknown command. Type \"/help\" for help.");
+		}
+		
+		return false;
+	}
+	
+	
 }
