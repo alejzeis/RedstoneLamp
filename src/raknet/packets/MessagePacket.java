@@ -54,7 +54,7 @@ public class MessagePacket extends Packet {
 	
 	@Override
 	public void process(PacketHandler h) {
-		
+		h.sendPacket(getPacket());
 	}
 	
 	public void processAll(PacketHandler h) {
