@@ -11,9 +11,9 @@ import redstonelamp.utils.RedstoneLampProperties;
 import redstonelamp.utils.StringCast;
 
 public class RedstoneLamp implements Runnable {
-	public static String MC_VERSION = "0.11.0 build 7";
+	public static String MC_VERSION = "0.11.0 build 9";
 	public static String SOFTWARE = "RedstoneLamp";
-	public static String VERSION = "1.1.0";
+	public static String VERSION = "1.1.1";
 	public static String CODENAME = "Pumpkin Seeds";
 	public static String STAGE = "DEVELOPMENT";
 	public static double API_VERSION = 1.3;
