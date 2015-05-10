@@ -7,8 +7,9 @@ RedstoneLamp - http://RedstoneLamp.net
 
 RedstoneLamp Forums - http://forums.RedstoneLamp.net
 
-RedstoneLamo Documentation - http://docs.RedstoneLamp.net
+RedstoneLamp Documentation - http://docs.RedstoneLamp.net
 
+Get Plugins - http://forums.redstonelamp.net/index.php?resources/
 
 # TODO
 - [ ] Working Packet Sending/Handling
@@ -33,3 +34,6 @@ RedstoneLamo Documentation - http://docs.RedstoneLamp.net
 - [ ] Plugin Loading
 - [x] Command Registration
 - [ ] Command Handling
+- [ ] More language support
+
+**Please read the contributing.md before making Pull Requests**
