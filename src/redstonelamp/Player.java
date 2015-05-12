@@ -2,7 +2,9 @@ package redstonelamp;
 
 import java.net.InetAddress;
 
-public class Player {
+import redstonelamp.cmd.CommandSender;
+
+public class Player implements CommandSender {
 	public InetAddress clientAddress;
 	public int clientPort;
 	public int packetCount;
@@ -18,6 +20,7 @@ public class Player {
 	public short blockID;
 	public short metadata;
 	public boolean isConnected;
+	public int face;
 	
 	public Player(InetAddress i, int p, int eid, long cid) {
 		clientAddress = i;
@@ -58,5 +61,23 @@ public class Player {
 	 */
 	public void setClientID(long cid) {
 		clientID = cid;
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Server getServer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void sendMessage(String message) {
+		// TODO Auto-generated method stub
+		
 	}
 }
