@@ -3,7 +3,7 @@ package raknet.packets;
 import java.net.DatagramPacket;
 import java.nio.ByteBuffer;
 
-import raknet.MinecraftPacket;
+import redstonelamp.utils.MinecraftPacket;
 import raknet.Packet;
 import raknet.PacketHandler;
 
