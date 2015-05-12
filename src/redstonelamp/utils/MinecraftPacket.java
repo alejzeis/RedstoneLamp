@@ -18,4 +18,5 @@ public class MinecraftPacket {
 
 	//Encapsulated Packets
 	public static final int MessagePacket = 0x85;
+	public static final int SetEntityMotionPacket = 0x9F
 }
