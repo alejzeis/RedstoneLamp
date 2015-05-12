@@ -4,13 +4,16 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
-import raknet.packets.*;
+import raknet.packets.JoinPacket;
+import raknet.packets.MessagePacket;
+import raknet.packets.QueryPacket;
+import raknet.packets.StartLoginPacket;
 import redstonelamp.Player;
 import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
-import redstonelamp.plugin.Plugin;
 import redstonelamp.utils.MinecraftPacket;
 
 public class PacketHandler implements Runnable {
@@ -19,6 +22,10 @@ public class PacketHandler implements Runnable {
 	private DatagramPacket packet;
 	private InetAddress clientAddress;
 	private int clientPort;
+	private Queue<ByteBuffer> queuePackets = new LinkedList<ByteBuffer>();
+	private int queueDataSize;
+	private Queue<ByteBuffer> queuePacketsToAll = new LinkedList<ByteBuffer>();
+	private int queueDataSizeToAll;
 	
 	public PacketHandler(RedstoneLamp redstone, Server server, DatagramPacket packet) {
 		this.server = redstone;
@@ -49,8 +56,12 @@ public class PacketHandler implements Runnable {
 				break;
 				
 				case MinecraftPacket.RakNetReliability:
-					encapsulatedDecode(packet.getData());
+					encapsulatedDecode();
 				break;
+
+				case MinecraftPacket.MessagePacket:
+					 processMessage();
+					 break;
 				
 				default:
 					this.network.getLogger().warn("Unknown packet from: " + clientAddress + ":" + clientPort + " | PacketData - Packet: " + packetType + " Size: " + packetSize);
@@ -73,22 +84,8 @@ public class PacketHandler implements Runnable {
 		}
 	}
 	
-	public void encapsulatedDecode(byte[] buffer) {
-		CustomPacket pk = CustomPacket.fromBuffer(buffer);
-		//TODO: Send ACK, Increment Sequence numbers, etc.
-		for(CustomPacket.EncapsulatedPacket ep : pk.packets){
-			handleDataPacket(ep);
-		}
-	}
-
-	public void handleDataPacket(CustomPacket.EncapsulatedPacket ep) {
-		byte pid = ep.buffer[0];
-		switch(pid){
-			//TODO: Handle here
-			case (byte) MinecraftPacket.MessagePacket:
-				processMessage();
-				break;
-		}
+	public void encapsulatedDecode() {
+		
 	}
 
 	/*
@@ -101,9 +98,17 @@ public class PacketHandler implements Runnable {
 			if(msg.startsWith("/")) msg = msg.substring(msg.indexOf("/")+1, msg.length());
 			System.out.println(" current player addrss " + clientAddress);
 			Player currentPlayer = this.server.currentPlayer(clientAddress, clientPort);
-			//network.dispatchCommand(currentPlayer, msg.trim());
+			network.dispatchCommand(currentPlayer, msg.trim());
 		}
 	}
 	
+	public void addToQueue(ByteBuffer b) {
+		queuePackets.add(b);
+		queueDataSize += b.capacity();
+	}
 	
+	public void addToQueueForAll(ByteBuffer b) {
+		queuePacketsToAll.add(b);
+		queueDataSizeToAll += b.capacity();
+	}
 }
