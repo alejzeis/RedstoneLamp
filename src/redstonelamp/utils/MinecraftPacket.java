@@ -47,7 +47,7 @@ public class MinecraftPacket {
 	public static final int PlayerActionPacket = 0xa3;
 	public static final int HurtArmorPacket = 0xa5;
 	public static final int SetEntityDataPacket = 0xa6;
-	public static final int SetEntityMotionPacket = 0xa7;
+	public static final int SetEntityMotionPacket = 0x9F;
 	public static final int SetRidingPacket = 0xa8;
 	public static final int SetHealthPacket = 0xa9;
 	public static final int SetSpawnPositionPacket = 0xaa;
@@ -67,5 +67,4 @@ public class MinecraftPacket {
 	public static final int FullChunkDataPacket = 0x1b; // TODO need to verify
 														// the actual value to
 														// be used
-
 }
