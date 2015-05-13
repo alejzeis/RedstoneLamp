@@ -3,9 +3,10 @@ package raknet.packets;
 import java.net.DatagramPacket;
 import java.nio.ByteBuffer;
 
-import raknet.MinecraftPacket;
+
 import raknet.Packet;
 import raknet.PacketHandler;
+import redstonelamp.utils.MinecraftPacket;
 
 
 public class AnimatePacket extends Packet {
