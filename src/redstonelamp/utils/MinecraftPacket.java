@@ -65,6 +65,6 @@ public class MinecraftPacket {
 	public static final int SignUpdatePacket = 0xb6;
 	public static final int AdventureSettingsPacket = 0xb7;
 	public static final int FullChunkDataPacket = 0x1b; // TODO need to verify
-														// the actual value to
-														// be used
+	// the actual value to
+	// be used
 }
