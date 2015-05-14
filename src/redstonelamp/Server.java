@@ -1,6 +1,9 @@
 package redstonelamp;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -20,6 +23,7 @@ import redstonelamp.cmd.PluginIdentifiableCommand;
 import redstonelamp.cmd.SimpleCommandMap;
 import redstonelamp.event.player.PlayerJoinEvent;
 import redstonelamp.event.player.PlayerMoveEvent;
+import redstonelamp.event.server.ServerCommandEvent;
 import redstonelamp.logger.Logger;
 import redstonelamp.monitor.FileMonitor;
 import redstonelamp.plugin.PluginBase;
@@ -36,7 +40,8 @@ public class Server extends Thread {
 	private CommandRegistrationManager commandManager;
 	private PluginManager pluginManager;
 	private SimpleCommandMap simpleCommandMap;
-	
+    private CommandSender sender;
+    
 	private boolean isListening;
 	private RedstoneLamp redstone;
 	public DatagramSocket socket;
@@ -108,7 +113,7 @@ public class Server extends Thread {
 //			FileMonitor filemonitor = new FileMonitor(this);
 //			filemonitor.start();
 //			
-			CommandSender sender = new ConsoleCommandSender();
+			sender = new ConsoleCommandSender();
 			
 			PlayerJoinEvent pje = new PlayerJoinEvent(null);
 			PlayerMoveEvent pme = new PlayerMoveEvent(null);
@@ -157,6 +162,8 @@ public class Server extends Thread {
 				pkt.setPort(packet.getPort());
 				new Thread(new PacketHandler(redstone, this, pkt)).start();
 			}
+			
+			tickProcessor();
 		}
 	}
 	
@@ -393,6 +400,25 @@ public class Server extends Thread {
 		return new StringCast();
 	}
 
+	private void tickProcessor() {
+		checkConsole();
+	}
+	
+	private void checkConsole() {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		try {
+			String line = reader.readLine();
+			if( line != null) { 
+				line = line.trim();
+				if(line.startsWith("/")) line = line.substring(line.indexOf("/") + 1, line.length());
+				ServerCommandEvent sce = new ServerCommandEvent(sender, line);
+				pluginManager.callEvent(sce);
+				this.dispatchCommand(sender, line);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	/*
 	 * generic method will execute plug-in and server commands
 	 */
@@ -410,9 +436,6 @@ public class Server extends Thread {
 		}else {
 			sender.sendMessage("Unknown command. Type \"/help\" for help.");
 		}
-		
 		return false;
 	}
-	
-	
 }
