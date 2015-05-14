@@ -40,8 +40,8 @@ public class Server extends Thread {
 	private CommandRegistrationManager commandManager;
 	private PluginManager pluginManager;
 	private SimpleCommandMap simpleCommandMap;
-    private CommandSender sender;
-    
+	private CommandSender sender;
+	
 	private boolean isListening;
 	private RedstoneLamp redstone;
 	public DatagramSocket socket;
@@ -110,9 +110,9 @@ public class Server extends Thread {
 			pluginManager.registerPluginLoader(pluginLoader);
 			pluginManager.loadPlugins(folder);
 			
-//			FileMonitor filemonitor = new FileMonitor(this);
-//			filemonitor.start();
-//			
+			//			FileMonitor filemonitor = new FileMonitor(this);
+			//			filemonitor.start();
+			//			
 			sender = new ConsoleCommandSender();
 			
 			PlayerJoinEvent pje = new PlayerJoinEvent(null);
@@ -120,14 +120,14 @@ public class Server extends Thread {
 			pluginManager.callEvent(pje);
 			pluginManager.callEvent(pme);
 			
-//			String cmd = null;
-//			ArrayList<Command> cmdList = this.getCommandRegistrationManager().getPluginCommands(cmd);
-//			for(Command command : cmdList) {
-//				PluginCommand pcmd = (PluginCommand) command;
-//				PluginBase base = (PluginBase) pcmd.getPlugin();
-//				if(base != null)
-//					base.onCommand(sender, command, cmd, null);
-//			}
+			//			String cmd = null;
+			//			ArrayList<Command> cmdList = this.getCommandRegistrationManager().getPluginCommands(cmd);
+			//			for(Command command : cmdList) {
+			//				PluginCommand pcmd = (PluginCommand) command;
+			//				PluginBase base = (PluginBase) pcmd.getPlugin();
+			//				if(base != null)
+			//					base.onCommand(sender, command, cmd, null);
+			//			}
 			
 			//dispatchCommand(sender, "Test");
 		} else
@@ -399,7 +399,7 @@ public class Server extends Thread {
 	public StringCast getStringCast() {
 		return new StringCast();
 	}
-
+	
 	private void tickProcessor() {
 		checkConsole();
 	}
@@ -408,33 +408,31 @@ public class Server extends Thread {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		try {
 			String line = reader.readLine();
-			if( line != null) { 
+			if(line != null) {
 				line = line.trim();
-				if(line.startsWith("/")) line = line.substring(line.indexOf("/") + 1, line.length());
+				if(line.startsWith("/"))
+					line = line.substring(line.indexOf("/") + 1, line.length());
 				ServerCommandEvent sce = new ServerCommandEvent(sender, line);
 				pluginManager.callEvent(sce);
 				this.dispatchCommand(sender, line);
 			}
-		} catch (IOException e) {
+		} catch(IOException e) {
 			e.printStackTrace();
 		}
 	}
+	
 	/*
 	 * generic method will execute plug-in and server commands
 	 */
 	public boolean dispatchCommand(CommandSender sender, String command) {
-		if( !(sender instanceof CommandSender)) {
-			throw new IllegalArgumentException("CommandSender is not valid");
-		}
+		if(!(sender instanceof CommandSender)) { throw new IllegalArgumentException("CommandSender is not valid"); }
 		
-		if(this.simpleCommandMap.dispatch(sender, command)){
-			return true;
-		}
+		if(this.simpleCommandMap.dispatch(sender, command)) { return true; }
 		
-		if( sender instanceof Player ) {
+		if(sender instanceof Player) {
 			sender.sendMessage("Unknown command. Type \"/help\" for help.");
-		}else {
-			sender.sendMessage("Unknown command. Type \"/help\" for help.");
+		} else {
+			sender.sendMessage("Unknown command. Type \"help\" or \"?\" for help.");
 		}
 		return false;
 	}
