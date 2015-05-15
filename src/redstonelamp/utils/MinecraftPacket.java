@@ -2,7 +2,7 @@ package redstonelamp.utils;
 
 public class MinecraftPacket {
 	public static final int RakNetProtocolVersion = 5;
-	public static final int PROTOCOL_VERSION = 24;
+	public static final int PROTOCOL_VERSION = 25;
 
 	// Packets Used to Join The Server
 	public static final int QueryPacket = 0x01;
