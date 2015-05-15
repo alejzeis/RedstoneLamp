@@ -15,12 +15,15 @@ Get Plugins - http://forums.redstonelamp.net/index.php?resources/
 - [ ] Working Packet Sending/Handling
 
 	- [x] Handle Login Packets
-		- [x] 0x02 - ID_UNCONNECTED_PING_OPEN_CONNECTIONS_1
-		- [x] 0x05 - ID_OPEN_CONNECTION_REQUEST_1
-		- [x] 0x07 - ID_OPEN_CONNECTION_REPLY_2
-	- [ ] Handle Data Packets
-		- [ ] 0x84 - RakNet Reliability Packet
-		- [ ] Other Packets
+		- [x] Ping Packets
+			- [x] 0x02 - ID_UNCONNECTED_PING_OPEN_CONNECTIONS_1 => 0x1C - ID_UNCONNECTED_PONG
+		- [ ] Connection Packets
+			- [x] 0x05 - ID_OPEN_CONNECTION_REQUEST_1 => 0x06 - ID_OPEN_CONNECTION_REPLY_1
+			- [x] 0x07 - ID_OPEN_CONNECTION_REQUEST_2 => 0x08 - ID_OPEN_CONNECTION_REPLY_2
+			- [ ] 0x09 - ClientConnect => 0x10 - ServerHandshake
+			- [ ] 0x13 - ClientHandshake
+			- [ ] 0x82 - Login => 0x83 - LoginStatus => 0x87 - StartGame => 0x86 - SetTime => (Send Chunks)
+			- [ ] 0x84 - Ready
 		
 	- [ ] Send Packets
 		- [ ] Chunk Sending
@@ -31,9 +34,9 @@ Get Plugins - http://forums.redstonelamp.net/index.php?resources/
 - [ ] Implement Items
 - [ ] Implement Blocks
 - [ ] Level Generation
-- [ ] Plugin Loading
+- [x] Plugin Loading
 - [x] Command Registration
-- [ ] Command Handling
-- [ ] More language support
+- [x] Command Handling
+- [ ] Multi-language support
 
-**Please read the contributing.md before making Pull Requests**
+**Please read the CONTRIBUTING.md before making Pull Requests**
