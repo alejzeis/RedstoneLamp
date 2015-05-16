@@ -58,7 +58,7 @@ public class CustomPacket {
             EncapsulatedPacket ep = new EncapsulatedPacket();
             byte flag = bb.get();
             ep.reliability = (byte) (flag >> 5);
-            ep.hasSplit = (flag & 0b00010000) == 16;
+            ep.hasSplit = (flag & 0xb0001000) == 16;
             int len = bb.getShort() / 8; //Length is in bits
             //int len = ((bb.getShort() + 7) >> 3); //Uncomment this for faster decoding
             if(ep.reliability == 2 || ep.reliability == 3 || ep.reliability == 4 || ep.reliability == 6 || ep.reliability == 7){
@@ -79,7 +79,7 @@ public class CustomPacket {
         }
 
         public void append(ByteBuffer bb){
-            bb.put((byte) ((reliability << 5) ^ (hasSplit ? 0b0001 : 0x00)));
+            bb.put((byte) ((reliability << 5) ^ (hasSplit ? 0xb0001 : 0x00)));
             bb.putShort((short) (buffer.length * 8)); //Length is in bits
             //bb.putShort((short) (buffer.length << 3)); //Uncomment this for faster encoding
             if(reliability == 0x02 || reliability == 0x03 || reliability == 0x04 || reliability == 0x06 || reliability == 0x07){
