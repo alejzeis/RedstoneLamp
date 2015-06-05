@@ -1,8 +1,9 @@
                         The RedstoneLamp Source Code License
                         
-Permission is given to all that may like, to view the source code for the RedstonLamp
-project.  This source code can be used to write plugins for the software or similar.
-However, the projects code can not be used for the following:
+Permission is given to all that may like, to view the source code for the RedstoneLamp
+project or other projects created by the Redstonelamp Organization.  This source code
+can be used to write plugins for the software or similar.  However, the projects code
+can not be used for the following:
 
 Section 1 - Modified Software
   a) The software that is provided is as-is and no permission is given to any persons
@@ -20,7 +21,7 @@ Section 2 - Code
   If the author does not have this, the code found similar must be removed or a DMCA
   Takedown will be created.
   c) If the author uses the source code before requesting and recieving written
-  permission, even if permission is granted after, a DMCAA Takedown will be created.
+  permission, even if permission is granted after, a DMCA Takedown will be created.
   
 Section 3 - Compiling
   a) Compiling the original source code is allowed however, this new executable can
