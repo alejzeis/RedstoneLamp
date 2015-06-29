@@ -4,8 +4,13 @@
 	</description>
 	
 	<property name="src" location="src"/>
+	<property name="lib" location="lib"/>
 	<property name="build" location="build"/>
 	<property name="dist"	location="dist"/>
+	
+	<path id="classpath">
+		<fileset dir="${lib}" includes="**/*.jar"/>
+	</path>
 	
 	<target name="init">
 		<tstamp/>
