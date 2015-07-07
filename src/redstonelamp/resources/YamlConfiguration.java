@@ -9,16 +9,15 @@ import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 
 public class YamlConfiguration {
-	private File yaml;
-	private Map<String, Object> data;
-	private Yaml config;
+	private File file;
 	private FileWriter writer;
+	private Map<String, Object> data;
+	private Yaml yaml = new Yaml();
 	
 	public YamlConfiguration(String file) throws IOException {
-		this.yaml = new File(file);
 		this.data = new HashMap<String, Object>();
-		this.config = new Yaml();
-		this.writer = new FileWriter(file);
+		this.file = new File(file);
+		this.writer = new FileWriter(this.file);
 	}
 	
 	public YamlConfiguration set(String key, Object value) {
@@ -26,17 +25,21 @@ public class YamlConfiguration {
 		return this;
 	}
 	
-	public YamlConfiguration get(String key) {
-		this.data.get(key);
-		return this;
+	public Object get(Object key) {
+		return this.data.get(key);
 	}
 	
-	public YamlConfiguration dump() {
-		this.config.dump(this.data);
-		return this;
+	public void save() {
+		this.yaml.dump(this.data, this.writer);
 	}
 	
-	public void write() {
-		this.config.dump(data, writer);
+	public boolean close() {
+		try {
+			this.writer.close();
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

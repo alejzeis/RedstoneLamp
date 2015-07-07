@@ -1,7 +1,7 @@
 package redstonelamp.utils;
 
 public class TextFormat {
-	public static String ESCAPE = "§";
+	public static String ESCAPE = "\0xC2\0xA7";
 	
 	public static String BLACK = "0";
 	public static String DARK_BLUE = "1";
