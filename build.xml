@@ -9,7 +9,7 @@
 	<property name="dist"	location="dist"/>
 	
 	<path id="classpath">
-		<fileset dir="${lib}" includes="**/*.jar"/>
+		<fileset dir="${lib}" includes="lib/**/*.jar"/>
 	</path>
 	
 	<target name="init">
