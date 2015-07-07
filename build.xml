@@ -7,10 +7,26 @@
 	<property name="lib" location="lib"/>
 	<property name="build" location="build"/>
 	<property name="dist"	location="dist"/>
+
+	<property name="mainclass" value="redstonelamp.RedstoneLamp"/>
 	
 	<path id="classpath">
-		<fileset dir="${lib}" includes="lib/**/*.jar"/>
+		<fileset dir="${lib}" includes="lib/*.jar"/>
 	</path>
+
+	<path id="jars">
+		<fileset dir="${lib}" includes="**/*.jar"/>
+	</path>
+
+	<pathconvert property="mf.classpath" pathsep=" ">
+		<path refid="classpath"/>
+		<mapper>
+			<chainedmapper>
+				<flattenmapper/>
+				<globmapper from="*.jar" to="lib/*.jar"/>
+			</chainedmapper>
+		</mapper>
+	</pathconvert>
 	
 	<target name="init">
 		<tstamp/>
@@ -18,12 +34,20 @@
 	</target>
 	
 	<target name="compile" depends="init" description="Compile the source">
-		<javac srcdir="${src}" destdir="${build}"/>
+		<javac srcdir="${src}" destdir="${build}" classpathref="jars"/>
 	</target>
 	
 	<target name="dist" depends="compile" description="Generate the distribution">
 		<mkdir dir="${dist}/builds"/>
-		<jar jarfile="${dist}/builds/Redstonelamp-${DSTAMP}.jar" basedir="${build}"/>
+		<jar jarfile="${dist}/builds/Redstonelamp-${DSTAMP}.jar" basedir="${build}">
+			<!--<zipgroupfileset dir="dist" includes="*.jar"/>-->
+			<zipgroupfileset dir="${lib}" includes="*.jar" excludes=""/>
+
+			<manifest>
+				<attribute name="Main-Class" value="${mainclass}"/>
+				<attribute name="Class-Path" value="${mf.classpath}"/>
+			</manifest>
+		</jar>
 	</target>
 	
 	<target name="clean" description="Clean up">
