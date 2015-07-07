@@ -1,8 +1,12 @@
 package redstonelamp;
 
 import redstonelamp.network.JRakLibInterface;
+import redstonelamp.network.Network;
 import redstonelamp.utils.MainLogger;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class Server implements Runnable{
@@ -10,10 +14,13 @@ public class Server implements Runnable{
     private MainLogger logger;
     private Properties properties;
 
+    private boolean running = false;
+
     private String bindInterface;
     private int bindPort;
 
-    private JRakLibInterface rakLibInterface;
+    private List<Player> players = new ArrayList<>();
+    private Network network;
 
     public Server(Properties properties, MainLogger logger){
         this.logger = logger;
@@ -21,19 +28,59 @@ public class Server implements Runnable{
         debugMode = Boolean.parseBoolean(properties.getProperty("debug", "false"));
         bindInterface = properties.getProperty("interface", "0.0.0.0");
         bindPort = Integer.parseInt(properties.getProperty("port", "19132"));
-        rakLibInterface = new JRakLibInterface(this);
+        network = new Network(this);
+        network.registerInterface(new JRakLibInterface(this));
+
+        running = true;
+        run();
     }
 
     @Override
     public void run(){
-        tick();
+        while(running){
+            long start = Instant.now().toEpochMilli();
+            tick();
+            long diff = Instant.now().toEpochMilli() - start;
+            if(diff < 50){
+                try {
+                    Thread.currentThread().sleep(Instant.now().toEpochMilli() + (50 - diff));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**
      * Executes a server tick.
      */
     private void tick() {
+        network.tick();
+    }
 
+    public void addPlayer(Player player){
+        synchronized (players){
+            players.add(player);
+        }
+    }
+
+    public Player getPlayer(String identifier){
+        synchronized (players){
+            for(Player player : players){
+                if(player.getIdentifier().equals(identifier)){
+                    return player;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * INTERNAL METHOD! Use <code>player.kick()</code> instead.
+     * @param player
+     */
+    public void removePlayer(Player player){
+        players.remove(player);
     }
 
     public Properties getProperties() {
@@ -54,5 +101,9 @@ public class Server implements Runnable{
 
     public boolean isDebugMode() {
         return debugMode;
+    }
+
+    public Network getNetwork() {
+        return network;
     }
 }

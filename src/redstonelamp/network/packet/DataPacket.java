@@ -19,6 +19,7 @@ public abstract class DataPacket {
      */
     public final byte[] encode(){
         DynamicByteBuffer bb = DynamicByteBuffer.newInstance();
+        bb.putByte(getPID());
         _encode(bb);
         return bb.toArray();
     }
@@ -29,6 +30,7 @@ public abstract class DataPacket {
      */
     public final void decode(byte[] buffer){
         DynamicByteBuffer bb = DynamicByteBuffer.newInstance(buffer);
+        bb.getByte(); //PID
         _decode(bb);
         bb = null;
     }

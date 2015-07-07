@@ -12,4 +12,5 @@ public class NetworkInfo {
      * The MCPE protocol version RedstoneLamp implements.
      */
     public static final int MCPE_PROTOCOL = 27;
+    public static final byte BATCH_PACKET = (byte) 0xb1;
 }
