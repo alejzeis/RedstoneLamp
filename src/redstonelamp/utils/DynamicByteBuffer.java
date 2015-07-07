@@ -25,6 +25,7 @@ public class DynamicByteBuffer {
         bb.setByteBuffer(ByteBuffer.wrap(bytes));
         bb.setByteOrder(ByteOrder.BIG_ENDIAN);
         bb.setPosition(0);
+        bb.binary = Binary.getDefaultInstance();
         return bb;
     }
 
@@ -39,6 +40,7 @@ public class DynamicByteBuffer {
         bb.setByteBuffer(ByteBuffer.wrap(bytes));
         bb.setByteOrder(order);
         bb.setPosition(0);
+        bb.binary = Binary.newInstance(order);
         return bb;
     }
 
@@ -51,6 +53,7 @@ public class DynamicByteBuffer {
         bb.setByteBuffer(ByteBuffer.allocate(2));
         bb.setByteOrder(ByteOrder.BIG_ENDIAN);
         bb.setPosition(0);
+        bb.binary = Binary.getDefaultInstance();
         return bb;
     }
 
@@ -63,6 +66,7 @@ public class DynamicByteBuffer {
         bb.setByteBuffer(ByteBuffer.allocate(2));
         bb.setByteOrder(order);
         bb.setPosition(0);
+        bb.binary = Binary.newInstance(order);
         return bb;
     }
 
