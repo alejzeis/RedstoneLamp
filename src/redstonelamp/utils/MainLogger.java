@@ -15,7 +15,7 @@ public class MainLogger {
 	public void debug(String message) {
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-		if(RedstoneLamp.isDebugMode)
+		if(RedstoneLamp.getServerInstance().isDebugMode())
 			System.out.println(sdf.format(cal.getTime()) + " [DEBUG] " + message);
 	}
 	

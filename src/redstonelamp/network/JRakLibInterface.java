@@ -20,8 +20,9 @@ public class JRakLibInterface implements ServerInstance{
     public JRakLibInterface(Server server){
         this.server = server;
         rakLibLogger = new JRakLibLogger();
-        rakLib = new JRakLibServer(rakLibLogger, 19132, "0.0.0.0"); //TODO: Get this from Server class
+        rakLib = new JRakLibServer(rakLibLogger, server.getBindPort(), server.getBindInterface());
         interface_ = new ServerHandler(rakLib, this);
+        server.getLogger().info("Started server on "+server.getBindInterface()+":"+server.getBindPort() + " implementing MCPE v"+NetworkInfo.MCPE_VERSION+", protocol "+NetworkInfo.MCPE_PROTOCOL);
     }
 
     public void process(){

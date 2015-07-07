@@ -1,24 +1,45 @@
 package redstonelamp;
 
-import java.io.IOException;
+import java.io.*;
+import java.util.Properties;
 
 import redstonelamp.utils.MainLogger;
 
-public class RedstoneLamp {
-	public static MainLogger logger = new MainLogger();
-	public static boolean isDebugMode = false;
+public class RedstoneLamp implements Runnable{
+	private static Server SERVER_INSTANCE;
+	private MainLogger logger = new MainLogger();
 	
 	public static void main(String[] args) {
+		new RedstoneLamp().run();
+	}
+
+	public void run(){
 		try {
-			loadProperties();
+			Properties properties = loadProperties();
+			SERVER_INSTANCE = new Server(properties, logger);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public static void loadProperties() throws IOException {
+	public Properties loadProperties() throws IOException {
 		logger.info("Loading server properties...");
-		//TODO: Properties
+		Properties properties = new Properties();
+		File propFile = new File("server.properties");
+		if(!propFile.exists()){
+			propFile.createNewFile();
+			//Put default values
+			properties.put("interface", "0.0.0.0");
+			properties.put("port", "19132");
+			properties.put("debug", "false");
+			properties.store(new FileWriter(propFile), "RedstoneLamp properties");
+		}
+		properties.load(new FileReader(propFile));
+		return properties;
 	}
+
+	public static Server getServerInstance(){
+		return SERVER_INSTANCE;
+	}
+
 }
