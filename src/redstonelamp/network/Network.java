@@ -1,13 +1,17 @@
 package redstonelamp.network;
 
+import redstonelamp.Player;
 import redstonelamp.Server;
 import redstonelamp.network.packet.BatchPacket;
 import redstonelamp.network.packet.DataPacket;
+import redstonelamp.utils.CompressionUtils;
+import redstonelamp.utils.DynamicByteBuffer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.zip.DataFormatException;
 
 /**
  * Networking class.
@@ -27,12 +31,61 @@ public class Network {
         }
     }
 
+    public void processBatch(BatchPacket bp, Player player) {
+        try{
+            bp.payload = CompressionUtils.zlibInflate(bp.payload);
+            int len = bp.payload.length;
+            int offset = 0;
+            while(offset < len){
+                DataPacket pk = getPacket(bp.payload[offset++]);
+                pk.decode(bp.payload, offset);
+                player.handleDataPacket(pk);
+                offset =+ (pk.getOffset() - offset);
+                if(offset >= bp.payload.length){
+                    return;
+                }
+            }
+        } catch(Exception e){
+            server.getLogger().error("Exception: "+e.getMessage());
+            if(server.isDebugMode()){
+                server.getLogger().debug("Exception while handling BatchPacket " + String.format("%02X ", bp.payload[0]));
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void sendBatches(Player[] players, DataPacket[] packets, NetworkChannel channel){
+        DynamicByteBuffer bb = DynamicByteBuffer.newInstance();
+        for(DataPacket packet : packets){
+            bb.put(packet.encode());
+        }
+
+        BatchPacket bp = new BatchPacket();
+        bp.setChannel(channel);
+        bp.payload = CompressionUtils.zlibDeflate(bb.toArray(), NetworkInfo.COMPRESSION_LEVEL);
+
+        for(Player player : players){
+            if(server.getPlayer(player.getIdentifier()) != null){
+                player.sendDataPacket(bp);
+            }
+        }
+    }
+
     public void registerInterface(NetworkInterface interface_){
         interfaces.add(interface_);
     }
 
     public void removeInterface(NetworkInterface interface_){
         interfaces.remove(interface_);
+    }
+
+    public NetworkInterface getInterface(Class<? extends NetworkInterface> clazz){
+        for(NetworkInterface networkInterface : interfaces){
+            if(networkInterface.getClass().getName().equals(clazz.getName())){
+                return networkInterface;
+            }
+        }
+        return null;
     }
 
     public DataPacket getPacket(byte ID){

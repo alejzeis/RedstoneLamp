@@ -1,12 +1,16 @@
 package redstonelamp.network;
 
+import net.beaconpe.jraklib.JRakLib;
 import net.beaconpe.jraklib.protocol.EncapsulatedPacket;
 import net.beaconpe.jraklib.server.JRakLibServer;
 import net.beaconpe.jraklib.server.ServerHandler;
 import net.beaconpe.jraklib.server.ServerInstance;
 import redstonelamp.Player;
+import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
+import redstonelamp.network.packet.BatchPacket;
 import redstonelamp.network.packet.DataPacket;
+import redstonelamp.network.packet.UnknownDataPacket;
 import redstonelamp.utils.TextFormat;
 
 /**
@@ -32,7 +36,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
     @Override
     public void openSession(String identifier, String address, int port, long clientID) {
         server.getLogger().debug("New session from "+identifier+" with clientID: "+clientID);
-        Player player = new Player(server, identifier, address, port, clientID);
+        Player player = new Player(server, this, identifier, address, port, clientID);
         server.addPlayer(player);
     }
 
@@ -52,11 +56,20 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
                     DataPacket pk = server.getNetwork().getPacket(packet.buffer[0]);
                     if(pk != null){
                         pk.decode(packet.buffer);
-                        server.getPlayer(identifier).handleDataPacket(pk);
+                    } else {
+                        pk = new UnknownDataPacket();
+                        pk.decode(packet.buffer);
                     }
+                    server.getPlayer(identifier).handleDataPacket(pk);
                 }
             } catch(Exception e){
+                if(server.isDebugMode()){
+                    server.getLogger().debug("Exception while processing packet "+String.format("%02X ", packet.buffer[0])+"");
+                    server.getLogger().error("Exception: "+e.getMessage());
+                    e.printStackTrace();
+                }
 
+                interface_.blockAddress(server.getPlayer(identifier).getAddress().getHostString(), 5000);
             }
         }
     }
@@ -82,7 +95,25 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
 
     @Override
     public void sendPacket(Player player, DataPacket packet, boolean needACK, boolean immediate) {
+        if(server.getPlayer(player.getIdentifier()) != null){
+            byte[] buffer = packet.encode();
+            if(!immediate && !needACK && !(packet instanceof BatchPacket) && NetworkInfo.COMPRESSION_LIMIT >= 0 && buffer.length >= NetworkInfo.COMPRESSION_LIMIT){
+                server.getNetwork().sendBatches(new Player[] {player}, new DataPacket[] {packet}, packet.getChannel());
+                return;
+            }
 
+            EncapsulatedPacket pk = new EncapsulatedPacket();
+            pk.buffer = buffer;
+            if(packet.getChannel() != NetworkChannel.CHANNEL_NONE){
+                pk.reliability = 3;
+                pk.orderChannel = packet.getChannel().getAsByte();
+                pk.orderIndex = 0;
+            } else {
+                pk.reliability = 2;
+            }
+
+            interface_.sendEncapsulated(player.getIdentifier(), pk, (byte) ((needACK == true ? JRakLib.FLAG_NEED_ACK : 0) | (immediate == true ? JRakLib.PRIORITY_IMMEDIATE : JRakLib.PRIORITY_NORMAL)));
+        }
     }
 
     @Override
@@ -116,5 +147,9 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
     @Override
     public void emergencyShutdown() {
         interface_.emergencyShutdown();
+    }
+
+    public static JRakLibInterface getInstance(){
+        return (JRakLibInterface) RedstoneLamp.getServerInstance().getNetwork().getInterface(JRakLibInterface.class);
     }
 }
