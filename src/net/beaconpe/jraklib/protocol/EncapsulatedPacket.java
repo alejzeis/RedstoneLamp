@@ -124,7 +124,7 @@ public class EncapsulatedPacket {
         }
 
         if(reliability > 0){
-            if(reliability >= 2 && reliability != 5){
+            if(reliability >= 2 && reliability != 5 && messageIndex != -1){
                 bb.put(Binary.writeLTriad(messageIndex));
             }
             if(reliability <= 4 && reliability != 2){

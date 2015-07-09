@@ -4,6 +4,7 @@ package redstonelamp.utils;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 /**
@@ -144,6 +145,11 @@ public class DynamicByteBuffer {
     public void putLTriad(int t){
         put(binary.writeLTriad(t));
     }
+
+    public void putString(String s){
+        putShort((short) s.getBytes().length);
+        put(s.getBytes());
+    }
     
     public void putChar(char c){
         put(binary.writeChar(c));
@@ -183,6 +189,14 @@ public class DynamicByteBuffer {
     
     public int getLTriad(){
         return binary.readLTriad(get(3));
+    }
+
+    public String getString(){
+        return new String(get(getShort()));
+    }
+
+    public String getString(Charset charset){
+        return new String(get(getShort()), charset);
     }
     
     public char getChar(){

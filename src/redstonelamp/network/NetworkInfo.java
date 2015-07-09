@@ -15,5 +15,7 @@ public class NetworkInfo {
      */
     public static final int MCPE_PROTOCOL = 27;
     public static final byte LOGIN_PACKET = (byte) 0x82;
+    public static final byte PLAY_STATUS_PACKET = (byte) 0x83;
+    public static final byte DISCONNECT_PACKET = (byte) 0x84;
     public static final byte BATCH_PACKET = (byte) 0xb1;
 }

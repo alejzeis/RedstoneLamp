@@ -109,4 +109,8 @@ public class Server implements Runnable{
     public Network getNetwork() {
         return network;
     }
+
+    public List<Player> getOnlinePlayers() {
+        return players;
+    }
 }

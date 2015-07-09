@@ -2,9 +2,7 @@ package redstonelamp.network;
 
 import redstonelamp.Player;
 import redstonelamp.Server;
-import redstonelamp.network.packet.BatchPacket;
-import redstonelamp.network.packet.DataPacket;
-import redstonelamp.network.packet.UnknownDataPacket;
+import redstonelamp.network.packet.*;
 import redstonelamp.utils.CompressionUtils;
 import redstonelamp.utils.DynamicByteBuffer;
 
@@ -12,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.zip.DataFormatException;
 
 /**
  * Networking class.
@@ -53,7 +50,7 @@ public class Network {
         } catch(Exception e){
             server.getLogger().error("Exception: "+e.getMessage());
             if(server.isDebugMode()){
-                server.getLogger().debug("Exception while handling BatchPacket " + String.format("%02X ", bp.payload[0]));
+                server.getLogger().debug("Exception while handling BatchPacket 0x" + String.format("%02X ", bp.payload[0]));
                 e.printStackTrace();
             }
         }
@@ -109,5 +106,7 @@ public class Network {
 
     private void registerPackets(){
         packets.put(BatchPacket.ID, BatchPacket.class);
+        packets.put(LoginPacket.ID, LoginPacket.class);
+        packets.put(DisconnectPacket.ID, DisconnectPacket.class);
     }
 }

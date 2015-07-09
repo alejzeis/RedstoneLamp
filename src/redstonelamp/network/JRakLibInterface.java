@@ -45,7 +45,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
     public void closeSession(String identifier, String reason) {
         server.getLogger().debug("Session "+identifier+" closed: "+reason);
         if(server.getPlayer(identifier) != null){
-            server.removePlayer(server.getPlayer(identifier));
+            server.getPlayer(identifier).close("left the game", reason, true);
         }
     }
 
@@ -65,7 +65,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
                 }
             } catch(Exception e){
                 if(server.isDebugMode()){
-                    server.getLogger().debug("Exception while processing packet "+String.format("%02X ", packet.buffer[0])+"");
+                    server.getLogger().debug("Exception while processing packet 0x"+String.format("%02X ", packet.buffer[0])+"");
                     server.getLogger().error("Exception: "+e.getMessage());
                     e.printStackTrace();
                 }
