@@ -4,6 +4,7 @@ import redstonelamp.Player;
 import redstonelamp.Server;
 import redstonelamp.network.packet.BatchPacket;
 import redstonelamp.network.packet.DataPacket;
+import redstonelamp.network.packet.UnknownDataPacket;
 import redstonelamp.utils.CompressionUtils;
 import redstonelamp.utils.DynamicByteBuffer;
 
@@ -23,6 +24,7 @@ public class Network {
 
     public Network(Server server){
         this.server = server;
+        registerPackets();
     }
 
     public void tick(){
@@ -38,10 +40,13 @@ public class Network {
             int offset = 0;
             while(offset < len){
                 DataPacket pk = getPacket(bp.payload[offset++]);
+                if(pk == null){
+                    pk = new UnknownDataPacket();
+                }
                 pk.decode(bp.payload, offset);
                 player.handleDataPacket(pk);
                 offset =+ (pk.getOffset() - offset);
-                if(offset >= bp.payload.length){
+                if(offset >= bp.payload.length || offset < 0){
                     return;
                 }
             }

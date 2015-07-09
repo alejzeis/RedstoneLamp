@@ -31,6 +31,8 @@ public class Server implements Runnable{
         network = new Network(this);
         network.registerInterface(new JRakLibInterface(this));
 
+        RedstoneLamp.setServerInstance(this);
+
         running = true;
         run();
     }
@@ -42,10 +44,11 @@ public class Server implements Runnable{
             tick();
             long diff = Instant.now().toEpochMilli() - start;
             if(diff < 50){
-                try {
-                    Thread.currentThread().sleep(Instant.now().toEpochMilli() + (50 - diff));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                long until = Instant.now().toEpochMilli() + (50 - diff);
+                while(true) {
+                    if (Instant.now().toEpochMilli() >= until) {
+                        break;
+                    }
                 }
             }
         }

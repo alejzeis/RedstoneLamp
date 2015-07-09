@@ -16,7 +16,7 @@ public class RedstoneLamp implements Runnable{
 	public void run(){
 		try {
 			Properties properties = loadProperties();
-			SERVER_INSTANCE = new Server(properties, logger);
+			new Server(properties, logger);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -38,8 +38,12 @@ public class RedstoneLamp implements Runnable{
 		return properties;
 	}
 
+	protected static void setServerInstance(Server server){
+		RedstoneLamp.SERVER_INSTANCE = server;
+	}
+
 	public static Server getServerInstance(){
-		return SERVER_INSTANCE;
+		return RedstoneLamp.SERVER_INSTANCE;
 	}
 
 }

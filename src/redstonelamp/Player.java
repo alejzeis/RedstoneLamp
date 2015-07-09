@@ -40,9 +40,6 @@ public class Player {
         }
 
         switch (packet.getBuffer()[0]){
-            case NetworkInfo.LOGIN_PACKET:
-                break;
-
             default:
                 if(server.isDebugMode()){
                     server.getLogger().debug("Packet ("+packet.getClass().getName()+") "+String.format("%02X ", packet.getBuffer()[0]));

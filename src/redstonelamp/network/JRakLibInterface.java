@@ -31,6 +31,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
         interface_ = new ServerHandler(rakLib, this);
         server.getLogger().info("Started server on "+server.getBindInterface()+":"+server.getBindPort() + " implementing MCPE v"+NetworkInfo.MCPE_VERSION+", protocol "+NetworkInfo.MCPE_PROTOCOL);
         setName(server.getProperties().getProperty("name", "A RedstoneLamp server"));
+        interface_.sendOption("portChecking", "false");
     }
 
     @Override
@@ -147,9 +148,5 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
     @Override
     public void emergencyShutdown() {
         interface_.emergencyShutdown();
-    }
-
-    public static JRakLibInterface getInstance(){
-        return (JRakLibInterface) RedstoneLamp.getServerInstance().getNetwork().getInterface(JRakLibInterface.class);
     }
 }

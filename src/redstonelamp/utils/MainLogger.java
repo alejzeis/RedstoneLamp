@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import redstonelamp.RedstoneLamp;
+import redstonelamp.Server;
 
 public class MainLogger {
 	public void info(String message) {
@@ -15,8 +16,9 @@ public class MainLogger {
 	public void debug(String message) {
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-		if(RedstoneLamp.getServerInstance().isDebugMode())
+		if(RedstoneLamp.getServerInstance().isDebugMode()) {
 			System.out.println(sdf.format(cal.getTime()) + " [DEBUG] " + message);
+		}
 	}
 	
 	public void warn(String message) {
