@@ -10,6 +10,7 @@ import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
 import redstonelamp.network.packet.BatchPacket;
 import redstonelamp.network.packet.DataPacket;
+import redstonelamp.network.packet.LoginPacket;
 import redstonelamp.network.packet.UnknownDataPacket;
 import redstonelamp.utils.TextFormat;
 
@@ -105,6 +106,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
 
             EncapsulatedPacket pk = new EncapsulatedPacket();
             pk.buffer = buffer;
+            pk.messageIndex = 0;
             if(packet.getChannel() != NetworkChannel.CHANNEL_NONE){
                 pk.reliability = 3;
                 pk.orderChannel = packet.getChannel().getAsByte();

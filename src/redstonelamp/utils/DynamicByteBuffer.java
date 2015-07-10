@@ -51,7 +51,7 @@ public class DynamicByteBuffer {
      */
     public static DynamicByteBuffer newInstance(){
         DynamicByteBuffer bb = new DynamicByteBuffer();
-        bb.setByteBuffer(ByteBuffer.allocate(2));
+        bb.setByteBuffer(ByteBuffer.allocate(0));
         bb.setByteOrder(ByteOrder.BIG_ENDIAN);
         bb.setPosition(0);
         bb.binary = Binary.getDefaultInstance();

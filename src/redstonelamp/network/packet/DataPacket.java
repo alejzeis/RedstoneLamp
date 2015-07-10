@@ -35,7 +35,7 @@ public abstract class DataPacket {
     public final void decode(byte[] buffer){
         this.buffer = buffer;
         DynamicByteBuffer bb = DynamicByteBuffer.newInstance(buffer);
-        bb.getByte(); //PID
+        bb.setPosition(1);
         _decode(bb);
         offset = bb.getPosition();
         bb = null;
@@ -50,7 +50,6 @@ public abstract class DataPacket {
         this.buffer = buffer;
         DynamicByteBuffer bb = DynamicByteBuffer.newInstance(buffer);
         bb.setPosition(offset);
-        bb.getByte(); //PID
         _decode(bb);
         offset = bb.getPosition();
         bb = null;

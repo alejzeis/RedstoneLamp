@@ -29,6 +29,7 @@ public class LoginPacket extends DataPacket{
 
     @Override
     protected void _decode(DynamicByteBuffer bb) {
+        System.out.println(bb.getPosition());
         username = bb.getString();
         protocol1 = bb.getInt();
         protocol2 = bb.getInt();
