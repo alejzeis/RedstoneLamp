@@ -1,6 +1,6 @@
 Although there have not been any commits lately, we are NOT dead!  We are working on a large-scale commit in the background that will fix a lot of issues we were having in development!
 
-# RedstoneLamp	[![Build Status](https://travis-ci.org/RedstoneLamp/RedstoneLamp.svg?branch=new)](https://travis-ci.org/RedstoneLamp/RedstoneLamp)
+# RedstoneLamp	[![Travis branch](https://img.shields.io/travis/RedstoneLamp/RedstoneLamp/new.svg?style=flat-square)]() [![License](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square)](https://tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3))
 MinecraftPE Server Software
 
 
