@@ -30,8 +30,8 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
         rakLibLogger = new JRakLibLogger();
         rakLib = new JRakLibServer(rakLibLogger, server.getBindPort(), server.getBindInterface());
         interface_ = new ServerHandler(rakLib, this);
-        server.getLogger().info("Started server on "+server.getBindInterface()+":"+server.getBindPort() + " implementing MCPE v"+NetworkInfo.MCPE_VERSION+", protocol "+NetworkInfo.MCPE_PROTOCOL);
-        setName(server.getProperties().getProperty("name", "A RedstoneLamp server"));
+        server.getLogger().info("Started server on " + server.getBindInterface() + ":" + server.getBindPort() + " implementing MCPE v" + NetworkInfo.MCPE_VERSION + ", protocol " + NetworkInfo.MCPE_PROTOCOL);
+        setName(server.getProperties().getProperty("name", TextFormat.RED + "Redstone" + TextFormat.YELLOW + "Lamp "+TextFormat.AQUA+"server."));
         interface_.sendOption("portChecking", "false");
     }
 
