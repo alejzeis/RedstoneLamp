@@ -21,6 +21,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
     private Server server;
     private JRakLibLogger rakLibLogger;
     private JRakLibServer rakLib;
+    private JRakLibExceptionHandler exceptionHandler;
     private ServerHandler interface_;
 
     private boolean rakLibCrashed = false;
@@ -29,6 +30,8 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
         this.server = server;
         rakLibLogger = new JRakLibLogger();
         rakLib = new JRakLibServer(rakLibLogger, server.getBindPort(), server.getBindInterface());
+        exceptionHandler = new JRakLibExceptionHandler();
+        rakLib.setUncaughtExceptionHandler(exceptionHandler);
         interface_ = new ServerHandler(rakLib, this);
         server.getLogger().info("Started server on " + server.getBindInterface() + ":" + server.getBindPort() + " implementing MCPE v" + NetworkInfo.MCPE_VERSION + ", protocol " + NetworkInfo.MCPE_PROTOCOL);
         setName(server.getProperties().getProperty("name", TextFormat.RED + "Redstone" + TextFormat.YELLOW + "Lamp "+TextFormat.AQUA+"server."));
@@ -136,9 +139,10 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
         }
 
         if(rakLib.getState() == Thread.State.TERMINATED){ //Check to see if thread crashed.
-            rakLibLogger.emergency("(JRakLibInterface): JRakLib crashed!");
-            rakLib.dumpStack(); //Dump stack trace
+            rakLibLogger.emergency("(JRakLibInterface): JRakLib crashed! "+exceptionHandler.getLastExceptionMessage());
+            exceptionHandler.printLastExceptionTrace();
             rakLibCrashed = true;
+            server.getNetwork().removeInterface(this);
         }
     }
 
