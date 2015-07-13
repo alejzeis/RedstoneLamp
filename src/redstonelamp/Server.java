@@ -26,7 +26,7 @@ public class Server implements Runnable{
         this.logger = logger;
         this.properties = properties;
         debugMode = Boolean.parseBoolean(properties.getProperty("debug", "false"));
-        bindInterface = properties.getProperty("interface", "0.0.0.0");
+        bindInterface = properties.getProperty("server-ip", "0.0.0.0");
         bindPort = Integer.parseInt(properties.getProperty("port", "19132"));
         network = new Network(this);
         network.registerInterface(new JRakLibInterface(this));

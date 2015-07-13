@@ -28,13 +28,16 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
 
     public JRakLibInterface(Server server){
         this.server = server;
+        server.getLogger().info("Starting Minecraft: PE server v" + NetworkInfo.MCPE_VERSION + " (protocol " + NetworkInfo.MCPE_PROTOCOL + ")");
         rakLibLogger = new JRakLibLogger();
         rakLib = new JRakLibServer(rakLibLogger, server.getBindPort(), server.getBindInterface());
         exceptionHandler = new JRakLibExceptionHandler();
         rakLib.setUncaughtExceptionHandler(exceptionHandler);
         interface_ = new ServerHandler(rakLib, this);
-        server.getLogger().info("Started server on " + server.getBindInterface() + ":" + server.getBindPort() + " implementing MCPE v" + NetworkInfo.MCPE_VERSION + ", protocol " + NetworkInfo.MCPE_PROTOCOL);
-        setName(server.getProperties().getProperty("name", TextFormat.RED + "Redstone" + TextFormat.YELLOW + "Lamp "+TextFormat.AQUA+"server."));
+        setName(server.getProperties().getProperty("motd"));
+        server.getLogger().info("Server running on " + server.getBindInterface() + ":" + server.getBindPort());
+        server.getLogger().info("This server is running " + RedstoneLamp.SOFTWARE + " version " + RedstoneLamp.VERSION + " \""+ RedstoneLamp.CODENAME +"\" (API " + RedstoneLamp.API_VERSION + ")");
+        server.getLogger().info(RedstoneLamp.SOFTWARE + " is distributed under the " + RedstoneLamp.LICENSE);
         interface_.sendOption("portChecking", "false");
     }
 
