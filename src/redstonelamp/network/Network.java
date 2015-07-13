@@ -108,5 +108,6 @@ public class Network {
         packets.put(BatchPacket.ID, BatchPacket.class);
         packets.put(LoginPacket.ID, LoginPacket.class);
         packets.put(DisconnectPacket.ID, DisconnectPacket.class);
+        packets.put(PlayStatusPacket.ID, PlayStatusPacket.class);
     }
 }
