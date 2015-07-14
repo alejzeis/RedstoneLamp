@@ -31,11 +31,18 @@ public class Server implements Runnable{
         debugMode = Boolean.parseBoolean(properties.getProperty("debug", "false"));
         bindInterface = properties.getProperty("server-ip", "0.0.0.0");
         bindPort = Integer.parseInt(properties.getProperty("port", "19132"));
+
+        logger.info("This server is running " + RedstoneLamp.SOFTWARE + " version " + RedstoneLamp.VERSION + " \"" + RedstoneLamp.CODENAME + "\" (API " + RedstoneLamp.API_VERSION + ")");
+        logger.info(RedstoneLamp.SOFTWARE + " is distributed under the " + RedstoneLamp.LICENSE);
+        
         network = new Network(this);
         network.registerInterface(new JRakLibInterface(this));
 
         RedstoneLamp.setServerInstance(this);
         pluginManager = new PluginManager();
+
+        pluginManager.getPluginLoader().loadPlugins();
+        logger.info("Done! Type \"help\" or \"?\" for help.");
         
         running = true;
         run();
