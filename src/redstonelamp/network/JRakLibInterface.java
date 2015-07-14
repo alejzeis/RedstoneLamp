@@ -39,6 +39,8 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
         server.getLogger().info("This server is running " + RedstoneLamp.SOFTWARE + " version " + RedstoneLamp.VERSION + " \""+ RedstoneLamp.CODENAME +"\" (API " + RedstoneLamp.API_VERSION + ")");
         server.getLogger().info(RedstoneLamp.SOFTWARE + " is distributed under the " + RedstoneLamp.LICENSE);
         interface_.sendOption("portChecking", "false");
+        server.getPluginManager().getPluginLoader().loadPlugins();
+        server.getLogger().info("Done! Type \"help\" or \"?\" for help.");
     }
 
     @Override

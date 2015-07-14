@@ -2,6 +2,7 @@ package redstonelamp;
 
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.Network;
+import redstonelamp.plugin.PluginManager;
 import redstonelamp.utils.MainLogger;
 
 import java.time.Instant;
@@ -21,6 +22,8 @@ public class Server implements Runnable{
 
     private List<Player> players = new ArrayList<>();
     private Network network;
+    
+    private PluginManager pluginManager;
 
     public Server(Properties properties, MainLogger logger){
         this.logger = logger;
@@ -32,7 +35,8 @@ public class Server implements Runnable{
         network.registerInterface(new JRakLibInterface(this));
 
         RedstoneLamp.setServerInstance(this);
-
+        pluginManager = new PluginManager();
+        
         running = true;
         run();
     }
@@ -112,5 +116,9 @@ public class Server implements Runnable{
 
     public List<Player> getOnlinePlayers() {
         return players;
+    }
+    
+    public PluginManager getPluginManager() {
+    	return pluginManager;
     }
 }
