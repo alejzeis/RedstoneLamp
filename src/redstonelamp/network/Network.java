@@ -73,6 +73,12 @@ public class Network {
         }
     }
 
+    public void setName(String name){
+        for(NetworkInterface networkInterface : interfaces){
+            networkInterface.setName(name);
+        }
+    }
+
     public void registerInterface(NetworkInterface interface_){
         interfaces.add(interface_);
     }

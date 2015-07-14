@@ -36,8 +36,6 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
         rakLib.setUncaughtExceptionHandler(exceptionHandler);
         interface_ = new ServerHandler(rakLib, this);
 
-        setName(server.getProperties().getProperty("motd"));
-
         server.getLogger().info("Server running on " + server.getBindInterface() + ":" + server.getBindPort());
 
         interface_.sendOption("portChecking", "false");
@@ -134,7 +132,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
 
     @Override
     public void setName(String name) {
-        interface_.sendOption("name", "MCPE;"+name+";"+NetworkInfo.MCPE_PROTOCOL+";"+NetworkInfo.MCPE_VERSION+";"+"0;20"); //TODO: Max and online players
+        interface_.sendOption("name", "MCPE;"+name+";"+NetworkInfo.MCPE_PROTOCOL+";"+NetworkInfo.MCPE_VERSION+";"+server.getOnlinePlayers().size()+";"+server.getMaxPlayers()); //TODO: Max and online players
     }
 
     @Override

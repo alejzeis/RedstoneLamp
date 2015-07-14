@@ -94,7 +94,7 @@ public class Player {
                 skin = lp.skin;
 
                 for(Player player : server.getOnlinePlayers()){
-                    if(player.getName().equalsIgnoreCase(username)){
+                    if(player.getName().equalsIgnoreCase(username) && player.isConnected() && player.isLoggedIn()){
                         player.kick("logged in from another location", false);
                         return;
                     }
@@ -174,6 +174,10 @@ public class Player {
 
     public boolean isConnected() {
         return connected;
+    }
+
+    public boolean isLoggedIn(){
+        return loggedIn;
     }
 
     public String getName() {

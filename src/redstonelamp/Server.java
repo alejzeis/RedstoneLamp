@@ -4,6 +4,7 @@ import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.Network;
 import redstonelamp.plugin.PluginManager;
 import redstonelamp.utils.MainLogger;
+import redstonelamp.utils.TextFormat;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -12,6 +13,9 @@ import java.util.Properties;
 
 public class Server implements Runnable{
     private boolean debugMode = false;
+    private String motd;
+    private int maxPlayers;
+
     private MainLogger logger;
     private Properties properties;
 
@@ -28,15 +32,19 @@ public class Server implements Runnable{
     public Server(Properties properties, MainLogger logger){
         this.logger = logger;
         this.properties = properties;
+
         debugMode = Boolean.parseBoolean(properties.getProperty("debug", "false"));
         bindInterface = properties.getProperty("server-ip", "0.0.0.0");
         bindPort = Integer.parseInt(properties.getProperty("port", "19132"));
+        motd = properties.getProperty("motd", TextFormat.AQUA+"A "+TextFormat.DARK_RED+"Redstone"+TextFormat.YELLOW+"Lamp "+TextFormat.AQUA+"Server.");
+        maxPlayers = Integer.parseInt(properties.getProperty("maxPlayers", "20"));
 
         logger.info("This server is running " + RedstoneLamp.SOFTWARE + " version " + RedstoneLamp.VERSION + " \"" + RedstoneLamp.CODENAME + "\" (API " + RedstoneLamp.API_VERSION + ")");
         logger.info(RedstoneLamp.SOFTWARE + " is distributed under the " + RedstoneLamp.LICENSE);
         
         network = new Network(this);
         network.registerInterface(new JRakLibInterface(this));
+        network.setName(motd);
 
         RedstoneLamp.setServerInstance(this);
         pluginManager = new PluginManager();
@@ -127,5 +135,13 @@ public class Server implements Runnable{
     
     public PluginManager getPluginManager() {
     	return pluginManager;
+    }
+
+    public String getMotd() {
+        return motd;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
     }
 }
