@@ -1,5 +1,6 @@
 package redstonelamp;
 
+import redstonelamp.entity.Entity;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.NetworkChannel;
 import redstonelamp.network.NetworkInfo;
@@ -12,7 +13,7 @@ import java.util.UUID;
 /**
  * Represents a player, playing on the server.
  */
-public class Player {
+public class Player extends Entity{
     private Server server;
 
     private String username;
