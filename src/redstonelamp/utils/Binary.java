@@ -5,9 +5,7 @@ import redstonelamp.entity.EntityMetadata;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Binary class for reading/writing values. USE INSTEAD OF JRAKLIB's BINARY!
@@ -64,6 +62,10 @@ public class Binary {
 
     public byte[] writeChar(char c) {
         return ByteBuffer.allocate(2).order(order).putChar(c).array();
+    }
+
+    public byte[] writeMetadata(EntityMetadata metadata){
+        return writeMetadata(metadata.getArray());
     }
 
     public byte[] writeMetadata(Map<Byte, List<Object>> array){
@@ -171,6 +173,10 @@ public class Binary {
     }
 
     public EntityMetadata readMetadata(byte[] bytes){
+        return readMetadata(bytes, false);
+    }
+
+    public EntityMetadata readMetadata(byte[] bytes, boolean types){
         ByteBuffer bb = ByteBuffer.wrap(bytes);
         bb.order(order);
         EntityMetadata metadata = new EntityMetadata();
@@ -179,7 +185,7 @@ public class Binary {
         while(b != 127){
             byte bottom = (byte) (b & 0x1F);
             byte type = (byte) (b >> 5);
-            Object r;
+            Object r = null;
             switch(type){
                 case 0:
                     r = bb.get();
@@ -209,8 +215,38 @@ public class Binary {
                     bb.order(order);
                     break;
 
+                case 5:
+                    bb.order(ByteOrder.LITTLE_ENDIAN);
+                    List<Object> list = new ArrayList<>();
+                    list.add(bb.getShort());
+                    list.add(bb.get());
+                    list.add(bb.getShort());
+                    bb.order(order);
+                    r = list;
+                    break;
 
+                case 6:
+                    bb.order(ByteOrder.LITTLE_ENDIAN);
+                    List<Integer> list2 = new ArrayList<>();
+                    for(int i = 0; i < 3; i++){
+                        list2.add(bb.getInt());
+                    }
+                    bb.order(order);
+                    r = list2;
+                    break;
+
+                case 8:
+                    bb.order(order);
+                    r = bb.getLong();
+                    bb.order(order);
+                    break;
             }
+            if(types){
+                metadata.set(bottom, Arrays.asList(new Object[] {r, type}));
+            } else {
+                metadata.set(bottom, Arrays.asList(new Object[] {r}));
+            }
+            b = bb.get();
         }
 
         return metadata;
