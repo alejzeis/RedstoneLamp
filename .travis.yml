@@ -1,6 +1,23 @@
 language: java
 
+sudo: required
+
+before_install:
+  - echo "Directory Listing:"
+  - dir
+  - echo "===== Installing Documentation Stuff ====="
+  - sudo apt-get install python-software-properties 
+  - sudo apt-add-repository -y ppa:libreoffice/libreoffice-4-2
+  - sudo apt-get update
+  - sudo apt-get install doxygen
+  - echo "===== Done ====="
+
 script: ant compile
+
+after_success:
+  - echo "===== Running Doxygen ====="
+  - doxygen DOXYFILE
+  - echo "===== Generated Documentation ====="
 
 jdk:
   - oraclejdk8
