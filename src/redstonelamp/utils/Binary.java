@@ -172,6 +172,8 @@ public class Binary {
         return ByteBuffer.wrap(bytes).order(order).getChar();
     }
 
+
+
     public EntityMetadata readMetadata(byte[] bytes){
         return readMetadata(bytes, false);
     }

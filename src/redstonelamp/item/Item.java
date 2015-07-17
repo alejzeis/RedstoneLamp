@@ -13,4 +13,24 @@ public class Item {
         this.metadata = metadata;
         this.count = count;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public short getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(short metadata) {
+        this.metadata = metadata;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
 }

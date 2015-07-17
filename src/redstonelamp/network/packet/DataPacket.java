@@ -1,5 +1,6 @@
 package redstonelamp.network.packet;
 
+import redstonelamp.item.Item;
 import redstonelamp.network.NetworkChannel;
 import redstonelamp.utils.DynamicByteBuffer;
 
@@ -57,6 +58,19 @@ public abstract class DataPacket {
 
     protected abstract void _encode(DynamicByteBuffer bb);
     protected abstract void _decode(DynamicByteBuffer bb);
+
+    public void putSlot(DynamicByteBuffer bb, Item item){
+        bb.putShort((short) item.getId());
+        bb.putByte((byte) item.getCount());
+        bb.putShort(item.getMetadata());
+    }
+
+    public Item getSlot(DynamicByteBuffer bb){
+        short id = bb.getShort();
+        byte count = bb.getByte();
+        short meta = bb.getShort();
+        return new Item(id, meta, count);
+    }
 
     public NetworkChannel getChannel() {
         return channel;

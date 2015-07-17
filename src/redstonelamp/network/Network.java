@@ -112,8 +112,16 @@ public class Network {
 
     private void registerPackets(){
         packets.put(BatchPacket.ID, BatchPacket.class);
-        packets.put(LoginPacket.ID, LoginPacket.class);
+        packets.put(ContainerSetContentPacket.ID, ContainerSetContentPacket.class);
         packets.put(DisconnectPacket.ID, DisconnectPacket.class);
+        packets.put(LoginPacket.ID, LoginPacket.class);
         packets.put(PlayStatusPacket.ID, PlayStatusPacket.class);
+        packets.put(SetDifficultyPacket.ID, SetDifficultyPacket.class);
+        packets.put(SetEntityDataPacket.ID, SetEntityDataPacket.class);
+        packets.put(SetEntityMotionPacket.ID, SetEntityMotionPacket.class);
+        packets.put(SetHealthPacket.ID, SetHealthPacket.class);
+        packets.put(SetSpawnPositionPacket.ID, SetSpawnPositionPacket.class);
+        packets.put(SetTimePacket.ID, SetTimePacket.class);
+        packets.put(StartGamePacket.ID, StartGamePacket.class);
     }
 }
