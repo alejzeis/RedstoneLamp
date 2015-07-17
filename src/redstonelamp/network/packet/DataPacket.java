@@ -59,13 +59,13 @@ public abstract class DataPacket {
     protected abstract void _encode(DynamicByteBuffer bb);
     protected abstract void _decode(DynamicByteBuffer bb);
 
-    public void putSlot(DynamicByteBuffer bb, Item item){
+    protected void putSlot(DynamicByteBuffer bb, Item item){
         bb.putShort((short) item.getId());
         bb.putByte((byte) item.getCount());
         bb.putShort(item.getMetadata());
     }
 
-    public Item getSlot(DynamicByteBuffer bb){
+    protected Item getSlot(DynamicByteBuffer bb){
         short id = bb.getShort();
         byte count = bb.getByte();
         short meta = bb.getShort();

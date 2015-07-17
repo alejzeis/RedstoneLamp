@@ -1,6 +1,7 @@
 package redstonelamp;
 
 import redstonelamp.entity.Entity;
+import redstonelamp.item.Item;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.NetworkChannel;
 import redstonelamp.network.NetworkInfo;
@@ -8,6 +9,7 @@ import redstonelamp.network.packet.*;
 import redstonelamp.utils.TextFormat;
 
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -106,9 +108,51 @@ public class Player extends Entity{
                 psp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
                 sendDataPacket(psp);
 
-                //TODO: Send Startgame, chunks, time, etc.
+                StartGamePacket sgp = new StartGamePacket();
+                sgp.seed = -1;
+                sgp.x = 0f; //Dummy positions
+                sgp.y = 64f;
+                sgp.z = 0f;
+                sgp.spawnX = 0;
+                sgp.spawnY = 64;
+                sgp.spawnZ = 0;
+                sgp.generator = 1;
+                sgp.gamemode = 1; //CREATIVE
+                sgp.eid = 0; //Player EntityID is always 0
+                sgp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+                sendDataPacket(sgp);
+
+                SetTimePacket stp = new SetTimePacket();
+                stp.time = 12000;
+                stp.started = true;
+                stp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+                sendDataPacket(stp);
+
+                SetSpawnPositionPacket sspp = new SetSpawnPositionPacket();
+                sspp.x = 0;
+                sspp.y = 64;
+                sspp.z = 0;
+                sspp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+                sendDataPacket(sspp);
+
+                SetHealthPacket shp = new SetHealthPacket();
+                shp.health = 20;
+                shp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+                sendDataPacket(shp);
+
+                SetDifficultyPacket sdp = new SetDifficultyPacket();
+                sdp.difficulty = 1;
+                sdp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+                sendDataPacket(sdp);
 
                 server.getLogger().info(username+" ["+identifier+"] logged in with entity id 0 at [x: 0, y: 64, z: 0]"); //TODO: Real info here.
+
+                ContainerSetContentPacket cscp = new ContainerSetContentPacket();
+                cscp.windowId = ContainerSetContentPacket.SPECIAL_CREATIVE;
+                cscp.slots = Arrays.asList(new Item[] {new Item(1, (short) 0, 4)});
+                cscp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+                sendDataPacket(cscp);
+
                 break;
         }
     }
