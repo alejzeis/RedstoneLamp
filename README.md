@@ -28,9 +28,13 @@ Get Plugins - http://forums.RedstoneLamp.net/resources/
 
 	- [ ] Plugin Loading
 	
-		- [ ] Java File Loading
+		- [x] JAR File Loading
 		- [ ] JavaScript File Loading
-		- [ ] JAR File Loading
 	- [ ] Plugin API
+	
+		- [ ] PluginBase API
+		- [ ] Server API
+		- [ ] Player API
+		- [ ] Item/Block API
 
 **Please read the CONTRIBUTING.md before making Pull Requests**
