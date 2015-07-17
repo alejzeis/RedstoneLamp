@@ -40,9 +40,9 @@ public class PluginLoader {
 	}
 	
 	private void loadJarPlugin(File plugin) {
-		String name = FilenameUtils.removeExtension(plugin.getName());;
+		String name = FilenameUtils.removeExtension(plugin.getName());
 		try {
-			RedstoneLamp.getServerInstance().getLogger().warning("Loading plugin \"" + name + "\"...");
+			RedstoneLamp.getServerInstance().getLogger().info("Loading plugin \"" + name + "\"...");
 			Policy.setPolicy(new PluginPolicy());
 			System.setSecurityManager(new SecurityManager());
 			
@@ -52,15 +52,17 @@ public class PluginLoader {
 		} catch(MalformedURLException e) {
 			e.printStackTrace();
 			RedstoneLamp.getServerInstance().getLogger().error("Failed to load plugin \"" + name + "\": MalformedURL");
-		} catch (InstantiationException e) {
+		} catch(InstantiationException e) {
 			e.printStackTrace();
 			RedstoneLamp.getServerInstance().getLogger().error("Failed to load plugin \"" + name + "\": Instantiation");
-		} catch (IllegalAccessException e) {
+		} catch(IllegalAccessException e) {
 			e.printStackTrace();
 			RedstoneLamp.getServerInstance().getLogger().error("Failed to load plugin \"" + name + "\": IllegalAccess");
-		} catch (ClassNotFoundException e) {
+		} catch(ClassNotFoundException e) {
 			e.printStackTrace();
 			RedstoneLamp.getServerInstance().getLogger().error("Failed to load plugin \"" + name + "\": ClassNotFound");
+		} catch(ClassCastException e) {
+			RedstoneLamp.getServerInstance().getLogger().error("Failed to load plugin \"" + name + "\": Plugins must extend PluginBase");
 		}
 	}
 	
