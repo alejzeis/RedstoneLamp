@@ -52,7 +52,12 @@ public class Player extends Entity{
         }
 
         switch (packet.getBuffer()[0]){
+
             default:
+                if(packet instanceof UnknownDataPacket && server.isDebugMode()){
+                    server.getLogger().debug("Unknown Packet: 0x"+String.format("%02X", packet.getBuffer()[0]));
+                    break;
+                }
                 if(server.isDebugMode()){
                     server.getLogger().debug("Packet ("+packet.getClass().getName()+") 0x"+String.format("%02X ", packet.getBuffer()[0]));
                 }
