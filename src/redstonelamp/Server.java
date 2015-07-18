@@ -54,6 +54,7 @@ public class Server implements Runnable{
         pluginManager = new PluginManager();
 
         pluginManager.getPluginLoader().loadPlugins();
+        pluginManager.getPluginLoader().enablePlugins();
         logger.info("Done! Type \"help\" or \"?\" for help.");
         
         running = true;
@@ -150,6 +151,11 @@ public class Server implements Runnable{
 
     public int getMaxPlayers() {
         return maxPlayers;
+    }
+    
+    public void stop() {
+    	pluginManager.getPluginLoader().disablePlugins();
+    	System.exit(1);
     }
 
     public Level getMainLevel(){
