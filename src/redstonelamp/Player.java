@@ -2,6 +2,7 @@ package redstonelamp;
 
 import redstonelamp.entity.Entity;
 import redstonelamp.item.Item;
+import redstonelamp.level.Location;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.NetworkChannel;
 import redstonelamp.network.NetworkInfo;
@@ -108,6 +109,8 @@ public class Player extends Entity{
                     }
                 }
 
+                setLocation(new Location(0, 64, 0, null));
+
                 PlayStatusPacket psp = new PlayStatusPacket();
                 psp.status = PlayStatusPacket.Status.LOGIN_SUCCESS;
                 psp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
@@ -115,12 +118,12 @@ public class Player extends Entity{
 
                 StartGamePacket sgp = new StartGamePacket();
                 sgp.seed = -1;
-                sgp.x = 0f; //Dummy positions
-                sgp.y = 64f;
-                sgp.z = 0f;
-                sgp.spawnX = 0;
-                sgp.spawnY = 64;
-                sgp.spawnZ = 0;
+                sgp.x = (float) getLocation().getX(); //Dummy positions
+                sgp.y = (float) getLocation().getY();
+                sgp.z = (float) getLocation().getZ();
+                sgp.spawnX = (int) getLocation().getX();
+                sgp.spawnY = (int) getLocation().getY();
+                sgp.spawnZ = (int) getLocation().getZ();
                 sgp.generator = 1;
                 sgp.gamemode = 1; //CREATIVE
                 sgp.eid = 0; //Player EntityID is always 0
@@ -134,9 +137,9 @@ public class Player extends Entity{
                 sendDataPacket(stp);
 
                 SetSpawnPositionPacket sspp = new SetSpawnPositionPacket();
-                sspp.x = 0;
-                sspp.y = 64;
-                sspp.z = 0;
+                sspp.x = (int) getLocation().getX();
+                sspp.y = (byte) getLocation().getY();
+                sspp.z = (int) getLocation().getZ();
                 sspp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
                 sendDataPacket(sspp);
 
@@ -150,13 +153,15 @@ public class Player extends Entity{
                 sdp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
                 sendDataPacket(sdp);
 
-                server.getLogger().info(username+" ["+identifier+"] logged in with entity id 0 at [x: 0, y: 64, z: 0]"); //TODO: Real info here.
+                server.getLogger().info(username+" ["+identifier+"] logged in with entity id 0 at [x: "+Math.round(getLocation().getX())+", y: "+Math.round(getLocation().getY())+", z: "+Math.round(getLocation().getZ())+"]"); //TODO: Real info here.
 
                 ContainerSetContentPacket cscp = new ContainerSetContentPacket();
                 cscp.windowId = ContainerSetContentPacket.SPECIAL_CREATIVE;
                 cscp.slots = Arrays.asList(new Item[] {new Item(1, (short) 0, 4)});
                 cscp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
                 sendDataPacket(cscp);
+
+                server.getMainLevel().queueLoginChunks(this);
 
                 break;
         }

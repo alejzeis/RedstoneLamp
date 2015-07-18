@@ -1,5 +1,6 @@
 package redstonelamp;
 
+import redstonelamp.level.Level;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.Network;
 import redstonelamp.plugin.PluginManager;
@@ -26,6 +27,7 @@ public class Server implements Runnable{
 
     private List<Player> players = new ArrayList<>();
     private Network network;
+    private Level mainLevel;
     
     private PluginManager pluginManager;
 
@@ -41,6 +43,8 @@ public class Server implements Runnable{
 
         logger.info("This server is running " + RedstoneLamp.SOFTWARE + " version " + RedstoneLamp.VERSION + " \"" + RedstoneLamp.CODENAME + "\" (API " + RedstoneLamp.API_VERSION + ")");
         logger.info(RedstoneLamp.SOFTWARE + " is distributed under the " + RedstoneLamp.LICENSE);
+
+        mainLevel = new Level(this);
         
         network = new Network(this);
         network.registerInterface(new JRakLibInterface(this));
@@ -69,6 +73,8 @@ public class Server implements Runnable{
                         break;
                     }
                 }
+            } else {
+                logger.warning(diff+">50 Did the system time change, or is the server overloaded?");
             }
         }
     }
@@ -78,6 +84,7 @@ public class Server implements Runnable{
      */
     private void tick() {
         network.tick();
+        mainLevel.tick();
     }
 
     public void addPlayer(Player player){
@@ -143,5 +150,9 @@ public class Server implements Runnable{
 
     public int getMaxPlayers() {
         return maxPlayers;
+    }
+
+    public Level getMainLevel(){
+        return mainLevel;
     }
 }

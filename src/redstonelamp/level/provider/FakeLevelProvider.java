@@ -14,8 +14,15 @@ public class FakeLevelProvider implements LevelProvider{
         bb.put(new byte[(16 * 16 * 128) / 2]); //Half-Byte block metadata
         bb.put(new byte[(16 * 16 * 128) / 2]); //Half-Byte skylight
         bb.put(new byte[(16 * 16 * 128) / 2]); //Half-Byte blocklight
-        bb.put(new byte[256]); //Heightmap
-        bb.put(new byte[1024]); //BiomeColors
+        for(int i = 0; i < 256; i++){
+            bb.putByte((byte) 0xFF);
+        }
+        for(int i = 0; i < 256; i++){
+            bb.putByte((byte) 0x01);
+            bb.putByte((byte) 0x85);
+            bb.putByte((byte) 0xB2);
+            bb.putByte((byte) 0x4A);
+        }
         return bb.toArray();
     }
 }
