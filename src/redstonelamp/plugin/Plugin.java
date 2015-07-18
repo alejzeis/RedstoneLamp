@@ -1,5 +1,7 @@
 package redstonelamp.plugin;
 
+import java.io.File;
+
 import redstonelamp.Server;
 import redstonelamp.utils.MainLogger;
 
@@ -13,4 +15,6 @@ public interface Plugin {
 	public Server getServer();
 	
 	public MainLogger getLogger();
+	
+	public File getDataFolder();
 }
