@@ -39,6 +39,26 @@ public class PluginLoader {
 		return this.dir;
 	}
 	
+	/**
+	 * INTERNAL METHOD!
+	 */
+	public void enablePlugins() {
+		for(Object o : RedstoneLamp.getServerInstance().getPluginManager().getPluginArray()) {
+			PluginBase plugin = (PluginBase) o;
+			plugin.onEnable();
+		}
+	}
+	
+	/**
+	 * INTERNAL METHOD!
+	 */
+	public void disablePlugins() {
+		for(Object o : RedstoneLamp.getServerInstance().getPluginManager().getPluginArray()) {
+			PluginBase plugin = (PluginBase) o;
+			plugin.onDisable();
+		}
+	}
+	
 	private void loadJarPlugin(File plugin) {
 		String name = FilenameUtils.removeExtension(plugin.getName());
 		try {
@@ -48,6 +68,7 @@ public class PluginLoader {
 			
 			ClassLoader loader = URLClassLoader.newInstance(new URL[] {plugin.toURL()});
 			PluginBase redstonelampPlugin = (PluginBase) loader.loadClass(name).newInstance();
+			RedstoneLamp.getServerInstance().getPluginManager().getPluginArray().add(redstonelampPlugin);
 			redstonelampPlugin.onLoad();
 		} catch(MalformedURLException e) {
 			e.printStackTrace();
