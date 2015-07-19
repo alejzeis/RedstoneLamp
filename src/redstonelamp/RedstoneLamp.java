@@ -3,6 +3,7 @@ package redstonelamp;
 import java.io.*;
 import java.util.Properties;
 
+import redstonelamp.cmd.defaults.Stop;
 import redstonelamp.utils.MainLogger;
 
 public class RedstoneLamp implements Runnable{
@@ -73,4 +74,7 @@ public class RedstoneLamp implements Runnable{
 		return RedstoneLamp.SERVER_INSTANCE;
 	}
 
+	public static void registerDefaultCommands() {
+		getServerInstance().getCommandManager().registerCommand("stop", "Stops the server", new Stop());
+	}
 }

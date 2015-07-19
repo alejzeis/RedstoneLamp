@@ -66,6 +66,7 @@ public class Server implements Runnable{
 
         pluginManager.getPluginLoader().loadPlugins();
         pluginManager.getPluginLoader().enablePlugins();
+        RedstoneLamp.registerDefaultCommands();
         logger.info("Done! Type \"help\" or \"?\" for help.");
         cli = new BufferedReader(new InputStreamReader(System.in));
         
@@ -93,7 +94,7 @@ public class Server implements Runnable{
             try {
 				line = cli.readLine();
 				if(line != null) {
-					getCommandManager().getCommandExecutor().executeCommand(line);
+					getCommandManager().getCommandExecutor().executeCommand(line, "Console");
 				}
 			} catch (IOException e) {}
         }
@@ -261,11 +262,15 @@ public class Server implements Runnable{
      * Stops the server
      */
     public void stop() {
-    	pluginManager.getPluginLoader().disablePlugins();
     	try {
     		if(cli instanceof BufferedReader)
     			cli.close();
 		} catch (IOException e) {}
+		for(Player p : getOnlinePlayers()) {
+			p.kick("Server closed.", false);
+		}
+    	pluginManager.getPluginLoader().disablePlugins();
+    	//TODO: Safely close server to avoid RakLib crash
     	System.exit(1);
     }
 }

@@ -302,4 +302,13 @@ public class Player extends Entity{
     public void sendMessage(String message) {
     	//TODO: Send a message to the player
     }
+    
+    /**
+     * Returns true if the player is an Operator
+     * 
+     * @return boolean
+     */
+	public boolean isOp() {
+		return false;
+	}
 }
