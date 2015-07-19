@@ -10,7 +10,11 @@ public interface Plugin {
 	
 	public void onEnable();
 	
+	public boolean isEnabled(String plugin);
+	
 	public void onDisable();
+	
+	public boolean isDisabled(String plugin);
 	
 	public Server getServer();
 	

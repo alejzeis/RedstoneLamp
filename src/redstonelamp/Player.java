@@ -183,6 +183,12 @@ public class Player extends Entity{
         rakLibInterface.sendPacket(this, packet, false, false);
     }
 
+    /**
+     * Kicks the player from the server
+     * 
+     * @param String
+     * @param boolean
+     */
     public void kick(String reason, boolean admin){
         String message;
         if(admin){
@@ -194,10 +200,11 @@ public class Player extends Entity{
     }
 
     /**
-     * Internal Method, please use <code>Player.kick</code> instead.
-     * @param message
-     * @param reason
-     * @param notifyClient
+     * INTERNAL METHOD, please use <code>Player.kick</code> instead.
+     * 
+     * @param String
+     * @param String
+     * @param boolean
      */
     public void close(String message, String reason, boolean notifyClient){
         if(connected){
@@ -219,23 +226,66 @@ public class Player extends Entity{
         }
     }
 
+    /**
+     * Returns the players identifier
+     * 
+     * @return String
+     */
     public String getIdentifier() {
         return identifier;
     }
 
+    /**
+     * Returns the players IP Address
+     * 
+     * @return InetSocketAddress
+     */
     public InetSocketAddress getAddress() {
         return address;
     }
 
+    /**
+     * Returns true if the player is online
+     * 
+     * @return boolean
+     */
     public boolean isConnected() {
         return connected;
     }
 
+    /**
+     * Returns true if the player is logged in
+     * 
+     * @return boolean
+     */
     public boolean isLoggedIn(){
         return loggedIn;
     }
 
+    /**
+     * Returns the players username
+     * 
+     * @return String
+     */
     public String getName() {
         return username;
+    }
+    
+    /**
+     * Returns the players skin as a String
+     * 
+     * @return String
+     */
+    public String getSkin() {
+    	return skin;
+    }
+    
+    /**
+     * Returns the players UUID
+     * 
+     * @return UUID
+     */
+    public UUID getUUID() {
+    	return uuid;
     }
 }

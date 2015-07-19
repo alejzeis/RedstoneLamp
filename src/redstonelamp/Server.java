@@ -5,7 +5,6 @@ import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.Network;
 import redstonelamp.plugin.PluginManager;
 import redstonelamp.utils.MainLogger;
-import redstonelamp.utils.TextFormat;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -88,12 +87,23 @@ public class Server implements Runnable{
         mainLevel.tick();
     }
 
+    /**
+     * Adds a player to the server
+     * 
+     * @param Player
+     */
     public void addPlayer(Player player){
         synchronized (players){
             players.add(player);
         }
     }
 
+    /**
+     * Gets a player from the server
+     * 
+     * @param String
+     * @return Player
+     */
     public Player getPlayer(String identifier){
         synchronized (players){
             for(Player player : players){
@@ -113,52 +123,110 @@ public class Server implements Runnable{
         players.remove(player);
     }
 
+    /**
+     * Returns the server.properties data
+     * 
+     * @return Properties
+     */
     public Properties getProperties() {
         return properties;
     }
 
+    /**
+     * Returns the server logger
+     * 
+     * @return MainLogger
+     */
     public MainLogger getLogger() {
         return logger;
     }
 
+    /**
+     * Returns the servers Bind Interface
+     * 
+     * @return String
+     */
     public String getBindInterface() {
         return bindInterface;
     }
 
+    /**
+     * Returns the server port
+     * 
+     * @return int
+     */
     public int getBindPort() {
         return bindPort;
     }
 
+    /**
+     * Returns true if the server is in DEBUG Mode
+     * 
+     * @return boolean
+     */
     public boolean isDebugMode() {
         return debugMode;
     }
 
+    /**
+     * Returns the servers Network
+     * 
+     * @return Network
+     */
     public Network getNetwork() {
         return network;
     }
 
+    /**
+     * Returns a List array of all online players
+     * 
+     * @return List<Player>
+     */
     public List<Player> getOnlinePlayers() {
         return players;
     }
     
+    /**
+     * Returns the plugin manager
+     * 
+     * @return PluginManager
+     */
     public PluginManager getPluginManager() {
     	return pluginManager;
     }
 
+    /**
+     * Returns the servers MOTD
+     * 
+     * @return String
+     */
     public String getMotd() {
         return motd;
     }
 
+    /**
+     * Returns the max number of players that can join
+     * 
+     * @return int
+     */
     public int getMaxPlayers() {
         return maxPlayers;
     }
+
+    /**
+     * Returns the default server level
+     * 
+     * @return Level
+     */
+    public Level getMainLevel(){
+        return mainLevel;
+    }
     
+    /**
+     * Stops the server
+     */
     public void stop() {
     	pluginManager.getPluginLoader().disablePlugins();
     	System.exit(1);
-    }
-
-    public Level getMainLevel(){
-        return mainLevel;
     }
 }

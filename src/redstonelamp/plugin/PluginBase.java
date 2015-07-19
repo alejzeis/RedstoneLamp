@@ -13,7 +13,15 @@ public class PluginBase implements Plugin {
 	
 	public void onEnable() {}
 	
+	public boolean isEnabled(String plugin) {
+		return this.getServer().getPluginManager().getPluginArray().toString().contains(plugin);
+	}
+	
 	public void onDisable() {}
+	
+	public boolean isDisabled(String plugin) {
+		return !(this.getServer().getPluginManager().getPluginArray().toString().contains(plugin));
+	}
 	
 	public Server getServer() {
 		return RedstoneLamp.getServerInstance();
