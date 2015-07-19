@@ -30,7 +30,7 @@ public class PluginLoader {
 					loadJSPlugin(plugin);
 				//TODO: Other types of plugins
 				else
-					RedstoneLamp.getServerInstance().getLogger().error("Failed to verify plugin type for \"" + name + "\"");
+					RedstoneLamp.getServerInstance().getLogger().fatal("Failed to verify plugin type for \"" + name + "\"");
 			}
 		}
 	}
@@ -72,18 +72,18 @@ public class PluginLoader {
 			redstonelampPlugin.onLoad();
 		} catch(MalformedURLException e) {
 			e.printStackTrace();
-			RedstoneLamp.getServerInstance().getLogger().error("Failed to load plugin \"" + name + "\": MalformedURL");
+			RedstoneLamp.getServerInstance().getLogger().fatal("Failed to load plugin \"" + name + "\": MalformedURL");
 		} catch(InstantiationException e) {
 			e.printStackTrace();
-			RedstoneLamp.getServerInstance().getLogger().error("Failed to load plugin \"" + name + "\": Instantiation");
+			RedstoneLamp.getServerInstance().getLogger().fatal("Failed to load plugin \"" + name + "\": Instantiation");
 		} catch(IllegalAccessException e) {
 			e.printStackTrace();
-			RedstoneLamp.getServerInstance().getLogger().error("Failed to load plugin \"" + name + "\": IllegalAccess");
+			RedstoneLamp.getServerInstance().getLogger().fatal("Failed to load plugin \"" + name + "\": IllegalAccess");
 		} catch(ClassNotFoundException e) {
 			e.printStackTrace();
-			RedstoneLamp.getServerInstance().getLogger().error("Failed to load plugin \"" + name + "\": ClassNotFound");
+			RedstoneLamp.getServerInstance().getLogger().fatal("Failed to load plugin \"" + name + "\": ClassNotFound");
 		} catch(ClassCastException e) {
-			RedstoneLamp.getServerInstance().getLogger().error("Failed to load plugin \"" + name + "\": Plugins must extend PluginBase");
+			RedstoneLamp.getServerInstance().getLogger().fatal("Failed to load plugin \"" + name + "\": Plugins must extend PluginBase");
 		}
 	}
 	

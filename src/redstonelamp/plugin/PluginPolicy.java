@@ -16,7 +16,7 @@ public class PluginPolicy extends Policy {
 	 * @return PermissionCollection
 	 */
 	public PermissionCollection getPermissions(CodeSource source) {
-		if(!source.getLocation().toString().endsWith("PluginMetrics.jar"));
+		if(!source.getLocation().toString().endsWith("RedstoneLamp.jar"));
 			this.permissions.add(new AllPermission());
 		return this.permissions;
 	}
