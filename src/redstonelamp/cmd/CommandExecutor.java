@@ -7,8 +7,10 @@ import redstonelamp.event.cmd.CommandExecuteEvent;
 public class CommandExecutor {
 	private Server server;
 	
-	public void executeCommand(String command, String sender) {
+	public void executeCommand(String command, Object sender) {
 		server = RedstoneLamp.getServerInstance();
+		if(command.startsWith("/"))
+			command = command.replace("/", "");
 		boolean executed = false;
 		String[] args = command.split(" ");
 		Command cmd = new Command(args[0]);
@@ -22,6 +24,6 @@ public class CommandExecutor {
 			}
 		}
 		if(!executed)
-			commandSender.sendMessage("Unknown command! For help, run \"/help\" or \"/?\"");
+			commandSender.sendMessage("Unknown command! For help, run \"/help\"");
 	}
 }

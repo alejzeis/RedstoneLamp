@@ -3,6 +3,8 @@ package redstonelamp;
 import java.io.*;
 import java.util.Properties;
 
+import redstonelamp.cmd.defaults.Help;
+import redstonelamp.cmd.defaults.Kick;
 import redstonelamp.cmd.defaults.Stop;
 import redstonelamp.utils.MainLogger;
 
@@ -75,6 +77,8 @@ public class RedstoneLamp implements Runnable{
 	}
 
 	public static void registerDefaultCommands() {
+		getServerInstance().getCommandManager().registerCommand("help", "Shows all available commands", new Help());
+		getServerInstance().getCommandManager().registerCommand("kick", "Stops the server", new Kick());
 		getServerInstance().getCommandManager().registerCommand("stop", "Stops the server", new Stop());
 	}
 }

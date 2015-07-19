@@ -67,7 +67,7 @@ public class Server implements Runnable{
         pluginManager.getPluginLoader().loadPlugins();
         pluginManager.getPluginLoader().enablePlugins();
         RedstoneLamp.registerDefaultCommands();
-        logger.info("Done! Type \"help\" or \"?\" for help.");
+        logger.info("Done! Type \"help\" for help.");
         cli = new BufferedReader(new InputStreamReader(System.in));
         
         running = true;
@@ -77,7 +77,6 @@ public class Server implements Runnable{
     @Override
     public void run(){
         while(running){
-        	String line = null;
             long start = Instant.now().toEpochMilli();
             tick();
             long diff = Instant.now().toEpochMilli() - start;
@@ -91,12 +90,6 @@ public class Server implements Runnable{
             } else {
                 logger.warning(diff+">50 Did the system time change, or is the server overloaded?");
             }
-            try {
-				line = cli.readLine();
-				if(line != null) {
-					getCommandManager().getCommandExecutor().executeCommand(line, "Console");
-				}
-			} catch (IOException e) {}
         }
     }
 
@@ -107,6 +100,14 @@ public class Server implements Runnable{
         network.tick();
         mainLevel.tick();
         getEventManager().getEventExecutor().execute(new ServerTickEvent());
+		String line = null;
+        try {
+        	if(cli.ready()) {
+        		line = cli.readLine();
+        		if(line != null)
+        			RedstoneLamp.getServerInstance().getCommandManager().getCommandExecutor().executeCommand(line, this);
+        	}
+		} catch (IOException e) {}
     }
 
     /**
