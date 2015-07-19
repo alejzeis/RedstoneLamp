@@ -7,7 +7,7 @@ public class EventManager {
 	private ArrayList<Object> listeners = new ArrayList<Object>();
 	
 	/**
-	 * Returns all classes events are regestered to
+	 * Returns all classes events are registered to
 	 * 
 	 * @return ArrayList<Object>
 	 */
@@ -15,7 +15,12 @@ public class EventManager {
 		return listeners;
 	}
 	
-	public void registerEvents(Listener listener) {
+	/**
+	 * Registers an event listener
+	 * 
+	 * @param Listener
+	 */
+	public void registerEventListener(Listener listener) {
 		getListeners().add(listener);
 	}
 	

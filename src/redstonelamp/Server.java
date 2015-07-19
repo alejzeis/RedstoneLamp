@@ -1,6 +1,8 @@
 package redstonelamp;
 
 import redstonelamp.event.EventManager;
+import redstonelamp.event.player.PlayerJoinEvent;
+import redstonelamp.event.player.PlayerQuitEvent;
 import redstonelamp.event.server.ServerTickEvent;
 import redstonelamp.level.Level;
 import redstonelamp.network.JRakLibInterface;
@@ -100,6 +102,7 @@ public class Server implements Runnable{
     public void addPlayer(Player player){
         synchronized (players){
             players.add(player);
+            getEventManager().getEventExecutor().execute(new PlayerJoinEvent(player));
         }
     }
 

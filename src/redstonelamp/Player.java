@@ -1,13 +1,14 @@
 package redstonelamp;
 
 import redstonelamp.entity.Entity;
+import redstonelamp.event.player.PlayerKickEvent;
+import redstonelamp.event.player.PlayerQuitEvent;
 import redstonelamp.item.Item;
 import redstonelamp.level.Location;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.NetworkChannel;
 import redstonelamp.network.NetworkInfo;
 import redstonelamp.network.packet.*;
-import redstonelamp.utils.TextFormat;
 
 import java.net.InetSocketAddress;
 import java.util.Arrays;
@@ -196,6 +197,7 @@ public class Player extends Entity{
         } else {
             message = reason != "" ? reason : "disconnectionScreen.noReason";
         }
+        server.getEventManager().getEventExecutor().execute(new PlayerKickEvent(this, reason));
         close("left the game.", message, true);
     }
 
@@ -218,6 +220,9 @@ public class Player extends Entity{
             connected = false;
             loggedIn = false;
 
+            //TODO: Skip if Player.kick() called
+            server.getEventManager().getEventExecutor().execute(new PlayerQuitEvent(this));
+            
             rakLibInterface.close(this, notifyClient ? reason : "");
 
             server.getLogger().info(username + "["+identifier+"] logged out: "+reason);
