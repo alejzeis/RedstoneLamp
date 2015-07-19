@@ -16,6 +16,8 @@ public class PlayerQuitEvent implements Event {
 		listener.onEvent(this);
 	}
 	
+	public void cancel() {}
+	
 	public String getName() {
 		return type;
 	}

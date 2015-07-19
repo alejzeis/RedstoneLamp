@@ -1,5 +1,6 @@
 package redstonelamp;
 
+import redstonelamp.cmd.CommandManager;
 import redstonelamp.event.EventManager;
 import redstonelamp.event.player.PlayerJoinEvent;
 import redstonelamp.event.player.PlayerQuitEvent;
@@ -34,9 +35,11 @@ public class Server implements Runnable{
     
     private PluginManager pluginManager;
     private EventManager eventManager;
+    private CommandManager commandManager;
 
     public Server(Properties properties, MainLogger logger){
     	eventManager = new EventManager();
+    	commandManager = new CommandManager();
         this.logger = logger;
         this.properties = properties;
 
@@ -210,6 +213,10 @@ public class Server implements Runnable{
      */
     public EventManager getEventManager() {
     	return eventManager;
+    }
+    
+    public CommandManager getCommandManager() {
+    	return commandManager;
     }
 
     /**

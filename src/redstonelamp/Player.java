@@ -293,4 +293,13 @@ public class Player extends Entity{
     public UUID getUUID() {
     	return uuid;
     }
+    
+    /**
+     * Sends a message to the player
+     * 
+     * @param String
+     */
+    public void sendMessage(String message) {
+    	//TODO: Send a message to the player
+    }
 }

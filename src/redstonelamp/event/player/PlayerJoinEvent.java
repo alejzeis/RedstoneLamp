@@ -1,11 +1,10 @@
 package redstonelamp.event.player;
 
 import redstonelamp.Player;
-import redstonelamp.event.Cancellable;
 import redstonelamp.event.Event;
 import redstonelamp.event.Listener;
 
-public class PlayerJoinEvent implements Event, Cancellable {
+public class PlayerJoinEvent implements Event {
 	private String type = "PlayerJoinEvent";
 	private Player player;
 	
