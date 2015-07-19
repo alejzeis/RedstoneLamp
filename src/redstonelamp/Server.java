@@ -1,5 +1,7 @@
 package redstonelamp;
 
+import redstonelamp.event.EventManager;
+import redstonelamp.event.server.ServerTickEvent;
 import redstonelamp.level.Level;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.Network;
@@ -29,8 +31,10 @@ public class Server implements Runnable{
     private Level mainLevel;
     
     private PluginManager pluginManager;
+    private EventManager eventManager;
 
     public Server(Properties properties, MainLogger logger){
+    	eventManager = new EventManager();
         this.logger = logger;
         this.properties = properties;
 
@@ -85,6 +89,7 @@ public class Server implements Runnable{
     private void tick() {
         network.tick();
         mainLevel.tick();
+        getEventManager().getEventExecutor().execute(new ServerTickEvent());
     }
 
     /**
@@ -193,6 +198,15 @@ public class Server implements Runnable{
      */
     public PluginManager getPluginManager() {
     	return pluginManager;
+    }
+    
+    /**
+     * Returns the event manager
+     * 
+     * @return EventManager
+     */
+    public EventManager getEventManager() {
+    	return eventManager;
     }
 
     /**
