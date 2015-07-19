@@ -10,12 +10,18 @@ public class FakeLevelProvider implements LevelProvider{
     @Override
     public byte[] orderChunk(int x, int z) {
         DynamicByteBuffer bb = DynamicByteBuffer.newInstance();
-        bb.put(new byte[16 * 16 * 128]); //Block Ids
+        for(int i = 0; i < (16 * 16 *128); i++){
+            bb.putByte((byte) 0x01);
+        }
         bb.put(new byte[(16 * 16 * 128) / 2]); //Half-Byte block metadata
-        bb.put(new byte[(16 * 16 * 128) / 2]); //Half-Byte skylight
-        bb.put(new byte[(16 * 16 * 128) / 2]); //Half-Byte blocklight
+        for(int i = 0; i < 16384; i++){
+            bb.putByte((byte) 0xF0);
+        }
+        for(int i = 0; i < 16384; i++){
+            bb.putByte((byte) 0x11);
+        }
         for(int i = 0; i < 256; i++){
-            bb.putByte((byte) 0xFF);
+            bb.putByte((byte) 0x00);
         }
         for(int i = 0; i < 256; i++){
             bb.putByte((byte) 0x01);
