@@ -3,7 +3,6 @@ package redstonelamp;
 import redstonelamp.cmd.CommandManager;
 import redstonelamp.event.EventManager;
 import redstonelamp.event.player.PlayerJoinEvent;
-import redstonelamp.event.player.PlayerQuitEvent;
 import redstonelamp.event.server.ServerTickEvent;
 import redstonelamp.level.Level;
 import redstonelamp.network.JRakLibInterface;
@@ -11,6 +10,9 @@ import redstonelamp.network.Network;
 import redstonelamp.plugin.PluginManager;
 import redstonelamp.utils.MainLogger;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,7 @@ public class Server implements Runnable{
     private List<Player> players = new ArrayList<>();
     private Network network;
     private Level mainLevel;
+    private BufferedReader cli;
     
     private PluginManager pluginManager;
     private EventManager eventManager;
@@ -64,6 +67,7 @@ public class Server implements Runnable{
         pluginManager.getPluginLoader().loadPlugins();
         pluginManager.getPluginLoader().enablePlugins();
         logger.info("Done! Type \"help\" or \"?\" for help.");
+        cli = new BufferedReader(new InputStreamReader(System.in));
         
         running = true;
         run();
@@ -72,6 +76,7 @@ public class Server implements Runnable{
     @Override
     public void run(){
         while(running){
+        	String line = null;
             long start = Instant.now().toEpochMilli();
             tick();
             long diff = Instant.now().toEpochMilli() - start;
@@ -85,6 +90,12 @@ public class Server implements Runnable{
             } else {
                 logger.warning(diff+">50 Did the system time change, or is the server overloaded?");
             }
+            try {
+				line = cli.readLine();
+				if(line != null) {
+					getCommandManager().getCommandExecutor().executeCommand(line);
+				}
+			} catch (IOException e) {}
         }
     }
 
@@ -251,6 +262,10 @@ public class Server implements Runnable{
      */
     public void stop() {
     	pluginManager.getPluginLoader().disablePlugins();
+    	try {
+    		if(cli instanceof BufferedReader)
+    			cli.close();
+		} catch (IOException e) {}
     	System.exit(1);
     }
 }
