@@ -124,4 +124,16 @@ public class Network {
         packets.put(SetTimePacket.ID, SetTimePacket.class);
         packets.put(StartGamePacket.ID, StartGamePacket.class);
     }
+
+    public void shutdown() {
+        for(NetworkInterface _interface : interfaces){
+            _interface.shutdown();
+        }
+    }
+
+    public void emergencyShutdown() {
+        for(NetworkInterface _interface : interfaces){
+            _interface.emergencyShutdown();
+        }
+    }
 }
