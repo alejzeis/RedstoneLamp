@@ -276,6 +276,7 @@ public class Server implements Runnable{
 		}
     	pluginManager.getPluginLoader().disablePlugins();
     	//TODO: Safely close server to avoid RakLib crash
+    	RedstoneLamp.getAsync().shutdown();
     	System.exit(1);
     }
 }

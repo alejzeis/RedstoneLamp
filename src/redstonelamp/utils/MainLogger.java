@@ -77,6 +77,6 @@ public class MainLogger {
 		if(RedstoneLamp.getServerInstance() instanceof Server)
 			RedstoneLamp.getServerInstance().stop();
 		else
-			System.exit(1);
+			RedstoneLamp.getServerInstance().stop();
 	}
 }

@@ -67,7 +67,7 @@ public class RedstoneLamp implements Runnable{
 			properties.put("generate-structures", "true");
 			properties.put("port", "19132");
 			properties.put("debug", "false");
-			properties.put("async-workers", 4);
+			properties.put("async-workers", "4");
 			properties.store(new FileWriter(propFile), "RedstoneLamp properties");
 		}
 		properties.load(new FileReader(propFile));
