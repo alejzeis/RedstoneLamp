@@ -2,6 +2,8 @@ package redstonelamp;
 
 import java.io.*;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import redstonelamp.cmd.defaults.Help;
 import redstonelamp.cmd.defaults.Kick;
@@ -18,6 +20,7 @@ public class RedstoneLamp implements Runnable{
 	public static String LICENSE = "GNU GENERAL PUBLIC LICENSE v3";
 	
 	private static Server SERVER_INSTANCE;
+	private static ExecutorService async;
 	private MainLogger logger = new MainLogger();
 	
 	public static void main(String[] args) {
@@ -27,6 +30,8 @@ public class RedstoneLamp implements Runnable{
 	public void run(){
 		try {
 			Properties properties = loadProperties();
+			int workers = 4; //TODO: properties.getProperty("async-workers");
+			async = Executors.newFixedThreadPool(workers);
 			new Server(properties, logger);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -62,6 +67,7 @@ public class RedstoneLamp implements Runnable{
 			properties.put("generate-structures", "true");
 			properties.put("port", "19132");
 			properties.put("debug", "false");
+			properties.put("async-workers", 4);
 			properties.store(new FileWriter(propFile), "RedstoneLamp properties");
 		}
 		properties.load(new FileReader(propFile));
@@ -74,6 +80,10 @@ public class RedstoneLamp implements Runnable{
 
 	public static Server getServerInstance(){
 		return RedstoneLamp.SERVER_INSTANCE;
+	}
+	
+	public static ExecutorService getAsync() {
+		return async;
 	}
 
 	public static void registerDefaultCommands() {

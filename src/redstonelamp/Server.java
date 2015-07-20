@@ -99,15 +99,19 @@ public class Server implements Runnable{
     private void tick() {
         network.tick();
         mainLevel.tick();
-        getEventManager().getEventExecutor().execute(new ServerTickEvent());
-		String line = null;
-        try {
-        	if(cli.ready()) {
-        		line = cli.readLine();
-        		if(line != null)
-        			RedstoneLamp.getServerInstance().getCommandManager().getCommandExecutor().executeCommand(line, this);
-        	}
-		} catch (IOException e) {}
+     	getEventManager().getEventExecutor().execute(new ServerTickEvent());
+		RedstoneLamp.getAsync().execute(new Runnable() {
+			public void run() {
+				String line = null;
+		        try {
+		        	if(cli.ready()) {
+		        		line = cli.readLine();
+		        		if(line != null)
+		        			RedstoneLamp.getServerInstance().getCommandManager().getCommandExecutor().executeCommand(line, RedstoneLamp.getServerInstance());
+		        	}
+				} catch (IOException e) {}
+			}
+		});
     }
 
     /**
