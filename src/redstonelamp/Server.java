@@ -3,6 +3,7 @@ package redstonelamp;
 import redstonelamp.cmd.CommandManager;
 import redstonelamp.event.EventManager;
 import redstonelamp.event.player.PlayerJoinEvent;
+import redstonelamp.event.server.ServerStopEvent;
 import redstonelamp.event.server.ServerTickEvent;
 import redstonelamp.level.Level;
 import redstonelamp.network.JRakLibInterface;
@@ -267,6 +268,7 @@ public class Server implements Runnable{
      * Stops the server
      */
     public void stop() {
+    	getEventManager().getEventExecutor().execute(new ServerStopEvent());
     	try {
     		if(cli instanceof BufferedReader)
     			cli.close();

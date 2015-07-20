@@ -1,23 +1,27 @@
 package redstonelamp.event.server;
 
-import redstonelamp.Player;
+import redstonelamp.RedstoneLamp;
+import redstonelamp.Server;
 import redstonelamp.event.Event;
 import redstonelamp.event.Listener;
 
-public class ServerTickEvent implements Event {
+public class ServerTickEvent extends ServerEvent {
 	private String type = "ServerTickEvent";
+	private Event e = this;
 	
 	public void execute(Listener listener) {
-		listener.onEvent(this);
+		RedstoneLamp.getAsync().execute(new Runnable() {
+			public void run() {
+				listener.onEvent(e);
+			}
+		});
 	}
 	
-	public void cancel() {}
-	
-	public String getName() {
+	public String getEventName() {
 		return type;
 	}
 	
-	public Player getPlayer() {
-		return null;
+	public Server getServer() {
+		return RedstoneLamp.getServerInstance();
 	}
 }

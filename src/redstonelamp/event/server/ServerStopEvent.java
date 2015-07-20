@@ -1,11 +1,12 @@
-package redstonelamp.event.cmd;
+package redstonelamp.event.server;
 
 import redstonelamp.RedstoneLamp;
+import redstonelamp.Server;
 import redstonelamp.event.Event;
 import redstonelamp.event.Listener;
 
-public class CommandExecuteEvent extends Event {
-	private String type = "CommandExecuteEvent";
+public class ServerStopEvent extends ServerEvent {
+	private String type = "ServerTickEvent";
 	private Event e = this;
 	
 	public void execute(Listener listener) {
@@ -18,5 +19,9 @@ public class CommandExecuteEvent extends Event {
 	
 	public String getEventName() {
 		return type;
+	}
+	
+	public Server getServer() {
+		return RedstoneLamp.getServerInstance();
 	}
 }

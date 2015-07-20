@@ -1,13 +1,37 @@
 package redstonelamp.event;
 
 import redstonelamp.Player;
+import redstonelamp.RedstoneLamp;
+import redstonelamp.Server;
+import redstonelamp.event.player.PlayerEvent;
+import redstonelamp.event.player.PlayerKickEvent;
+import redstonelamp.event.server.ServerEvent;
 
-public abstract interface Event {
-	public void execute(Listener listener);
+public abstract class Event {
+	public abstract void execute(Listener listener);
+
+	public abstract String getEventName();
 	
-	public String getName();
+	public void cancel() {
+		if(!(this instanceof Cancellable))
+			return;
+	}
 	
-	public void cancel();
+	public Player getPlayer() {
+		if(!(this instanceof PlayerEvent))
+			return null;
+		return null;
+	}
 	
-	public Player getPlayer();
+	public String getReason() {
+		if(!(this instanceof PlayerEvent) && !(this instanceof PlayerKickEvent))
+			return null;
+		return null;
+	}
+	
+	public Server getServer() {
+		if(!(this instanceof ServerEvent))
+			return RedstoneLamp.getServerInstance();
+		return null;
+	}
 }
