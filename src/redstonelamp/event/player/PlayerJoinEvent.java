@@ -10,6 +10,8 @@ public class PlayerJoinEvent extends PlayerEvent implements Cancellable {
 	private String type = "PlayerJoinEvent";
 	private Player player;
 	private Event e = this;
+
+	private boolean canceled;
 	
 	public PlayerJoinEvent(Player player) {
 		this.player = player;
@@ -29,5 +31,15 @@ public class PlayerJoinEvent extends PlayerEvent implements Cancellable {
 	
 	public Player getPlayer() {
 		return player;
+	}
+
+	@Override
+	public boolean isCanceled() {
+		return canceled;
+	}
+
+	@Override
+	public void setCanceled(boolean canceled) {
+		this.canceled = canceled;
 	}
 }

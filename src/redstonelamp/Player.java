@@ -71,6 +71,7 @@ public class Player extends Entity{
                 LoginPacket lp = (LoginPacket) packet;
 
                 username = lp.username;
+                setNameTag(username);
                 mojangClientId = lp.clientId;
                 uuid = UUID.nameUUIDFromBytes(username.getBytes());
 
@@ -105,12 +106,16 @@ public class Player extends Entity{
 
                 for(Player player : server.getOnlinePlayers()){
                     if(player.getName().equalsIgnoreCase(username) && player.isConnected() && player.isLoggedIn()){
-                        player.kick("logged in from another location", false);
+                        if(!player.kick("logged in from another location", false)){
+                            player.close("left the game", "logged in from another location", true);
+                        }
                         return;
                     }
                 }
 
                 setLocation(new Location(0, 64, 0, null));
+
+
 
                 PlayStatusPacket psp = new PlayStatusPacket();
                 psp.status = PlayStatusPacket.Status.LOGIN_SUCCESS;
@@ -187,26 +192,33 @@ public class Player extends Entity{
     /**
      * Kicks the player from the server
      * 
-     * @param String
-     * @param boolean
+     * @param reason The reason for the kick.
+     * @param admin If this kick was by an admin.
+     * @return If the client was kicked.
      */
-    public void kick(String reason, boolean admin){
+    public boolean kick(String reason, boolean admin){
         String message;
         if(admin){
             message = "Kicked by admin. Reason: "+ reason;
         } else {
             message = reason != "" ? reason : "disconnectionScreen.noReason";
         }
-        server.getEventManager().getEventExecutor().execute(new PlayerKickEvent(this, reason));
-        close("left the game.", message, true);
+        PlayerKickEvent evt = new PlayerKickEvent(this, reason);
+        server.getEventManager().getEventExecutor().execute(evt);
+        if(!evt.isCanceled()) {
+            close("left the game.", message, true);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
      * INTERNAL METHOD, please use <code>Player.kick</code> instead.
      * 
-     * @param String
-     * @param String
-     * @param boolean
+     * @param message
+     * @param reason
+     * @param notifyClient
      */
     public void close(String message, String reason, boolean notifyClient){
         if(connected){
@@ -297,7 +309,7 @@ public class Player extends Entity{
     /**
      * Sends a message to the player
      * 
-     * @param String
+     * @param message The message to be sent to the player.
      */
     public void sendMessage(String message) {
     	//TODO: Send a message to the player

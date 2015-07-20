@@ -14,14 +14,16 @@ public class EntityMetadata {
         return array.get(key);
     }
 
-    public void set(Byte key, List<Object> value){
+    public EntityMetadata set(Byte key, List<Object> value){
         array.put(key, value);
+        return this;
     }
 
-    public void add(Byte key, Object value){
+    public EntityMetadata add(Byte key, Object value){
         List<Object> list = array.get(key);
         list.add(value);
         array.put(key, list);
+        return this;
     }
 
     public Map<Byte, List<Object>> getArray() {

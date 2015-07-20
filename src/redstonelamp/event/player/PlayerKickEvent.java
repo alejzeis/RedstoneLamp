@@ -11,6 +11,8 @@ public class PlayerKickEvent extends PlayerEvent implements Cancellable {
 	private Player player;
 	private String reason;
 	private Event e = this;
+
+	private boolean canceled;
 	
 	public PlayerKickEvent(Player player, String reason) {
 		this.player = player;
@@ -35,5 +37,15 @@ public class PlayerKickEvent extends PlayerEvent implements Cancellable {
 	
 	public String getReason() {
 		return reason;
+	}
+
+	@Override
+	public boolean isCanceled() {
+		return canceled;
+	}
+
+	@Override
+	public void setCanceled(boolean canceled) {
+		this.canceled = canceled;
 	}
 }
