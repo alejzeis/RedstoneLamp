@@ -276,6 +276,7 @@ public class Server implements Runnable{
 		for(Player p : getOnlinePlayers()) {
 			p.kick("Server closed.", false);
 		}
+        mainLevel.shutdown();
     	pluginManager.getPluginLoader().disablePlugins();
     	//TODO: Safely close server to avoid RakLib crash
     	RedstoneLamp.getAsync().shutdown();

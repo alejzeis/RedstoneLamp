@@ -10,17 +10,18 @@ import redstonelamp.network.packet.PlayStatusPacket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 
 /**
  * Base level class.
  */
 public class Level {
-    public static int CHUNKS_PER_TICK = 4;
+    public static int CHUNKS_PER_TICK = 2;
 
     private Server server;
     private LevelProvider provider;
     private Map<Player, List<ChunkLocation>> chunksToSend = new ConcurrentHashMap<>();
+    private ExecutorService sendPool = Executors.newFixedThreadPool(5); //5 threads
 
     public Level(Server server){
         this.server = server;
@@ -42,16 +43,18 @@ public class Level {
                 chunksToSend.remove(player);
                 return;
             }
-            byte[] data = provider.orderChunk(chunks.get(i).getX(), chunks.get(i).getZ());
-            FullChunkDataPacket dp = new FullChunkDataPacket();
-            dp.x = chunks.get(i).getX();
-            dp.z = chunks.get(i).getZ();
-            dp.payload = data;
-            dp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
-            player.sendDataPacket(dp);
-            chunks.remove(i);
+            final int finalI = i;
+            sendPool.submit(() -> {
+                byte[] data = provider.orderChunk(chunks.get(finalI).getX(), chunks.get(finalI).getZ());
+                FullChunkDataPacket dp = new FullChunkDataPacket();
+                dp.x = chunks.get(finalI).getX();
+                dp.z = chunks.get(finalI).getZ();
+                dp.payload = data;
+                dp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+                player.sendDataPacket(dp);
+                chunks.remove(finalI);
+            });
         }
-
         chunksToSend.put(player, chunks);
     }
 
@@ -60,7 +63,7 @@ public class Level {
             throw new IllegalArgumentException("Chunks already queued.");
         }
 
-        List<ChunkLocation> chunks = new ArrayList<>();
+        List<ChunkLocation> chunks = new CopyOnWriteArrayList<>();
         int chunkX = (int) player.getLocation().getX();
         int chunkZ = (int) player.getLocation().getZ();
         for (int distance = 5; distance >= 0; distance--) {
@@ -73,5 +76,9 @@ public class Level {
             }
         }
         chunksToSend.put(player, chunks);
+    }
+
+    public void shutdown() {
+        sendPool.shutdown();
     }
 }

@@ -1,5 +1,6 @@
 package redstonelamp.entity;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,6 +21,9 @@ public class EntityMetadata {
     }
 
     public EntityMetadata add(Byte key, Object value){
+        if(!array.containsKey(key)){
+            return set(key, Arrays.asList(new Object[] {value}));
+        }
         List<Object> list = array.get(key);
         list.add(value);
         array.put(key, list);
