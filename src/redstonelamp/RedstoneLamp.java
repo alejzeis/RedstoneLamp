@@ -30,7 +30,7 @@ public class RedstoneLamp implements Runnable{
 	public void run(){
 		try {
 			Properties properties = loadProperties();
-			int workers = 4; //TODO: properties.getProperty("async-workers");
+			int workers = Integer.parseInt(properties.getProperty("async-workers", "4"));
 			async = Executors.newFixedThreadPool(workers);
 			new Server(properties, logger);
 		} catch (IOException e) {
