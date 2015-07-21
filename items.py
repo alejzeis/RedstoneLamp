@@ -90,41 +90,46 @@ self::$list[self::RAW_FISH] = Fish::class;
 self::$list[self::COOKED_FISH] = CookedFish::class;
 """
 
-items = []
+def buildFiles():
 
-f = open("list.txt", 'r')
-lines = f.readlines()
-f.close()
+    items = []
 
-for line in lines:
-    line = line.replace("\n", "")
-    line = line.replace("self::$list[", "")
-    line = line.replace("]", "")
-    line = line.split(" ")[0].strip()
-    line = line.replace("self::", "")
-    line = line.lower()
-    l = list(line)
-    l[0] = l[0].upper()
-    counter = 0
-    for char in l:
-        counter = counter + 1
-        if char == "_":
-            l[counter] = l[counter].upper()
-    line = "".join(l)
-    line = line.replace("_", "")
+    f = open("list.txt", 'r')
+    lines = f.readlines()
+    f.close()
 
-    data = """package redstonelamp.item;
+    for line in lines:
+        line = line.replace("\n", "")
+        line = line.replace("self::$list[", "")
+        line = line.replace("]", "")
+        line = line.split(" ")[0].strip()
+        line = line.replace("self::", "")
+        line = line.lower()
+        l = list(line)
+        l[0] = l[0].upper()
+        counter = 0
+        for char in l:
+            counter = counter + 1
+            if char == "_":
+                l[counter] = l[counter].upper()
+        line = "".join(l)
+        line = line.replace("_", "")
 
-public class """+line+""" extends Item {
-    public """+line+"""(int id, short metadata, int count) {
-        super(id, metadata, count);
+        data = """package redstonelamp.item;
+
+    public class """+line+""" extends Item {
+        public """+line+"""(int id, short metadata, int count) {
+            super(id, metadata, count);
+        }
     }
-}
-"""
+    """
 
-    f2 = open("src\\redstonelamp\\item\\"+line+".java", 'w')
-    f2.write(data)
-    f2.close()
-    print "Wrote "+line+".java"
+        f2 = open("src\\redstonelamp\\item\\"+line+".java", 'w')
+        f2.write(data)
+        f2.close()
+        print "Wrote "+line+".java"
 
-print "=============COMPLETE"
+    print "=============COMPLETE"
+
+if __name__ == "__main__":
+    buildFiles()

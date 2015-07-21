@@ -118,4 +118,17 @@ public interface ItemValues {
 	public static int BEET_ROOT = 457;
 	public static int BEET_ROOT_SEEDS = 458;
 	public static int BEET_ROOT_SOUP = 459;
+	public static int BEETROOT_SEEDS = 458;
+	public static int BEETROOT_SOUP = 459;
+	public static int FLINT_STEEL = 259;
+	public static int GOLD_INGOT = 266;
+	public static int IRON_INGOT = 265;
+	public static int WOODEN_SWORD = 268;
+	public static int WOODEN_SHOVEL = 269;
+	public static int WOODEN_PICKAXE = 270;
+	public static int WOODEN_HOE = 290;
+	public static int WOODEN_DOOR = 324;
+	public static int WOODEN_AXE = 271;
+	public static int WHEAT_SEEDS = 295;
+	public static int SUGARCANE = 338;
 }
