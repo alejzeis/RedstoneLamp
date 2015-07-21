@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by jython234 on 7/14/2015.
@@ -22,7 +23,9 @@ public class EntityMetadata {
 
     public EntityMetadata add(Byte key, Object value){
         if(!array.containsKey(key)){
-            return set(key, Arrays.asList(new Object[] {value}));
+            List<Object> l = new CopyOnWriteArrayList<>();
+            l.add(value);
+            return set(key, l);
         }
         List<Object> list = array.get(key);
         list.add(value);

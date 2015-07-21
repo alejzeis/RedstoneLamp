@@ -78,6 +78,10 @@ public class Level {
         chunksToSend.put(player, chunks);
     }
 
+    public synchronized void clearQueue(Player player){
+        chunksToSend.remove(player);
+    }
+
     public void shutdown() {
         sendPool.shutdown();
     }

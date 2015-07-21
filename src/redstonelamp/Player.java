@@ -41,6 +41,8 @@ public class Player extends Entity{
         this.address = new InetSocketAddress(address, port);
         this.clientId = clientId;
         connected = true;
+
+        spawnTo(this);
     }
 
     public void handleDataPacket(DataPacket packet){
@@ -115,7 +117,14 @@ public class Player extends Entity{
 
                 setLocation(new Location(0, 64, 0, null));
 
-
+                SetEntityMotionPacket semp = new SetEntityMotionPacket();
+                SetEntityMotionPacket.entitymotionpacket_EntityData data = new SetEntityMotionPacket.entitymotionpacket_EntityData();
+                data.eid = 0;
+                data.motionX = 0;
+                data.motionY = 0;
+                data.motionZ = 0;
+                semp.entities = Arrays.asList(new SetEntityMotionPacket.entitymotionpacket_EntityData[] {data});
+                sendDataPacket(semp);
 
                 PlayStatusPacket psp = new PlayStatusPacket();
                 psp.status = PlayStatusPacket.Status.LOGIN_SUCCESS;
@@ -137,7 +146,7 @@ public class Player extends Entity{
                 sendDataPacket(sgp);
 
                 SetTimePacket stp = new SetTimePacket();
-                stp.time = 12000;
+                stp.time = 30171;
                 stp.started = true;
                 stp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
                 sendDataPacket(stp);
@@ -163,7 +172,7 @@ public class Player extends Entity{
 
                 ContainerSetContentPacket cscp = new ContainerSetContentPacket();
                 cscp.windowId = ContainerSetContentPacket.SPECIAL_CREATIVE;
-                cscp.slots = Arrays.asList(new Item[] {new Item(1, (short) 0, 4)});
+                cscp.slots = Item.getCreativeItems();
                 cscp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
                 sendDataPacket(cscp);
 
@@ -222,6 +231,7 @@ public class Player extends Entity{
      */
     public void close(String message, String reason, boolean notifyClient){
         if(connected){
+            server.getMainLevel().clearQueue(this);
             if(notifyClient){
                 DisconnectPacket dp = new DisconnectPacket();
                 dp.message = reason;

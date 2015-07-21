@@ -51,17 +51,9 @@ public abstract class Entity {
         setDataProperty(DATA_NAMETAG, EntityMetadata.DataType.DATA_TYPE_STRING, tag);
     }
 
-    public void setDataProperty(int id, int type, Object value){
-        if(!dataProperties.containsKey(id)){
-            dataProperties.put(id, new EntityMetadata().add((byte) id, value));
-
-            sendData(this, hasSpawned, id, dataProperties.get(id));
-        }
-    }
-
     public void setDataProperty(int id, EntityMetadata.DataType type, Object value){
         if(!dataProperties.containsKey(id)){
-            dataProperties.put(id, new EntityMetadata().add((byte) id, value));
+            dataProperties.put(id, new EntityMetadata().add((byte) id, type).add((byte) id, value));
 
             sendData(this, hasSpawned, id, dataProperties.get(id));
         }

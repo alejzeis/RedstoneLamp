@@ -22,7 +22,7 @@ public class NetworkInfo {
     public static final byte DISCONNECT_PACKET = (byte) 0x84;
     public static final byte SET_TIME_PACKET = (byte) 0x86;
     public static final byte START_GAME_PACKET = (byte) 0x87;
-    public static final byte SET_ENTITY_DATA_PACKET = (byte) 0x93;
+    public static final byte SET_ENTITY_DATA_PACKET = (byte) 0x9e;
     public static final byte SET_ENTITY_MOTION_PACKET = (byte) 0x9f;
     public static final byte SET_HEALTH_PACKET = (byte) 0xa1;
     public static final byte SET_SPAWN_POSITION_PACKET = (byte) 0xa2;
