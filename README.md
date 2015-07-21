@@ -11,30 +11,4 @@ RedstoneLamp Documentation - http://docs.RedstoneLamp.net
 
 Get Plugins - http://forums.RedstoneLamp.net/resources/
 
-# TODO
-- [ ] Working Server
-
-	- [ ] Pocket Edition
-	
-		- [x] Server List Ping/Pong
-		- [ ] Player Spawning
-		- [ ] Chunk Sending
-		- [ ] Level Generation
-		- [ ] Blocks
-		- [ ] Items
-		- [ ] Item Drops
-		- [ ] Physics
-- [ ] Plugins
-
-	- [ ] Plugin Loading
-	
-		- [x] JAR File Loading
-		- [ ] JavaScript File Loading
-	- [ ] Plugin API
-	
-		- [ ] PluginBase API
-		- [ ] Server API
-		- [ ] Player API
-		- [ ] Item/Block API
-
 **Please read the CONTRIBUTING.md before making Pull Requests**
