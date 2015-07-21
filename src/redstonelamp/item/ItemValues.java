@@ -1,6 +1,6 @@
 package redstonelamp.item;
 
-public class ItemValues {
+public interface ItemValues {
 	public static int IRON_SHOVEL = 256;
 	public static int IRON_PICKAXE = 257;
 	public static int IRON_AXE = 258;
