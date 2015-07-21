@@ -43,10 +43,10 @@ public class Position extends Vector3 {
 		return false;
 	}
 	
-	//TODO: public Position getSide() {}
-	
-	public String toString() {
-		return "Position(X=" + x + ", Y=" + y + ", Z=" + z + ")";
+	public Position getSide(int side, int step){
+		if(!isValid())
+			return null;
+		return Position.fromObject(getSide(side, step), level);
 	}
 	
 	public Position setComponents(int x, int y, int z) {
@@ -54,5 +54,9 @@ public class Position extends Vector3 {
 		this.y = y;
 		this.z = z;
 		return this;
+	}
+	
+	public String toString() {
+		return "Position(X=" + x + ", Y=" + y + ", Z=" + z + ")";
 	}
 }
