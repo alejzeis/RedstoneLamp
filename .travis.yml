@@ -1,7 +1,14 @@
 language: java
 
+sudo: required
+
+before_install:
+  - wget -q -O - http://get.redstonelamp.net/travis/before_install.sh | bash
+
 script: ant compile
+
+after_success:
+  - wget -q -O - http://get.redstonelamp.net/travis/after_success.sh | bash
 
 jdk:
   - oraclejdk8
-  - oraclejdk7

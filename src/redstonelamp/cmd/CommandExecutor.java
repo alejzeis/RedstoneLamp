@@ -1,16 +1,29 @@
 package redstonelamp.cmd;
 
-import java.util.List;
+import redstonelamp.RedstoneLamp;
+import redstonelamp.Server;
+import redstonelamp.event.cmd.CommandExecuteEvent;
 
-public interface CommandExecutor {
-	/**
-	 * Run when a command is issued
-	 * 
-	 * @param CommandSender sender
-	 * @param Command command
-	 * @param String label
-	 * @param List<String> args
-	 * @return boolean
-	 */
-	public boolean onCommand(CommandSender sender, Command command, String label, List<String> args);
+public class CommandExecutor {
+	private Server server;
+	
+	public void executeCommand(String command, Object sender) {
+		server = RedstoneLamp.getServerInstance();
+		if(command.startsWith("/"))
+			command = command.replace("/", "");
+		boolean executed = false;
+		String[] args = command.split(" ");
+		Command cmd = new Command(args[0]);
+		CommandSender commandSender = new CommandSender(sender);
+		String label = null; //TODO
+		server.getEventManager().getEventExecutor().execute(new CommandExecuteEvent());
+		for(int i = 0; i < (server.getCommandManager().getCommandMap().commands.size()); i++) {
+			if(command.startsWith(server.getCommandManager().getCommandMap().commands.get(i))) {
+				server.getCommandManager().getCommandMap().listeners.get(i).onCommand(commandSender, cmd, label, args);
+				executed = true;
+			}
+		}
+		if(!executed)
+			commandSender.sendMessage("Unknown command! For help, run \"/help\"");
+	}
 }

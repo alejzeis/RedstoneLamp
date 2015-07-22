@@ -1,12 +1,14 @@
 package redstonelamp.event;
 
-public interface EventExecutor {
-	/**
-	 * Executes an event
-	 * 
-	 * @param Listener listener
-	 * @param Event event
-	 * @throws EventException
-	 */
-	public void execute(Listener listener, Event event) throws EventException;
+import redstonelamp.RedstoneLamp;
+
+public class EventExecutor {
+	public void execute(Event e) {
+		for(Object o : RedstoneLamp.getServerInstance().getEventManager().getListeners()) {
+			if(o instanceof Listener) {
+				Listener l = (Listener) o;
+				e.execute(l);
+			}
+		}
+	}
 }

@@ -1,50 +1,37 @@
 package redstonelamp.event;
 
+import redstonelamp.Player;
+import redstonelamp.RedstoneLamp;
+import redstonelamp.Server;
+import redstonelamp.event.player.PlayerEvent;
+import redstonelamp.event.player.PlayerKickEvent;
+import redstonelamp.event.server.ServerEvent;
+
 public abstract class Event {
-	protected String eventName = null;
-	private boolean isCancelled = false;
+	public abstract void execute(Listener listener);
+
+	public abstract String getEventName();
 	
-	public Event() {
-		this(false);
+	public void cancel() {
+		if(!(this instanceof Cancellable))
+			return;
 	}
 	
-	public Event(boolean async) {
-		
+	public Player getPlayer() {
+		if(!(this instanceof PlayerEvent))
+			return null;
+		return null;
 	}
 	
-	/**
-	 * Returns the events name
-	 * 
-	 * @return String
-	 */
-	final public String getEventName() {
-		return this.eventName == null ? this.getClass().getSimpleName():this.eventName;
+	public String getReason() {
+		if(!(this instanceof PlayerEvent) && !(this instanceof PlayerKickEvent))
+			return null;
+		return null;
 	}
 	
-	/**
-	 * Returns the HandlerList class
-	 * 
-	 * @return HandlerList
-	 */
-	public abstract HandlerList getHandlers();
-	
-	/**
-	 * Cancels the event
-	 * 
-	 * @return boolean
-	 */
-	public boolean isCancelled() {
-		if(!(this instanceof Cancellable)) { throw new IllegalArgumentException("Event is not Cancellable"); }
-		return this.isCancelled == true;
-	}
-	
-	/**
-	 * Sets the events cancel status
-	 * 
-	 * @param boolean value
-	 */
-	public void setCancelled(boolean value) {
-		if(!(this instanceof Cancellable)) { throw new IllegalArgumentException("Event is not Cancellable"); }
-		this.isCancelled = value;
+	public Server getServer() {
+		if(!(this instanceof ServerEvent))
+			return RedstoneLamp.getServerInstance();
+		return null;
 	}
 }

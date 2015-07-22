@@ -1,140 +1,94 @@
 package redstonelamp;
 
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.*;
+import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import redstonelamp.logger.Logger;
-import redstonelamp.utils.RedstoneLampProperties;
-import redstonelamp.utils.StringCast;
+import redstonelamp.cmd.defaults.Help;
+import redstonelamp.cmd.defaults.Kick;
+import redstonelamp.cmd.defaults.Stop;
+import redstonelamp.utils.MainLogger;
 
-public class RedstoneLamp implements Runnable {
-	public static String MC_VERSION = "0.11.0 build 9";
+public class RedstoneLamp implements Runnable{
+	public static String MC_VERSION = "0.11.1";
 	public static String SOFTWARE = "RedstoneLamp";
-	public static String VERSION = "1.1.1";
-	public static String CODENAME = "Pumpkin Seeds";
+	public static String VERSION = "1.2.0";
+	public static String CODENAME = "Snowball";
 	public static String STAGE = "DEVELOPMENT";
-	public static double API_VERSION = 1.3;
-	public static String LICENSE = "GNU GENERAL PUBLIC LICENSE";
+	public static double API_VERSION = 1.4;
+	public static String LICENSE = "GNU GENERAL PUBLIC LICENSE v3";
 	
-	private static RedstoneLamp redstone;
-	public static Logger logger = new Logger();
-	private static RedstoneLampProperties rlp = new RedstoneLampProperties();
-	public static Server server;
-	private boolean running;
-	public boolean stopped;
-	public ArrayList<Player> players;
-	public HashMap<Integer, Long> entityIDList = new HashMap<Integer, Long>();
-	public int connectedPlayers;
-	
-	public static boolean DEBUG;
-	public static boolean DEVELOPER;
-	
-	public RedstoneLamp() {
-		running = true;
-		stopped = false;
-		connectedPlayers = 0;
-		players = new ArrayList<Player>();
-	}
+	private static Server SERVER_INSTANCE;
+	private static ExecutorService async;
+	private MainLogger logger = new MainLogger();
 	
 	public static void main(String[] args) {
-		rlp.load();
-		DEBUG = StringCast.toBoolean(rlp.get("DEBUG_MODE"));
-		DEVELOPER = StringCast.toBoolean(rlp.get("DEVELOPER_MODE"));
-		redstone = new RedstoneLamp();
-		redstone.run();
+		new RedstoneLamp().run();
 	}
-	
-	public void initiateShutdown() {
-		running = false;
-		System.exit(0);
-	}
-	
-	public void run() {
-		if(start()) {
-			long ticks = 0;
-			while(!running) {
-				try {
-					Thread.sleep(100);
-				} catch(InterruptedException e) {}
-				ticks++;
-				if(ticks % 100 == 0) {
-					Runtime.getRuntime().gc();
-				}
-			}
-		}
-	}
-	
-	private boolean start() {
+
+	public void run(){
 		try {
-			server = new Server(redstone, rlp.get("name"), rlp.get("motd"), rlp.get("server-port"), rlp.get("whitelist"), rlp.get("announce-player-achievements"), rlp.get("spawn-protection"), rlp.get("max-players"), rlp.get("allow-cheats"), rlp.get("spawn-animals"), rlp.get("spawn-mobs"), rlp.get("gamemode"), rlp.get("force-gamemode"), rlp.get("hardcore"), rlp.get("pvp"), rlp.get("difficulty"), rlp.get("generator-settings"), rlp.get("level-name"), rlp.get("level-seed"), rlp.get("levet-type"), rlp.get("enable-query"), rlp.get("enable-rcon"), rlp.get("rcon.password"), rlp.get("auto-save"), rlp.get("enable-plugins"));
-			server.start();
-			if(server.pluginsEnabled())
-				server.getLogger().info("Done! For help, type \"help\" or \"?\"");
-			else
-				server.getLogger().info("Done!");
-		} catch(SocketException se) {
-			String address = "0.0.0.0";
-			try {
-				InetAddress ip = InetAddress.getLocalHost();
-				address = ip.getHostAddress();
-			} catch(UnknownHostException uhe) {
-				logger.fatal("Unable to determine system IP!");
-			}
-			logger.fatal("***** COULDN'T BIND TO PORT " + address + ":" + StringCast.toInt(rlp.get("server-port")) + " *****\n\t\t Is there a server already running on that port?");
-		}
-		return true;
-	}
-	
-	public void addPlayer(InetAddress i, int p, long cid) {
-		if(currentPlayer(i, p) == null) {
-			boolean b = false;
-			int entityID = 1009;
-			while(!b) {
-				entityID = 1000 + (int) (Math.random() * 1050);
-				if(!entityIDList.containsKey(entityID)) {
-					entityIDList.put(entityID, cid);
-					b = true;
-				}
-			}
-			players.add(new Player(i, p, entityID, cid));
-			connectedPlayers++;
-			logger.info("Connected players: " + players.size());
+			Properties properties = loadProperties();
+			int workers = Integer.parseInt(properties.getProperty("async-workers", "4"));
+			async = Executors.newFixedThreadPool(workers);
+			new Server(properties, logger);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
-	public void removePlayer(InetAddress i, int p) {
-		for(int j = 0; j < players.size(); j++) {
-			Player player = players.get(j);
-			if(player.clientAddress.equals(i) && player.clientPort == p) {
-				entityIDList.values().remove(player.clientID);
-				players.remove(j);
-				connectedPlayers--;
-				break;
-			}
+	public Properties loadProperties() throws IOException {
+		logger.info("Loading server properties...");
+		Properties properties = new Properties();
+		File propFile = new File("server.properties");
+		if(!propFile.exists()){
+			propFile.createNewFile();
+			properties.put("motd", "A Minecraft Server");
+			properties.put("server-ip", "0.0.0.0");
+			properties.put("max-players", "20");
+			properties.put("white-list", "false");
+			properties.put("level-name", "world");
+			properties.put("level-type", "DEFAULT");
+			properties.put("level-seed", "");
+			properties.put("spawn-npcs", "true");
+			properties.put("spawn-animals", "true");
+			properties.put("spawn-monsters", "true");
+			properties.put("hardcore", "false");
+			properties.put("enable-rcon", "false");
+			properties.put("force-gamemode", "false");
+			properties.put("enable-query", "false");
+			properties.put("allow-flight", "false");
+			properties.put("announce-player-achievements", "true");
+			properties.put("pvp", "true");
+			properties.put("difficulty", "1");
+			properties.put("gamemode", "0");
+			properties.put("view-distance", "10");
+			properties.put("generate-structures", "true");
+			properties.put("port", "19132");
+			properties.put("debug", "false");
+			properties.put("async-workers", "4");
+			properties.store(new FileWriter(propFile), "RedstoneLamp properties");
 		}
-		System.out.println("Connected players: " + players.size() + " " + entityIDList.size());
+		properties.load(new FileReader(propFile));
+		return properties;
+	}
+
+	protected static void setServerInstance(Server server){
+		RedstoneLamp.SERVER_INSTANCE = server;
+	}
+
+	public static Server getServerInstance(){
+		return RedstoneLamp.SERVER_INSTANCE;
 	}
 	
-	public Player currentPlayer(InetAddress i, int p) {
-		for(Player player : players) {
-			if(player.clientAddress.equals(i) && player.clientPort == p) { return player; }
-		}
-		return null;
+	public static ExecutorService getAsync() {
+		return async;
 	}
-	
-	public Integer addEntityID(Long cid) {
-		boolean b = false;
-		int newID = 0;
-		while(!b) {
-			newID = 1000 + (int) (Math.random() * 1050);
-			if(!entityIDList.containsKey(newID)) {
-				entityIDList.put(newID, cid);
-				b = true;
-			}
-		}
-		return newID;
+
+	public static void registerDefaultCommands() {
+		getServerInstance().getCommandManager().registerCommand("help", "Shows all available commands", new Help());
+		getServerInstance().getCommandManager().registerCommand("kick", "Stops the server", new Kick());
+		getServerInstance().getCommandManager().registerCommand("stop", "Stops the server", new Stop());
 	}
 }

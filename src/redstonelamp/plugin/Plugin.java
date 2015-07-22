@@ -1,32 +1,24 @@
 package redstonelamp.plugin;
 
-import java.util.ArrayList;
+import java.io.File;
 
 import redstonelamp.Server;
-import redstonelamp.cmd.CommandExecutor;
+import redstonelamp.utils.MainLogger;
 
-public interface Plugin extends CommandExecutor {
+public interface Plugin {
 	public void onLoad();
 	
 	public void onEnable();
 	
+	public boolean isEnabled(String plugin);
+	
 	public void onDisable();
 	
-	public PluginDescription getDescription();
-	
-	public String getDataFolder();
-	
-	public String getResource(String file);
-	
-	public ArrayList<String> getResources();
+	public boolean isDisabled(String plugin);
 	
 	public Server getServer();
 	
-	public String getName();
+	public MainLogger getLogger();
 	
-	public PluginLoader getPluginLoader();
-	
-	public boolean isEnabled();
-	
-	public boolean isDisabled();
+	public File getDataFolder();
 }

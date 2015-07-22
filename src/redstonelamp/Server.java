@@ -1,439 +1,283 @@
 package redstonelamp;
 
+import redstonelamp.cmd.CommandManager;
+import redstonelamp.event.EventManager;
+import redstonelamp.event.player.PlayerJoinEvent;
+import redstonelamp.event.server.ServerStopEvent;
+import redstonelamp.event.server.ServerTickEvent;
+import redstonelamp.level.Level;
+import redstonelamp.network.JRakLibInterface;
+import redstonelamp.network.Network;
+import redstonelamp.plugin.PluginManager;
+import redstonelamp.utils.MainLogger;
+
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
+import java.util.Properties;
 
-import raknet.PacketHandler;
-import redstonelamp.cmd.Command;
-import redstonelamp.cmd.CommandRegistrationManager;
-import redstonelamp.cmd.CommandSender;
-import redstonelamp.cmd.ConsoleCommandSender;
-import redstonelamp.cmd.PluginCommand;
-import redstonelamp.cmd.PluginIdentifiableCommand;
-import redstonelamp.cmd.SimpleCommandMap;
-import redstonelamp.event.player.PlayerJoinEvent;
-import redstonelamp.event.player.PlayerMoveEvent;
-import redstonelamp.event.server.ServerCommandEvent;
-import redstonelamp.logger.Logger;
-import redstonelamp.monitor.FileMonitor;
-import redstonelamp.plugin.PluginBase;
-import redstonelamp.plugin.PluginLoader;
-import redstonelamp.plugin.PluginManager;
-import redstonelamp.utils.RedstoneLampProperties;
-import redstonelamp.utils.StringCast;
+public class Server implements Runnable{
+    private boolean debugMode = false;
+    private String motd;
+    private int maxPlayers;
 
-public class Server extends Thread {
-	private String address, name, motd, generator_settings, level_name, seed, level_type, rcon_pass;
-	private int port, spawn_protection, max_players, gamemode, difficulty;
-	private boolean whitelist, announce_player_achievements, allow_cheats, spawn_animals, spawn_mobs, force_gamemode, hardcore, pvp, query, rcon, auto_save, enable_plugins;
-	
-	private CommandRegistrationManager commandManager;
-	private PluginManager pluginManager;
-	private SimpleCommandMap simpleCommandMap;
-	private CommandSender sender;
-	
-	private boolean isListening;
-	private RedstoneLamp redstone;
-	public DatagramSocket socket;
-	private DatagramPacket packet;
-	public long serverID;
-	private Random rnd = new Random();
-	public long start;
-	public Player[] players;
-	
-	public Server(RedstoneLamp redstonelamp, String name, String motd, String port, String whitelist, String announce_player_achievements, String spawn_protection, String max_players, String allow_cheats, String spawn_animals, String spawn_mobs, String gamemode, String force_gamemode, String hardcore, String pvp, String difficulty, String generator_settings, String level_name, String seed, String level_type, String query, String rcon, String rcon_pass, String auto_save, String enable_plugins) throws SocketException {
-		isListening = false;
-		Thread.currentThread().setName("RedstoneLamp");
-		this.name = name;
-		this.motd = motd;
-		this.port = StringCast.toInt(port);
-		this.whitelist = StringCast.toBoolean(whitelist);
-		this.announce_player_achievements = StringCast.toBoolean(announce_player_achievements);
-		this.spawn_protection = StringCast.toInt(spawn_protection);
-		this.max_players = StringCast.toInt(max_players);
-		this.allow_cheats = StringCast.toBoolean(allow_cheats);
-		this.spawn_animals = StringCast.toBoolean(spawn_animals);
-		this.spawn_mobs = StringCast.toBoolean(spawn_mobs);
-		this.gamemode = StringCast.toInt(gamemode);
-		this.force_gamemode = StringCast.toBoolean(force_gamemode);
-		this.hardcore = StringCast.toBoolean(hardcore);
-		this.pvp = StringCast.toBoolean(pvp);
-		this.difficulty = StringCast.toInt(difficulty);
-		this.generator_settings = generator_settings;
-		this.level_name = level_name;
-		this.seed = seed;
-		this.level_type = level_type;
-		this.query = StringCast.toBoolean(query);
-		this.rcon = StringCast.toBoolean(rcon);
-		this.rcon_pass = rcon_pass;
-		this.auto_save = StringCast.toBoolean(auto_save);
-		this.enable_plugins = StringCast.toBoolean(enable_plugins);
-		this.redstone = redstonelamp;
-		this.getLogger().info("Starting Minecraft: PE Server v" + this.getMCVersion());
-		try {
-			InetAddress ip = InetAddress.getLocalHost();
-			this.address = ip.getHostAddress();
-		} catch(UnknownHostException e) {
-			this.getLogger().fatal("Unable to determine system IP!");
+    private MainLogger logger;
+    private Properties properties;
+
+    private boolean running = false;
+
+    private String bindInterface;
+    private int bindPort;
+
+    private List<Player> players = new ArrayList<>();
+    private Network network;
+    private Level mainLevel;
+    private BufferedReader cli;
+    
+    private PluginManager pluginManager;
+    private EventManager eventManager;
+    private CommandManager commandManager;
+
+    public Server(Properties properties, MainLogger logger){
+    	eventManager = new EventManager();
+    	commandManager = new CommandManager();
+        this.logger = logger;
+        this.properties = properties;
+
+        debugMode = Boolean.parseBoolean(properties.getProperty("debug", "false"));
+        bindInterface = properties.getProperty("server-ip", "0.0.0.0");
+        bindPort = Integer.parseInt(properties.getProperty("port", "19132"));
+        motd = properties.getProperty("motd", "A Minecraft Server");
+        maxPlayers = Integer.parseInt(properties.getProperty("max-players", "20"));
+
+        logger.info("This server is running " + RedstoneLamp.SOFTWARE + " version " + RedstoneLamp.VERSION + " \"" + RedstoneLamp.CODENAME + "\" (API " + RedstoneLamp.API_VERSION + ")");
+        logger.info(RedstoneLamp.SOFTWARE + " is distributed under the " + RedstoneLamp.LICENSE);
+
+        mainLevel = new Level(this);
+        
+        network = new Network(this);
+        network.registerInterface(new JRakLibInterface(this));
+        network.setName(motd);
+
+        RedstoneLamp.setServerInstance(this);
+        pluginManager = new PluginManager();
+
+        pluginManager.getPluginLoader().loadPlugins();
+        pluginManager.getPluginLoader().enablePlugins();
+        RedstoneLamp.registerDefaultCommands();
+        logger.info("Done! Type \"help\" for help.");
+        cli = new BufferedReader(new InputStreamReader(System.in));
+        
+        running = true;
+        run();
+    }
+
+    @Override
+    public void run(){
+        while(running){
+            long start = Instant.now().toEpochMilli();
+            tick();
+            long diff = Instant.now().toEpochMilli() - start;
+            if(diff < 50){
+                long until = Instant.now().toEpochMilli() + (50 - diff);
+                while(true) {
+                    if (Instant.now().toEpochMilli() >= until) {
+                        break;
+                    }
+                }
+            } else {
+                logger.warning(diff+">50 Did the system time change, or is the server overloaded?");
+            }
+        }
+    }
+
+    /**
+     * Executes a server tick.
+     */
+    private void tick() {
+        network.tick();
+        mainLevel.tick();
+     	getEventManager().getEventExecutor().execute(new ServerTickEvent());
+		RedstoneLamp.getAsync().execute(() -> {
+            String line = null;
+            try {
+                if(cli.ready()) {
+                    line = cli.readLine();
+                    if(line != null)
+                        RedstoneLamp.getServerInstance().getCommandManager().getCommandExecutor().executeCommand(line, RedstoneLamp.getServerInstance());
+                }
+            } catch (IOException e) {}
+        });
+    }
+
+    /**
+     * Adds a player to the server
+     * 
+     * @param Player
+     */
+    public void addPlayer(Player player){
+        synchronized (players){
+            players.add(player);
+            getEventManager().getEventExecutor().execute(new PlayerJoinEvent(player));
+        }
+    }
+
+    /**
+     * Gets a player from the server
+     * 
+     * @param String
+     * @return Player
+     */
+    public Player getPlayer(String identifier){
+        synchronized (players){
+            for(Player player : players){
+                if(player.getIdentifier().equals(identifier)){
+                    return player;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * INTERNAL METHOD! Use <code>player.kick()</code> instead.
+     * @param player
+     */
+    public void removePlayer(Player player){
+        players.remove(player);
+    }
+
+    /**
+     * Returns the server.properties data
+     * 
+     * @return Properties
+     */
+    public Properties getProperties() {
+        return properties;
+    }
+
+    /**
+     * Returns the server logger
+     * 
+     * @return MainLogger
+     */
+    public MainLogger getLogger() {
+        return logger;
+    }
+
+    /**
+     * Returns the servers Bind Interface
+     * 
+     * @return String
+     */
+    public String getBindInterface() {
+        return bindInterface;
+    }
+
+    /**
+     * Returns the server port
+     * 
+     * @return int
+     */
+    public int getBindPort() {
+        return bindPort;
+    }
+
+    /**
+     * Returns true if the server is in DEBUG Mode
+     * 
+     * @return boolean
+     */
+    public boolean isDebugMode() {
+        return debugMode;
+    }
+
+    /**
+     * Returns the servers Network
+     * 
+     * @return Network
+     */
+    public Network getNetwork() {
+        return network;
+    }
+
+    /**
+     * Returns a List array of all online players
+     * 
+     * @return List<Player>
+     */
+    public List<Player> getOnlinePlayers() {
+        return players;
+    }
+    
+    /**
+     * Returns the plugin manager
+     * 
+     * @return PluginManager
+     */
+    public PluginManager getPluginManager() {
+    	return pluginManager;
+    }
+    
+    /**
+     * Returns the event manager
+     * 
+     * @return EventManager
+     */
+    public EventManager getEventManager() {
+    	return eventManager;
+    }
+    
+    public CommandManager getCommandManager() {
+    	return commandManager;
+    }
+
+    /**
+     * Returns the servers MOTD
+     * 
+     * @return String
+     */
+    public String getMotd() {
+        return motd;
+    }
+
+    /**
+     * Returns the max number of players that can join
+     * 
+     * @return int
+     */
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    /**
+     * Returns the default server level
+     * 
+     * @return Level
+     */
+    public Level getMainLevel(){
+        return mainLevel;
+    }
+    
+    /**
+     * Stops the server
+     */
+    public void stop() {
+    	getEventManager().getEventExecutor().execute(new ServerStopEvent());
+    	try {
+    		if(cli instanceof BufferedReader)
+    			cli.close();
+		} catch (IOException e) {}
+		for(Player p : getOnlinePlayers()) {
+			p.kick("Server closed.", false);
 		}
-		this.getLogger().info("Opening server on " + this.address + ":" + this.port);
-		this.getLogger().info("This server is running " + RedstoneLamp.SOFTWARE + " version " + RedstoneLamp.VERSION + " \"" + RedstoneLamp.CODENAME + "\" (API " + RedstoneLamp.API_VERSION + ")");
-		this.getLogger().info(RedstoneLamp.SOFTWARE + " is distributed under the " + RedstoneLamp.LICENSE);
-		
-		File folder = new File("./plugins");
-		File inuse = new File("./plugins/cache");
-		
-		if(this.enable_plugins) {
-			if(!folder.exists())
-				folder.mkdirs();
-			
-			if(!inuse.exists())
-				inuse.mkdirs();
-			inuse.deleteOnExit();
-			
-			simpleCommandMap = new SimpleCommandMap(this);
-			commandManager = new CommandRegistrationManager(simpleCommandMap);
-			pluginManager = new PluginManager(this, simpleCommandMap);
-			PluginLoader pluginLoader = new PluginLoader(this);
-			
-			pluginLoader.setPluginOption("./plugins/", "./plugins/cache/");
-			pluginManager.registerPluginLoader(pluginLoader);
-			pluginManager.loadPlugins(folder);
-			
-			//			FileMonitor filemonitor = new FileMonitor(this);
-			//			filemonitor.start();
-			//			
-			sender = new ConsoleCommandSender();
-			
-			PlayerJoinEvent pje = new PlayerJoinEvent(null);
-			PlayerMoveEvent pme = new PlayerMoveEvent(null);
-			pluginManager.callEvent(pje);
-			pluginManager.callEvent(pme);
-			
-			//			String cmd = null;
-			//			ArrayList<Command> cmdList = this.getCommandRegistrationManager().getPluginCommands(cmd);
-			//			for(Command command : cmdList) {
-			//				PluginCommand pcmd = (PluginCommand) command;
-			//				PluginBase base = (PluginBase) pcmd.getPlugin();
-			//				if(base != null)
-			//					base.onCommand(sender, command, cmd, null);
-			//			}
-			
-			//dispatchCommand(sender, "Test");
-		} else
-			this.getLogger().info("Plugins are not enabled so RedstoneLamp has ignored any exsisting Plugin files!");
-		
-		socket = new DatagramSocket(StringCast.toInt(port));
-		socket.getBroadcast();
-		serverID = rnd.nextLong();
-		isListening = true;
-	}
-	
-	public void run() {
-		start = System.currentTimeMillis();
-		while(isListening) {
-			byte[] buffer = new byte[1536];
-			packet = new DatagramPacket(buffer, 1536);
-			int packetSize = 0;
-			try {
-				socket.setSoTimeout(5000);
-				socket.receive(packet);
-				socket.setSoTimeout(0);
-				packetSize = packet.getLength();
-			} catch(Exception e) {}
-			
-			if(packetSize > 0) {
-				ByteBuffer b = ByteBuffer.wrap(packet.getData());
-				byte[] data = new byte[packet.getLength()];
-				b.get(data);
-				
-				DatagramPacket pkt = new DatagramPacket(data, packetSize);
-				pkt.setAddress(packet.getAddress());
-				pkt.setPort(packet.getPort());
-				new Thread(new PacketHandler(redstone, this, pkt)).start();
-			}
-			
-			tickProcessor();
-		}
-	}
-	
-	/**
-	 * Returns the Server Address
-	 * 
-	 * @return String
-	 */
-	public String getAddress() {
-		return address;
-	}
-	
-	/**
-	 * Returns the Server Port
-	 * 
-	 * @return int
-	 */
-	public int getPort() {
-		return port;
-	}
-	
-	/**
-	 * Returns the Server MOTD
-	 * 
-	 * @return String
-	 */
-	public String getMOTD() {
-		return motd;
-	}
-	
-	/**
-	 * Returns the Server Name
-	 * 
-	 * @return String
-	 */
-	public String getServerName() {
-		return name;
-	}
-	
-	/**
-	 * Returns true if the server is whitelisted
-	 * 
-	 * @return boolean
-	 */
-	public boolean isWhitelisted() {
-		return whitelist;
-	}
-	
-	/**
-	 * Returns the number of player slots
-	 * 
-	 * @return int
-	 */
-	public int getMaxPlayers() {
-		return max_players;
-	}
-	
-	/**
-	 * Returns true if cheats are enabled
-	 * 
-	 * @return boolean
-	 */
-	public boolean cheatsEnabled() {
-		return allow_cheats;
-	}
-	
-	/**
-	 * Returns true if spawn animals is enabled
-	 * 
-	 * @return boolean
-	 */
-	public boolean spawnAnimals() {
-		return spawn_animals;
-	}
-	
-	/**
-	 * Returns true if spawn mobs is enabled
-	 * 
-	 * @return boolean
-	 */
-	public boolean spawnMobs() {
-		return spawn_mobs;
-	}
-	
-	/**
-	 * Returns the gamemode integer
-	 * 
-	 * @return int
-	 */
-	public int getGamemode() {
-		return gamemode;
-	}
-	
-	/**
-	 * Returns true if hardcore is enabled
-	 * 
-	 * @return boolean
-	 */
-	public boolean isHardcore() {
-		return hardcore;
-	}
-	
-	/**
-	 * Returns true if PvP is enabled
-	 * 
-	 * @return boolean
-	 */
-	public boolean isPvPEnabled() {
-		return pvp;
-	}
-	
-	/**
-	 * Returns the difficulty integer
-	 * 
-	 * @return int
-	 */
-	public int getDifficulty() {
-		return difficulty;
-	}
-	
-	/**
-	 * Returns the default levels name
-	 * 
-	 * @return String
-	 */
-	public String getLevelName() {
-		return level_name;
-	}
-	
-	/**
-	 * Returns the default levels seed
-	 * 
-	 * @return String
-	 */
-	public String getSeed() {
-		return seed;
-	}
-	
-	/**
-	 * Returns true if auto save is enabled
-	 * 
-	 * @return boolean
-	 */
-	public boolean isAutoSaveEnabled() {
-		return auto_save;
-	}
-	
-	/**
-	 * Returns the Server ID
-	 * 
-	 * @return long
-	 */
-	public long getServerID() {
-		return serverID;
-	}
-	
-	/**
-	 * Returns the version of MCPE the server is running on
-	 * 
-	 * @return String
-	 */
-	public String getMCVersion() {
-		return RedstoneLamp.MC_VERSION;
-	}
-	
-	/**
-	 * Returns true if plugins are enabled
-	 * 
-	 * @return boolean
-	 */
-	public boolean pluginsEnabled() {
-		return enable_plugins;
-	}
-	
-	/**
-	 * Returns the Server Logger class
-	 * 
-	 * @return Logger
-	 */
-	public Logger getLogger() {
-		return RedstoneLamp.logger;
-	}
-	
-	/**
-	 * Returns the CommandRegistrationManager class
-	 * 
-	 * @return CommandRegistrationManager
-	 */
-	public CommandRegistrationManager getCommandRegistrationManager() {
-		return commandManager;
-	}
-	
-	/**
-	 * Returns the PluginManager class
-	 * 
-	 * @return PluginManager
-	 */
-	public PluginManager getPluginManager() {
-		return pluginManager;
-	}
-	
-	/**
-	 * @param cmd
-	 * @return PluginIdentifiableCommand
-	 */
-	public PluginIdentifiableCommand getPluginCommand(final String cmd) {
-		return commandManager.getPluginCommand(cmd);
-	}
-	
-	/**
-	 * Returns the SimpleCommandMap class
-	 * 
-	 * @return SimpleCommandMap
-	 */
-	public SimpleCommandMap getCommandMap() {
-		return simpleCommandMap;
-	}
-	
-	/**
-	 * Returns the RedstoneLampProperties class
-	 * 
-	 * @return RedstoneLampProperties
-	 */
-	public RedstoneLampProperties getRedstoneLampProperties() {
-		return new RedstoneLampProperties();
-	}
-	
-	/**
-	 * Returns the StringCast class
-	 * 
-	 * @return StringCast
-	 */
-	public StringCast getStringCast() {
-		return new StringCast();
-	}
-	
-	private void tickProcessor() {
-		checkConsole();
-	}
-	
-	private void checkConsole() {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		try {
-			String line = reader.readLine();
-			if(line != null) {
-				line = line.trim();
-				if(line.startsWith("/"))
-					line = line.substring(line.indexOf("/") + 1, line.length());
-				ServerCommandEvent sce = new ServerCommandEvent(sender, line);
-				pluginManager.callEvent(sce);
-				this.dispatchCommand(sender, line);
-			}
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/*
-	 * generic method will execute plug-in and server commands
-	 */
-	public boolean dispatchCommand(CommandSender sender, String command) {
-		if(!(sender instanceof CommandSender)) { throw new IllegalArgumentException("CommandSender is not valid"); }
-		
-		if(this.simpleCommandMap.dispatch(sender, command)) { return true; }
-		
-		if(sender instanceof Player) {
-			sender.sendMessage("Unknown command. Type \"/help\" for help.");
-		} else {
-			sender.sendMessage("Unknown command. Type \"help\" or \"?\" for help.");
-		}
-		return false;
-	}
+        mainLevel.shutdown();
+    	pluginManager.getPluginLoader().disablePlugins();
+        network.shutdown();
+    	RedstoneLamp.getAsync().shutdown();
+    	System.exit(0);
+    }
 }
