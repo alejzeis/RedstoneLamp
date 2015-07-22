@@ -1,6 +1,6 @@
 package redstonelamp.network.packet;
 
-import redstonelamp.network.NetworkInfo;
+import redstonelamp.network.PENetworkInfo;
 import redstonelamp.utils.DynamicByteBuffer;
 
 import java.util.List;
@@ -9,13 +9,13 @@ import java.util.List;
  * SetEntityMotionPacket (0x9f)
  */
 public class SetEntityMotionPacket extends DataPacket{
-    public final static byte ID = NetworkInfo.SET_ENTITY_MOTION_PACKET;
+    public final static byte ID = PENetworkInfo.SET_ENTITY_MOTION_PACKET;
 
     public List<entitymotionpacket_EntityData> entities;
 
     @Override
     public byte getPID() {
-        return NetworkInfo.SET_ENTITY_MOTION_PACKET;
+        return PENetworkInfo.SET_ENTITY_MOTION_PACKET;
     }
 
     @Override

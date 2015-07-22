@@ -6,13 +6,11 @@ import net.beaconpe.jraklib.server.JRakLibServer;
 import net.beaconpe.jraklib.server.ServerHandler;
 import net.beaconpe.jraklib.server.ServerInstance;
 import redstonelamp.Player;
-import redstonelamp.RedstoneLamp;
+import redstonelamp.PocketPlayer;
 import redstonelamp.Server;
 import redstonelamp.network.packet.BatchPacket;
 import redstonelamp.network.packet.DataPacket;
-import redstonelamp.network.packet.LoginPacket;
 import redstonelamp.network.packet.UnknownDataPacket;
-import redstonelamp.utils.TextFormat;
 
 /**
  * Interface for communicating with the JRakLib library.
@@ -28,7 +26,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
 
     public JRakLibInterface(Server server){
         this.server = server;
-        server.getLogger().info("Starting Minecraft: PE server v" + NetworkInfo.MCPE_VERSION + " (protocol " + NetworkInfo.MCPE_PROTOCOL + ")");
+        server.getLogger().info("Starting Minecraft: PE server v" + PENetworkInfo.MCPE_VERSION + " (protocol " + PENetworkInfo.MCPE_PROTOCOL + ")");
 
         rakLibLogger = new JRakLibLogger();
         rakLib = new JRakLibServer(rakLibLogger, server.getBindPort(), server.getBindInterface());
@@ -36,7 +34,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
         rakLib.setUncaughtExceptionHandler(exceptionHandler);
         interface_ = new ServerHandler(rakLib, this);
 
-        server.getLogger().info("Server running on " + server.getBindInterface() + ":" + server.getBindPort());
+        server.getLogger().info("[JRakLibInterface]: Successfully binded to "+server.getBindInterface()+":"+server.getBindPort());
 
         interface_.sendOption("portChecking", "false");
     }
@@ -44,7 +42,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
     @Override
     public void openSession(String identifier, String address, int port, long clientID) {
         server.getLogger().debug("New session from "+identifier+" with clientID: "+clientID);
-        Player player = new Player(server, this, identifier, address, port, clientID);
+        Player player = new PocketPlayer(server, this, identifier, address, port, clientID);
         server.addPlayer(player);
     }
 
@@ -105,7 +103,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
     public void sendPacket(Player player, DataPacket packet, boolean needACK, boolean immediate) {
         if(server.getPlayer(player.getIdentifier()) != null){
             byte[] buffer = packet.encode();
-            if(!immediate && !needACK && !(packet instanceof BatchPacket) && NetworkInfo.COMPRESSION_LIMIT >= 0 && buffer.length >= NetworkInfo.COMPRESSION_LIMIT){
+            if(!immediate && !needACK && !(packet instanceof BatchPacket) && PENetworkInfo.COMPRESSION_LIMIT >= 0 && buffer.length >= PENetworkInfo.COMPRESSION_LIMIT){
                 server.getNetwork().sendBatches(new Player[] {player}, new DataPacket[] {packet}, packet.getChannel());
                 return;
             }
@@ -132,7 +130,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
 
     @Override
     public void setName(String name) {
-        interface_.sendOption("name", "MCPE;"+name+";"+NetworkInfo.MCPE_PROTOCOL+";"+NetworkInfo.MCPE_VERSION+";"+server.getOnlinePlayers().size()+";"+server.getMaxPlayers()); //TODO: Max and online players
+        interface_.sendOption("name", "MCPE;"+name+";"+ PENetworkInfo.MCPE_PROTOCOL+";"+ PENetworkInfo.MCPE_VERSION+";"+server.getOnlinePlayers().size()+";"+server.getMaxPlayers()); //TODO: Max and online players
     }
 
     @Override

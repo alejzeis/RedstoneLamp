@@ -1,13 +1,13 @@
 package redstonelamp.network.packet;
 
-import redstonelamp.network.NetworkInfo;
+import redstonelamp.network.PENetworkInfo;
 import redstonelamp.utils.DynamicByteBuffer;
 
 /**
  * SetSpawnPositionPacket (0xa2)
  */
 public class SetSpawnPositionPacket extends DataPacket{
-    public final static byte ID = NetworkInfo.SET_SPAWN_POSITION_PACKET;
+    public final static byte ID = PENetworkInfo.SET_SPAWN_POSITION_PACKET;
 
     public int x;
     public int z;
@@ -15,7 +15,7 @@ public class SetSpawnPositionPacket extends DataPacket{
 
     @Override
     public byte getPID() {
-        return NetworkInfo.SET_SPAWN_POSITION_PACKET;
+        return PENetworkInfo.SET_SPAWN_POSITION_PACKET;
     }
 
     @Override

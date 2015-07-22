@@ -1,13 +1,13 @@
 package redstonelamp.network.packet;
 
-import redstonelamp.network.NetworkInfo;
+import redstonelamp.network.PENetworkInfo;
 import redstonelamp.utils.DynamicByteBuffer;
 
 /**
  * Login Packet (0x82)
  */
 public class LoginPacket extends DataPacket{
-    public static byte ID = NetworkInfo.LOGIN_PACKET;
+    public static byte ID = PENetworkInfo.LOGIN_PACKET;
 
     public String username;
     public int protocol1;
@@ -19,7 +19,7 @@ public class LoginPacket extends DataPacket{
 
     @Override
     public byte getPID() {
-        return NetworkInfo.LOGIN_PACKET;
+        return PENetworkInfo.LOGIN_PACKET;
     }
 
     @Override

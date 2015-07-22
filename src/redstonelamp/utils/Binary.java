@@ -1,8 +1,12 @@
 package redstonelamp.utils;
 
+import com.flowpowered.networking.util.ByteBufUtils;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import redstonelamp.entity.Entity;
 import redstonelamp.entity.EntityMetadata;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.*;
@@ -132,6 +136,17 @@ public class Binary {
         return bb.toArray();
     }
 
+    /**
+     * Writes a VarInt.
+     * @param i
+     * @return
+     */
+    public byte[] writeVarInt(int i){
+        ByteBuf buf = Unpooled.buffer(1);
+        ByteBufUtils.writeVarInt(buf, i);
+        return buf.array();
+    }
+
     public byte readByte(byte b) {
         return b;
     }
@@ -252,5 +267,15 @@ public class Binary {
         }
 
         return metadata;
+    }
+
+    /**
+     * Reads a VarInt.
+     * @param bytes
+     * @return
+     */
+    public int readVarInt(byte[] bytes) throws IOException {
+        ByteBuf buf = Unpooled.copiedBuffer(bytes);
+        return ByteBufUtils.readVarInt(buf);
     }
 }

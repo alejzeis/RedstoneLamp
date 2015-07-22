@@ -1,19 +1,19 @@
 package redstonelamp.network.packet;
 
-import redstonelamp.network.NetworkInfo;
+import redstonelamp.network.PENetworkInfo;
 import redstonelamp.utils.DynamicByteBuffer;
 
 /**
  * SetHealthPacket (0xa1)
  */
 public class SetHealthPacket extends DataPacket{
-    public final static byte ID = NetworkInfo.SET_HEALTH_PACKET;
+    public final static byte ID = PENetworkInfo.SET_HEALTH_PACKET;
 
     public int health;
 
     @Override
     public byte getPID() {
-        return NetworkInfo.SET_HEALTH_PACKET;
+        return PENetworkInfo.SET_HEALTH_PACKET;
     }
 
     @Override

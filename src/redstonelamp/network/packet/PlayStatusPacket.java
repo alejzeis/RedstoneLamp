@@ -1,19 +1,19 @@
 package redstonelamp.network.packet;
 
-import redstonelamp.network.NetworkInfo;
+import redstonelamp.network.PENetworkInfo;
 import redstonelamp.utils.DynamicByteBuffer;
 
 /**
  * Play Status Packet (0x83)
  */
 public class PlayStatusPacket extends DataPacket{
-    public static byte ID = NetworkInfo.PLAY_STATUS_PACKET;
+    public static byte ID = PENetworkInfo.PLAY_STATUS_PACKET;
 
     public Status status;
 
     @Override
     public byte getPID() {
-        return NetworkInfo.PLAY_STATUS_PACKET;
+        return PENetworkInfo.PLAY_STATUS_PACKET;
     }
 
     @Override

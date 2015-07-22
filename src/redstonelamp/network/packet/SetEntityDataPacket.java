@@ -1,7 +1,7 @@
 package redstonelamp.network.packet;
 
 import redstonelamp.entity.EntityMetadata;
-import redstonelamp.network.NetworkInfo;
+import redstonelamp.network.PENetworkInfo;
 import redstonelamp.utils.Binary;
 import redstonelamp.utils.DynamicByteBuffer;
 
@@ -9,14 +9,14 @@ import redstonelamp.utils.DynamicByteBuffer;
  * SetEntityDataPacket (0x93)
  */
 public class SetEntityDataPacket extends DataPacket{
-    public final static byte ID = NetworkInfo.SET_ENTITY_DATA_PACKET;
+    public final static byte ID = PENetworkInfo.SET_ENTITY_DATA_PACKET;
 
     public long eid;
     public EntityMetadata metadata;
 
     @Override
     public byte getPID() {
-        return NetworkInfo.SET_ENTITY_DATA_PACKET;
+        return PENetworkInfo.SET_ENTITY_DATA_PACKET;
     }
 
     @Override
