@@ -88,7 +88,7 @@ public class RedstoneLamp implements Runnable{
 
 	public static void registerDefaultCommands() {
 		getServerInstance().getCommandManager().registerCommand("help", "Shows all available commands", new Help());
-		getServerInstance().getCommandManager().registerCommand("kick", "Stops the server", new Kick());
+		getServerInstance().getCommandManager().registerCommand("kick", "Kicks a player from the server", new Kick());
 		getServerInstance().getCommandManager().registerCommand("stop", "Stops the server", new Stop());
 	}
 }
