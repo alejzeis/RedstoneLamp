@@ -1,19 +1,19 @@
 package redstonelamp.network.packet;
 
-import redstonelamp.network.NetworkInfo;
+import redstonelamp.network.PENetworkInfo;
 import redstonelamp.utils.DynamicByteBuffer;
 
 /**
  * DisconnectPacket (0x84)
  */
 public class DisconnectPacket extends DataPacket{
-    public static byte ID = NetworkInfo.DISCONNECT_PACKET;
+    public static byte ID = PENetworkInfo.DISCONNECT_PACKET;
 
     public String message;
 
     @Override
     public byte getPID() {
-        return NetworkInfo.DISCONNECT_PACKET;
+        return PENetworkInfo.DISCONNECT_PACKET;
     }
 
     @Override

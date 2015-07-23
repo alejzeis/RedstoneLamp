@@ -5,7 +5,7 @@ import redstonelamp.RedstoneLamp;
 /**
  * Network constants class (packetID's, etc...)
  */
-public class NetworkInfo {
+public class PENetworkInfo {
     public static int COMPRESSION_LIMIT = 512;
     public static int COMPRESSION_LEVEL = 7;
     /**

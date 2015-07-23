@@ -1,14 +1,14 @@
 package redstonelamp.network.packet;
 
 
-import redstonelamp.network.NetworkInfo;
+import redstonelamp.network.PENetworkInfo;
 import redstonelamp.utils.DynamicByteBuffer;
 
 /**
  * MC_BATCH_PACKET (0xb1)
  */
 public class BatchPacket extends DataPacket{
-    public static byte ID = NetworkInfo.BATCH_PACKET;
+    public static byte ID = PENetworkInfo.BATCH_PACKET;
 
     public byte[] payload;
 

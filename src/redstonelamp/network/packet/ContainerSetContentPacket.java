@@ -1,7 +1,7 @@
 package redstonelamp.network.packet;
 
 import redstonelamp.item.Item;
-import redstonelamp.network.NetworkInfo;
+import redstonelamp.network.PENetworkInfo;
 import redstonelamp.utils.DynamicByteBuffer;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
  * ContainerSetContentPacket (0xaa)
  */
 public class ContainerSetContentPacket extends DataPacket{
-    public final static byte ID = NetworkInfo.CONTAINTER_SET_CONTENT_PACKET;
+    public final static byte ID = PENetworkInfo.CONTAINTER_SET_CONTENT_PACKET;
 
     public final static byte SPECIAL_INVENTORY = 0x00;
     public final static byte SPECIAL_ARMOR = 0x78;
@@ -24,7 +24,7 @@ public class ContainerSetContentPacket extends DataPacket{
 
     @Override
     public byte getPID() {
-        return NetworkInfo.CONTAINTER_SET_CONTENT_PACKET;
+        return PENetworkInfo.CONTAINTER_SET_CONTENT_PACKET;
     }
 
     @Override

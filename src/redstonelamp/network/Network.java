@@ -64,7 +64,7 @@ public class Network {
 
         BatchPacket bp = new BatchPacket();
         bp.setChannel(channel);
-        bp.payload = CompressionUtils.zlibDeflate(bb.toArray(), NetworkInfo.COMPRESSION_LEVEL);
+        bp.payload = CompressionUtils.zlibDeflate(bb.toArray(), PENetworkInfo.COMPRESSION_LEVEL);
 
         for(Player player : players){
             if(server.getPlayer(player.getIdentifier()) != null){

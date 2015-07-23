@@ -1,13 +1,13 @@
 package redstonelamp.network.packet;
 
-import redstonelamp.network.NetworkInfo;
+import redstonelamp.network.PENetworkInfo;
 import redstonelamp.utils.DynamicByteBuffer;
 
 /**
  * StartGamePacket (0x87)
  */
 public class StartGamePacket extends DataPacket{
-    public final static byte ID = NetworkInfo.START_GAME_PACKET;
+    public final static byte ID = PENetworkInfo.START_GAME_PACKET;
 
     public int seed;
     public int generator;
@@ -22,7 +22,7 @@ public class StartGamePacket extends DataPacket{
 
     @Override
     public byte getPID() {
-        return NetworkInfo.START_GAME_PACKET;
+        return PENetworkInfo.START_GAME_PACKET;
     }
 
     @Override

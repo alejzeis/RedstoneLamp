@@ -1,20 +1,20 @@
 package redstonelamp.network.packet;
 
-import redstonelamp.network.NetworkInfo;
+import redstonelamp.network.PENetworkInfo;
 import redstonelamp.utils.DynamicByteBuffer;
 
 /**
  * SetTimePacket (0x86)
  */
 public class SetTimePacket extends DataPacket{
-    public final static byte ID = NetworkInfo.SET_TIME_PACKET;
+    public final static byte ID = PENetworkInfo.SET_TIME_PACKET;
 
     public int time;
     public boolean started = true;
 
     @Override
     public byte getPID() {
-        return NetworkInfo.SET_TIME_PACKET;
+        return PENetworkInfo.SET_TIME_PACKET;
     }
 
     @Override
