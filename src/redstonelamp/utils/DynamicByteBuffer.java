@@ -1,6 +1,7 @@
 package redstonelamp.utils;
 
 
+import java.io.IOException;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -130,6 +131,10 @@ public class DynamicByteBuffer {
         put(binary.writeInt(i));
     }
 
+    public void putVarInt(int i){
+
+    }
+
     public void putLong(long l){
         put(binary.writeLong(l));
     }
@@ -149,6 +154,10 @@ public class DynamicByteBuffer {
     public void putString(String s){
         putShort((short) s.getBytes().length);
         put(s.getBytes());
+    }
+
+    public void putPCString(String s){
+
     }
     
     public void putChar(char c){
@@ -174,6 +183,15 @@ public class DynamicByteBuffer {
     public int getInt(){
         return binary.readInt(get(4));
     }
+
+    public int getVarInt() {
+        try {
+            return binary.readVarInt(bb);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
     
     public long getLong(){
         return binary.readLong(get(8));
@@ -197,6 +215,10 @@ public class DynamicByteBuffer {
 
     public String getString(Charset charset){
         return new String(get(getShort()), charset);
+    }
+
+    public String getPCString(){
+        return new String(get(getVarInt()), Charset.forName("UTF-8"));
     }
     
     public char getChar(){

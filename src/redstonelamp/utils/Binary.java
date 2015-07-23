@@ -290,4 +290,21 @@ public class Binary {
         }
         return i;
     }
+
+    /**
+     * Reads a VarInt using the given Bytebuffer. Code is from: https://gist.github.com/zh32/7190955
+     * @param bytes
+     * @return
+     */
+    public int readVarInt(ByteBuffer bb) throws IOException {
+        int i = 0;
+        int j = 0;
+        while (true) {
+            int k = bb.get();
+            i |= (k & 0x7F) << j++ * 7;
+            if (j > 5) throw new RuntimeException("VarInt too big");
+            if ((k & 0x80) != 128) break;
+        }
+        return i;
+    }
 }
