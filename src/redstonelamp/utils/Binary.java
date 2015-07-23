@@ -1,8 +1,5 @@
 package redstonelamp.utils;
 
-import com.flowpowered.networking.util.ByteBufUtils;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import redstonelamp.entity.Entity;
 import redstonelamp.entity.EntityMetadata;
 
@@ -137,14 +134,21 @@ public class Binary {
     }
 
     /**
-     * Writes a VarInt.
+     * Writes a VarInt. Code is from: https://gist.github.com/zh32/7190955
      * @param i
      * @return
      */
     public byte[] writeVarInt(int i){
-        ByteBuf buf = Unpooled.buffer(1);
-        ByteBufUtils.writeVarInt(buf, i);
-        return buf.array();
+        DynamicByteBuffer bb = DynamicByteBuffer.newInstance();
+        while (true) {
+            if ((i & 0xFFFFFF80) == 0) {
+                bb.putByte((byte) i);
+                return bb.toArray();
+            }
+
+            bb.putByte((byte) (i & 0x7F | 0x80));
+            i >>>= 7;
+        }
     }
 
     public byte readByte(byte b) {
@@ -270,12 +274,20 @@ public class Binary {
     }
 
     /**
-     * Reads a VarInt.
+     * Reads a VarInt. Code is from: https://gist.github.com/zh32/7190955
      * @param bytes
      * @return
      */
     public int readVarInt(byte[] bytes) throws IOException {
-        ByteBuf buf = Unpooled.copiedBuffer(bytes);
-        return ByteBufUtils.readVarInt(buf);
+        ByteBuffer bb = ByteBuffer.wrap(bytes);
+        int i = 0;
+        int j = 0;
+        while (true) {
+            int k = bb.get();
+            i |= (k & 0x7F) << j++ * 7;
+            if (j > 5) throw new RuntimeException("VarInt too big");
+            if ((k & 0x80) != 128) break;
+        }
+        return i;
     }
 }
