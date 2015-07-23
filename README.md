@@ -1,4 +1,4 @@
-# RedstoneLamp	[![Travis branch](https://img.shields.io/travis/RedstoneLamp/RedstoneLamp/new.svg?style=flat-square)](https://travis-ci.org/RedstoneLamp/RedstoneLamp) [![License](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square)](https://tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3))
+# RedstoneLamp	[![Travis branch](https://img.shields.io/travis/RedstoneLamp/RedstoneLamp/master.svg?style=flat-square)](https://travis-ci.org/RedstoneLamp/RedstoneLamp) [![License](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square)](https://tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3))
 MinecraftPE Server Software
 
 
