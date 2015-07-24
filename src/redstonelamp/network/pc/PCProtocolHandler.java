@@ -6,6 +6,7 @@ import org.apache.mina.core.session.IoSession;
 import redstonelamp.DesktopPlayer;
 import redstonelamp.Player;
 import redstonelamp.network.pc.packet.MinecraftPacket;
+import redstonelamp.network.pc.packet.handshake.HandshakePacket;
 
 /**
  * Protocol handler.
@@ -28,7 +29,12 @@ public class PCProtocolHandler extends IoHandlerAdapter{
 
         switch (pkt.packetID){
             case PCNetworkInfo.HANDHSAKE_HANDSHAKE:
-
+                HandshakePacket hp = new HandshakePacket();
+                hp.decode(pkt.payload);
+                if(hp.nextState == HandshakePacket.STATE_LOGIN){
+                    DesktopPlayer player = new DesktopPlayer(pcInterface, pcInterface.getServer(), session);
+                    pcInterface.getServer().addPlayer(player);
+                } //Send status reply once we get the status request
                 break;
             case PCNetworkInfo.STATUS_STATUS_REQUEST:
 

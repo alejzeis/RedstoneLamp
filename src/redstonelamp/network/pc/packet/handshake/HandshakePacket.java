@@ -5,10 +5,13 @@ import redstonelamp.network.pc.PCNetworkInfo;
 import redstonelamp.utils.DynamicByteBuffer;
 
 /**
- * Created by jython234 on 7/23/2015.
+ * HandshakePacket (0x00)
  */
 public class HandshakePacket extends DataPacket{
     public final static byte ID = PCNetworkInfo.HANDHSAKE_HANDSHAKE;
+
+    public final static int STATE_STATUS = 1;
+    public final static int STATE_LOGIN = 2;
 
     public int protocolVersion;
     public String serverAddress;
@@ -27,6 +30,9 @@ public class HandshakePacket extends DataPacket{
 
     @Override
     protected void _decode(DynamicByteBuffer bb) {
-
+        protocolVersion = bb.getVarInt();
+        serverAddress = bb.getPCString();
+        serverPort = bb.getUnsignedShort();
+        nextState = bb.getVarInt();
     }
 }

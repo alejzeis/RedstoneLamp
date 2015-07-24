@@ -132,7 +132,7 @@ public class DynamicByteBuffer {
     }
 
     public void putVarInt(int i){
-
+        put(binary.writeVarInt(i));
     }
 
     public void putLong(long l){
@@ -157,7 +157,8 @@ public class DynamicByteBuffer {
     }
 
     public void putPCString(String s){
-
+        putVarInt(s.getBytes(Charset.forName("UTF-8")).length);
+        put(s.getBytes(Charset.forName("UTF-8")));
     }
     
     public void putChar(char c){
