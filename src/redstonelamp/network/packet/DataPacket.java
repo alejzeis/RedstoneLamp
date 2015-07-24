@@ -22,7 +22,7 @@ public abstract class DataPacket {
      * Encode this packet into  bytes.
      * @return The packet's bytes.
      */
-    public final byte[] encode(){
+    public byte[] encode(){
         DynamicByteBuffer bb = DynamicByteBuffer.newInstance();
         bb.putByte(getPID());
         _encode(bb);
@@ -33,7 +33,7 @@ public abstract class DataPacket {
      * Decodes the raw bytes of this packet into the child class.
      * @param buffer The packet's raw bytes.
      */
-    public final void decode(byte[] buffer){
+    public void decode(byte[] buffer){
         this.buffer = buffer;
         DynamicByteBuffer bb = DynamicByteBuffer.newInstance(buffer);
         bb.setPosition(1);
@@ -47,7 +47,7 @@ public abstract class DataPacket {
      * @param buffer The packet's raw bytes.
      * @param offset The position to start at.
      */
-    public final void decode(byte[] buffer, int offset){
+    public void decode(byte[] buffer, int offset){
         this.buffer = buffer;
         DynamicByteBuffer bb = DynamicByteBuffer.newInstance(buffer);
         bb.setPosition(offset);

@@ -1,14 +1,14 @@
 package redstonelamp.network.pc.packet.handshake;
 
-import redstonelamp.network.packet.DataPacket;
 import redstonelamp.network.pc.PCNetworkInfo;
+import redstonelamp.network.pc.packet.PCDataPacket;
 import redstonelamp.utils.DynamicByteBuffer;
 
 /**
  * HandshakePacket (0x00)
  */
-public class HandshakePacket extends DataPacket{
-    public final static byte ID = PCNetworkInfo.HANDHSAKE_HANDSHAKE;
+public class HandshakePacket extends PCDataPacket {
+    public final static int ID = PCNetworkInfo.HANDHSAKE_HANDSHAKE;
 
     public final static int STATE_STATUS = 1;
     public final static int STATE_LOGIN = 2;
@@ -19,7 +19,7 @@ public class HandshakePacket extends DataPacket{
     public int nextState;
 
     @Override
-    public byte getPID() {
+    public int getID() {
         return PCNetworkInfo.HANDHSAKE_HANDSHAKE;
     }
 

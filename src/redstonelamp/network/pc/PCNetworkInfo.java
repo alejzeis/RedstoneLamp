@@ -9,5 +9,6 @@ public class PCNetworkInfo {
 
     public final static int HANDHSAKE_HANDSHAKE = 0x00;
 
-    public final static int STATUS_STATUS_REQUEST = 0x01;
+    public final static int STATUS_REQUEST = 0x00;
+    public final static int STATUS_RESPONSE = 0x00;
 }
