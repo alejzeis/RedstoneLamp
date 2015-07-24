@@ -8,7 +8,7 @@ import redstonelamp.event.server.ServerTickEvent;
 import redstonelamp.level.Level;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.Network;
-import redstonelamp.network.pc.NettyInterface;
+import redstonelamp.network.pc.PCInterface;
 import redstonelamp.plugin.PluginManager;
 import redstonelamp.utils.MainLogger;
 
@@ -61,7 +61,7 @@ public class Server implements Runnable{
         
         network = new Network(this);
         network.registerInterface(new JRakLibInterface(this));
-        network.registerInterface(new NettyInterface(this));
+        network.registerInterface(new PCInterface(this));
         network.setName(motd);
 
         RedstoneLamp.setServerInstance(this);

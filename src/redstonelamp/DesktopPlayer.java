@@ -1,7 +1,9 @@
 package redstonelamp;
 
+import org.apache.mina.core.session.IoSession;
 import redstonelamp.entity.Entity;
 import redstonelamp.network.packet.DataPacket;
+import redstonelamp.network.pc.PCInterface;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;
@@ -10,6 +12,16 @@ import java.util.UUID;
  * Implementation of a player, connected from a computer.
  */
 public class DesktopPlayer extends Entity implements Player{
+
+    private IoSession ioSession;
+    private Server server;
+    private PCInterface pcInterface;
+
+    public DesktopPlayer(PCInterface pcInterface, Server server, IoSession session){
+        this.pcInterface = pcInterface;
+        this.server = server;
+        this.ioSession = session;
+    }
 
     @Override
     public void handleDataPacket(DataPacket packet) {
@@ -79,5 +91,9 @@ public class DesktopPlayer extends Entity implements Player{
     @Override
     public boolean isOp() {
         return false;
+    }
+
+    public IoSession getSession(){
+        return ioSession;
     }
 }
