@@ -19,6 +19,7 @@ public class RedstoneLamp implements Runnable{
 	public static double API_VERSION = 1.4;
 	public static String LICENSE = "GNU GENERAL PUBLIC LICENSE v3";
 	
+	public static Properties properties;
 	private static Server SERVER_INSTANCE;
 	private static ExecutorService async;
 	private MainLogger logger = new MainLogger();
@@ -29,9 +30,10 @@ public class RedstoneLamp implements Runnable{
 
 	public void run(){
 		try {
-			Properties properties = loadProperties();
+			properties = loadProperties();
 			int workers = Integer.parseInt(properties.getProperty("async-workers", "4"));
 			async = Executors.newFixedThreadPool(workers);
+			logger.debug("Created " + workers + " Async threads!");
 			new Server(properties, logger);
 		} catch (IOException e) {
 			e.printStackTrace();
