@@ -4,6 +4,7 @@ import redstonelamp.RedstoneLamp;
 import redstonelamp.block.Block;
 import redstonelamp.block.BlockValues;
 import redstonelamp.block.Flower;
+import redstonelamp.entity.Squid;
 import redstonelamp.entity.Villager;
 import redstonelamp.entity.Zombie;
 
@@ -368,7 +369,7 @@ public class Item implements ItemValues{
         addCreativeItem(Item.get(ItemValues.SPAWN_EGG, Zombie.NETWORK_ID));
         
         //TODO: PigZombie
-        //addCreativeItem(Item.get(ItemValues.SPAWN_EGG, Squid.NETWORK_ID));
+        addCreativeItem(Item.get(ItemValues.SPAWN_EGG, Squid.NETWORK_ID));
         
         addCreativeItem(Item.get(ItemValues.SNOWBALL, 0));
         //Seeds
