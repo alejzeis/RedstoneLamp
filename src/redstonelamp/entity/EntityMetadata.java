@@ -41,6 +41,7 @@ public class EntityMetadata {
         this.array = array;
     }
 
+
     public static enum DataType{
         DATA_TYPE_BYTE((byte) 0),
         DATA_TYPE_SHORT((byte) 1),

@@ -65,7 +65,7 @@ public class DynamicByteBuffer {
      */
     public static DynamicByteBuffer newInstance(ByteOrder order){
         DynamicByteBuffer bb = new DynamicByteBuffer();
-        bb.setByteBuffer(ByteBuffer.allocate(2));
+        bb.setByteBuffer(ByteBuffer.allocate(0));
         bb.setByteOrder(order);
         bb.setPosition(0);
         bb.binary = Binary.newInstance(order);
@@ -248,6 +248,7 @@ public class DynamicByteBuffer {
     
     public void setByteOrder(ByteOrder order){
         bb.order(order);
+        binary = Binary.newInstance(order);
     }
     
     public ByteBuffer getByteBuffer(){

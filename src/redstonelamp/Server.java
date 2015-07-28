@@ -5,6 +5,7 @@ import redstonelamp.event.EventManager;
 import redstonelamp.event.player.PlayerJoinEvent;
 import redstonelamp.event.server.ServerStopEvent;
 import redstonelamp.event.server.ServerTickEvent;
+import redstonelamp.item.Item;
 import redstonelamp.level.Level;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.Network;
@@ -58,6 +59,8 @@ public class Server implements Runnable{
         logger.info(RedstoneLamp.SOFTWARE + " is distributed under the " + RedstoneLamp.LICENSE);
 
         mainLevel = new Level(this);
+        Item.init();
+        logger.info("Items initialized ("+Item.getCreativeItems().size()+" creative items)");
         
         network = new Network(this);
         network.registerInterface(new JRakLibInterface(this));

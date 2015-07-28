@@ -11,8 +11,7 @@ import java.util.zip.Inflater;
 public class CompressionUtils {
 
     public static byte[] zlibDeflate(byte[] uncompressed, int level){
-        Deflater deflater = new Deflater();
-        deflater.setLevel(level);
+        Deflater deflater = new Deflater(level, false);
         deflater.setInput(uncompressed);
         deflater.finish();
 

@@ -11,6 +11,7 @@ import redstonelamp.Server;
 import redstonelamp.network.packet.BatchPacket;
 import redstonelamp.network.packet.DataPacket;
 import redstonelamp.network.packet.UnknownDataPacket;
+import redstonelamp.utils.Binary;
 
 /**
  * Interface for communicating with the JRakLib library.
@@ -59,6 +60,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
         if(server.getPlayer(identifier) != null){
             try{
                 if(packet.buffer != null || packet.buffer.length > 0){
+                    server.getLogger().debug("("+identifier+") Packet IN: "+Binary.dumpHexBytes(packet.buffer));
                     DataPacket pk = server.getNetwork().getPacket(packet.buffer[0]);
                     if(pk != null){
                         pk.decode(packet.buffer);
@@ -103,6 +105,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
     public void sendPacket(Player player, DataPacket packet, boolean needACK, boolean immediate) {
         if(server.getPlayer(player.getIdentifier()) != null){
             byte[] buffer = packet.encode();
+            server.getLogger().debug("("+player.getIdentifier()+") Packet OUT: "+ Binary.dumpHexBytes(buffer));
             if(!immediate && !needACK && !(packet instanceof BatchPacket) && PENetworkInfo.COMPRESSION_LIMIT >= 0 && buffer.length >= PENetworkInfo.COMPRESSION_LIMIT){
                 server.getNetwork().sendBatches(new Player[] {player}, new DataPacket[] {packet}, packet.getChannel());
                 return;

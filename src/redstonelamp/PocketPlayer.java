@@ -1,6 +1,7 @@
 package redstonelamp;
 
 import redstonelamp.entity.Entity;
+import redstonelamp.entity.EntityMetadata;
 import redstonelamp.event.player.PlayerKickEvent;
 import redstonelamp.event.player.PlayerQuitEvent;
 import redstonelamp.item.Item;
@@ -11,8 +12,10 @@ import redstonelamp.network.PENetworkInfo;
 import redstonelamp.network.packet.*;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Implementation of a Player, connected from a mobile device or windows 10.
@@ -116,7 +119,7 @@ public class PocketPlayer extends Entity implements Player{
                     }
                 }
 
-                setLocation(new Location(0, 64, 0, null));
+                setLocation(new Location(0, 128, 76, null));
 
                 SetEntityMotionPacket semp = new SetEntityMotionPacket();
                 SetEntityMotionPacket.entitymotionpacket_EntityData data = new SetEntityMotionPacket.entitymotionpacket_EntityData();
@@ -127,6 +130,13 @@ public class PocketPlayer extends Entity implements Player{
                 semp.entities = Arrays.asList(new SetEntityMotionPacket.entitymotionpacket_EntityData[] {data});
                 sendDataPacket(semp);
 
+                EntityMetadata em = new EntityMetadata();
+                em.set((byte) 17, new CopyOnWriteArrayList<>());
+                em.add((byte) 17, EntityMetadata.DataType.DATA_TYPE_POS);
+                em.add((byte) 17, Arrays.asList(0, 0, 0));
+
+                sendData(this, Arrays.asList(this), 0, em);
+
                 PlayStatusPacket psp = new PlayStatusPacket();
                 psp.status = PlayStatusPacket.Status.LOGIN_SUCCESS;
                 psp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
@@ -134,7 +144,7 @@ public class PocketPlayer extends Entity implements Player{
 
                 StartGamePacket sgp = new StartGamePacket();
                 sgp.seed = -1;
-                sgp.x = (float) getLocation().getX(); //Dummy positions
+                sgp.x = (float) getLocation().getX();
                 sgp.y = (float) getLocation().getY();
                 sgp.z = (float) getLocation().getZ();
                 sgp.spawnX = (int) getLocation().getX();
@@ -147,7 +157,7 @@ public class PocketPlayer extends Entity implements Player{
                 sendDataPacket(sgp);
 
                 SetTimePacket stp = new SetTimePacket();
-                stp.time = 30171;
+                stp.time = 28617;
                 stp.started = true;
                 stp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
                 sendDataPacket(stp);
@@ -177,7 +187,7 @@ public class PocketPlayer extends Entity implements Player{
                 cscp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
                 sendDataPacket(cscp);
 
-                server.getMainLevel().queueLoginChunks(this);
+                //server.getMainLevel().queueLoginChunks(this);
 
                 break;
         }
