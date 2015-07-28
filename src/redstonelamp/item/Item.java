@@ -3,6 +3,9 @@ package redstonelamp.item;
 import redstonelamp.RedstoneLamp;
 import redstonelamp.block.Block;
 import redstonelamp.block.BlockValues;
+import redstonelamp.block.Flower;
+import redstonelamp.entity.Villager;
+import redstonelamp.entity.Zombie;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -253,17 +256,17 @@ public class Item implements ItemValues{
         addCreativeItem(Item.get(ItemValues.FURNACE, 0));
         addCreativeItem(Item.get(ItemValues.END_PORTAL, 0));
         addCreativeItem(Item.get(ItemValues.DANDELION, 0));
-        /*
-        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower::TYPE_POPPY));
-        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower::TYPE_BLUE_ORCHID));
-        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower::TYPE_ALLIUM));
-        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower::TYPE_AZURE_BLUET));
-        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower::TYPE_RED_TULIP));
-        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower::TYPE_ORANGE_TULIP));
-        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower::TYPE_WHITE_TULIP));
-        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower::TYPE_PINK_TULIP));
-        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower::TYPE_OXEYE_DAISY));
-        */
+        
+        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower.TYPE_POPPY));
+        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower.TYPE_BLUE_ORCHID));
+        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower.TYPE_ALLIUM));
+        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower.TYPE_AZURE_BLUET));
+        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower.TYPE_RED_TULIP));
+        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower.TYPE_ORANGE_TULIP));
+        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower.TYPE_WHITE_TULIP));
+        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower.TYPE_PINK_TULIP));
+        addCreativeItem(Item.get(ItemValues.RED_FLOWER, Flower.TYPE_OXEYE_DAISY));
+        
         //TODO: Lilac
         //TODO: Double Tallgrass
         //TODO: Large Fern
@@ -349,7 +352,7 @@ public class Item implements ItemValues{
         addCreativeItem(Item.get(ItemValues.CLOCK, 0));
         addCreativeItem(Item.get(ItemValues.COMPASS, 0));
         addCreativeItem(Item.get(ItemValues.MINECART, 0));
-        //addCreativeItem(Item.get(ItemValues.SPAWN_EGG, Villager::NETWORK_ID));
+        addCreativeItem(Item.get(ItemValues.SPAWN_EGG, Villager.NETWORK_ID));
         
         //addCreativeItem(Item.get(ItemValues.SPAWN_EGG, 10)); //Chicken
         //addCreativeItem(Item.get(ItemValues.SPAWN_EGG, 11)); //Cow
@@ -362,10 +365,10 @@ public class Item implements ItemValues{
         //TODO: Silverfish
         //TODO: Skeleton
         //TODO: Slime
-        //addCreativeItem(Item.get(ItemValues.SPAWN_EGG, Zombie::NETWORK_ID));
+        addCreativeItem(Item.get(ItemValues.SPAWN_EGG, Zombie.NETWORK_ID));
         
         //TODO: PigZombie
-        //addCreativeItem(Item.get(ItemValues.SPAWN_EGG, Squid::NETWORK_ID));
+        //addCreativeItem(Item.get(ItemValues.SPAWN_EGG, Squid.NETWORK_ID));
         
         addCreativeItem(Item.get(ItemValues.SNOWBALL, 0));
         //Seeds
