@@ -1,15 +1,12 @@
 package redstonelamp.level;
 
-import com.sun.org.apache.xml.internal.security.Init;
 import redstonelamp.Player;
-import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
 import redstonelamp.level.provider.FakeLevelProvider;
 import redstonelamp.network.NetworkChannel;
 import redstonelamp.network.packet.FullChunkDataPacket;
 import redstonelamp.network.packet.PlayStatusPacket;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
