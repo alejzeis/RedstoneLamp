@@ -77,7 +77,7 @@ public class PocketPlayer extends Entity implements Player{
                 LoginPacket lp = (LoginPacket) packet;
 
                 username = lp.username;
-                setNameTag(username);
+                //setNameTag(username);
                 mojangClientId = lp.clientId;
                 uuid = UUID.nameUUIDFromBytes(username.getBytes());
 
@@ -88,14 +88,14 @@ public class PocketPlayer extends Entity implements Player{
 
                         PlayStatusPacket psp = new PlayStatusPacket();
                         psp.status = PlayStatusPacket.Status.LOGIN_FAILED_CLIENT;
-                        psp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+                        //psp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
                         sendDirectDataPacket(psp);
                     } else {
                         message = "disconnectionScreen.outdatedServer";
 
                         PlayStatusPacket psp = new PlayStatusPacket();
                         psp.status = PlayStatusPacket.Status.LOGIN_FAILED_SERVER;
-                        psp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+                       //psp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
                         sendDirectDataPacket(psp);
                     }
                     close("", message, false);
@@ -121,6 +121,11 @@ public class PocketPlayer extends Entity implements Player{
 
                 setLocation(new Location(0, 128, 76, null));
 
+                sendLoginPackets();
+
+                server.getMainLevel().queueLoginChunks(this);
+
+                /*
                 SetEntityMotionPacket semp = new SetEntityMotionPacket();
                 SetEntityMotionPacket.entitymotionpacket_EntityData data = new SetEntityMotionPacket.entitymotionpacket_EntityData();
                 data.eid = 0;
@@ -188,9 +193,85 @@ public class PocketPlayer extends Entity implements Player{
                 sendDataPacket(cscp);
 
                 //server.getMainLevel().queueLoginChunks(this);
+                */
 
                 break;
         }
+    }
+
+    private void sendLoginPackets() {
+        PlayStatusPacket psp = new PlayStatusPacket();
+        psp.status = PlayStatusPacket.Status.LOGIN_SUCCESS;
+        //psp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+        sendDataPacket(psp);
+
+        StartGamePacket sgp = new StartGamePacket();
+        sgp.seed = -1;
+        sgp.x = (float) getLocation().getX();
+        sgp.y = (float) getLocation().getY();
+        sgp.z = (float) getLocation().getZ();
+        sgp.spawnX = (int) getLocation().getX();
+        sgp.spawnY = (int) getLocation().getY();
+        sgp.spawnZ = (int) getLocation().getZ();
+        sgp.generator = 1;
+        sgp.gamemode = 1; //CREATIVE
+        sgp.eid = 0; //Player EntityID is always 0
+        //sgp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+        sendDataPacket(sgp);
+
+        SetTimePacket stp = new SetTimePacket();
+        stp.time = 28617;
+        stp.started = true;
+        //stp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+        sendDataPacket(stp);
+
+        SetSpawnPositionPacket sspp = new SetSpawnPositionPacket();
+        sspp.x = (int) getLocation().getX();
+        sspp.y = (byte) getLocation().getY();
+        sspp.z = (int) getLocation().getZ();
+        //sspp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+        sendDataPacket(sspp);
+
+        AdventureSettingsPacket asp = new AdventureSettingsPacket();
+        asp.flags = 0x80;
+        //asp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+        sendDataPacket(asp);
+
+        SetHealthPacket shp = new SetHealthPacket();
+        shp.health = 20;
+        //shp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+        sendDataPacket(shp);
+
+        SetDifficultyPacket sdp = new SetDifficultyPacket();
+        sdp.difficulty = 1;
+        //sdp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+        sendDataPacket(sdp);
+
+        server.getLogger().info(username+" ["+identifier+"] logged in with entity id 0 at [x: "+Math.round(getLocation().getX())+", y: "+Math.round(getLocation().getY())+", z: "+Math.round(getLocation().getZ())+"]"); //TODO: Real info here.
+
+        sendMetadata();
+
+        ContainerSetContentPacket cscp = new ContainerSetContentPacket();
+        cscp.windowId = ContainerSetContentPacket.SPECIAL_CREATIVE;
+        cscp.slots = Item.getCreativeItems();
+        //cscp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+        sendDataPacket(cscp);
+    }
+
+    private void sendMetadata() {
+        EntityMetadata em = new EntityMetadata();
+        em.set((byte) 0, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0));
+        em.set((byte) 1, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_SHORT, (short) 300));
+        em.set((byte) 2, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_STRING, username));
+        em.set((byte) 3, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 1));
+        em.set((byte) 4, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0));
+        em.set((byte) 7, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_INT, 1));
+        em.set((byte) 8, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0));
+        em.set((byte) 15, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0));
+        em.set((byte) 16, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0));
+        em.set((byte) 17, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_LONG, (long) 0));
+
+        sendData(this, Arrays.asList(this), 0, em);
     }
 
     @Override

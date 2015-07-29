@@ -1,6 +1,8 @@
 package redstonelamp.level;
 
+import com.sun.org.apache.xml.internal.security.Init;
 import redstonelamp.Player;
+import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
 import redstonelamp.level.provider.FakeLevelProvider;
 import redstonelamp.network.NetworkChannel;
@@ -21,7 +23,6 @@ public class Level {
     private Server server;
     private LevelProvider provider;
     private Map<Player, List<ChunkLocation>> chunksToSend = new ConcurrentHashMap<>();
-    private ExecutorService sendPool = Executors.newFixedThreadPool(5); //5 threads
 
     public Level(Server server){
         this.server = server;
@@ -32,30 +33,30 @@ public class Level {
         if(chunksToSend.keySet().isEmpty()){
             return;
         }
-        Player player = chunksToSend.keySet().iterator().next();
-        List<ChunkLocation> chunks = chunksToSend.get(player);
-        for(int i = 0; i < CHUNKS_PER_TICK; i++){
-            if(i >= chunks.size()){
-                PlayStatusPacket psp = new PlayStatusPacket();
-                psp.status = PlayStatusPacket.Status.PLAYER_SPAWN;
-                psp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
-                player.sendDataPacket(psp);
-                chunksToSend.remove(player);
-                return;
-            }
-            final int finalI = i;
-            sendPool.submit(() -> {
+        for(Player player : chunksToSend.keySet()) {
+            List<ChunkLocation> chunks = chunksToSend.get(player);
+            for (int i = 0; i < CHUNKS_PER_TICK; i++) {
+                if (i >= chunks.size()) {
+                    PlayStatusPacket psp = new PlayStatusPacket();
+                    psp.status = PlayStatusPacket.Status.PLAYER_SPAWN;
+                    //psp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+                    player.sendDataPacket(psp);
+                    chunksToSend.remove(player);
+                    return;
+                }
+                final int finalI = i;
+
                 byte[] data = provider.orderChunk(chunks.get(finalI).getX(), chunks.get(finalI).getZ());
                 FullChunkDataPacket dp = new FullChunkDataPacket();
                 dp.x = chunks.get(finalI).getX();
                 dp.z = chunks.get(finalI).getZ();
                 dp.payload = data;
-                dp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+                //dp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
                 player.sendDataPacket(dp);
                 chunks.remove(finalI);
-            });
+            }
+            chunksToSend.put(player, chunks);
         }
-        chunksToSend.put(player, chunks);
     }
 
     public void queueLoginChunks(Player player){
@@ -75,7 +76,7 @@ public class Level {
                 }
             }
         }
-        chunksToSend.put(player, chunks);
+       new Thread(new InitalChunkSender(chunks, player)).start();
     }
 
     public synchronized void clearQueue(Player player){
@@ -83,6 +84,35 @@ public class Level {
     }
 
     public void shutdown() {
-        sendPool.shutdown();
+        //sendPool.shutdown();
+    }
+
+    public class InitalChunkSender implements Runnable{
+        private List<ChunkLocation> locations;
+        private Player player;
+
+        public InitalChunkSender(List<ChunkLocation> locations, Player player){
+            this.locations = locations;
+            this.player = player;
+        }
+
+        @Override
+        public void run() {
+            int sent = 0;
+            for(ChunkLocation location : locations){
+                sent = sent + 1;
+                byte[] data = provider.orderChunk(location.getX(), location.getZ());
+                FullChunkDataPacket dp = new FullChunkDataPacket();
+                dp.x = location.getX();
+                dp.z = location.getZ();
+                dp.payload = data;
+                dp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+                player.sendDataPacket(dp);
+                System.out.println("Sent chunk "+location.getX()+", "+location.getZ()+" sent: "+sent);
+            }
+            PlayStatusPacket psp = new PlayStatusPacket();
+            psp.status = PlayStatusPacket.Status.PLAYER_SPAWN;
+            player.sendDirectDataPacket(psp);
+        }
     }
 }

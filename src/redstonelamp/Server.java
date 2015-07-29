@@ -105,6 +105,7 @@ public class Server implements Runnable{
     private void tick() {
         network.tick();
         mainLevel.tick();
+        /*
      	getEventManager().getEventExecutor().execute(new ServerTickEvent());
 		RedstoneLamp.getAsync().execute(() -> {
             String line = null;
@@ -116,6 +117,7 @@ public class Server implements Runnable{
                 }
             } catch (IOException e) {}
         });
+        */
     }
 
     /**

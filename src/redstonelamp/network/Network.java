@@ -1,6 +1,7 @@
 package redstonelamp.network;
 
 import redstonelamp.Player;
+import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
 import redstonelamp.network.packet.*;
 import redstonelamp.utils.CompressionUtils;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Networking class.
@@ -19,6 +21,8 @@ public class Network {
     private Server server;
     private List<NetworkInterface> interfaces = new ArrayList<>();
 
+    private Map<Player[], List<DataPacket>> toSend = new ConcurrentHashMap<>();
+
     public Network(Server server){
         this.server = server;
         registerPackets();
@@ -27,6 +31,27 @@ public class Network {
     public void tick(){
         for(NetworkInterface networkInterface : interfaces){
             networkInterface.processData();
+        }
+        for(Player[] players : toSend.keySet()){
+            List<DataPacket> packets = toSend.get(players);
+            for(Player player : players){
+                for(DataPacket dp : packets){
+                    player.sendDirectDataPacket(dp);
+                }
+            }
+            toSend.remove(players);
+        }
+    }
+
+    public void addToSendQueue(Player[] i, DataPacket dp){
+        if(toSend.containsKey(i)) {
+            List<DataPacket> list = toSend.get(i);
+            list.add(dp);
+            toSend.put(i, list);
+        } else {
+            List<DataPacket> l = new CopyOnWriteArrayList<>();
+            l.add(dp);
+            toSend.put(i, l);
         }
     }
 
@@ -62,15 +87,13 @@ public class Network {
             bb.put(packet.encode());
         }
 
-        BatchPacket bp = new BatchPacket();
-        bp.setChannel(channel);
-        bp.payload = CompressionUtils.zlibDeflate(bb.toArray(), PENetworkInfo.COMPRESSION_LEVEL);
-
-        for(Player player : players){
-            if(server.getPlayer(player.getIdentifier()) != null){
-                player.sendDataPacket(bp);
-            }
+        RedstoneLamp.getAsync().submit(() -> {
+                    BatchPacket bp = new BatchPacket();
+                    bp.setChannel(channel);
+                    bp.payload = CompressionUtils.zlibDeflate(bb.toArray(), PENetworkInfo.COMPRESSION_LEVEL);
+                    addToSendQueue(players, bp);
         }
+        );
     }
 
     public void setName(String name){
