@@ -1,7 +1,6 @@
 package redstonelamp.block;
 
 import redstonelamp.item.Item;
-import redstonelamp.level.Position;
 import redstonelamp.metadata.Metadatable;
 
 public class Block extends Item implements Metadatable, BlockValues {

@@ -11,12 +11,9 @@ import redstonelamp.network.NetworkChannel;
 import redstonelamp.network.PENetworkInfo;
 import redstonelamp.network.packet.*;
 
-import java.io.File;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Implementation of a Player, connected from a mobile device or windows 10.

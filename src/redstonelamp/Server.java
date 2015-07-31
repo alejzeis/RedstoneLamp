@@ -4,7 +4,6 @@ import redstonelamp.cmd.CommandManager;
 import redstonelamp.event.EventManager;
 import redstonelamp.event.player.PlayerJoinEvent;
 import redstonelamp.event.server.ServerStopEvent;
-import redstonelamp.event.server.ServerTickEvent;
 import redstonelamp.item.Item;
 import redstonelamp.level.Level;
 import redstonelamp.network.JRakLibInterface;

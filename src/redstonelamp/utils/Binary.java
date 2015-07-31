@@ -1,6 +1,5 @@
 package redstonelamp.utils;
 
-import redstonelamp.entity.Entity;
 import redstonelamp.entity.EntityMetadata;
 
 import java.io.IOException;

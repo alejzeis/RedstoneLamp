@@ -1,6 +1,5 @@
 package redstonelamp;
 
-import redstonelamp.entity.Entity;
 import redstonelamp.level.Location;
 import redstonelamp.network.packet.DataPacket;
 

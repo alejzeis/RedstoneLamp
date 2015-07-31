@@ -1,15 +1,12 @@
 package redstonelamp.item;
 
-import redstonelamp.RedstoneLamp;
 import redstonelamp.block.Block;
-import redstonelamp.block.BlockValues;
 import redstonelamp.block.Flower;
 import redstonelamp.entity.Squid;
 import redstonelamp.entity.Villager;
 import redstonelamp.entity.Zombie;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
