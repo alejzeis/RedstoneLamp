@@ -4,6 +4,7 @@ import redstonelamp.entity.Entity;
 import redstonelamp.level.Location;
 import redstonelamp.network.packet.DataPacket;
 
+import java.io.File;
 import java.net.InetSocketAddress;
 import java.util.UUID;
 
@@ -97,4 +98,16 @@ public interface Player {
      * @return boolean
      */
      boolean isOp();
+     
+     /**
+      * Returns the "players" folder
+      * 
+      * @return File
+      */
+     default File getDataFolder() {
+ 		File dataFolder = new File("./players/");
+ 		if(!dataFolder.isDirectory())
+ 			dataFolder.mkdirs();
+ 		return dataFolder;
+     }
 }

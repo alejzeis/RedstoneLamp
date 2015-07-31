@@ -7,6 +7,7 @@ import redstonelamp.network.NetworkChannel;
 import redstonelamp.network.packet.FullChunkDataPacket;
 import redstonelamp.network.packet.PlayStatusPacket;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -82,6 +83,18 @@ public class Level {
 
     public void shutdown() {
         //sendPool.shutdown();
+    }
+    
+    /**
+     * Returns the "worlds" directory
+     * 
+     * @return File
+     */
+    public File getDataFolder() {
+    	File dataFolder = new File("./worlds/");
+    	if(!dataFolder.isDirectory())
+    		dataFolder.mkdirs();
+    	return dataFolder;
     }
 
     public class InitalChunkSender implements Runnable{
