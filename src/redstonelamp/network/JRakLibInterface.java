@@ -105,7 +105,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
     public void sendPacket(Player player, DataPacket packet, boolean needACK, boolean immediate) {
         if(server.getPlayer(player.getIdentifier()) != null){
             byte[] buffer = packet.encode();
-            server.getLogger().debug("("+player.getIdentifier()+") Packet OUT: "+ Binary.dumpHexBytes(buffer));
+            if(buffer[0] != PENetworkInfo.FULL_CHUNK_DATA_PACKET) server.getLogger().debug("("+player.getIdentifier()+") Packet OUT: "+ Binary.dumpHexBytes(buffer));
             if(!immediate && !needACK && !(packet instanceof BatchPacket) && PENetworkInfo.COMPRESSION_LIMIT >= 0 && buffer.length >= PENetworkInfo.COMPRESSION_LIMIT){
                 server.getNetwork().sendBatches(new Player[] {player}, new DataPacket[] {packet}, packet.getChannel());
                 return;

@@ -26,6 +26,7 @@ public class PENetworkInfo {
     public static final byte SET_ENTITY_MOTION_PACKET = (byte) 0x9f;
     public static final byte SET_HEALTH_PACKET = (byte) 0xa1;
     public static final byte SET_SPAWN_POSITION_PACKET = (byte) 0xa2;
+    public static final byte RESPAWN_PACKET = (byte) 0xa4;
     public static final byte CONTAINTER_SET_CONTENT_PACKET = (byte) 0xaa;
     public static final byte ADVENTURE_SETTINGS_PACKET = (byte) 0xac;
     public static final byte FULL_CHUNK_DATA_PACKET = (byte) 0xaf;

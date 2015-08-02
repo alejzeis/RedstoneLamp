@@ -117,7 +117,7 @@ public class PocketPlayer extends Entity implements Player{
                     }
                 }
 
-                setLocation(new Location(0, 128, 76, null));
+                setLocation(new Location(0, 2, 0, null));
 
                 sendLoginPackets();
 
@@ -254,6 +254,23 @@ public class PocketPlayer extends Entity implements Player{
         cscp.slots = Item.getCreativeItems();
         //cscp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
         sendDataPacket(cscp);
+    }
+    
+    public void doFirstSpawn(){
+        SetTimePacket stp = new SetTimePacket();
+        stp.time = 28617;
+        stp.started = true;
+        sendDataPacket(stp);
+
+        RespawnPacket rp = new RespawnPacket();
+        rp.x = (float) getLocation().getX();
+        rp.y = (float) getLocation().getY();
+        rp.z = (float) getLocation().getZ();
+        sendDataPacket(rp);
+
+        PlayStatusPacket psp = new PlayStatusPacket();
+        psp.status = PlayStatusPacket.Status.PLAYER_SPAWN;
+        sendDataPacket(psp);
     }
 
     private void sendMetadata() {

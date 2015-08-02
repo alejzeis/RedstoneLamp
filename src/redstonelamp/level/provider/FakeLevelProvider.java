@@ -1,5 +1,6 @@
 package redstonelamp.level.provider;
 
+import redstonelamp.item.ItemValues;
 import redstonelamp.level.LevelProvider;
 import redstonelamp.utils.DynamicByteBuffer;
 
@@ -12,20 +13,25 @@ public class FakeLevelProvider implements LevelProvider{
     @Override
     public byte[] orderChunk(int x, int z) {
         ByteBuffer bb = ByteBuffer.allocate(83200);
-        for(int i = 0; i < (16 * 16 *128); i++){
-            bb.put((byte) 0x01);
+        for(int blockX = 0; blockX < 16; blockX++){
+            for(int blockZ = 0; blockZ < 16; blockZ++){
+                bb.put((byte) ItemValues.GRASS);
+                for(int blockY = 0; blockY < 127; blockY++){
+                    bb.put((byte) ItemValues.AIR);
+                }
+            }
         }
-        bb.put(new byte[(16 * 16 * 128) / 2]); //Half-Byte block metadata
-        for(int i = 0; i < 16384; i++){
-            bb.put((byte) 0xF0);
+        bb.put(new byte[16384]);
+        for(int i = 0; i < 16384; i++){  //Skylight
+            bb.put((byte) 0xFF);
         }
-        for(int i = 0; i < 16384; i++){
-            bb.put((byte) 0x11);
-        }
-        for(int i = 0; i < 256; i++){
+        for(int i = 0; i < 16384; i++){ //BlockLight
             bb.put((byte) 0x00);
         }
-        for(int i = 0; i < 256; i++){
+        for(int i = 0; i < 256; i++){ //Heightmap
+            bb.put((byte) 0xFF);
+        }
+        for(int i = 0; i < 256; i++){ //Biome Colors
             bb.put((byte) 0x01);
             bb.put((byte) 0x85);
             bb.put((byte) 0xB2);

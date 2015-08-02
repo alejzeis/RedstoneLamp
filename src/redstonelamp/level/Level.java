@@ -1,11 +1,13 @@
 package redstonelamp.level;
 
 import redstonelamp.Player;
+import redstonelamp.PocketPlayer;
 import redstonelamp.Server;
 import redstonelamp.level.provider.FakeLevelProvider;
 import redstonelamp.network.NetworkChannel;
 import redstonelamp.network.packet.FullChunkDataPacket;
 import redstonelamp.network.packet.PlayStatusPacket;
+import redstonelamp.network.packet.RespawnPacket;
 
 import java.io.File;
 import java.util.List;
@@ -120,9 +122,9 @@ public class Level {
                 player.sendDataPacket(dp);
                 System.out.println("Sent chunk "+location.getX()+", "+location.getZ()+" sent: "+sent);
             }
-            PlayStatusPacket psp = new PlayStatusPacket();
-            psp.status = PlayStatusPacket.Status.PLAYER_SPAWN;
-            player.sendDirectDataPacket(psp);
+            if(player instanceof PocketPlayer){
+                ((PocketPlayer) player).doFirstSpawn();
+            }
         }
     }
 }
