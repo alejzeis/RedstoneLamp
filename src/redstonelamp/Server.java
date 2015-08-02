@@ -20,6 +20,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Server implements Runnable{
     private boolean debugMode = false;
@@ -34,7 +35,7 @@ public class Server implements Runnable{
     private String bindInterface;
     private int bindPort;
 
-    private List<Player> players = new ArrayList<>();
+    private List<Player> players = new CopyOnWriteArrayList();
     private Network network;
     private Level mainLevel;
     private BufferedReader cli;
