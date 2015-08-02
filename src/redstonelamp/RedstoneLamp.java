@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 
 import redstonelamp.cmd.defaults.Help;
 import redstonelamp.cmd.defaults.Kick;
+import redstonelamp.cmd.defaults.List;
 import redstonelamp.cmd.defaults.Stop;
 import redstonelamp.utils.MainLogger;
 
@@ -32,7 +33,7 @@ public class RedstoneLamp implements Runnable{
 		try {
 			properties = loadProperties();
 			int workers = Integer.parseInt(properties.getProperty("async-workers", "4"));
-			async = Executors.newFixedThreadPool(1);
+			async = Executors.newFixedThreadPool(workers);
 			logger.debug("Created " + workers + " Async threads!");
 			new Server(properties, logger);
 		} catch (IOException e) {
@@ -89,6 +90,7 @@ public class RedstoneLamp implements Runnable{
 	}
 
 	public static void registerDefaultCommands() {
+		getServerInstance().getCommandManager().registerCommand("list", "Shows a list of all online players", new List());
 		getServerInstance().getCommandManager().registerCommand("help", "Shows all available commands", new Help());
 		getServerInstance().getCommandManager().registerCommand("kick", "Kicks a player from the server", new Kick());
 		getServerInstance().getCommandManager().registerCommand("stop", "Stops the server", new Stop());
