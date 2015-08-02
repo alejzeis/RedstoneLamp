@@ -4,6 +4,7 @@ import redstonelamp.cmd.CommandManager;
 import redstonelamp.event.EventManager;
 import redstonelamp.event.player.PlayerJoinEvent;
 import redstonelamp.event.server.ServerStopEvent;
+import redstonelamp.event.server.ServerTickEvent;
 import redstonelamp.item.Item;
 import redstonelamp.level.Level;
 import redstonelamp.network.JRakLibInterface;
@@ -104,7 +105,6 @@ public class Server implements Runnable{
     private void tick() {
         network.tick();
         mainLevel.tick();
-        /*
      	getEventManager().getEventExecutor().execute(new ServerTickEvent());
 		RedstoneLamp.getAsync().execute(() -> {
             String line = null;
@@ -116,7 +116,6 @@ public class Server implements Runnable{
                 }
             } catch (IOException e) {}
         });
-        */
     }
 
     /**
