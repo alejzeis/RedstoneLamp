@@ -64,9 +64,6 @@ public class PocketPlayer extends Entity implements Player{
                     server.getLogger().debug("Unknown Packet: 0x"+String.format("%02X", packet.getBuffer()[0]));
                     break;
                 }
-                if(server.isDebugMode()){
-                    server.getLogger().debug("Packet ("+packet.getClass().getName()+") 0x"+String.format("%02X ", packet.getBuffer()[0]));
-                }
 
             case PENetworkInfo.LOGIN_PACKET:
                 if(loggedIn){
@@ -257,10 +254,9 @@ public class PocketPlayer extends Entity implements Player{
     }
     
     public void doFirstSpawn(){
-        SetTimePacket stp = new SetTimePacket();
-        stp.time = 28617;
-        stp.started = true;
-        sendDataPacket(stp);
+        PlayStatusPacket psp = new PlayStatusPacket();
+        psp.status = PlayStatusPacket.Status.PLAYER_SPAWN;
+        sendDataPacket(psp);
 
         RespawnPacket rp = new RespawnPacket();
         rp.x = (float) getLocation().getX();
@@ -268,9 +264,10 @@ public class PocketPlayer extends Entity implements Player{
         rp.z = (float) getLocation().getZ();
         sendDataPacket(rp);
 
-        PlayStatusPacket psp = new PlayStatusPacket();
-        psp.status = PlayStatusPacket.Status.PLAYER_SPAWN;
-        sendDataPacket(psp);
+        SetTimePacket stp = new SetTimePacket();
+        stp.time = 28617;
+        stp.started = true;
+        sendDataPacket(stp);
     }
 
     private void sendMetadata() {
