@@ -17,16 +17,16 @@ public class FakeLevelProvider implements LevelProvider{
             for(int blockZ = 0; blockZ < 16; blockZ++){
                 bb.put((byte) ItemValues.GRASS);
                 for(int blockY = 0; blockY < 127; blockY++){
-                    bb.put((byte) ItemValues.AIR);
+                    bb.put((byte) ItemValues.GRASS);
                 }
             }
         }
         bb.put(new byte[16384]);
         for(int i = 0; i < 16384; i++){  //Skylight
-            bb.put((byte) 0xFF);
+            bb.put((byte) 0);
         }
         for(int i = 0; i < 16384; i++){ //BlockLight
-            bb.put((byte) 0x00);
+            bb.put((byte) 0);
         }
         for(int i = 0; i < 256; i++){ //Heightmap
             bb.put((byte) 0xFF);

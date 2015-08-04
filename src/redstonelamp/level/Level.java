@@ -2,6 +2,7 @@ package redstonelamp.level;
 
 import redstonelamp.Player;
 import redstonelamp.PocketPlayer;
+import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
 import redstonelamp.level.provider.FakeLevelProvider;
 import redstonelamp.network.NetworkChannel;
@@ -67,7 +68,7 @@ public class Level {
         List<ChunkLocation> chunks = new CopyOnWriteArrayList<>();
         int chunkX = (int) player.getLocation().getX();
         int chunkZ = (int) player.getLocation().getZ();
-        for (int distance = 5; distance >= 0; distance--) {
+        for (int distance = 3; distance >= 0; distance--) {
             for (int x = chunkX - distance; x < chunkX + distance; x++) {
                 for (int z = chunkZ - distance; z < chunkZ + distance; z++) {
                     if (Math.sqrt((chunkX - x) * (chunkX - x) + (chunkZ - z) * (chunkZ - z)) < 5) {
@@ -76,7 +77,7 @@ public class Level {
                 }
             }
         }
-       new Thread(new InitalChunkSender(chunks, player)).start();
+        RedstoneLamp.getAsync().submit(new InitalChunkSender(chunks, player));
     }
 
     public synchronized void clearQueue(Player player){

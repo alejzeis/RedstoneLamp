@@ -114,7 +114,7 @@ public class PocketPlayer extends Entity implements Player{
                     }
                 }
 
-                setLocation(new Location(0, 2, 0, null));
+                setLocation(new Location(128, 86.000002746582, 128, server.getMainLevel()));
 
                 sendLoginPackets();
 
@@ -228,7 +228,9 @@ public class PocketPlayer extends Entity implements Player{
         sendDataPacket(sspp);
 
         AdventureSettingsPacket asp = new AdventureSettingsPacket();
-        asp.flags = 0x80;
+        int flags = 0;
+        flags |= 0x20;
+        asp.flags = flags;
         //asp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
         sendDataPacket(asp);
 
@@ -329,7 +331,7 @@ public class PocketPlayer extends Entity implements Player{
             if(notifyClient){
                 DisconnectPacket dp = new DisconnectPacket();
                 dp.message = reason;
-                dp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
+                //dp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
                 sendDirectDataPacket(dp);
             }
 

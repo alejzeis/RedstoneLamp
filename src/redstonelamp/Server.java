@@ -104,19 +104,25 @@ public class Server implements Runnable{
      * Executes a server tick.
      */
     private void tick() {
-        network.tick();
-        mainLevel.tick();
-     	getEventManager().getEventExecutor().execute(new ServerTickEvent());
-		RedstoneLamp.getAsync().execute(() -> {
-            String line = null;
-            try {
-                if(cli.ready()) {
-                    line = cli.readLine();
-                    if(line != null)
-                        RedstoneLamp.getServerInstance().getCommandManager().getCommandExecutor().executeCommand(line, RedstoneLamp.getServerInstance());
+        try {
+            network.tick();
+            mainLevel.tick();
+            getEventManager().getEventExecutor().execute(new ServerTickEvent());
+            RedstoneLamp.getAsync().execute(() -> {
+                String line = null;
+                try {
+                    if (cli.ready()) {
+                        line = cli.readLine();
+                        if (line != null)
+                            RedstoneLamp.getServerInstance().getCommandManager().getCommandExecutor().executeCommand(line, RedstoneLamp.getServerInstance());
+                    }
+                } catch (IOException e) {
                 }
-            } catch (IOException e) {}
-        });
+            });
+        } catch(Exception e){
+            logger.warning("Exception in tick: "+e.getMessage());
+
+        }
     }
 
     /**
