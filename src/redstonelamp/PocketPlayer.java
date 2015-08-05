@@ -10,6 +10,7 @@ import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.NetworkChannel;
 import redstonelamp.network.PENetworkInfo;
 import redstonelamp.network.packet.*;
+import redstonelamp.utils.TextFormat;
 
 import java.net.InetSocketAddress;
 import java.util.Arrays;
@@ -270,6 +271,8 @@ public class PocketPlayer extends Entity implements Player{
         stp.time = 28617;
         stp.started = true;
         sendDataPacket(stp);
+
+        sendMessage(TextFormat.RED+"Welcome to RedstoneLamp server!");
     }
 
     private void sendMetadata() {
@@ -418,7 +421,10 @@ public class PocketPlayer extends Entity implements Player{
      * @param message The message to be sent to the player.
      */
     public void sendMessage(String message) {
-    	//TODO: Send a message to the player
+    	TextPacket packet = new TextPacket();
+        packet.type = TextPacket.TYPE_RAW;
+        packet.message = message;
+        sendDataPacket(packet);
     }
     
     /**

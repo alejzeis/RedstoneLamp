@@ -20,6 +20,7 @@ public class PENetworkInfo {
     public static final byte LOGIN_PACKET = (byte) 0x82;
     public static final byte PLAY_STATUS_PACKET = (byte) 0x83;
     public static final byte DISCONNECT_PACKET = (byte) 0x84;
+    public static final byte TEXT_PACKET = (byte) 0x85;
     public static final byte SET_TIME_PACKET = (byte) 0x86;
     public static final byte START_GAME_PACKET = (byte) 0x87;
     public static final byte SET_ENTITY_DATA_PACKET = (byte) 0x9e;
