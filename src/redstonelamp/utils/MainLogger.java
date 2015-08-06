@@ -17,12 +17,9 @@ import redstonelamp.Server;
 
 public class MainLogger {
 	private PrintWriter writer;
-	private File log = new File("latest.log");
 	private Collection<String> lines = new ArrayList<String>();
 	
-	public MainLogger() {
-		log.delete();
-	}
+	public MainLogger() {}
 	
 	/**
 	 * A normal Server Message
@@ -119,10 +116,15 @@ public class MainLogger {
 	}
 	
 	public void close() {
+		Calendar cal = Calendar.getInstance();
 		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("mmddyyyyHHmmss");
+			File logsDir = new File("logs/");
+			File log = new File(logsDir + "/" + sdf.format(cal.getTime()) + ".log");
+			if(!logsDir.isDirectory())
+				logsDir.mkdirs();
 			FileUtils.writeLines(log, lines);
 		} catch (IOException e) {
-			Calendar cal = Calendar.getInstance();
 			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 			System.out.println(sdf.format(cal.getTime()) + " [ERROR] Unable to write log!");
 		}
