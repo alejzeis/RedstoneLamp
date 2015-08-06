@@ -291,7 +291,7 @@ public class Server implements Runnable{
     			cli.close();
 		} catch (IOException e) {}
 		for(Player p : getOnlinePlayers()) {
-			p.kick("Server closed.", false);
+			p.kick("Server closed.", true);
 		}
         mainLevel.shutdown();
     	pluginManager.getPluginLoader().disablePlugins();

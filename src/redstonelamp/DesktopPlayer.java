@@ -3,6 +3,7 @@ package redstonelamp;
 import org.apache.mina.core.session.IoSession;
 import redstonelamp.entity.Entity;
 import redstonelamp.network.packet.DataPacket;
+import redstonelamp.network.packet.TextPacket;
 import redstonelamp.network.pc.PCInterface;
 
 import java.net.InetSocketAddress;
@@ -86,6 +87,16 @@ public class DesktopPlayer extends Entity implements Player{
     @Override
     public void sendMessage(String message) {
 
+    }
+    
+    @Override
+    public void sendPopup(String message) {
+    	
+    }
+    
+    @Override
+    public void sendTip(String message) {
+    	
     }
 
     @Override

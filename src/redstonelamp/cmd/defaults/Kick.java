@@ -15,7 +15,7 @@ public class Kick implements CommandListener {
 				if(args.length >= 3)
 					reason = args[2];
 				for(Player p : RedstoneLamp.getServerInstance().getOnlinePlayers()) {
-					if(args[1].equals(p.getName())) {
+					if(args[1].toLowerCase().equals(p.getName().toLowerCase())) {
 						p.kick(reason, true);
 						sender.sendMessage("kicked " + p.getName() + " Reason: " + reason);
 						kicked = true;

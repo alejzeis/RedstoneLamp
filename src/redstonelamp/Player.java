@@ -90,6 +90,10 @@ public interface Player {
      * @param message The message to be sent to the player.
      */
      void sendMessage(String message);
+     
+     void sendPopup(String message);
+     
+     void sendTip(String message);
 
     /**
      * Returns true if the player is an Operator

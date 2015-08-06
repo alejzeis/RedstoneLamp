@@ -7,6 +7,7 @@ import redstonelamp.RedstoneLamp;
 import redstonelamp.cmd.Command;
 import redstonelamp.cmd.CommandListener;
 import redstonelamp.cmd.CommandSender;
+import redstonelamp.utils.TextFormat;
 
 public class Tell implements CommandListener {
 	public void onCommand(CommandSender sender, Command cmd, String label, String[] args) {

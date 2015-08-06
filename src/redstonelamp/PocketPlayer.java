@@ -429,6 +429,20 @@ public class PocketPlayer extends Entity implements Player{
         sendDataPacket(packet);
     }
     
+    public void sendPopup(String message) {
+    	TextPacket packet = new TextPacket();
+        packet.type = TextPacket.TYPE_POPUP;
+        packet.message = message;
+        sendDataPacket(packet);
+    }
+    
+    public void sendTip(String message) {
+    	TextPacket packet = new TextPacket();
+        packet.type = TextPacket.TYPE_TIP;
+        packet.message = message;
+        sendDataPacket(packet);
+    }
+    
     /**
      * Returns true if the player is an Operator
      * 
