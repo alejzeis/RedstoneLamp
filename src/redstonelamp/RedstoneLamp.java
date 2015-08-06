@@ -9,7 +9,6 @@ import redstonelamp.cmd.defaults.*;
 import redstonelamp.utils.MainLogger;
 
 public class RedstoneLamp implements Runnable{
-	public static String MC_VERSION = "0.11.1";
 	public static String SOFTWARE = "RedstoneLamp";
 	public static String VERSION = "1.2.0";
 	public static String CODENAME = "Snowball";
@@ -20,9 +19,10 @@ public class RedstoneLamp implements Runnable{
 	public static Properties properties;
 	private static Server SERVER_INSTANCE;
 	private static ExecutorService async;
-	private MainLogger logger = new MainLogger();
+	private static MainLogger logger;
 	
 	public static void main(String[] args) {
+		logger = new MainLogger();
 		new RedstoneLamp().run();
 	}
 

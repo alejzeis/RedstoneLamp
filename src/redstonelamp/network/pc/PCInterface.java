@@ -32,7 +32,7 @@ public class PCInterface implements NetworkInterface{
     public PCInterface(Server server){
         this.server = server;
 
-        server.getLogger().info("[PCInterface]: Starting Minecraft: PC server v"+PCNetworkInfo.MC_VERSION+" (protocol "+PCNetworkInfo.MC_PROTOCOL+").");
+        server.getLogger().info("Starting Minecraft: PC server v"+PCNetworkInfo.MC_VERSION+" (protocol "+PCNetworkInfo.MC_PROTOCOL+").");
         acceptor = new NioSocketAcceptor();
         acceptor.getFilterChain().addLast("logger", new LoggingFilter());
         acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new HeaderEncoder(), new HeaderDecoder()));
@@ -44,7 +44,7 @@ public class PCInterface implements NetworkInterface{
         acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
         try {
             acceptor.bind(new InetSocketAddress(Integer.parseInt(RedstoneLamp.properties.getProperty("mcpc-port", "25565"))));
-            server.getLogger().info("[PCInterface]: Successfully binded to *:25565");
+            server.getLogger().debug("[PCInterface]: Successfully bound to *:25565");
         } catch (IOException e) {
             server.getLogger().fatal("[PCInterface]: Failed to bind to *:25565!");
             e.printStackTrace();

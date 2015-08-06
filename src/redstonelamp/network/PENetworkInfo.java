@@ -1,7 +1,5 @@
 package redstonelamp.network;
 
-import redstonelamp.RedstoneLamp;
-
 /**
  * Network constants class (packetID's, etc...)
  */
@@ -11,7 +9,7 @@ public class PENetworkInfo {
     /**
      * The version of MCPE that RedstoneLamp implements.
      */
-    public static final String MCPE_VERSION = RedstoneLamp.MC_VERSION;
+    public static final String MCPE_VERSION = "0.11.1";
     /**
      * The MCPE protocol version RedstoneLamp implements.
      */

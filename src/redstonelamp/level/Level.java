@@ -99,6 +99,13 @@ public class Level {
     		dataFolder.mkdirs();
     	return dataFolder;
     }
+    
+    public File getDefaultWorldDataFolder() {
+       	File dataFolder = new File(getDataFolder() + "/" + RedstoneLamp.properties.getProperty("level-name", "world"));
+       	if(!dataFolder.isDirectory())
+       		dataFolder.mkdirs();
+       	return dataFolder;
+    }
 
     public class InitalChunkSender implements Runnable{
         private List<ChunkLocation> locations;

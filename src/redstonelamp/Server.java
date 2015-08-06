@@ -61,7 +61,7 @@ public class Server implements Runnable{
 
         mainLevel = new Level(this);
         Item.init();
-        logger.info("Items initialized ("+Item.getCreativeItems().size()+" creative items)");
+        logger.debug("Items initialized ("+Item.getCreativeItems().size()+" creative items)");
         
         network = new Network(this);
         network.registerInterface(new JRakLibInterface(this));
@@ -285,6 +285,7 @@ public class Server implements Runnable{
      * Stops the server
      */
     public void stop() {
+    	logger.info("Stopping the server...");
     	getEventManager().getEventExecutor().execute(new ServerStopEvent());
     	try {
     		if(cli instanceof BufferedReader)
@@ -297,6 +298,7 @@ public class Server implements Runnable{
     	pluginManager.getPluginLoader().disablePlugins();
         network.shutdown();
     	RedstoneLamp.getAsync().shutdown();
+    	logger.close();
     	System.exit(0);
     }
 }
