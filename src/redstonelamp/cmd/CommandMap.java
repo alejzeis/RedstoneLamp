@@ -7,4 +7,5 @@ public class CommandMap {
 	public List<String> commands = new ArrayList<String>();
 	public List<String> description = new ArrayList<String>();
 	public List<CommandListener> listeners = new ArrayList<CommandListener>();
+	public List<String> permission = new ArrayList<String>();
 }
