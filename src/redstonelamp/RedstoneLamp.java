@@ -65,7 +65,8 @@ public class RedstoneLamp implements Runnable{
 			properties.put("gamemode", "0");
 			properties.put("view-distance", "10");
 			properties.put("generate-structures", "true");
-			properties.put("port", "19132");
+			properties.put("mcpe-port", "19132");
+			properties.put("mcpc-port", "25565");
 			properties.put("debug", "false");
 			properties.put("async-workers", "4");
 			properties.store(new FileWriter(propFile), "RedstoneLamp properties");

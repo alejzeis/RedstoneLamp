@@ -9,6 +9,7 @@ import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import redstonelamp.DesktopPlayer;
 import redstonelamp.Player;
+import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
 import redstonelamp.network.NetworkInterface;
 import redstonelamp.network.packet.DataPacket;
@@ -42,7 +43,7 @@ public class PCInterface implements NetworkInterface{
         acceptor.getSessionConfig().setReadBufferSize(2048);
         acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
         try {
-            acceptor.bind(new InetSocketAddress(25565));
+            acceptor.bind(new InetSocketAddress(Integer.parseInt(RedstoneLamp.properties.getProperty("mcpc-port", "25565"))));
             server.getLogger().info("[PCInterface]: Successfully binded to *:25565");
         } catch (IOException e) {
             server.getLogger().fatal("[PCInterface]: Failed to bind to *:25565!");

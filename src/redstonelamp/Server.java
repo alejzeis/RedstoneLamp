@@ -52,7 +52,7 @@ public class Server implements Runnable{
 
         debugMode = Boolean.parseBoolean(properties.getProperty("debug", "false"));
         bindInterface = properties.getProperty("server-ip", "0.0.0.0");
-        bindPort = Integer.parseInt(properties.getProperty("port", "19132"));
+        bindPort = Integer.parseInt(properties.getProperty("mcpe-port", "19132"));
         motd = properties.getProperty("motd", "A Minecraft Server");
         maxPlayers = Integer.parseInt(properties.getProperty("max-players", "20"));
 
