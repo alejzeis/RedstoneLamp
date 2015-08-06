@@ -153,6 +153,13 @@ public class Server implements Runnable{
         }
         return null;
     }
+    
+	public void broadcast(String message) {
+		logger.noTag(message);
+		for(Player p : getOnlinePlayers()) {
+			p.sendMessage(message);
+		}
+	}
 
     /**
      * INTERNAL METHOD! Use <code>player.kick()</code> instead.

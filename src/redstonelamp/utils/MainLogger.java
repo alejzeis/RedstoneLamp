@@ -78,4 +78,10 @@ public class MainLogger {
 		else
 			RedstoneLamp.getServerInstance().stop();
 	}
+
+	public void noTag(String message) {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		System.out.println(sdf.format(cal.getTime()) + " " + message);
+	}
 }

@@ -12,7 +12,7 @@ import java.util.UUID;
  * Implementation of a player, connected from a computer.
  */
 public class DesktopPlayer extends Entity implements Player{
-
+	private String displayName = "Steve"; //TODO: Remove init when ready
     private IoSession ioSession;
     private Server server;
     private PCInterface pcInterface;
@@ -96,4 +96,12 @@ public class DesktopPlayer extends Entity implements Player{
     public IoSession getSession(){
         return ioSession;
     }
+    
+	public String getDisplayName() {
+		return displayName;
+	}
+	
+	public void setDisplayName(String name) {
+		displayName = name;
+	}
 }

@@ -23,6 +23,7 @@ public class PocketPlayer extends Entity implements Player{
     private Server server;
 
     private String username;
+    private String displayName;
     private UUID uuid;
     private long mojangClientId;
     private String skin;
@@ -73,6 +74,7 @@ public class PocketPlayer extends Entity implements Player{
                 LoginPacket lp = (LoginPacket) packet;
 
                 username = lp.username;
+                displayName = username;
                 //setNameTag(username);
                 mojangClientId = lp.clientId;
                 uuid = UUID.nameUUIDFromBytes(username.getBytes());
@@ -434,5 +436,13 @@ public class PocketPlayer extends Entity implements Player{
      */
 	public boolean isOp() {
 		return false;
+	}
+	
+	public String getDisplayName() {
+		return displayName;
+	}
+	
+	public void setDisplayName(String name) {
+		displayName = name;
 	}
 }

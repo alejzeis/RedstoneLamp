@@ -109,4 +109,8 @@ public interface Player {
  			dataFolder.mkdirs();
  		return dataFolder;
      }
+     
+	String getDisplayName();
+	
+	void setDisplayName(String name);
 }
