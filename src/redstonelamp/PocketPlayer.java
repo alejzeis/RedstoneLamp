@@ -2,6 +2,7 @@ package redstonelamp;
 
 import redstonelamp.entity.Entity;
 import redstonelamp.entity.EntityMetadata;
+import redstonelamp.event.player.PlayerJoinEvent;
 import redstonelamp.event.player.PlayerKickEvent;
 import redstonelamp.event.player.PlayerQuitEvent;
 import redstonelamp.item.Item;
@@ -248,7 +249,8 @@ public class PocketPlayer extends Entity implements Player{
         sendDataPacket(sdp);
 
         server.getLogger().info(username+" ["+identifier+"] logged in with entity id 0 at [x: "+Math.round(getLocation().getX())+", y: "+Math.round(getLocation().getY())+", z: "+Math.round(getLocation().getZ())+"]"); //TODO: Real info here.
-
+        server.getEventManager().getEventExecutor().execute(new PlayerJoinEvent(this));
+        
         sendMetadata();
 
         ContainerSetContentPacket cscp = new ContainerSetContentPacket();
@@ -342,14 +344,12 @@ public class PocketPlayer extends Entity implements Player{
 
             connected = false;
             loggedIn = false;
-
-            //TODO: Skip if Player.kick() called
-            server.getEventManager().getEventExecutor().execute(new PlayerQuitEvent(this));
             
             rakLibInterface.close(this, notifyClient ? reason : "");
 
             server.getLogger().info(username + "["+identifier+"] logged out: "+reason);
-
+            server.getEventManager().getEventExecutor().execute(new PlayerQuitEvent(this));
+            
             server.removePlayer(this);
         }
     }
