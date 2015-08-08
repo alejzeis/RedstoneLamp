@@ -62,28 +62,30 @@ public class PluginLoader {
 	private void loadJarPlugin(File plugin) {
 		String name = FilenameUtils.removeExtension(plugin.getName());
 		try {
-			RedstoneLamp.getServerInstance().getLogger().info("Loading plugin \"" + name + "\"...");
 			Policy.setPolicy(new PluginPolicy());
 			System.setSecurityManager(new SecurityManager());
 			
 			ClassLoader loader = URLClassLoader.newInstance(new URL[] {plugin.toURL()});
 			PluginBase redstonelampPlugin = (PluginBase) loader.loadClass(name).newInstance();
 			RedstoneLamp.getServerInstance().getPluginManager().getPluginArray().add(redstonelampPlugin);
+			RedstoneLamp.getServerInstance().getLogger().info("Loading plugin \"" + name + "\"...");
 			redstonelampPlugin.onLoad();
 		} catch(MalformedURLException e) {
 			e.printStackTrace();
-			RedstoneLamp.getServerInstance().getLogger().fatal("Failed to load plugin \"" + name + "\": MalformedURL");
+			RedstoneLamp.getServerInstance().getLogger().writeToLog(e.getMessage());
+			RedstoneLamp.getServerInstance().getLogger().error("Failed to load plugin \"" + name + "\": Malformed URL");
 		} catch(InstantiationException e) {
 			e.printStackTrace();
-			RedstoneLamp.getServerInstance().getLogger().fatal("Failed to load plugin \"" + name + "\": Instantiation");
+			RedstoneLamp.getServerInstance().getLogger().writeToLog(e.getMessage());
+			RedstoneLamp.getServerInstance().getLogger().error("Failed to load plugin \"" + name + "\": Instantiation error");
 		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-			RedstoneLamp.getServerInstance().getLogger().fatal("Failed to load plugin \"" + name + "\": IllegalAccess");
+			RedstoneLamp.getServerInstance().getLogger().writeToLog(e.getMessage());
+			RedstoneLamp.getServerInstance().getLogger().error("Failed to load plugin \"" + name + "\": Plugin does not contain a src directory");
 		} catch(ClassNotFoundException e) {
-			e.printStackTrace();
-			RedstoneLamp.getServerInstance().getLogger().fatal("Failed to load plugin \"" + name + "\": ClassNotFound");
+			RedstoneLamp.getServerInstance().getLogger().writeToLog(e.getMessage());
+			RedstoneLamp.getServerInstance().getLogger().error("Failed to load plugin \"" + name + "\": Unable to find main class");
 		} catch(ClassCastException e) {
-			RedstoneLamp.getServerInstance().getLogger().fatal("Failed to load plugin \"" + name + "\": Plugins must extend PluginBase");
+			RedstoneLamp.getServerInstance().getLogger().error("Failed to load plugin \"" + name + "\": Plugins must extend PluginBase");
 		}
 	}
 	
