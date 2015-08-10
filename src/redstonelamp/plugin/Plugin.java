@@ -21,4 +21,18 @@ public interface Plugin {
 	public MainLogger getLogger();
 	
 	public File getDataFolder();
+	
+	public String getName();
+	
+	public String getVersion();
+	
+	public double getApi();
+	
+	public String getAuthor();
+	
+	public String getDescription();
+
+	public String getWebsite();
+	
+	public String getUpdateUrl();
 }
