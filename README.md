@@ -10,5 +10,3 @@ RedstoneLamp Forums - http://forums.RedstoneLamp.net
 RedstoneLamp Documentation - http://docs.RedstoneLamp.net
 
 Get Plugins - http://forums.RedstoneLamp.net/resources/
-
-**Please read the CONTRIBUTING.md before making Pull Requests**

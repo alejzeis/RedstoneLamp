@@ -9,6 +9,7 @@ import java.security.Policy;
 import org.apache.commons.io.FilenameUtils;
 
 import redstonelamp.RedstoneLamp;
+import redstonelamp.resources.annotations.RedstonePlugin;
 
 public class PluginLoader {
 	private File dir = new File("./plugins");
@@ -67,9 +68,21 @@ public class PluginLoader {
 			
 			ClassLoader loader = URLClassLoader.newInstance(new URL[] {plugin.toURL()});
 			PluginBase redstonelampPlugin = (PluginBase) loader.loadClass(name).newInstance();
-			RedstoneLamp.getServerInstance().getPluginManager().getPluginArray().add(redstonelampPlugin);
-			RedstoneLamp.getServerInstance().getLogger().info("Loading plugin \"" + name + "\"...");
-			redstonelampPlugin.onLoad();
+			RedstonePlugin annotation = redstonelampPlugin.getClass().getAnnotation(RedstonePlugin.class);
+			if(annotation != null) {
+				if(!(annotation.api() > RedstoneLamp.API_VERSION)) {
+					RedstoneLamp.getServerInstance().getPluginManager().getPluginArray().add(redstonelampPlugin);
+					if(!annotation.author().equals(""))
+						RedstoneLamp.getServerInstance().getLogger().info("Loading plugin " + name + " v" + annotation.version() + " by " + annotation.author() + "...");
+					else
+						RedstoneLamp.getServerInstance().getLogger().info("Loading plugin " + name + " v" + annotation.version() + "...");
+					if(annotation.api() < RedstoneLamp.API_VERSION)
+						RedstoneLamp.getServerInstance().getLogger().warning("Plugin \"" + name + "\" uses an older API version which may cause issues.");
+					redstonelampPlugin.onLoad();
+				} else
+					RedstoneLamp.getServerInstance().getLogger().warn("Failed to load plugin \"" + name + "\": API version is greater than the current API version");
+			} else
+				RedstoneLamp.getServerInstance().getLogger().error("Failed to load plugin \"" + name + "\": @RedstonePlugin annotation is missing from main class");
 		} catch(MalformedURLException e) {
 			e.printStackTrace();
 			RedstoneLamp.getServerInstance().getLogger().writeToLog(e.getMessage());
