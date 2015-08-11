@@ -9,6 +9,7 @@ public class CommandExecutor {
 	
 	public void executeCommand(String command, Object sender) {
 		server = RedstoneLamp.getServerInstance();
+		command = command.toLowerCase();
 		if(command.startsWith("/"))
 			command = command.replace("/", "");
 		boolean executed = false;
@@ -24,6 +25,6 @@ public class CommandExecutor {
 			}
 		}
 		if(!executed)
-			commandSender.sendMessage("Unknown command! For help, run \"/help\"");
+			commandSender.sendMessage("Unknown command! For help, type \"/help\"");
 	}
 }
