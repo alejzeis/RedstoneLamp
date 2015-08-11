@@ -34,29 +34,29 @@ public class Level {
         if(chunksToSend.keySet().isEmpty()){
             return;
         }
-        for(Player player : chunksToSend.keySet()) {
-            List<ChunkLocation> chunks = chunksToSend.get(player);
-            for (int i = 0; i < CHUNKS_PER_TICK; i++) {
-                if (i >= chunks.size()) {
-                    PlayStatusPacket psp = new PlayStatusPacket();
-                    psp.status = PlayStatusPacket.Status.PLAYER_SPAWN;
-                    //psp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
-                    player.sendDataPacket(psp);
-                    chunksToSend.remove(player);
-                    return;
-                }
-                final int finalI = i;
+        int sent = 0;
+        for(Player player : chunksToSend.keySet()){
+            if(sent >= CHUNKS_PER_TICK) break;
 
-                byte[] data = provider.orderChunk(chunks.get(finalI).getX(), chunks.get(finalI).getZ());
+            List<ChunkLocation> chunks = chunksToSend.get(player);
+            for(ChunkLocation location : chunks){
+                if(sent >= CHUNKS_PER_TICK) break;
+
+                byte[] data = provider.orderChunk(location.getX(), location.getZ());
                 FullChunkDataPacket dp = new FullChunkDataPacket();
-                dp.x = chunks.get(finalI).getX();
-                dp.z = chunks.get(finalI).getZ();
+                dp.x = location.getX();
+                dp.z = location.getZ();
                 dp.payload = data;
-                //dp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
                 player.sendDataPacket(dp);
-                chunks.remove(finalI);
+                chunks.remove(location);
+                sent++;
             }
-            chunksToSend.put(player, chunks);
+            if(!chunks.isEmpty()){
+                chunksToSend.put(player, chunks);
+            } else {
+                ((PocketPlayer) player).doFirstSpawn(); //TODO
+                chunksToSend.remove(player);
+            }
         }
     }
 
@@ -66,18 +66,36 @@ public class Level {
         }
 
         List<ChunkLocation> chunks = new CopyOnWriteArrayList<>();
-        int chunkX = (int) player.getLocation().getX();
-        int chunkZ = (int) player.getLocation().getZ();
-        for (int distance = 3; distance >= 0; distance--) {
-            for (int x = chunkX - distance; x < chunkX + distance; x++) {
-                for (int z = chunkZ - distance; z < chunkZ + distance; z++) {
-                    if (Math.sqrt((chunkX - x) * (chunkX - x) + (chunkZ - z) * (chunkZ - z)) < 5) {
-                        chunks.add(new ChunkLocation(x, z));
-                    }
+        int centerX = (int) player.getLocation().getX();
+        int centerZ = (int) player.getLocation().getZ();
+
+        int cornerX = centerX - 64;
+        int cornerZ = centerZ + 64;
+
+        int x = cornerX;
+        int z = cornerZ;
+
+        int chunkNum = 0;
+        try{
+            while(chunkNum < 96){
+                System.out.println("ChunkSender chunk "+x+", "+z);
+
+                chunks.add(new ChunkLocation(x, z));
+
+                if(x < cornerX + 144){
+                    x = x + 16;
+                } else {
+                    x = cornerX;
+                    z = z - 16;
                 }
+                chunkNum++;
+                Thread.currentThread().sleep(100);
             }
+        } catch(Exception e){
+            e.printStackTrace();
         }
-        RedstoneLamp.getAsync().submit(new InitalChunkSender(chunks, player));
+
+        chunksToSend.put(player, chunks);
     }
 
     public synchronized void clearQueue(Player player){
@@ -105,6 +123,10 @@ public class Level {
        	if(!dataFolder.isDirectory())
        		dataFolder.mkdirs();
        	return dataFolder;
+    }
+
+    public LevelProvider getProvider() {
+        return provider;
     }
 
     public class InitalChunkSender implements Runnable{

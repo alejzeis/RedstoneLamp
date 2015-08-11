@@ -7,6 +7,7 @@ import redstonelamp.event.server.ServerStopEvent;
 import redstonelamp.event.server.ServerTickEvent;
 import redstonelamp.item.Item;
 import redstonelamp.level.Level;
+import redstonelamp.level.provider.FakeLevelProvider;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.Network;
 import redstonelamp.network.pc.PCInterface;
@@ -60,6 +61,9 @@ public class Server implements Runnable{
         logger.info(RedstoneLamp.SOFTWARE + " is distributed under the " + RedstoneLamp.LICENSE);
 
         mainLevel = new Level(this);
+        if(mainLevel.getProvider() instanceof FakeLevelProvider){
+            logger.warning("This server is using a FakeLevelProvider, world changes and spawn positions are not saved.");
+        }
         Item.init();
         logger.debug("Items initialized ("+Item.getCreativeItems().size()+" creative items)");
         

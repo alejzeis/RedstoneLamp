@@ -35,6 +35,7 @@ public class PocketPlayer extends Entity implements Player{
 
     private boolean connected = false;
     private boolean loggedIn = false;
+    private boolean spawned = false;
 
     private JRakLibInterface rakLibInterface;
 
@@ -118,11 +119,11 @@ public class PocketPlayer extends Entity implements Player{
                     }
                 }
 
-                setLocation(new Location(128, 86.000002746582, 128, server.getMainLevel()));
+                setLocation(new Location(128, 2, 128, server.getMainLevel()));
 
                 sendLoginPackets();
 
-                server.getMainLevel().queueLoginChunks(this);
+                RedstoneLamp.getAsync().submit(() -> server.getMainLevel().queueLoginChunks(this));
 
                 /*
                 SetEntityMotionPacket semp = new SetEntityMotionPacket();
@@ -236,7 +237,7 @@ public class PocketPlayer extends Entity implements Player{
         flags |= 0x20;
         asp.flags = flags;
         //asp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
-        sendDataPacket(asp);
+        //sendDataPacket(asp);
 
         SetHealthPacket shp = new SetHealthPacket();
         shp.health = 20;
