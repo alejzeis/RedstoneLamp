@@ -40,6 +40,10 @@ public class EntityMetadata {
         this.array = array;
     }
 
+    public boolean containsKey(int id) {
+        return array.containsKey(id);
+    }
+
 
     public static enum DataType{
         DATA_TYPE_BYTE((byte) 0),

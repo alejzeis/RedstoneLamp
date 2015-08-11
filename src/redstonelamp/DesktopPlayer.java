@@ -5,6 +5,7 @@ import redstonelamp.entity.Entity;
 import redstonelamp.network.packet.DataPacket;
 import redstonelamp.network.packet.TextPacket;
 import redstonelamp.network.pc.PCInterface;
+import redstonelamp.utils.Skin;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;
@@ -75,7 +76,7 @@ public class DesktopPlayer extends Entity implements Player{
     }
 
     @Override
-    public String getSkin() {
+    public Skin getSkin() {
         return null;
     }
 

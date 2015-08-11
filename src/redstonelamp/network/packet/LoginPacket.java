@@ -2,6 +2,7 @@ package redstonelamp.network.packet;
 
 import redstonelamp.network.PENetworkInfo;
 import redstonelamp.utils.DynamicByteBuffer;
+import redstonelamp.utils.Skin;
 
 /**
  * Login Packet (0x82)
@@ -15,7 +16,7 @@ public class LoginPacket extends DataPacket{
     public long clientId;
 
     public boolean slim = false;
-    public String skin = null;
+    public Skin skin = null;
 
     @Override
     public byte getPID() {
@@ -36,6 +37,7 @@ public class LoginPacket extends DataPacket{
         clientId = bb.getInt();
 
         slim = bb.getByte() > 0;
-        skin = bb.getString();
+        System.out.println(bb.getByteBuffer().remaining() - 2);
+        skin = Skin.readFromDBB(bb);
     }
 }

@@ -11,7 +11,7 @@ import java.util.List;
  * ContainerSetContentPacket (0xaa)
  */
 public class ContainerSetContentPacket extends DataPacket{
-    public final static byte ID = PENetworkInfo.CONTAINTER_SET_CONTENT_PACKET;
+    public final static byte ID = PENetworkInfo.CONTAINER_SET_CONTENT_PACKET;
 
     public final static byte SPECIAL_INVENTORY = 0x00;
     public final static byte SPECIAL_ARMOR = 0x78;
@@ -24,7 +24,7 @@ public class ContainerSetContentPacket extends DataPacket{
 
     @Override
     public byte getPID() {
-        return PENetworkInfo.CONTAINTER_SET_CONTENT_PACKET;
+        return PENetworkInfo.CONTAINER_SET_CONTENT_PACKET;
     }
 
     @Override

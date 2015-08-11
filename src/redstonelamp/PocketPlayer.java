@@ -2,6 +2,7 @@ package redstonelamp;
 
 import redstonelamp.entity.Entity;
 import redstonelamp.entity.EntityMetadata;
+import redstonelamp.entity.Human;
 import redstonelamp.event.player.PlayerJoinEvent;
 import redstonelamp.event.player.PlayerKickEvent;
 import redstonelamp.event.player.PlayerQuitEvent;
@@ -11,6 +12,7 @@ import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.NetworkChannel;
 import redstonelamp.network.PENetworkInfo;
 import redstonelamp.network.packet.*;
+import redstonelamp.utils.Skin;
 import redstonelamp.utils.TextFormat;
 
 import java.net.InetSocketAddress;
@@ -20,14 +22,13 @@ import java.util.UUID;
 /**
  * Implementation of a Player, connected from a mobile device or windows 10.
  */
-public class PocketPlayer extends Entity implements Player{
+public class PocketPlayer extends Human implements Player{
     private Server server;
 
     private String username;
     private String displayName;
     private UUID uuid;
     private long mojangClientId;
-    private String skin;
 
     private long clientId;
     private String identifier;
@@ -86,8 +87,8 @@ public class PocketPlayer extends Entity implements Player{
                 LoginPacket lp = (LoginPacket) packet;
 
                 username = lp.username;
+                setNameTag(username);
                 displayName = username;
-                //setNameTag(username);
                 mojangClientId = lp.clientId;
                 uuid = UUID.nameUUIDFromBytes(username.getBytes());
 
@@ -113,12 +114,16 @@ public class PocketPlayer extends Entity implements Player{
                     break;
                 }
 
-                if(lp.skin.length() != 64 * 32 * 4 && lp.skin.length() != 64 * 64 * 4){
+
+                if(lp.skin.getBytes().length != 64 * 32 * 4 && lp.skin.getBytes().length != 64 * 64 * 4){
+                    System.out.println(lp.skin.getBytes().length);
                     close("", "disconnectionScreen.invalidSkin", true);
                     break;
                 }
 
+
                 skin = lp.skin;
+                isSlim = lp.slim;
 
                 for(Player player : server.getOnlinePlayers()){
                     if(player.getName().equalsIgnoreCase(username) && player.isConnected() && player.isLoggedIn()){
@@ -232,6 +237,12 @@ public class PocketPlayer extends Entity implements Player{
 
         server.broadcast(TextFormat.YELLOW+username+" joined the game.");
         server.getEventManager().getEventExecutor().execute(new PlayerJoinEvent(this));
+
+        for(Player player : server.getOnlinePlayers()){
+            if(player instanceof PocketPlayer){ //TODO: Spawn to PC
+                spawnTo(player);
+            }
+        }
     }
 
     private void sendMetadata() {
@@ -356,11 +367,11 @@ public class PocketPlayer extends Entity implements Player{
     }
     
     /**
-     * Returns the players skin as a String
+     * Returns the player's skin.
      * 
      * @return String
      */
-    public String getSkin() {
+    public Skin getSkin() {
     	return skin;
     }
     

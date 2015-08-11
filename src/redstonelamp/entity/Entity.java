@@ -25,7 +25,7 @@ public abstract class Entity {
     private long entityID;
 
     private List<Player> hasSpawned = new ArrayList<>();
-    private Map<Integer, EntityMetadata> dataProperties = new HashMap<>();
+    private EntityMetadata dataProperties = new EntityMetadata();
 
     public Location getLocation(){
         return location;
@@ -51,12 +51,30 @@ public abstract class Entity {
         setDataProperty(DATA_NAMETAG, EntityMetadata.DataType.DATA_TYPE_STRING, tag);
     }
 
+    public String getNameTag(){
+        return (String) getDataProperty(DATA_NAMETAG);
+    }
+
+    public Object getDataProperty(int id){
+        if(dataProperties.containsKey(id)){
+            return dataProperties.get((byte) id).get(1);
+        }
+        return null;
+    }
+
     public void setDataProperty(int id, EntityMetadata.DataType type, Object value){
         if(!dataProperties.containsKey(id)){
-            dataProperties.put(id, new EntityMetadata().add((byte) id, type).add((byte) id, value));
+            List<Object> list = new ArrayList<>();
+            list.add(type);
+            list.add(value);
+            dataProperties.add((byte) id, list);
 
-            sendData(this, hasSpawned, id, dataProperties.get(id));
+            sendData(this, hasSpawned, id, dataProperties);
         }
+    }
+
+    public EntityMetadata getDataProperties(){
+        return dataProperties;
     }
 
     public void sendData(Entity entity, List<Player> players, int id, EntityMetadata metadata) {

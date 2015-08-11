@@ -211,11 +211,11 @@ public class DynamicByteBuffer {
     }
 
     public String getString(){
-        return new String(get(getShort()));
+        return getString(Charset.forName("UTF-8"));
     }
 
     public String getString(Charset charset){
-        return new String(get(getShort()), charset);
+        return new String(get(getUnsignedShort()), charset);
     }
 
     public String getPCString(){

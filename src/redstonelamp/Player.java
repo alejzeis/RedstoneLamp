@@ -2,6 +2,7 @@ package redstonelamp;
 
 import redstonelamp.level.Location;
 import redstonelamp.network.packet.DataPacket;
+import redstonelamp.utils.Skin;
 
 import java.io.File;
 import java.net.InetSocketAddress;
@@ -71,11 +72,11 @@ public interface Player {
      String getName();
 
     /**
-     * Returns the players skin as a String
+     * Returns the player's skin.
      *
      * @return String
      */
-     String getSkin();
+     Skin getSkin();
 
     /**
      * Returns the players UUID
