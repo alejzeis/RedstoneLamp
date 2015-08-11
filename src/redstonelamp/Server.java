@@ -115,7 +115,7 @@ public class Server implements Runnable{
                         line = cli.readLine();
                         if (line != null)
                             RedstoneLamp.getServerInstance().getCommandManager().getCommandExecutor().executeCommand(line, RedstoneLamp.getServerInstance());
-                    }
+                }
                 } catch (IOException e) {
                 }
             });
