@@ -142,7 +142,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
             while(interface_.handlePacket()) { } //Handle packets.
         }
 
-        if(rakLib.getState() == Thread.State.TERMINATED){ //Check to see if thread crashed.
+        if(rakLib.getState() == Thread.State.TERMINATED && !server.isShuttingDown()){ //Check to see if thread crashed.
             rakLibLogger.emergency("(JRakLibInterface): JRakLib crashed! "+exceptionHandler.getLastExceptionMessage());
             exceptionHandler.printLastExceptionTrace();
             rakLibCrashed = true;

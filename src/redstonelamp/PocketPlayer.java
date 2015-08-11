@@ -141,7 +141,19 @@ public class PocketPlayer extends Human implements Player{
                 RedstoneLamp.getAsync().submit(() -> server.getMainLevel().queueLoginChunks(this));
                 break;
 
-            case TextPacket.ID:
+            case PENetworkInfo.MOVE_PLAYER_PACKET:
+                MovePlayerPacket mpp = (MovePlayerPacket) packet;
+                //TODO: check movement
+                Location l = getLocation();
+                l.setX(mpp.x);
+                l.setY(mpp.y);
+                l.setZ(mpp.z);
+                l.setYaw(mpp.yaw);
+                l.setPitch(mpp.pitch);
+                setLocation(l);
+                break;
+
+            case PENetworkInfo.TEXT_PACKET:
                 TextPacket tp = (TextPacket) packet;
                 switch (tp.type){
                     case TextPacket.TYPE_RAW:

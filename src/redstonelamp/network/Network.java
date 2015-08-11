@@ -147,6 +147,7 @@ public class Network {
         packets.put(SetTimePacket.ID, SetTimePacket.class);
         packets.put(StartGamePacket.ID, StartGamePacket.class);
         packets.put(TextPacket.ID, TextPacket.class);
+        packets.put(MovePlayerPacket.ID, MovePlayerPacket.class);
     }
 
     public void shutdown() {

@@ -43,6 +43,7 @@ public class Server implements Runnable{
     private PluginManager pluginManager;
     private EventManager eventManager;
     private CommandManager commandManager;
+    private boolean shuttingDown = false;
 
     public Server(Properties properties, MainLogger logger){
     	eventManager = new EventManager();
@@ -287,6 +288,7 @@ public class Server implements Runnable{
      * Stops the server
      */
     public void stop() {
+        shuttingDown = true;
     	logger.info("Stopping the server...");
     	getEventManager().getEventExecutor().execute(new ServerStopEvent());
     	try {
@@ -302,5 +304,9 @@ public class Server implements Runnable{
     	logger.close();
     	RedstoneLamp.getAsync().shutdown();
     	System.exit(0);
+    }
+
+    public boolean isShuttingDown() {
+        return shuttingDown;
     }
 }
