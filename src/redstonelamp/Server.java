@@ -123,7 +123,7 @@ public class Server implements Runnable{
             });
         } catch(Exception e){
             logger.warning("Exception in tick: "+e.getMessage());
-
+            e.printStackTrace(System.err);
         }
     }
 

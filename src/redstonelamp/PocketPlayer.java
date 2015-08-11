@@ -1,6 +1,5 @@
 package redstonelamp;
 
-import redstonelamp.entity.Entity;
 import redstonelamp.entity.EntityMetadata;
 import redstonelamp.entity.Human;
 import redstonelamp.event.player.PlayerJoinEvent;
@@ -9,7 +8,6 @@ import redstonelamp.event.player.PlayerQuitEvent;
 import redstonelamp.item.Item;
 import redstonelamp.level.Location;
 import redstonelamp.network.JRakLibInterface;
-import redstonelamp.network.NetworkChannel;
 import redstonelamp.network.PENetworkInfo;
 import redstonelamp.network.packet.*;
 import redstonelamp.utils.Skin;
@@ -240,6 +238,7 @@ public class PocketPlayer extends Human implements Player{
 
         for(Player player : server.getOnlinePlayers()){
             if(player instanceof PocketPlayer){ //TODO: Spawn to PC
+                ((PocketPlayer) player).spawnTo(this);
                 spawnTo(player);
             }
         }

@@ -4,6 +4,7 @@ import redstonelamp.Player;
 import redstonelamp.item.Item;
 import redstonelamp.item.ItemValues;
 import redstonelamp.network.packet.AddPlayerPacket;
+import redstonelamp.network.packet.PlayerArmorEquipmentPacket;
 import redstonelamp.utils.Skin;
 
 import java.util.Arrays;
@@ -42,15 +43,19 @@ public class Human extends Entity{
             app.slim = isSlim;
             app.metadata = getFakeMetadata();
             player.sendDataPacket(app);
+
+            PlayerArmorEquipmentPacket paep = new PlayerArmorEquipmentPacket(); //TODO: Real values
+            paep.eid = getId();
+            paep.slots = new byte[] {(byte) 255, (byte) 255, (byte) 255, (byte) 255};
+            player.sendDataPacket(paep);
         }
     }
 
     private EntityMetadata getFakeMetadata(){
         EntityMetadata em = new EntityMetadata();
-        //em.set((byte) 0, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0));
-        //em.set((byte) 1, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_SHORT, (short) 300));
+        em.set((byte) 0, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0));
+        em.set((byte) 1, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_SHORT, (short) 300));
         em.set((byte) 2, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_STRING, getName()));
-        /*
         em.set((byte) 3, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 1));
         em.set((byte) 4, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0));
         em.set((byte) 7, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_INT, 1));
@@ -58,7 +63,6 @@ public class Human extends Entity{
         em.set((byte) 15, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0));
         em.set((byte) 16, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0));
         em.set((byte) 17, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_LONG, (long) 0));
-        */
         return em;
     }
 
