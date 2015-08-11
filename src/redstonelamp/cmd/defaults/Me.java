@@ -12,7 +12,7 @@ public class Me implements CommandListener {
 	public void onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		String sent = "Console";
 		if(sender.getSender() instanceof Player)
-			sent = ((Player) sender).getDisplayName();
+			sent = ((Player) sender.getSender()).getDisplayName();
 		if(args.length > 1) {
 			args[0] = null;
 			String message = Arrays.toString(args);

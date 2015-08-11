@@ -14,7 +14,7 @@ public class Tell implements CommandListener {
 		boolean worked = false;
 		String sent = "Console";
 		if(sender.getSender() instanceof Player)
-			sent = ((Player) sender).getName();
+			sent = ((Player) sender.getSender()).getName();
 		if(args.length >= 3) {
 			String name = args[1];
 			args[0] = null;
