@@ -37,6 +37,8 @@ public class PocketPlayer extends Entity implements Player{
     private boolean loggedIn = false;
     private boolean spawned = false;
 
+    private int gamemode;
+
     private JRakLibInterface rakLibInterface;
 
     public PocketPlayer(Server server, JRakLibInterface rakLibInterface, String identifier, String address, int port, long clientId){
@@ -47,7 +49,15 @@ public class PocketPlayer extends Entity implements Player{
         this.clientId = clientId;
         connected = true;
 
+        loadPlayerData();
+
         spawnTo(this);
+    }
+
+    private void loadPlayerData() {
+        //TODO: Load actual data
+        gamemode = 1;
+
     }
 
     @Override
@@ -119,82 +129,25 @@ public class PocketPlayer extends Entity implements Player{
                     }
                 }
 
+                loggedIn = true;
+
                 setLocation(new Location(128, 2, 128, server.getMainLevel()));
 
                 sendLoginPackets();
 
                 RedstoneLamp.getAsync().submit(() -> server.getMainLevel().queueLoginChunks(this));
+                break;
 
-                /*
-                SetEntityMotionPacket semp = new SetEntityMotionPacket();
-                SetEntityMotionPacket.entitymotionpacket_EntityData data = new SetEntityMotionPacket.entitymotionpacket_EntityData();
-                data.eid = 0;
-                data.motionX = 0;
-                data.motionY = 0;
-                data.motionZ = 0;
-                semp.entities = Arrays.asList(new SetEntityMotionPacket.entitymotionpacket_EntityData[] {data});
-                sendDataPacket(semp);
-
-                EntityMetadata em = new EntityMetadata();
-                em.set((byte) 17, new CopyOnWriteArrayList<>());
-                em.add((byte) 17, EntityMetadata.DataType.DATA_TYPE_POS);
-                em.add((byte) 17, Arrays.asList(0, 0, 0));
-
-                sendData(this, Arrays.asList(this), 0, em);
-
-                PlayStatusPacket psp = new PlayStatusPacket();
-                psp.status = PlayStatusPacket.Status.LOGIN_SUCCESS;
-                psp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
-                sendDataPacket(psp);
-
-                StartGamePacket sgp = new StartGamePacket();
-                sgp.seed = -1;
-                sgp.x = (float) getLocation().getX();
-                sgp.y = (float) getLocation().getY();
-                sgp.z = (float) getLocation().getZ();
-                sgp.spawnX = (int) getLocation().getX();
-                sgp.spawnY = (int) getLocation().getY();
-                sgp.spawnZ = (int) getLocation().getZ();
-                sgp.generator = 1;
-                sgp.gamemode = 1; //CREATIVE
-                sgp.eid = 0; //Player EntityID is always 0
-                sgp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
-                sendDataPacket(sgp);
-
-                SetTimePacket stp = new SetTimePacket();
-                stp.time = 28617;
-                stp.started = true;
-                stp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
-                sendDataPacket(stp);
-
-                SetSpawnPositionPacket sspp = new SetSpawnPositionPacket();
-                sspp.x = (int) getLocation().getX();
-                sspp.y = (byte) getLocation().getY();
-                sspp.z = (int) getLocation().getZ();
-                sspp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
-                sendDataPacket(sspp);
-
-                SetHealthPacket shp = new SetHealthPacket();
-                shp.health = 20;
-                shp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
-                sendDataPacket(shp);
-
-                SetDifficultyPacket sdp = new SetDifficultyPacket();
-                sdp.difficulty = 1;
-                sdp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
-                sendDataPacket(sdp);
-
-                server.getLogger().info(username+" ["+identifier+"] logged in with entity id 0 at [x: "+Math.round(getLocation().getX())+", y: "+Math.round(getLocation().getY())+", z: "+Math.round(getLocation().getZ())+"]"); //TODO: Real info here.
-
-                ContainerSetContentPacket cscp = new ContainerSetContentPacket();
-                cscp.windowId = ContainerSetContentPacket.SPECIAL_CREATIVE;
-                cscp.slots = Item.getCreativeItems();
-                cscp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
-                sendDataPacket(cscp);
-
-                //server.getMainLevel().queueLoginChunks(this);
-                */
-
+            case TextPacket.ID:
+                TextPacket tp = (TextPacket) packet;
+                switch (tp.type){
+                    case TextPacket.TYPE_RAW:
+                        server.broadcast("<"+username+"> "+tp.message);
+                        break;
+                    case TextPacket.TYPE_CHAT:
+                        server.broadcast("<"+tp.source+"> "+tp.message);
+                        break;
+                }
                 break;
         }
     }
@@ -202,7 +155,6 @@ public class PocketPlayer extends Entity implements Player{
     private void sendLoginPackets() {
         PlayStatusPacket psp = new PlayStatusPacket();
         psp.status = PlayStatusPacket.Status.LOGIN_SUCCESS;
-        //psp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
         sendDataPacket(psp);
 
         StartGamePacket sgp = new StartGamePacket();
@@ -216,49 +168,44 @@ public class PocketPlayer extends Entity implements Player{
         sgp.generator = 1;
         sgp.gamemode = 1; //CREATIVE
         sgp.eid = 0; //Player EntityID is always 0
-        //sgp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
         sendDataPacket(sgp);
 
         SetTimePacket stp = new SetTimePacket();
         stp.time = 28617;
         stp.started = true;
-        //stp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
         sendDataPacket(stp);
 
         SetSpawnPositionPacket sspp = new SetSpawnPositionPacket();
         sspp.x = (int) getLocation().getX();
         sspp.y = (byte) getLocation().getY();
         sspp.z = (int) getLocation().getZ();
-        //sspp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
         sendDataPacket(sspp);
 
         AdventureSettingsPacket asp = new AdventureSettingsPacket();
         int flags = 0;
-        flags |= 0x20;
+        flags |= 0x20; //Allow nametags
+        flags |= 0x80; //Allow flight
         asp.flags = flags;
-        //asp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
-        //sendDataPacket(asp);
+        sendDataPacket(asp);
 
         SetHealthPacket shp = new SetHealthPacket();
         shp.health = 20;
-        //shp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
         sendDataPacket(shp);
 
         SetDifficultyPacket sdp = new SetDifficultyPacket();
         sdp.difficulty = 1;
-        //sdp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
         sendDataPacket(sdp);
 
         server.getLogger().info(username+" ["+identifier+"] logged in with entity id 0 at [x: "+Math.round(getLocation().getX())+", y: "+Math.round(getLocation().getY())+", z: "+Math.round(getLocation().getZ())+"]"); //TODO: Real info here.
-        server.getEventManager().getEventExecutor().execute(new PlayerJoinEvent(this));
         
         sendMetadata();
 
-        ContainerSetContentPacket cscp = new ContainerSetContentPacket();
-        cscp.windowId = ContainerSetContentPacket.SPECIAL_CREATIVE;
-        cscp.slots = Item.getCreativeItems();
-        //cscp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
-        sendDataPacket(cscp);
+        if(gamemode == 1) {
+            ContainerSetContentPacket cscp = new ContainerSetContentPacket();
+            cscp.windowId = ContainerSetContentPacket.SPECIAL_CREATIVE;
+            cscp.slots = Item.getCreativeItems();
+            sendDataPacket(cscp);
+        }
     }
     
     public void doFirstSpawn(){
@@ -277,7 +224,8 @@ public class PocketPlayer extends Entity implements Player{
         stp.started = true;
         sendDataPacket(stp);
 
-        sendMessage(TextFormat.RED+"Welcome to RedstoneLamp server!");
+        server.broadcast(TextFormat.YELLOW+username+" joined the game.");
+        server.getEventManager().getEventExecutor().execute(new PlayerJoinEvent(this));
     }
 
     private void sendMetadata() {
@@ -325,7 +273,7 @@ public class PocketPlayer extends Entity implements Player{
         PlayerKickEvent evt = new PlayerKickEvent(this, reason);
         server.getEventManager().getEventExecutor().execute(evt);
         if(!evt.isCanceled()) {
-            close("left the game.", message, true);
+            close(" left the game.", message, true);
             return true;
         } else {
             return false;
@@ -349,6 +297,7 @@ public class PocketPlayer extends Entity implements Player{
             rakLibInterface.close(this, notifyClient ? reason : "");
 
             server.getLogger().info(username + "["+identifier+"] logged out: "+reason);
+            server.broadcast(TextFormat.YELLOW + username + message);
             server.getEventManager().getEventExecutor().execute(new PlayerQuitEvent(this));
             
             server.removePlayer(this);

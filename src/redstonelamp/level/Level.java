@@ -89,7 +89,6 @@ public class Level {
                     z = z - 16;
                 }
                 chunkNum++;
-                Thread.currentThread().sleep(100);
             }
         } catch(Exception e){
             e.printStackTrace();
@@ -103,7 +102,7 @@ public class Level {
     }
 
     public void shutdown() {
-        //sendPool.shutdown();
+
     }
     
     /**
@@ -127,34 +126,5 @@ public class Level {
 
     public LevelProvider getProvider() {
         return provider;
-    }
-
-    public class InitalChunkSender implements Runnable{
-        private List<ChunkLocation> locations;
-        private Player player;
-
-        public InitalChunkSender(List<ChunkLocation> locations, Player player){
-            this.locations = locations;
-            this.player = player;
-        }
-
-        @Override
-        public void run() {
-            int sent = 0;
-            for(ChunkLocation location : locations){
-                sent = sent + 1;
-                byte[] data = provider.orderChunk(location.getX(), location.getZ());
-                FullChunkDataPacket dp = new FullChunkDataPacket();
-                dp.x = location.getX();
-                dp.z = location.getZ();
-                dp.payload = data;
-                dp.setChannel(NetworkChannel.CHANNEL_PRIORITY);
-                player.sendDataPacket(dp);
-                System.out.println("Sent chunk "+location.getX()+", "+location.getZ()+" sent: "+sent);
-            }
-            if(player instanceof PocketPlayer){
-                ((PocketPlayer) player).doFirstSpawn();
-            }
-        }
     }
 }
