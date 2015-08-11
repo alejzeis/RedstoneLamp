@@ -18,7 +18,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -301,8 +300,8 @@ public class Server implements Runnable{
         mainLevel.shutdown();
     	pluginManager.getPluginLoader().disablePlugins();
         network.shutdown();
-    	RedstoneLamp.getAsync().shutdown();
     	logger.close();
+    	RedstoneLamp.getAsync().shutdown();
     	System.exit(0);
     }
 }

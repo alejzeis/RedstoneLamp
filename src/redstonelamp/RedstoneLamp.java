@@ -117,6 +117,7 @@ public class RedstoneLamp implements Runnable{
 		getServerInstance().getCommandManager().registerCommand("spawnpoint", "Sets the spawn point for a player", new Spawnpoint(), "redstonelamp.command.setspawn.self");
 		getServerInstance().getCommandManager().registerCommand("status", "Displays server information", new Status(), "redstonelamp.command.status");
 		getServerInstance().getCommandManager().registerCommand("stop", "Stops the server", new Stop(), "redstonelamp.command.stop");
+		getServerInstance().getCommandManager().registerCommand("sudo", "Run a command as a player", new Sudo(), "redstonelamp.command.sudo");
 		getServerInstance().getCommandManager().registerCommand("teleport", "Teleports a player", new Teleport(), "redstonelamp.command.tp");
 		getServerInstance().getCommandManager().registerCommand("tell", "Sends a player a message", new Tell(), "redstonelamp.command.tell");
 		getServerInstance().getCommandManager().registerCommand("time", "Manages the server time", new Time(), "redstonelamp.command.time");
