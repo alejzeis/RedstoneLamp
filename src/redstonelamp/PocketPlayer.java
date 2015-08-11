@@ -142,11 +142,17 @@ public class PocketPlayer extends Entity implements Player{
                 TextPacket tp = (TextPacket) packet;
                 switch (tp.type){
                     case TextPacket.TYPE_RAW:
-                        server.broadcast("<"+username+"> "+tp.message);
-                        break;
+                    	if(!tp.message.toLowerCase().startsWith("/"))
+                    		server.broadcast("<"+username+"> "+tp.message);
+                    	else
+                    		server.getCommandManager().getCommandExecutor().executeCommand(tp.message, this);
+                    break;
                     case TextPacket.TYPE_CHAT:
-                        server.broadcast("<"+tp.source+"> "+tp.message);
-                        break;
+                    	if(!tp.message.toLowerCase().startsWith("/"))
+                    		server.broadcast("<"+tp.source+"> "+tp.message);
+                    	else
+                    		server.getCommandManager().getCommandExecutor().executeCommand(tp.message, this);
+                    break;
                 }
                 break;
         }
