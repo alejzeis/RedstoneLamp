@@ -1,21 +1,37 @@
 package redstonelamp;
 
+import java.net.InetSocketAddress;
+import java.util.Arrays;
+import java.util.UUID;
+
 import redstonelamp.entity.EntityMetadata;
 import redstonelamp.entity.Human;
 import redstonelamp.event.player.PlayerJoinEvent;
 import redstonelamp.event.player.PlayerKickEvent;
+import redstonelamp.event.player.PlayerMoveEvent;
 import redstonelamp.event.player.PlayerQuitEvent;
 import redstonelamp.item.Item;
 import redstonelamp.level.Location;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.PENetworkInfo;
-import redstonelamp.network.packet.*;
+import redstonelamp.network.packet.AdventureSettingsPacket;
+import redstonelamp.network.packet.BatchPacket;
+import redstonelamp.network.packet.ContainerSetContentPacket;
+import redstonelamp.network.packet.DataPacket;
+import redstonelamp.network.packet.DisconnectPacket;
+import redstonelamp.network.packet.LoginPacket;
+import redstonelamp.network.packet.MovePlayerPacket;
+import redstonelamp.network.packet.PlayStatusPacket;
+import redstonelamp.network.packet.RespawnPacket;
+import redstonelamp.network.packet.SetDifficultyPacket;
+import redstonelamp.network.packet.SetHealthPacket;
+import redstonelamp.network.packet.SetSpawnPositionPacket;
+import redstonelamp.network.packet.SetTimePacket;
+import redstonelamp.network.packet.StartGamePacket;
+import redstonelamp.network.packet.TextPacket;
+import redstonelamp.network.packet.UnknownDataPacket;
 import redstonelamp.utils.Skin;
 import redstonelamp.utils.TextFormat;
-
-import java.net.InetSocketAddress;
-import java.util.Arrays;
-import java.util.UUID;
 
 /**
  * Implementation of a Player, connected from a mobile device or windows 10.
@@ -152,7 +168,7 @@ public class PocketPlayer extends Human implements Player{
                 l.setYaw(mpp.yaw);
                 l.setPitch(mpp.pitch);
                 setLocation(l);
-
+                server.getEventManager().getEventExecutor().execute(new PlayerMoveEvent(this));
                 getLocation().getLevel().broadcastMovement(this, mpp);
                 break;
 

@@ -1,7 +1,6 @@
 package redstonelamp.event.player;
 
 import redstonelamp.Player;
-import redstonelamp.RedstoneLamp;
 import redstonelamp.event.Cancellable;
 import redstonelamp.event.Event;
 import redstonelamp.event.Listener;
@@ -18,11 +17,7 @@ public class PlayerJoinEvent extends PlayerEvent implements Cancellable {
 	}
 	
 	public void execute(Listener listener) {
-		RedstoneLamp.getAsync().execute(new Runnable() {
-			public void run() {
-				listener.onEvent(e);
-			}
-		});
+		listener.onEvent(e);
 	}
 	
 	public String getEventName() {
@@ -32,13 +27,11 @@ public class PlayerJoinEvent extends PlayerEvent implements Cancellable {
 	public Player getPlayer() {
 		return player;
 	}
-
-	@Override
+	
 	public boolean isCanceled() {
 		return canceled;
 	}
-
-	@Override
+	
 	public void setCanceled(boolean canceled) {
 		this.canceled = canceled;
 	}
