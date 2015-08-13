@@ -7,6 +7,7 @@ import redstonelamp.Server;
 import redstonelamp.level.provider.FakeLevelProvider;
 import redstonelamp.network.NetworkChannel;
 import redstonelamp.network.packet.FullChunkDataPacket;
+import redstonelamp.network.packet.MovePlayerPacket;
 import redstonelamp.network.packet.PlayStatusPacket;
 import redstonelamp.network.packet.RespawnPacket;
 
@@ -126,5 +127,24 @@ public class Level {
 
     public LevelProvider getProvider() {
         return provider;
+    }
+
+    public void broadcastMovement(Player player, MovePlayerPacket cMpp) {
+        Location l = player.getLocation();
+        if(l.getLevel() != this){
+            throw new IllegalArgumentException("Player is on a different Level!");
+        }
+        MovePlayerPacket mpp = new MovePlayerPacket(); //We assume that the movement checking was done in the Player implementation
+        mpp.eid = player.getId();
+        mpp.x = (float) l.getX();
+        mpp.y = (float) l.getY();
+        mpp.z = (float) l.getZ();
+        mpp.yaw = l.getYaw();
+        mpp.bodyYaw = cMpp.bodyYaw;
+        mpp.pitch = l.getPitch();
+        mpp.mode = cMpp.mode;
+        mpp.onGround = cMpp.onGround;
+
+        server.getOnlinePlayers().stream().filter(p -> p.getLocation().getLevel() == this && p != player).forEach(p -> p.sendDataPacket(mpp));
     }
 }

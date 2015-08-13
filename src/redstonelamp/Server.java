@@ -1,8 +1,11 @@
 package redstonelamp;
 
 import redstonelamp.cmd.CommandManager;
+import redstonelamp.event.Event;
 import redstonelamp.event.EventManager;
+import redstonelamp.event.Listener;
 import redstonelamp.event.player.PlayerJoinEvent;
+import redstonelamp.event.player.PlayerQuitEvent;
 import redstonelamp.event.server.ServerStopEvent;
 import redstonelamp.event.server.ServerTickEvent;
 import redstonelamp.item.Item;
@@ -22,7 +25,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Server implements Runnable{
+public class Server implements Runnable, Listener{
     private boolean debugMode = false;
     private String motd;
     private int maxPlayers;
@@ -52,8 +55,6 @@ public class Server implements Runnable{
     	commandManager = new CommandManager();
         this.logger = logger;
         this.properties = properties;
-
-        debugMode = Boolean.parseBoolean(properties.getProperty("debug", "false"));
         bindInterface = properties.getProperty("server-ip", "0.0.0.0");
         bindPort = Integer.parseInt(properties.getProperty("mcpe-port", "19132"));
         motd = properties.getProperty("motd", "A Minecraft Server");
@@ -320,5 +321,15 @@ public class Server implements Runnable{
 
     public boolean isShuttingDown() {
         return shuttingDown;
+    }
+
+    @Override
+    public void onEvent(Event event) {
+        if(event instanceof PlayerJoinEvent){
+            //PlayerJoinEvent evt = (PlayerJoinEvent) event;
+            network.setName(motd); //Update the player list
+        } else if(event instanceof PlayerQuitEvent){
+            network.setName(motd); //Update the player list
+        }
     }
 }

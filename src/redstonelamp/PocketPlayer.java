@@ -152,6 +152,8 @@ public class PocketPlayer extends Human implements Player{
                 l.setYaw(mpp.yaw);
                 l.setPitch(mpp.pitch);
                 setLocation(l);
+
+                getLocation().getLevel().broadcastMovement(this, mpp);
                 break;
 
             case PENetworkInfo.TEXT_PACKET:

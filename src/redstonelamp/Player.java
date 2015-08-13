@@ -118,4 +118,6 @@ public interface Player {
 	String getDisplayName();
 	
 	void setDisplayName(String name);
+
+    long getId();
 }
