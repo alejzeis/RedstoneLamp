@@ -27,6 +27,10 @@ public abstract class Entity {
     private List<Player> hasSpawned = new ArrayList<>();
     private EntityMetadata dataProperties = new EntityMetadata();
 
+    public Entity(){
+        entityID = System.currentTimeMillis();
+    }
+
     public Location getLocation(){
         return location;
     }

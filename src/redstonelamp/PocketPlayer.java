@@ -192,7 +192,7 @@ public class PocketPlayer extends Human implements Player{
         sendDataPacket(sgp);
 
         SetTimePacket stp = new SetTimePacket();
-        stp.time = 28617;
+        stp.time = 1;
         stp.started = true;
         sendDataPacket(stp);
 
@@ -217,7 +217,7 @@ public class PocketPlayer extends Human implements Player{
         sdp.difficulty = 1;
         sendDataPacket(sdp);
 
-        server.getLogger().info(username+" ["+identifier+"] logged in with entity id 0 at [x: "+Math.round(getLocation().getX())+", y: "+Math.round(getLocation().getY())+", z: "+Math.round(getLocation().getZ())+"]"); //TODO: Real info here.
+        server.getLogger().info(username+" ["+identifier+"] logged in with entity id "+getId()+" at [x: "+Math.round(getLocation().getX())+", y: "+Math.round(getLocation().getY())+", z: "+Math.round(getLocation().getZ())+"]");
         
         sendMetadata();
 
@@ -241,12 +241,14 @@ public class PocketPlayer extends Human implements Player{
         sendDataPacket(rp);
 
         SetTimePacket stp = new SetTimePacket();
-        stp.time = 28617;
+        stp.time = 2;
         stp.started = true;
         sendDataPacket(stp);
 
         server.broadcast(TextFormat.YELLOW+username+" joined the game.");
         server.getEventManager().getEventExecutor().execute(new PlayerJoinEvent(this));
+
+        spawnToAll(server);
 
         for(Player player : server.getOnlinePlayers()){
             if(player instanceof PocketPlayer){ //TODO: Spawn to PC

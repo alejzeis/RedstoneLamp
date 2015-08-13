@@ -1,6 +1,8 @@
 package redstonelamp.entity;
 
 import redstonelamp.Player;
+import redstonelamp.PocketPlayer;
+import redstonelamp.Server;
 import redstonelamp.item.Item;
 import redstonelamp.item.ItemValues;
 import redstonelamp.network.packet.AddPlayerPacket;
@@ -47,21 +49,32 @@ public class Human extends Entity{
             PlayerArmorEquipmentPacket paep = new PlayerArmorEquipmentPacket(); //TODO: Real values
             paep.eid = getId();
             paep.slots = new byte[] {(byte) 255, (byte) 255, (byte) 255, (byte) 255};
-            player.sendDataPacket(paep);
+            //player.sendDataPacket(paep);
+        }
+    }
+
+    public void spawnToAll(Server server){
+        for(Player player : server.getOnlinePlayers()){
+            if(player != this){
+                if(player instanceof PocketPlayer && this instanceof Player) {
+                    spawnTo(player);
+                    ((PocketPlayer) player).spawnTo((Player) this);
+                }
+            }
         }
     }
 
     private EntityMetadata getFakeMetadata(){
         EntityMetadata em = new EntityMetadata();
-        em.set((byte) 0, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0));
-        em.set((byte) 1, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_SHORT, (short) 300));
-        em.set((byte) 2, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_STRING, getName()));
-        em.set((byte) 3, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 1));
-        em.set((byte) 4, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0));
-        em.set((byte) 7, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_INT, 1));
-        em.set((byte) 8, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0));
-        em.set((byte) 15, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0));
-        em.set((byte) 16, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0));
+        em.set((byte) 0, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0)); //Is player on fire
+        em.set((byte) 1, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_SHORT, (short) 300)); //Strange Air thing
+        em.set((byte) 2, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_STRING, getName())); //nametag
+        em.set((byte) 3, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 1)); //Hide nametag?
+        em.set((byte) 4, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0)); //silent thing
+        em.set((byte) 7, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_INT, 0)); //Potion color
+        em.set((byte) 8, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0)); //Potion ambient
+        em.set((byte) 15, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 1)); //No ai
+        em.set((byte) 16, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0)); //Player flags
         em.set((byte) 17, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_LONG, (long) 0));
         return em;
     }
