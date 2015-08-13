@@ -20,6 +20,7 @@ public class DesktopPlayer extends Entity implements Player{
     private PCInterface pcInterface;
 
     public DesktopPlayer(PCInterface pcInterface, Server server, IoSession session){
+        super(server.getNextEntityId());
         this.pcInterface = pcInterface;
         this.server = server;
         this.ioSession = session;

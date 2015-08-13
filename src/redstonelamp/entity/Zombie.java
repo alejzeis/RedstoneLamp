@@ -21,4 +21,8 @@ package redstonelamp.entity;
  */
 public class Zombie extends Entity{
     public final static short NETWORK_ID = 32;
+
+    public Zombie(int id) {
+        super(id);
+    }
 }

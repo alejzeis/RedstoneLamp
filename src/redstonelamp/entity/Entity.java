@@ -1,6 +1,7 @@
 package redstonelamp.entity;
 
 import redstonelamp.Player;
+import redstonelamp.Server;
 import redstonelamp.level.Location;
 import redstonelamp.network.NetworkChannel;
 import redstonelamp.network.packet.SetEntityDataPacket;
@@ -27,8 +28,8 @@ public abstract class Entity {
     private List<Player> hasSpawned = new ArrayList<>();
     private EntityMetadata dataProperties = new EntityMetadata();
 
-    public Entity(){
-        entityID = System.currentTimeMillis();
+    public Entity(int id){
+        entityID = id;
     }
 
     public Location getLocation(){

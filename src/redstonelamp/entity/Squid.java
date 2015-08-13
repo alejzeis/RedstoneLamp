@@ -21,4 +21,8 @@ package redstonelamp.entity;
  */
 public class Squid extends Entity{
     public final static short NETWORK_ID = 17;
+
+    public Squid(int id) {
+        super(id);
+    }
 }

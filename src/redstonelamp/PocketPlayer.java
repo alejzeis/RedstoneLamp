@@ -41,6 +41,7 @@ public class PocketPlayer extends Human implements Player{
     private JRakLibInterface rakLibInterface;
 
     public PocketPlayer(Server server, JRakLibInterface rakLibInterface, String identifier, String address, int port, long clientId){
+        super(server.getNextEntityId());
         this.server = server;
         this.rakLibInterface = rakLibInterface;
         this.identifier = identifier;

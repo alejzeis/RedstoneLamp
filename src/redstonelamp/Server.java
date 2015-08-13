@@ -45,6 +45,8 @@ public class Server implements Runnable{
     private CommandManager commandManager;
     private boolean shuttingDown = false;
 
+    private int nextEntityID = 0;
+
     public Server(Properties properties, MainLogger logger){
     	eventManager = new EventManager();
     	commandManager = new CommandManager();
@@ -282,6 +284,16 @@ public class Server implements Runnable{
      */
     public Level getMainLevel(){
         return mainLevel;
+    }
+
+    /**
+     * INTERNAL USE ONLY!
+     * <br>
+     * Returns the next entityID.
+     * @return nextEntityID.
+     */
+    public int getNextEntityId() { //TODO: move to new EntityManager
+        return nextEntityID++;
     }
     
     /**

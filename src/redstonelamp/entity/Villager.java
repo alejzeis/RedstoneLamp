@@ -21,4 +21,8 @@ package redstonelamp.entity;
  */
 public class Villager extends Entity{
     public final static short NETWORK_ID = 15;
+
+    public Villager(int id) {
+        super(id);
+    }
 }

@@ -22,6 +22,10 @@ public class Human extends Entity{
     protected Skin skin;
     protected boolean isSlim;
 
+    public Human(int id) {
+        super(id);
+    }
+
     @Override
     public void spawnTo(Player player) {
         if(player != this){
