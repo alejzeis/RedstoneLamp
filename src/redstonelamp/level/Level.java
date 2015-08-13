@@ -143,7 +143,7 @@ public class Level {
     public void despawnFromAll(Player p){
         for(Player player : server.getOnlinePlayers()){
             if(player != this){
-                if(player instanceof PocketPlayer && this instanceof Player) {
+                if(player instanceof PocketPlayer) {
                     p.despawnFrom(player);
                     player.despawnFrom(p);
                 }
