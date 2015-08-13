@@ -120,4 +120,8 @@ public interface Player {
 	void setDisplayName(String name);
 
     long getId();
+
+    void spawnTo(Player player);
+
+    void despawnFrom(Player player);
 }

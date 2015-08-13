@@ -129,6 +129,28 @@ public class Level {
         return provider;
     }
 
+    public void spawnToAll(Player p){
+        for(Player player : server.getOnlinePlayers()){
+            if(player != this){
+                if(player instanceof PocketPlayer && this instanceof Player) {
+                    p.spawnTo(player);
+                    player.spawnTo((Player) this);
+                }
+            }
+        }
+    }
+
+    public void despawnFromAll(Player p){
+        for(Player player : server.getOnlinePlayers()){
+            if(player != this){
+                if(player instanceof PocketPlayer && this instanceof Player) {
+                    p.despawnFrom(player);
+                    player.despawnFrom(p);
+                }
+            }
+        }
+    }
+
     public void broadcastMovement(Player player, MovePlayerPacket cMpp) {
         Location l = player.getLocation();
         if(l.getLevel() != this){

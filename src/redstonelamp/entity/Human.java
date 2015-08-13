@@ -7,6 +7,7 @@ import redstonelamp.item.Item;
 import redstonelamp.item.ItemValues;
 import redstonelamp.network.packet.AddPlayerPacket;
 import redstonelamp.network.packet.PlayerArmorEquipmentPacket;
+import redstonelamp.network.packet.RemovePlayerPacket;
 import redstonelamp.utils.Skin;
 
 import java.util.Arrays;
@@ -57,14 +58,21 @@ public class Human extends Entity{
         }
     }
 
+    @Override
+    public void despawnFrom(Player player) {
+        if(player != this){
+            super.despawnFrom(player);
+
+            RemovePlayerPacket rpp = new RemovePlayerPacket();
+            rpp.eid = getId();
+            rpp.clientID = getId();
+            player.sendDataPacket(rpp);
+        }
+    }
+
     public void spawnToAll(Server server){
-        for(Player player : server.getOnlinePlayers()){
-            if(player != this){
-                if(player instanceof PocketPlayer && this instanceof Player) {
-                    spawnTo(player);
-                    ((PocketPlayer) player).spawnTo((Player) this);
-                }
-            }
+        if(this instanceof Player){
+            getLocation().getLevel().spawnToAll((Player) this);
         }
     }
 

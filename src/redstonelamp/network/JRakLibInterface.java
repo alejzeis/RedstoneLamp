@@ -133,7 +133,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
 
     @Override
     public void setName(String name) {
-        interface_.sendOption("name", "MCPE;"+name+";"+ PENetworkInfo.MCPE_PROTOCOL+";"+ PENetworkInfo.MCPE_VERSION+";"+server.getOnlinePlayers().size()+";"+server.getMaxPlayers()); //TODO: Max and online players
+        interface_.sendOption("name", "MCPE;"+name+";"+ PENetworkInfo.MCPE_PROTOCOL+";"+ PENetworkInfo.MCPE_VERSION+";"+server.getOnlinePlayers().size()+";"+server.getMaxPlayers());
     }
 
     @Override

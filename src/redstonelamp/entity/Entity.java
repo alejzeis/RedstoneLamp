@@ -49,7 +49,7 @@ public abstract class Entity {
     }
 
     public void despawnFrom(Player player){
-        //TODO
+        hasSpawned.remove(player);
     }
 
     public void setNameTag(String tag){

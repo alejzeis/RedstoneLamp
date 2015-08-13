@@ -16,6 +16,7 @@ import redstonelamp.network.Network;
 import redstonelamp.network.pc.PCInterface;
 import redstonelamp.plugin.PluginManager;
 import redstonelamp.utils.MainLogger;
+import redstonelamp.utils.TextFormat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Server implements Runnable, Listener{
+public class Server implements Runnable {
     private boolean debugMode = false;
     private String motd;
     private int maxPlayers;
@@ -81,6 +82,9 @@ public class Server implements Runnable, Listener{
         pluginManager.getPluginLoader().loadPlugins();
         pluginManager.getPluginLoader().enablePlugins();
         RedstoneLamp.registerDefaultCommands();
+
+        eventManager.registerEventListener(new InternalListener(this));
+
         logger.info("Done! Type \"help\" for help.");
         cli = new BufferedReader(new InputStreamReader(System.in));
         
@@ -321,15 +325,5 @@ public class Server implements Runnable, Listener{
 
     public boolean isShuttingDown() {
         return shuttingDown;
-    }
-
-    @Override
-    public void onEvent(Event event) {
-        if(event instanceof PlayerJoinEvent){
-            //PlayerJoinEvent evt = (PlayerJoinEvent) event;
-            network.setName(motd); //Update the player list
-        } else if(event instanceof PlayerQuitEvent){
-            network.setName(motd); //Update the player list
-        }
     }
 }

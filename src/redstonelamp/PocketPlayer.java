@@ -127,7 +127,7 @@ public class PocketPlayer extends Human implements Player{
                 for(Player player : server.getOnlinePlayers()){
                     if(player.getName().equalsIgnoreCase(username) && player.isConnected() && player.isLoggedIn()){
                         if(!player.kick("logged in from another location", false)){
-                            player.close("left the game", "logged in from another location", true);
+                            player.close(" left the game", "logged in from another location", true);
                         }
                         return;
                     }
@@ -326,6 +326,9 @@ public class PocketPlayer extends Human implements Player{
 
             connected = false;
             loggedIn = false;
+            spawned = false;
+
+            getLocation().getLevel().despawnFromAll(this);
             
             rakLibInterface.close(this, notifyClient ? reason : "");
 
