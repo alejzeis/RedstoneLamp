@@ -9,4 +9,8 @@ public abstract class PlayerEvent extends Event {
 	public String getReason() {
 		return null;
 	}
+	
+	public String getMessage() {
+		return null;
+	}
 }
