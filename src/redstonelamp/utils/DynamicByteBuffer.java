@@ -258,4 +258,8 @@ public class DynamicByteBuffer {
     private void setByteBuffer(ByteBuffer bb){
         this.bb = bb;
     }
+
+    public byte[] getRemainingBytes() {
+        return get(bb.remaining());
+    }
 }

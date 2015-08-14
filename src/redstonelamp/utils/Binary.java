@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Binary class for reading/writing values. USE INSTEAD OF JRAKLIB's BINARY!
@@ -130,6 +131,17 @@ public class Binary {
         }
         bb.putByte((byte) 0x7f);
         return bb.toArray();
+    }
+
+    public byte[] writeUUID(UUID id){
+        String[] parts = id.toString().split(Pattern.quote("-"));
+        ByteBuffer bb = ByteBuffer.allocate(16);
+        bb.order(order);
+        bb.put(hex2bytes(parts[0]));
+        bb.put(hex2bytes(parts[1]));
+        bb.put(hex2bytes(parts[2]));
+        bb.put(hex2bytes(parts[3]));
+        return bb.array();
     }
 
     /**
@@ -272,6 +284,22 @@ public class Binary {
         return metadata;
     }
 
+    public UUID readUUID(byte[] bytes) {
+        DynamicByteBuffer bb = DynamicByteBuffer.newInstance(bytes, order);
+        String[] parts = new String[4];
+        parts[0] = bytes2hex(bb.get(4));
+        parts[1] = bytes2hex(bb.get(4));
+        parts[2] = bytes2hex(bb.get(4));
+        parts[3] = bytes2hex(bb.get(4));
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(parts[0]+"-");
+        sb.append(parts[1]+"-");
+        sb.append(parts[2]+"-");
+        sb.append(parts[3]+"-");
+        return UUID.fromString(sb.toString());
+    }
+
     /**
      * Reads a VarInt. Code is from: https://gist.github.com/zh32/7190955
      * @param bytes
@@ -313,5 +341,23 @@ public class Binary {
             sb.append(String.format("%02X", b)+" ");
         }
         return sb.toString();
+    }
+
+    public static String bytes2hex(byte[] bytes){
+        StringBuilder sb = new StringBuilder();
+        for(byte b : bytes){
+            sb.append(String.format("%02X", b));
+        }
+        return sb.toString();
+    }
+
+    public static byte[] hex2bytes(String s){
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                    + Character.digit(s.charAt(i+1), 16));
+        }
+        return data;
     }
 }

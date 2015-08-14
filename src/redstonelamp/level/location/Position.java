@@ -1,9 +1,14 @@
 package redstonelamp.level.location;
 
+import redstonelamp.io.Storable;
 import redstonelamp.level.Level;
 import redstonelamp.math.Vector3;
+import redstonelamp.utils.DynamicByteBuffer;
 
-public class Position extends Vector3 {
+import java.io.DataOutputStream;
+import java.nio.ByteOrder;
+
+public class Position extends Vector3 implements Storable{
 	public Level level = null;
 	
 	public Position() {}
@@ -59,5 +64,23 @@ public class Position extends Vector3 {
 	
 	public String toString() {
 		return "Position(X=" + x + ", Y=" + y + ", Z=" + z + ")";
+	}
+
+	@Override
+	public byte[] store() {
+		DynamicByteBuffer bb = DynamicByteBuffer.newInstance(ByteOrder.LITTLE_ENDIAN);
+		bb.putInt(x);
+		bb.putInt(y);
+		bb.putInt(z);
+		//TODO: put level name
+		return bb.toArray();
+	}
+
+	@Override
+	public void load(byte[] source) {
+		DynamicByteBuffer bb = DynamicByteBuffer.newInstance(source, ByteOrder.LITTLE_ENDIAN);
+		x = bb.getInt();
+		y = bb.getInt();
+		z = bb.getInt();
 	}
 }

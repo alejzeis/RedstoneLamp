@@ -21,12 +21,15 @@ import java.util.concurrent.*;
 public class Level {
     public static int CHUNKS_PER_TICK = 2;
 
+    private String name;
+
     private Server server;
     private LevelProvider provider;
     private Map<Player, List<ChunkLocation>> chunksToSend = new ConcurrentHashMap<>();
 
     public Level(Server server){
         this.server = server;
+        this.name = getDefaultWorldDataFolder().getName();
         provider = new FakeLevelProvider(); //TODO: Change.
     }
 
@@ -167,5 +170,9 @@ public class Level {
         mpp.onGround = cMpp.onGround;
 
         server.getOnlinePlayers().stream().filter(p -> p.getLocation().getLevel() == this && p != player).forEach(p -> p.sendDataPacket(mpp));
+    }
+
+    public String getName() {
+        return name;
     }
 }
