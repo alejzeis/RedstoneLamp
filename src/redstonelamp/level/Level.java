@@ -4,12 +4,11 @@ import redstonelamp.Player;
 import redstonelamp.PocketPlayer;
 import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
+import redstonelamp.level.location.ChunkLocation;
+import redstonelamp.level.location.Location;
 import redstonelamp.level.provider.FakeLevelProvider;
-import redstonelamp.network.NetworkChannel;
 import redstonelamp.network.packet.FullChunkDataPacket;
 import redstonelamp.network.packet.MovePlayerPacket;
-import redstonelamp.network.packet.PlayStatusPacket;
-import redstonelamp.network.packet.RespawnPacket;
 
 import java.io.File;
 import java.util.List;

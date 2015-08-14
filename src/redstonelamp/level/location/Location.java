@@ -1,4 +1,6 @@
-package redstonelamp.level;
+package redstonelamp.level.location;
+
+import redstonelamp.level.Level;
 
 /**
  * Represents a location in a world.

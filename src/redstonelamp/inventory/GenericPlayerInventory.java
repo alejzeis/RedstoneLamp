@@ -119,6 +119,7 @@ public class GenericPlayerInventory implements PlayerInventory{
         bb.putInt(getItemInHand().getId());
         bb.putShort(getItemInHand().getMetadata());
         bb.putInt(getItemInHand().getCount());
+        bb.putInt(stacks.keySet().size());
         for(int i = 0; i < stacks.keySet().size(); i++){
             Stack<Item> stack = getStackAt(i);
             bb.putInt(stack.size());
@@ -135,8 +136,28 @@ public class GenericPlayerInventory implements PlayerInventory{
     @Override
     public void load(byte[] source) {
         DynamicByteBuffer bb = DynamicByteBuffer.newInstance(source, ByteOrder.LITTLE_ENDIAN);
-        if(bb.getByte() != STORAGE_ID){
+        if(bb.getByte() != STORAGE_ID) {
             throw new InvalidDataException("STORAGE_ID does not match.");
+        }
+        int id = bb.getInt();
+        short md = bb.getShort();
+        int count = bb.getInt();
+        setItemInHand(Item.get(id, md, count));
+
+        int stacks = bb.getInt();
+        for(int i = 0; i < stacks; i++){
+            int stackSize = bb.getInt();
+            Stack<Item> stack = new Stack<>();
+
+            for(int i2 = 0; i2 < stackSize; i2++) {
+                int itemId = bb.getInt();
+                short itemMd = bb.getShort();
+                stack.push(Item.get(itemId, itemMd));
+            }
+            setStackAt(stack, i);
+        }
+        if(bb.getByte() != STORAGE_END){
+            throw new InvalidDataException("STORAGE_END does not match.");
         }
     }
 }

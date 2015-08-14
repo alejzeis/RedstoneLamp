@@ -1,6 +1,6 @@
 package redstonelamp;
 
-import redstonelamp.level.Location;
+import redstonelamp.level.location.Location;
 import redstonelamp.network.packet.DataPacket;
 import redstonelamp.utils.Skin;
 

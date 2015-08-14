@@ -1,8 +1,7 @@
 package redstonelamp.entity;
 
 import redstonelamp.Player;
-import redstonelamp.Server;
-import redstonelamp.level.Location;
+import redstonelamp.level.location.Location;
 import redstonelamp.network.NetworkChannel;
 import redstonelamp.network.packet.SetEntityDataPacket;
 

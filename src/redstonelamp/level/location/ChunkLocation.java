@@ -1,4 +1,4 @@
-package redstonelamp.level;
+package redstonelamp.level.location;
 
 /**
  * Represents a chunk location.

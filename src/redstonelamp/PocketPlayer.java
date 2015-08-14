@@ -11,7 +11,7 @@ import redstonelamp.event.player.PlayerKickEvent;
 import redstonelamp.event.player.PlayerMoveEvent;
 import redstonelamp.event.player.PlayerQuitEvent;
 import redstonelamp.item.Item;
-import redstonelamp.level.Location;
+import redstonelamp.level.location.Location;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.PENetworkInfo;
 import redstonelamp.network.packet.AdventureSettingsPacket;
