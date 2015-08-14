@@ -10,6 +10,7 @@ import redstonelamp.event.player.PlayerJoinEvent;
 import redstonelamp.event.player.PlayerKickEvent;
 import redstonelamp.event.player.PlayerMoveEvent;
 import redstonelamp.event.player.PlayerQuitEvent;
+import redstonelamp.inventory.PlayerInventory;
 import redstonelamp.item.Item;
 import redstonelamp.level.location.Location;
 import redstonelamp.network.JRakLibInterface;
@@ -51,6 +52,8 @@ public class PocketPlayer extends Human implements Player{
     private boolean connected = false;
     private boolean loggedIn = false;
     private boolean spawned = false;
+
+    private PlayerInventory inventory;
 
     private int gamemode;
 
