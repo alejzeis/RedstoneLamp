@@ -36,7 +36,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
         interface_ = new ServerHandler(rakLib, this);
 
         server.getLogger().debug("[JRakLibInterface]: Successfully bound to "+server.getBindInterface()+":"+server.getBindPort());
-
+        
         interface_.sendOption("portChecking", "false");
     }
 

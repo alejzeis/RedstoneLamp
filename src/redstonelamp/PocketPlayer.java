@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import redstonelamp.entity.EntityMetadata;
 import redstonelamp.entity.Human;
+import redstonelamp.event.player.PlayerChatEvent;
 import redstonelamp.event.player.PlayerJoinEvent;
 import redstonelamp.event.player.PlayerKickEvent;
 import redstonelamp.event.player.PlayerMoveEvent;
@@ -180,31 +181,39 @@ public class PocketPlayer extends Human implements Player{
 
             case PENetworkInfo.MOVE_PLAYER_PACKET:
                 MovePlayerPacket mpp = (MovePlayerPacket) packet;
-                //TODO: check movement
+                PlayerMoveEvent pme = new PlayerMoveEvent(this);
+                server.getEventManager().getEventExecutor().execute(pme);
                 Location l = getLocation();
-                l.setX(mpp.x);
-                l.setY(mpp.y);
-                l.setZ(mpp.z);
-                l.setYaw(mpp.yaw);
-                l.setPitch(mpp.pitch);
-                setLocation(l);
-                server.getEventManager().getEventExecutor().execute(new PlayerMoveEvent(this));
-                getLocation().getLevel().broadcastMovement(this, mpp);
+                if(!pme.isCanceled()) {
+                	//TODO: check movement
+                	l.setX(mpp.x);
+                	l.setY(mpp.y);
+                	l.setZ(mpp.z);
+                	l.setYaw(mpp.yaw);
+                	l.setPitch(mpp.pitch);
+                	setLocation(l);
+                	getLocation().getLevel().broadcastMovement(this, mpp);
+                } //TODO: Show the player they didnt move
                 break;
 
             case PENetworkInfo.TEXT_PACKET:
                 TextPacket tp = (TextPacket) packet;
+                PlayerChatEvent pce = new PlayerChatEvent(this, tp.message);
                 switch (tp.type){
                     case TextPacket.TYPE_RAW:
-                    	if(!tp.message.toLowerCase().startsWith("/"))
-                    		server.broadcast("<"+username+"> "+tp.message);
-                    	else
+                    	if(!tp.message.toLowerCase().startsWith("/")) {
+                    		server.getEventManager().getEventExecutor().execute(pce);
+                    		if(!pce.isCanceled())
+                    			server.broadcast("<"+username+"> "+tp.message);
+                    	} else
                     		server.getCommandManager().getCommandExecutor().executeCommand(tp.message, this);
                     break;
                     case TextPacket.TYPE_CHAT:
-                    	if(!tp.message.toLowerCase().startsWith("/"))
-                    		server.broadcast("<"+tp.source+"> "+tp.message);
-                    	else
+                    	if(!tp.message.toLowerCase().startsWith("/")) {
+                    		server.getEventManager().getEventExecutor().execute(pce);
+                    		if(!pce.isCanceled())
+                    			server.broadcast("<"+tp.source+"> "+tp.message);
+                    	} else
                     		server.getCommandManager().getCommandExecutor().executeCommand(tp.message, this);
                     break;
                 }
