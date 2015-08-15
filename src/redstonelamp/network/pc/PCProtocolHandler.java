@@ -26,20 +26,16 @@ public class PCProtocolHandler extends IoHandlerAdapter {
 	}
 
 	@Override
-	public void exceptionCaught(IoSession session, Throwable cause)
-			throws Exception {
+	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
 		cause.printStackTrace();
 	}
 
 	@Override
-	public void messageReceived(IoSession session, Object message)
-			throws Exception {
+	public void messageReceived(IoSession session, Object message) throws Exception {
 		MinecraftPacket pkt = (MinecraftPacket) message;
 
 		switch (pkt.packetID) {
-		case PCNetworkInfo.HANDHSAKE_HANDSHAKE: // Since the status request, and
-												// handshake have the same id,
-												// we must check the length
+		case PCNetworkInfo.HANDHSAKE_HANDSHAKE: // Since the status request, and handshake have the same id, we must check the length
 			if (pkt.payload.length <= 14) { // It's a status request.
 				sendStatusReply(session);
 			} else { // It's a handshake
@@ -74,8 +70,7 @@ public class PCProtocolHandler extends IoHandlerAdapter {
 		JSONObject description = new JSONObject();
 
 		ServerListPingEvent event = new ServerListPingEvent();
-		event.setProtocolTag(RedstoneLamp.SOFTWARE + " "
-				+ PCNetworkInfo.MC_VERSION);
+		event.setProtocolTag(RedstoneLamp.SOFTWARE + " " + PCNetworkInfo.MC_VERSION);
 		event.setProtocol(PCNetworkInfo.MC_PROTOCOL);
 		event.setMaxPlayers(server.getMaxPlayers());
 		event.setOnlinePlayers(server.getOnlinePlayers().size());
@@ -105,8 +100,7 @@ public class PCProtocolHandler extends IoHandlerAdapter {
 	}
 
 	@Override
-	public void sessionIdle(IoSession session, IdleStatus status)
-			throws Exception {
+	public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
 		System.out.println("IDLE " + session.getIdleCount(status));
 	}
 }
