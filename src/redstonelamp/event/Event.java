@@ -8,7 +8,6 @@ import redstonelamp.event.player.PlayerKickEvent;
 import redstonelamp.event.server.ServerEvent;
 
 public abstract class Event {
-	public abstract void execute(Listener listener);
 
 	public abstract String getEventName();
 	

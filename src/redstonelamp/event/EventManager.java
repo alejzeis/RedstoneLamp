@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 public class EventManager {
 	private EventExecutor eventExecutor = new EventExecutor();
-	private ArrayList<Object> listeners = new ArrayList<Object>();
+	private ArrayList<Listener> listeners = new ArrayList<Listener>();
 	
 	/**
 	 * Returns all classes events are registered to
 	 * 
 	 * @return ArrayList<Object>
 	 */
-	public ArrayList<Object> getListeners() {
+	public ArrayList<Listener> getListeners() {
 		return listeners;
 	}
 	
@@ -20,7 +20,7 @@ public class EventManager {
 	 * 
 	 * @param Listener
 	 */
-	public void registerEventListener(Listener listener) {
+	public void registerEvents(Listener listener) {
 		getListeners().add(listener);
 	}
 	
