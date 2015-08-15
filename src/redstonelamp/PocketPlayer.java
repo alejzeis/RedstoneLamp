@@ -11,6 +11,7 @@ import redstonelamp.event.player.PlayerKickEvent;
 import redstonelamp.event.player.PlayerMoveEvent;
 import redstonelamp.event.player.PlayerQuitEvent;
 import redstonelamp.inventory.PlayerInventory;
+import redstonelamp.io.playerdata.PlayerDatabase;
 import redstonelamp.item.Item;
 import redstonelamp.level.location.Location;
 import redstonelamp.network.JRakLibInterface;
@@ -53,9 +54,11 @@ public class PocketPlayer extends Human implements Player{
     private boolean loggedIn = false;
     private boolean spawned = false;
 
+    private PlayerDatabase.DatabaseEntry dbEntry;
     private PlayerInventory inventory;
 
     private int gamemode;
+    private int health;
 
     private JRakLibInterface rakLibInterface;
 
@@ -66,17 +69,28 @@ public class PocketPlayer extends Human implements Player{
         this.identifier = identifier;
         this.address = new InetSocketAddress(address, port);
         this.clientId = clientId;
-        connected = true;
 
-        loadPlayerData();
+        connected = true;
 
         spawnTo(this);
     }
 
     private void loadPlayerData() {
-        //TODO: Load actual data
-        gamemode = 1;
+        if(dbEntry.getGamemode() == -1){ //We need a new entry
+            dbEntry.setGamemode(server.getMainLevel().getGamemode());
+            dbEntry.setHealth(20);
+            dbEntry.setLocation(server.getMainLevel().getSpawnLocation());
+            dbEntry.setUUID(uuid);
+            server.getPlayerDatabase().putEntry(dbEntry);
 
+            loadPlayerData();
+        }
+        if(!uuid.toString().equals(dbEntry.getUUID().toString())){
+            server.getLogger().error("UUID Does not match: {mine: "+uuid.toString()+", DB: "+dbEntry.getUUID().toString());
+        }
+        gamemode = dbEntry.getGamemode();
+        health = dbEntry.getHealth();
+        setLocation(dbEntry.getLocation());
     }
 
     @Override
@@ -152,9 +166,12 @@ public class PocketPlayer extends Human implements Player{
                     }
                 }
 
+                dbEntry = server.getPlayerDatabase().getEntry(uuid);
+                loadPlayerData();
+
                 loggedIn = true;
 
-                setLocation(new Location(128, 2, 128, server.getMainLevel()));
+                //setLocation(new Location(128, 2, 128, server.getMainLevel()));
 
                 sendLoginPackets();
 
@@ -209,7 +226,7 @@ public class PocketPlayer extends Human implements Player{
         sgp.spawnY = (int) getLocation().getY();
         sgp.spawnZ = (int) getLocation().getZ();
         sgp.generator = 1;
-        sgp.gamemode = 1; //CREATIVE
+        sgp.gamemode = gamemode;
         sgp.eid = 0; //Player EntityID is always 0
         sendDataPacket(sgp);
 
@@ -227,12 +244,14 @@ public class PocketPlayer extends Human implements Player{
         AdventureSettingsPacket asp = new AdventureSettingsPacket();
         int flags = 0;
         flags |= 0x20; //Allow nametags
-        flags |= 0x80; //Allow flight
+        if(gamemode == 1) {
+            flags |= 0x80; //Allow flight
+        }
         asp.flags = flags;
         sendDataPacket(asp);
 
         SetHealthPacket shp = new SetHealthPacket();
-        shp.health = 20;
+        shp.health = health;
         sendDataPacket(shp);
 
         SetDifficultyPacket sdp = new SetDifficultyPacket();

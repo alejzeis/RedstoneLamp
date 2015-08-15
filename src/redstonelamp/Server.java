@@ -8,6 +8,8 @@ import redstonelamp.event.player.PlayerJoinEvent;
 import redstonelamp.event.player.PlayerQuitEvent;
 import redstonelamp.event.server.ServerStopEvent;
 import redstonelamp.event.server.ServerTickEvent;
+import redstonelamp.io.playerdata.GenericPlayerDatabase;
+import redstonelamp.io.playerdata.PlayerDatabase;
 import redstonelamp.item.Item;
 import redstonelamp.level.Level;
 import redstonelamp.level.provider.FakeLevelProvider;
@@ -19,6 +21,7 @@ import redstonelamp.utils.MainLogger;
 import redstonelamp.utils.TextFormat;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Instant;
@@ -42,6 +45,7 @@ public class Server implements Runnable {
     private List<Player> players = new CopyOnWriteArrayList();
     private Network network;
     private Level mainLevel;
+    private PlayerDatabase playerDatabase;
     private BufferedReader cli;
     
     private PluginManager pluginManager;
@@ -50,6 +54,7 @@ public class Server implements Runnable {
     private boolean shuttingDown = false;
 
     private int nextEntityID = 0;
+    private File playerDatbaseLocation;
 
     public Server(Properties properties, MainLogger logger){
     	eventManager = new EventManager();
@@ -70,7 +75,21 @@ public class Server implements Runnable {
         }
         Item.init();
         logger.debug("Items initialized ("+Item.getCreativeItems().size()+" creative items)");
-        
+
+        try {
+            playerDatbaseLocation = new File("players.dat");
+            playerDatabase = new GenericPlayerDatabase();
+            if(!playerDatbaseLocation.exists()){
+                playerDatbaseLocation.createNewFile();
+            } else {
+                playerDatabase.loadFromFile(getPlayerDatbaseLocation());
+            }
+        } catch (IOException e) {
+            logger.error("FAILED TO LOAD PLAYER DATABASE!!! java.io.IOException: "+e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+
         network = new Network(this);
         network.registerInterface(new JRakLibInterface(this));
         network.registerInterface(new PCInterface(this));
@@ -300,6 +319,26 @@ public class Server implements Runnable {
     public int getNextEntityId() { //TODO: move to new EntityManager
         return nextEntityID++;
     }
+
+    /**
+     * Get the PlayerDatabase implementation for this server.
+     * @return The PlayerDatabase used by the server.
+     */
+    public PlayerDatabase getPlayerDatabase() {
+        return playerDatabase;
+    }
+
+    /**
+     * Saves the server's PlayerDatabase.
+     */
+    public void savePlayerDatabase() {
+        try {
+            playerDatabase.save(getPlayerDatbaseLocation());
+        } catch (IOException e) {
+            getLogger().warning("Failed to save PlayerDatabase! java.io.IOException: "+e.getMessage());
+            e.printStackTrace();
+        }
+    }
     
     /**
      * Stops the server
@@ -325,5 +364,9 @@ public class Server implements Runnable {
 
     public boolean isShuttingDown() {
         return shuttingDown;
+    }
+
+    public File getPlayerDatbaseLocation() {
+        return playerDatbaseLocation;
     }
 }

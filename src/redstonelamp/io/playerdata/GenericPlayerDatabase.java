@@ -25,7 +25,7 @@ public class GenericPlayerDatabase implements PlayerDatabase{
         if(entries.containsKey(id.toString())){
             return entries.get(id.toString());
         }
-        return null;
+        return new GenericPlayerDatabase.GenericDatabaseEntry();
     }
 
     @Override
@@ -66,9 +66,9 @@ public class GenericPlayerDatabase implements PlayerDatabase{
     public static class GenericDatabaseEntry implements DatabaseEntry {
         public final static byte ENTRY_STORAGE_VERSION = 1;
 
-        private int gamemode;
+        private int gamemode = -1;
         private Location location;
-        private int health;
+        private int health = -1;
         private UUID uuid;
 
         @Override

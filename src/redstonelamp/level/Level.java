@@ -26,6 +26,8 @@ public class Level {
     private Server server;
     private LevelProvider provider;
     private Map<Player, List<ChunkLocation>> chunksToSend = new ConcurrentHashMap<>();
+    private int gamemode;
+    private Location spawnLocation;
 
     public Level(Server server){
         this.server = server;
@@ -174,5 +176,13 @@ public class Level {
 
     public String getName() {
         return name;
+    }
+
+    public int getGamemode() {
+        return gamemode;
+    }
+
+    public Location getSpawnLocation() {
+        return spawnLocation;
     }
 }
