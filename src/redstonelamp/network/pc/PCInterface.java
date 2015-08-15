@@ -16,15 +16,19 @@ import redstonelamp.network.packet.DataPacket;
 import redstonelamp.network.pc.codec.HeaderDecoder;
 import redstonelamp.network.pc.codec.HeaderEncoder;
 import redstonelamp.network.pc.packet.MinecraftPacket;
+import redstonelamp.network.pc.packet.PCDataPacket;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * PC Networking interface.
  */
 public class PCInterface implements NetworkInterface{
     private Server server;
+    private Map<Integer, Class<? extends PCDataPacket>> packets = new ConcurrentHashMap<>();
 
     private IoAcceptor acceptor;
     private PCProtocolHandler handler;
@@ -51,14 +55,35 @@ public class PCInterface implements NetworkInterface{
         }
     }
 
+    public PCDataPacket getPacket(int pid){
+        if(packets.containsKey(pid)){
+            try {
+                return packets.get(pid).newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    private void registerPacket(int pid, Class<? extends PCDataPacket> clazz){
+        packets.put(pid, clazz);
+    }
+
+    private void registerPackets() {
+
+    }
+
     @Override
     public void sendPacket(Player player, DataPacket packet, boolean needACK, boolean immediate) {
         if(!(player instanceof DesktopPlayer)){
            throw new IllegalArgumentException("Player must be a DesktopPlayer instance!");
         }
         try {
-            ((DesktopPlayer) player).getSession().write(new MinecraftPacket(packet.encode()));
-        } catch (IOException e) {
+            ((DesktopPlayer) player).getSession().write(packet);
+        } catch (Exception e) {
             server.getLogger().warning("Exception while sending packet from: "+player.getIdentifier());
             e.printStackTrace();
         }

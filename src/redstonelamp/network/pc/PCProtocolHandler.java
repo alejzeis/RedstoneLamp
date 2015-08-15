@@ -12,6 +12,7 @@ import redstonelamp.Server;
 import redstonelamp.event.EventExecutor;
 import redstonelamp.event.server.ServerListPingEvent;
 import redstonelamp.network.pc.packet.MinecraftPacket;
+import redstonelamp.network.pc.packet.PCDataPacket;
 import redstonelamp.network.pc.packet.handshake.HandshakePacket;
 import redstonelamp.network.pc.packet.status.StatusResponse;
 
@@ -37,27 +38,31 @@ public class PCProtocolHandler extends IoHandlerAdapter {
 		MinecraftPacket pkt = (MinecraftPacket) message;
 
 		switch (pkt.packetID) {
-		case PCNetworkInfo.HANDHSAKE_HANDSHAKE: // Since the status request, and
-												// handshake have the same id,
-												// we must check the length
-			if (pkt.payload.length <= 14) { // It's a status request.
-				sendStatusReply(session);
-			} else { // It's a handshake
-				HandshakePacket hp = new HandshakePacket();
-				hp.decode(pkt.payload);
-				if (hp.nextState == HandshakePacket.STATE_LOGIN) {
-					DesktopPlayer player = new DesktopPlayer(pcInterface,
-							pcInterface.getServer(), session);
-					pcInterface.getServer().addPlayer(player);
-				} // Send status reply once we get the status request
-			}
-			break;
+			case PCNetworkInfo.HANDHSAKE_HANDSHAKE: // Since the status request, and
+													// handshake have the same id,
+													// we must check the length
+				if (pkt.payload.length < 15) { // It's a status request.
+					sendStatusReply(session);
+				} else { // It's a handshake
+					HandshakePacket hp = new HandshakePacket();
+					hp.decode(pkt.payload);
+					if (hp.nextState == HandshakePacket.STATE_LOGIN) {
+						DesktopPlayer player = new DesktopPlayer(pcInterface, pcInterface.getServer(), session);
+						pcInterface.getServer().addPlayer(player);
+					} // Send status reply once we get the status request
+				}
+				break;
 		}
 
-		Player player = pcInterface.getServer().getPlayer(
-				session.getRemoteAddress().toString());
+		Player player = pcInterface.getServer().getPlayer(session.getRemoteAddress().toString());
 		if (player instanceof DesktopPlayer) {
-
+			PCDataPacket packet = pcInterface.getPacket(pkt.packetID);
+			if(packet != null) {
+				packet.decode(pkt.payload);
+				player.handleDataPacket(packet);
+			} else {
+				pcInterface.getServer().getLogger().warning("[PCProtocolHandler]: Dropped packet "+String.format("%02X", pkt.packetID));
+			}
 		} else { // No player class
 
 		}
@@ -105,8 +110,7 @@ public class PCProtocolHandler extends IoHandlerAdapter {
 	}
 
 	@Override
-	public void sessionIdle(IoSession session, IdleStatus status)
-			throws Exception {
+	public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
 		System.out.println("IDLE " + session.getIdleCount(status));
 	}
 }
