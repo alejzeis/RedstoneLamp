@@ -62,11 +62,12 @@ public class Server implements Runnable {
         bindInterface = properties.getProperty("server-ip", "0.0.0.0");
         bindPort = Integer.parseInt(properties.getProperty("mcpe-port", "19132"));
         motd = properties.getProperty("motd", "A Minecraft Server");
-        File ficon = new File("./server-icon.png");
+        File ficon = new File("server-icon.png");
         if(ficon.exists())
         	icon = new ServerIcon(ficon);
         else
-        	icon = new ServerIcon(new File(this.getClass().getResource("/server-icon.png").getFile()));
+            icon = new ServerIcon(new File("logo.png"));
+        	//icon = new ServerIcon(new File(this.getClass().getResource("server-icon.png").getFile()));
         maxPlayers = Integer.parseInt(properties.getProperty("max-players", "20"));
         
         
