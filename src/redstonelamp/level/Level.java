@@ -33,6 +33,8 @@ public class Level {
         this.server = server;
         this.name = getDefaultWorldDataFolder().getName();
         provider = new FakeLevelProvider(); //TODO: Change.
+        spawnLocation = new Location(128, 2, 128, this); //TODO: Change.
+        gamemode = 1; //TODO: Change.
     }
 
     public void tick(){
@@ -83,7 +85,7 @@ public class Level {
         int chunkNum = 0;
         try{
             while(chunkNum < 96){
-                System.out.println("ChunkSender chunk "+x+", "+z);
+                //System.out.println("ChunkSender chunk "+x+", "+z);
 
                 chunks.add(new ChunkLocation(x, z));
 

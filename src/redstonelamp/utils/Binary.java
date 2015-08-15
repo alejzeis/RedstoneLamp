@@ -286,17 +286,13 @@ public class Binary {
 
     public UUID readUUID(byte[] bytes) {
         DynamicByteBuffer bb = DynamicByteBuffer.newInstance(bytes, order);
-        String[] parts = new String[4];
-        parts[0] = bytes2hex(bb.get(4));
-        parts[1] = bytes2hex(bb.get(4));
-        parts[2] = bytes2hex(bb.get(4));
-        parts[3] = bytes2hex(bb.get(4));
+        String data = bytes2hex(bytes);
 
         StringBuilder sb = new StringBuilder();
-        sb.append(parts[0]+"-");
-        sb.append(parts[1]+"-");
-        sb.append(parts[2]+"-");
-        sb.append(parts[3]+"-");
+        sb.append(data.substring(0, 8) + "-");
+        sb.append(data.substring(8, 12)+"-3"+data.substring(13, 16)+"-8");
+        sb.append(data.substring(17, 20)+"-");
+        sb.append(data.substring(20, 32));
         return UUID.fromString(sb.toString());
     }
 

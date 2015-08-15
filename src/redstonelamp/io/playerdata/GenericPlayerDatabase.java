@@ -60,6 +60,7 @@ public class GenericPlayerDatabase implements PlayerDatabase{
             int len = bb.getUnsignedShort();
             GenericDatabaseEntry entry = new GenericDatabaseEntry();
             entry.load(bb.get(len));
+            putEntry(entry);
         }
     }
 
@@ -122,7 +123,8 @@ public class GenericPlayerDatabase implements PlayerDatabase{
             bb.put(locStoreData);
 
             bb.putInt(health);
-            bb.put(Binary.newInstance(ByteOrder.LITTLE_ENDIAN).writeUUID(uuid));
+            //bb.put(Binary.newInstance(ByteOrder.LITTLE_ENDIAN).writeUUID(uuid));
+            bb.putString(uuid.toString()); //TODO: Write UUID legit
             return bb.toArray();
         }
 
@@ -137,7 +139,8 @@ public class GenericPlayerDatabase implements PlayerDatabase{
             int len = bb.getUnsignedShort();
             location.load(bb.get(len));
             health = bb.getInt();
-            uuid = Binary.newInstance(ByteOrder.LITTLE_ENDIAN).readUUID(bb.get(16));
+            //uuid = Binary.newInstance(ByteOrder.LITTLE_ENDIAN).readUUID(bb.get(16));
+            uuid = UUID.fromString(bb.getString()); //TODO: Read UUID legit
         }
     }
 }

@@ -1,5 +1,6 @@
 package redstonelamp.io.playerdata;
 
+import org.apache.commons.io.IOUtils;
 import redstonelamp.io.Storable;
 import redstonelamp.level.location.Location;
 import redstonelamp.level.location.Position;
@@ -46,7 +47,7 @@ public interface PlayerDatabase extends Storable{
      * @throws IOException If there is an error while loading.
      */
     default void loadFromFile(File file) throws IOException {
-        byte[] data = Files.readAllBytes(Paths.get(file.toURI()));
+        byte[] data = IOUtils.toByteArray(new FileInputStream(file));
         load(data);
     }
 

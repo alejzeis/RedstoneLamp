@@ -73,11 +73,11 @@ public class Server implements Runnable {
             icon = new ServerIcon(new File("logo.png"));
         	//icon = new ServerIcon(new File(this.getClass().getResource("server-icon.png").getFile()));
         maxPlayers = Integer.parseInt(properties.getProperty("max-players", "20"));
-        
-        
 
         logger.info("This server is running " + RedstoneLamp.SOFTWARE + " version " + RedstoneLamp.VERSION + " \"" + RedstoneLamp.CODENAME + "\" (API " + RedstoneLamp.API_VERSION + ")");
         logger.info(RedstoneLamp.SOFTWARE + " is distributed under the " + RedstoneLamp.LICENSE);
+
+        RedstoneLamp.setServerInstance(this);
 
         mainLevel = new Level(this);
         if(mainLevel.getProvider() instanceof FakeLevelProvider){
@@ -105,7 +105,6 @@ public class Server implements Runnable {
         network.registerInterface(new PCInterface(this));
         network.setName(motd);
 
-        RedstoneLamp.setServerInstance(this);
         pluginManager = new PluginManager();
 
         pluginManager.getPluginLoader().loadPlugins();
@@ -388,6 +387,4 @@ public class Server implements Runnable {
     public File getPlayerDatbaseLocation() {
         return playerDatbaseLocation;
     }
-		return shuttingDown;
-	}
 }

@@ -24,7 +24,6 @@ public class FullChunkDataPacket extends DataPacket{
         bb.putInt(z / 16);
         bb.putInt(payload.length);
         bb.put(payload);
-        System.out.println("Chunk "+(x / 16)+", "+(z / 16));
     }
 
     @Override
