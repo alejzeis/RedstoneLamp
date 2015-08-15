@@ -15,6 +15,7 @@ import redstonelamp.network.pc.packet.MinecraftPacket;
 import redstonelamp.network.pc.packet.PCDataPacket;
 import redstonelamp.network.pc.packet.handshake.HandshakePacket;
 import redstonelamp.network.pc.packet.status.StatusResponse;
+import redstonelamp.utils.ServerIcon;
 
 /**
  * Protocol handler.

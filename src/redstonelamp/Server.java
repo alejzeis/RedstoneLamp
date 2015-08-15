@@ -14,9 +14,9 @@ import redstonelamp.level.provider.FakeLevelProvider;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.Network;
 import redstonelamp.network.pc.PCInterface;
-import redstonelamp.network.pc.ServerIcon;
 import redstonelamp.plugin.PluginManager;
 import redstonelamp.utils.MainLogger;
+import redstonelamp.utils.ServerIcon;
 import redstonelamp.utils.TextFormat;
 
 import java.io.BufferedReader;
