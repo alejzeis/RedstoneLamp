@@ -32,6 +32,7 @@ public class BanSecurity {
 	}
 	
 	public boolean nameBanned(String name) {
+		name = name.toLowerCase();
 		try {
 			if(players.isFile()) {
 				String all = FileUtils.readFileToString(players);
