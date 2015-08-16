@@ -2,9 +2,7 @@ package redstonelamp.network.pc;
 
 import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.session.IdleStatus;
-import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import redstonelamp.DesktopPlayer;
@@ -15,8 +13,8 @@ import redstonelamp.network.NetworkInterface;
 import redstonelamp.network.packet.DataPacket;
 import redstonelamp.network.pc.codec.HeaderDecoder;
 import redstonelamp.network.pc.codec.HeaderEncoder;
-import redstonelamp.network.pc.packet.MinecraftPacket;
 import redstonelamp.network.pc.packet.PCDataPacket;
+import redstonelamp.network.pc.packet.login.LoginStartPacket;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -28,7 +26,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PCInterface implements NetworkInterface{
     private Server server;
-    private Map<Integer, Class<? extends PCDataPacket>> packets = new ConcurrentHashMap<>();
+    private Map<Integer, Class<? extends PCDataPacket>> playPackets = new ConcurrentHashMap<>();
+
+    private Map<Integer, Class<? extends PCDataPacket>> loginPackets = new ConcurrentHashMap<>(); //Login packets from the client
 
     private IoAcceptor acceptor;
     private PCProtocolHandler handler;
@@ -46,6 +46,7 @@ public class PCInterface implements NetworkInterface{
 
         acceptor.getSessionConfig().setReadBufferSize(2048);
         acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
+        registerPackets();
         try {
             acceptor.bind(new InetSocketAddress(Integer.parseInt(RedstoneLamp.properties.getProperty("mcpc-port", "25565"))));
             server.getLogger().debug("[PCInterface]: Successfully bound to *:25565");
@@ -55,10 +56,10 @@ public class PCInterface implements NetworkInterface{
         }
     }
 
-    public PCDataPacket getPacket(int pid){
-        if(packets.containsKey(pid)){
+    public PCDataPacket getPlayPacket(int pid){
+        if(playPackets.containsKey(pid)){
             try {
-                return packets.get(pid).newInstance();
+                return playPackets.get(pid).newInstance();
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
@@ -68,11 +69,37 @@ public class PCInterface implements NetworkInterface{
         return null;
     }
 
-    private void registerPacket(int pid, Class<? extends PCDataPacket> clazz){
-        packets.put(pid, clazz);
+    public PCDataPacket getLoginPacket(int pid) {
+        if(loginPackets.containsKey(pid)) {
+            try {
+                return loginPackets.get(pid).newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    private void registerPlayPacket(int pid, Class<? extends PCDataPacket> clazz){
+        playPackets.put(pid, clazz);
+    }
+
+    private void registerLoginPacket(int pid, Class<? extends PCDataPacket> clazz){
+        loginPackets.put(pid, clazz);
     }
 
     private void registerPackets() {
+        registerLoginPackets();
+        registerPlayPackets();
+    }
+
+    private void registerLoginPackets() {
+        loginPackets.put(LoginStartPacket.ID, LoginStartPacket.class);
+    }
+
+    private void registerPlayPackets() {
 
     }
 

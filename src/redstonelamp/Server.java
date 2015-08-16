@@ -16,9 +16,9 @@ import redstonelamp.level.provider.FakeLevelProvider;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.Network;
 import redstonelamp.network.pc.PCInterface;
-import redstonelamp.network.pc.ServerIcon;
 import redstonelamp.plugin.PluginManager;
 import redstonelamp.utils.MainLogger;
+import redstonelamp.utils.ServerIcon;
 import redstonelamp.utils.TextFormat;
 
 import java.io.BufferedReader;
@@ -58,6 +58,8 @@ public class Server implements Runnable {
     private int nextEntityID = 0;
     private File playerDatbaseLocation;
 
+    private boolean onlineMode = false;
+
     public Server(Properties properties, MainLogger logger){
     	eventManager = new EventManager();
     	commandManager = new CommandManager();
@@ -66,13 +68,17 @@ public class Server implements Runnable {
         bindInterface = properties.getProperty("server-ip", "0.0.0.0");
         bindPort = Integer.parseInt(properties.getProperty("mcpe-port", "19132"));
         motd = properties.getProperty("motd", "A Minecraft Server");
-        File ficon = new File("server-icon.png");
-        if(ficon.exists())
-        	icon = new ServerIcon(ficon);
-        else
-            icon = new ServerIcon(new File("logo.png"));
-        	//icon = new ServerIcon(new File(this.getClass().getResource("server-icon.png").getFile()));
+        try {
+            File ficon = new File("server-icon.png");
+            if(ficon.exists())
+        	    icon = new ServerIcon(ficon);
+            else
+                icon = new ServerIcon(new File(getClass().getResource("/resources/img/server-icon.png").toURI()));
+        } catch(Exception e) {
+        	e.printStackTrace();
+        }
         maxPlayers = Integer.parseInt(properties.getProperty("max-players", "20"));
+
 
         logger.info("This server is running " + RedstoneLamp.SOFTWARE + " version " + RedstoneLamp.VERSION + " \"" + RedstoneLamp.CODENAME + "\" (API " + RedstoneLamp.API_VERSION + ")");
         logger.info(RedstoneLamp.SOFTWARE + " is distributed under the " + RedstoneLamp.LICENSE);
@@ -386,5 +392,11 @@ public class Server implements Runnable {
 
     public File getPlayerDatbaseLocation() {
         return playerDatbaseLocation;
+    }
+		return shuttingDown;
+	}
+
+    public boolean isOnlineMode() {
+        return onlineMode;
     }
 }

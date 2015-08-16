@@ -33,6 +33,7 @@ import redstonelamp.network.packet.SetTimePacket;
 import redstonelamp.network.packet.StartGamePacket;
 import redstonelamp.network.packet.TextPacket;
 import redstonelamp.network.packet.UnknownDataPacket;
+import redstonelamp.security.BanSecurity;
 import redstonelamp.utils.Skin;
 import redstonelamp.utils.TextFormat;
 
@@ -62,9 +63,12 @@ public class PocketPlayer extends Human implements Player{
     private int health;
 
     private JRakLibInterface rakLibInterface;
+    
+    private BanSecurity ban_security;
 
     public PocketPlayer(Server server, JRakLibInterface rakLibInterface, String identifier, String address, int port, long clientId){
         super(server.getNextEntityId());
+        ban_security = new BanSecurity();
         this.server = server;
         this.rakLibInterface = rakLibInterface;
         this.identifier = identifier;
@@ -147,9 +151,13 @@ public class PocketPlayer extends Human implements Player{
                     break;
                 }
 
+                if(ban_security.nameBanned(username) || ban_security.ipBanned(identifier.substring(0, identifier.indexOf(":"))))
+                    close("", "You are banned from this server.", true);
+                	
 
                 if(lp.skin.getBytes().length != 64 * 32 * 4 && lp.skin.getBytes().length != 64 * 64 * 4){
-                    System.out.println(lp.skin.getBytes().length);
+                	if(server.isDebugMode())
+                        System.out.println(lp.skin.getBytes().length);
                     close("", "disconnectionScreen.invalidSkin", true);
                     break;
                 }
@@ -492,4 +500,14 @@ public class PocketPlayer extends Human implements Player{
 	public void setDisplayName(String name) {
 		displayName = name;
 	}
+    
+    public void ban() {
+        ban_security.addPlayer(username);
+        close(" left the game", "You have been banned!", true);
+    }
+    
+    public void banIp() {
+        ban_security.addIP(identifier.substring(0, identifier.indexOf(":")));
+        close(" left the game", "You have been banned!", true);
+    }
 }

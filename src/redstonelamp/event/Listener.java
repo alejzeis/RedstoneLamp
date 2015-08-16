@@ -1,5 +1,5 @@
 package redstonelamp.event;
 
 public interface Listener {
-	public void onEvent(Event event);
+	public default void onEvent(Event event) {}
 }

@@ -1,6 +1,6 @@
 package redstonelamp.event.server;
 
-import redstonelamp.network.pc.ServerIcon;
+import redstonelamp.utils.ServerIcon;
 
 public class ServerListPingEvent extends ServerEvent {
 

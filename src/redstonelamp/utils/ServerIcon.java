@@ -1,4 +1,4 @@
-package redstonelamp.network.pc;
+package redstonelamp.utils;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;

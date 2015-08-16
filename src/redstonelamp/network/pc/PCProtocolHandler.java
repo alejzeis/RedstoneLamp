@@ -8,13 +8,14 @@ import org.json.simple.JSONObject;
 import redstonelamp.DesktopPlayer;
 import redstonelamp.Player;
 import redstonelamp.RedstoneLamp;
-import redstonelamp.Server;
-import redstonelamp.event.EventExecutor;
 import redstonelamp.event.server.ServerListPingEvent;
 import redstonelamp.network.pc.packet.MinecraftPacket;
 import redstonelamp.network.pc.packet.PCDataPacket;
 import redstonelamp.network.pc.packet.handshake.HandshakePacket;
+import redstonelamp.network.pc.packet.status.StatusPingPacket;
+import redstonelamp.network.pc.packet.status.StatusPongPacket;
 import redstonelamp.network.pc.packet.status.StatusResponse;
+import redstonelamp.utils.ServerIcon;
 
 /**
  * Protocol handler.
@@ -35,42 +36,50 @@ public class PCProtocolHandler extends IoHandlerAdapter {
 	public void messageReceived(IoSession session, Object message) throws Exception {
 		MinecraftPacket pkt = (MinecraftPacket) message;
 
-		switch (pkt.packetID) {
-		case PCNetworkInfo.HANDHSAKE_HANDSHAKE: // Since the status request, and
-												// handshake have the same id,
-												// we must check the length
-			if (pkt.payload.length <= 14) { // It's a status request.
-				sendStatusReply(session);
-			} else { // It's a handshake
-				HandshakePacket hp = new HandshakePacket();
-				hp.decode(pkt.payload);
-				if (hp.nextState == HandshakePacket.STATE_LOGIN) {
-					DesktopPlayer player = new DesktopPlayer(pcInterface,
-							pcInterface.getServer(), session);
-					pcInterface.getServer().addPlayer(player);
-				} // Send status reply once we get the status request
-			}
-			break;
-		}
-
 		Player player = pcInterface.getServer().getPlayer(session.getRemoteAddress().toString());
 		if (player instanceof DesktopPlayer) {
-			PCDataPacket packet = pcInterface.getPacket(pkt.packetID);
-			if(packet != null) {
+			PCDataPacket packet = null;
+			if(((DesktopPlayer) player).getProtocolState() == ProtocolState.STATE_LOGIN) {
+				packet = pcInterface.getLoginPacket(pkt.packetID);
+			} else {
+				packet = pcInterface.getPlayPacket(pkt.packetID);
+			}
+			if (packet != null) {
 				packet.decode(pkt.payload);
 				player.handleDataPacket(packet);
-			} else {
-				pcInterface.getServer().getLogger().warning("[PCProtocolHandler]: Dropped packet "+String.format("%02X", pkt.packetID));
+				return; //Packet handled, exit method.
 			}
-		} else { // No player class
-
 		}
+
+		switch (pkt.packetID) {
+			case PCNetworkInfo.HANDHSAKE_HANDSHAKE: // Since the status request, and handshake have the same id, we must check the length
+				if (pkt.payload.length < 14) { // It's a status request.
+					sendStatusReply(session);
+				} else { // It's a handshake
+					HandshakePacket hp = new HandshakePacket();
+					hp.decode(pkt.payload);
+					if (hp.nextState == HandshakePacket.STATE_LOGIN) {
+						DesktopPlayer newplayer = new DesktopPlayer(pcInterface, pcInterface.getServer(), session);
+						pcInterface.getServer().addPlayer(newplayer);
+						newplayer.handleDataPacket(hp);
+					} // Send status reply once we get the status request
+				}
+				break;
+			case PCNetworkInfo.STATUS_PING:
+				StatusPingPacket ping = new StatusPingPacket();
+				ping.decode(pkt.payload);
+				StatusPongPacket pong = new StatusPongPacket();
+				pong.id = ping.id;
+				pong.encode();
+				session.write(pong);
+				break;
+		}
+
+		pcInterface.getServer().getLogger().warning("[PCProtocolHandler]: Dropped packet " + String.format("%02X", pkt.packetID));
 	}
 
 	@SuppressWarnings("unchecked")
 	private void sendStatusReply(IoSession session) {
-		Server server = pcInterface.getServer();
-		EventExecutor executor = server.getEventManager().getEventExecutor();
 
 		JSONObject root = new JSONObject();
 		JSONObject version = new JSONObject();
@@ -80,11 +89,11 @@ public class PCProtocolHandler extends IoHandlerAdapter {
 		ServerListPingEvent event = new ServerListPingEvent();
 		event.setProtocolTag(RedstoneLamp.SOFTWARE + " " + PCNetworkInfo.MC_VERSION);
 		event.setProtocol(PCNetworkInfo.MC_PROTOCOL);
-		event.setMaxPlayers(server.getMaxPlayers());
-		event.setOnlinePlayers(server.getOnlinePlayers().size());
-		event.setMotd(server.getMotd());
-		event.setIcon(server.getIcon());
-		executor.execute(event);
+		event.setMaxPlayers(pcInterface.getServer().getMaxPlayers());
+		event.setOnlinePlayers(pcInterface.getServer().getOnlinePlayers().size());
+		event.setMotd(pcInterface.getServer().getMotd());
+		event.setIcon(pcInterface.getServer().getIcon());
+		pcInterface.getServer().getEventManager().getEventExecutor().execute(event);
 
 		version.put("name", event.getProtocolTag());
 		version.put("protocol", event.getProtocol());
