@@ -393,8 +393,6 @@ public class Server implements Runnable {
     public File getPlayerDatbaseLocation() {
         return playerDatbaseLocation;
     }
-		return shuttingDown;
-	}
 
     public boolean isOnlineMode() {
         return onlineMode;
