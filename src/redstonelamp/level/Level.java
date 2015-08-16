@@ -32,8 +32,8 @@ public class Level {
 
     public void tick(){
         if(chunksToSend.keySet().isEmpty()){
-            return;
-        }
+        return;
+    }
         int sent = 0;
         for(Player player : chunksToSend.keySet()){
             if(sent >= CHUNKS_PER_TICK) break;

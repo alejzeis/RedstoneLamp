@@ -1,17 +1,17 @@
-package redstonelamp.network.pc.packet.handshake;
+package redstonelamp.network.pc.packet.status;
 
 import redstonelamp.network.pc.PCNetworkInfo;
 import redstonelamp.network.pc.packet.PCDataPacket;
 import redstonelamp.utils.DynamicByteBuffer;
 
-public class PingPacket extends PCDataPacket {
-	public final static int ID = PCNetworkInfo.PING;
+public class StatusPingPacket extends PCDataPacket {
+	public final static int ID = PCNetworkInfo.STATUS_PING;
 	
-	public long id = -1;
+	public long id;
 	
 	@Override
 	public int getID() {
-		return PCNetworkInfo.PING;
+		return PCNetworkInfo.STATUS_PING;
 	}
 
 	@Override

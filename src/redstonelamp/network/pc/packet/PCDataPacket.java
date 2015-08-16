@@ -28,6 +28,15 @@ public abstract class PCDataPacket extends DataPacket{
     @Override
     public void decode(byte[] buffer) {
         DynamicByteBuffer bb = DynamicByteBuffer.newInstance(buffer, ByteOrder.BIG_ENDIAN);
+        _decode(bb);
+    }
+
+    /**
+     * Decode FULLY A Minecraft Data Packet (this excludes the length, but includes the packet ID).
+     * @param buffer The DataPacket buffer, including the PID.
+     */
+    public void decodeFull(byte[] buffer){
+        DynamicByteBuffer bb = DynamicByteBuffer.newInstance(buffer, ByteOrder.BIG_ENDIAN);
         bb.getVarInt();
         _decode(bb);
     }

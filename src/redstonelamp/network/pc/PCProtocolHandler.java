@@ -12,8 +12,8 @@ import redstonelamp.event.server.ServerListPingEvent;
 import redstonelamp.network.pc.packet.MinecraftPacket;
 import redstonelamp.network.pc.packet.PCDataPacket;
 import redstonelamp.network.pc.packet.handshake.HandshakePacket;
-import redstonelamp.network.pc.packet.handshake.PingPacket;
-import redstonelamp.network.pc.packet.handshake.PongPacket;
+import redstonelamp.network.pc.packet.status.StatusPingPacket;
+import redstonelamp.network.pc.packet.status.StatusPongPacket;
 import redstonelamp.network.pc.packet.status.StatusResponse;
 import redstonelamp.utils.ServerIcon;
 
@@ -49,10 +49,10 @@ public class PCProtocolHandler extends IoHandlerAdapter {
 				} // Send status reply once we get the status request
 			}
 			break;
-		case PCNetworkInfo.PING:
-			PingPacket ping = new PingPacket();
+		case PCNetworkInfo.STATUS_PING:
+			StatusPingPacket ping = new StatusPingPacket();
 			ping.decode(pkt.payload);
-			PongPacket pong = new PongPacket();
+			StatusPongPacket pong = new StatusPongPacket();
 			pong.id = ping.id;
 			pong.encode();
 			session.write(pong);
