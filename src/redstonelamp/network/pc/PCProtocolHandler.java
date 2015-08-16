@@ -35,42 +35,47 @@ public class PCProtocolHandler extends IoHandlerAdapter {
 	@Override
 	public void messageReceived(IoSession session, Object message) throws Exception {
 		MinecraftPacket pkt = (MinecraftPacket) message;
-		
-		switch (pkt.packetID) {
-		case PCNetworkInfo.HANDHSAKE_HANDSHAKE: // Since the status request, and handshake have the same id, we must check the length
-			if (pkt.payload.length <= 14) { // It's a status request.
-				sendStatusReply(session);
-			} else { // It's a handshake
-				HandshakePacket hp = new HandshakePacket();
-				hp.decode(pkt.payload);
-				if (hp.nextState == HandshakePacket.STATE_LOGIN) {
-					DesktopPlayer player = new DesktopPlayer(pcInterface, pcInterface.getServer(), session);
-					pcInterface.getServer().addPlayer(player);
-				} // Send status reply once we get the status request
-			}
-			break;
-		case PCNetworkInfo.STATUS_PING:
-			StatusPingPacket ping = new StatusPingPacket();
-			ping.decode(pkt.payload);
-			StatusPongPacket pong = new StatusPongPacket();
-			pong.id = ping.id;
-			pong.encode();
-			session.write(pong);
-			break;
-		}
 
 		Player player = pcInterface.getServer().getPlayer(session.getRemoteAddress().toString());
 		if (player instanceof DesktopPlayer) {
-			PCDataPacket packet = pcInterface.getPacket(pkt.packetID);
-			if(packet != null) {
+			PCDataPacket packet = null;
+			if(((DesktopPlayer) player).getProtocolState() == ProtocolState.STATE_LOGIN) {
+				packet = pcInterface.getLoginPacket(pkt.packetID);
+			} else {
+				packet = pcInterface.getPlayPacket(pkt.packetID);
+			}
+			if (packet != null) {
 				packet.decode(pkt.payload);
 				player.handleDataPacket(packet);
-			} else {
-				pcInterface.getServer().getLogger().warning("[PCProtocolHandler]: Dropped packet "+String.format("%02X", pkt.packetID));
+				return; //Packet handled, exit method.
 			}
-		} else { // No player class
-
 		}
+
+		switch (pkt.packetID) {
+			case PCNetworkInfo.HANDHSAKE_HANDSHAKE: // Since the status request, and handshake have the same id, we must check the length
+				if (pkt.payload.length < 14) { // It's a status request.
+					sendStatusReply(session);
+				} else { // It's a handshake
+					HandshakePacket hp = new HandshakePacket();
+					hp.decode(pkt.payload);
+					if (hp.nextState == HandshakePacket.STATE_LOGIN) {
+						DesktopPlayer newplayer = new DesktopPlayer(pcInterface, pcInterface.getServer(), session);
+						pcInterface.getServer().addPlayer(newplayer);
+						newplayer.handleDataPacket(hp);
+					} // Send status reply once we get the status request
+				}
+				break;
+			case PCNetworkInfo.STATUS_PING:
+				StatusPingPacket ping = new StatusPingPacket();
+				ping.decode(pkt.payload);
+				StatusPongPacket pong = new StatusPongPacket();
+				pong.id = ping.id;
+				pong.encode();
+				session.write(pong);
+				break;
+		}
+
+		pcInterface.getServer().getLogger().warning("[PCProtocolHandler]: Dropped packet " + String.format("%02X", pkt.packetID));
 	}
 
 	@SuppressWarnings("unchecked")
