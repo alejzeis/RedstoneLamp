@@ -54,6 +54,8 @@ public class Server implements Runnable {
 
     private int nextEntityID = 0;
 
+    private boolean onlineMode = false;
+
     public Server(Properties properties, MainLogger logger){
     	eventManager = new EventManager();
     	commandManager = new CommandManager();
@@ -72,8 +74,7 @@ public class Server implements Runnable {
         	e.printStackTrace();
         }
         maxPlayers = Integer.parseInt(properties.getProperty("max-players", "20"));
-        
-        
+
 
         logger.info("This server is running " + RedstoneLamp.SOFTWARE + " version " + RedstoneLamp.VERSION + " \"" + RedstoneLamp.CODENAME + "\" (API " + RedstoneLamp.API_VERSION + ")");
         logger.info(RedstoneLamp.SOFTWARE + " is distributed under the " + RedstoneLamp.LICENSE);
@@ -349,4 +350,8 @@ public class Server implements Runnable {
     public boolean isShuttingDown() {
 		return shuttingDown;
 	}
+
+    public boolean isOnlineMode() {
+        return onlineMode;
+    }
 }

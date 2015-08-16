@@ -2,6 +2,7 @@ package redstonelamp;
 
 import org.apache.mina.core.session.IoSession;
 import redstonelamp.entity.Entity;
+import redstonelamp.entity.Human;
 import redstonelamp.network.packet.DataPacket;
 import redstonelamp.network.packet.TextPacket;
 import redstonelamp.network.pc.Chat;
@@ -10,6 +11,7 @@ import redstonelamp.network.pc.PCNetworkInfo;
 import redstonelamp.network.pc.ProtocolState;
 import redstonelamp.network.pc.packet.handshake.HandshakePacket;
 import redstonelamp.network.pc.packet.login.LoginDisconnectPacket;
+import redstonelamp.network.pc.packet.login.LoginStartPacket;
 import redstonelamp.utils.Skin;
 import redstonelamp.utils.TextFormat;
 
@@ -19,7 +21,7 @@ import java.util.UUID;
 /**
  * Implementation of a player, connected from a computer.
  */
-public class DesktopPlayer extends Entity implements Player{
+public class DesktopPlayer extends Human implements Player{
 	private String displayName = "Steve"; //TODO: Remove init when ready
     private Server server;
     private PCInterface pcInterface;
@@ -68,7 +70,13 @@ public class DesktopPlayer extends Entity implements Player{
     }
 
     private void handleLoginPacket(DataPacket packet) {
+        int id = packet.getPID();
+        switch(id){
+            case PCNetworkInfo.LOGIN_LOGIN_START:
+                LoginStartPacket lsp = (LoginStartPacket) packet;
 
+                break;
+        }
     }
 
     private void handlePlayPacket(DataPacket packet) {
