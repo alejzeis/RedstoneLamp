@@ -7,6 +7,8 @@ import redstonelamp.Server;
 import redstonelamp.level.location.ChunkLocation;
 import redstonelamp.level.location.Location;
 import redstonelamp.level.provider.FakeLevelProvider;
+import redstonelamp.level.provider.anvil.AnvilLevelProvider;
+import redstonelamp.level.provider.leveldb.LevelDBProvider;
 import redstonelamp.network.packet.FullChunkDataPacket;
 import redstonelamp.network.packet.MovePlayerPacket;
 
@@ -32,7 +34,9 @@ public class Level {
     public Level(Server server){
         this.server = server;
         this.name = getDefaultWorldDataFolder().getName();
-        provider = new FakeLevelProvider(); //TODO: Change.
+        //provider = new FakeLevelProvider(); //TODO: Change.
+        //provider = new AnvilLevelProvider(this);
+        provider = new LevelDBProvider(this, getDefaultWorldDataFolder());
         spawnLocation = new Location(128, 1, 128, this); //TODO: Change.
         gamemode = 1; //TODO: Change.
     }
@@ -49,7 +53,7 @@ public class Level {
             for(ChunkLocation location : chunks){
                 if(sent >= CHUNKS_PER_TICK) break;
 
-                byte[] data = provider.orderChunk(location.getX(), location.getZ());
+                byte[] data = provider.orderChunk(location.getX() / 16, location.getZ() / 16);
                 FullChunkDataPacket dp = new FullChunkDataPacket();
                 dp.x = location.getX();
                 dp.z = location.getZ();
@@ -186,5 +190,9 @@ public class Level {
 
     public Location getSpawnLocation() {
         return spawnLocation;
+    }
+
+    public Server getServer() {
+        return server;
     }
 }

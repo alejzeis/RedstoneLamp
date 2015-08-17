@@ -5,4 +5,5 @@ package redstonelamp.level;
  */
 public interface LevelProvider {
     byte[] orderChunk(int x, int z);
+    void shutdown();
 }

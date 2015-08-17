@@ -39,4 +39,9 @@ public class FakeLevelProvider implements LevelProvider{
         }
         return bb.array();
     }
+
+    @Override
+    public void shutdown() {
+
+    }
 }
