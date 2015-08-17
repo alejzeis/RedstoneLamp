@@ -1,14 +1,26 @@
 package redstonelamp.plugin;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.Policy;
 
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
 import org.apache.commons.io.FilenameUtils;
 
+import redstonelamp.event.Listener;
+import redstonelamp.plugin.js.JavaScriptAPI;
 import redstonelamp.RedstoneLamp;
+import redstonelamp.cmd.CommandListener;
 import redstonelamp.resources.annotations.RedstonePlugin;
 
 public class PluginLoader {
@@ -45,8 +57,17 @@ public class PluginLoader {
 	 */
 	public void enablePlugins() {
 		for(Object o : RedstoneLamp.getServerInstance().getPluginManager().getPluginArray()) {
-			PluginBase plugin = (PluginBase) o;
-			plugin.onEnable();
+			if(o instanceof PluginBase) {
+				PluginBase plugin = (PluginBase) o;
+				plugin.onEnable();
+			} else if(o instanceof Invocable) {
+				Invocable plugin = (Invocable) o;
+				try {
+					plugin.invokeFunction("onEnable");
+				} catch (NoSuchMethodException e) {} catch (ScriptException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
@@ -55,8 +76,17 @@ public class PluginLoader {
 	 */
 	public void disablePlugins() {
 		for(Object o : RedstoneLamp.getServerInstance().getPluginManager().getPluginArray()) {
-			PluginBase plugin = (PluginBase) o;
-			plugin.onDisable();
+			if(o instanceof PluginBase) {
+				PluginBase plugin = (PluginBase) o;
+				plugin.onDisable();
+			} else if(o instanceof Invocable) {
+				Invocable plugin = (Invocable) o;
+				try {
+					plugin.invokeFunction("onDisable");
+				} catch (NoSuchMethodException e) {} catch (ScriptException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
@@ -103,7 +133,29 @@ public class PluginLoader {
 	}
 	
 	private void loadJSPlugin(File plugin) {
-		String name = FilenameUtils.removeExtension(plugin.getName());
-		RedstoneLamp.getServerInstance().getLogger().warning("Failed to load plugin \"" + name + "\": JavaScript plugins are not currently supported!");
+		try {
+			String name = FilenameUtils.removeExtension(plugin.getName());
+			RedstoneLamp.getServerInstance().getLogger().info("Loading JavaScript plugin " + name + "...");
+			ScriptEngineManager _manager = new ScriptEngineManager();
+			ScriptEngine _engine = _manager.getEngineByName("JavaScript");
+			Reader reader = new InputStreamReader(new FileInputStream(plugin));
+			_engine.put("PluginBase", new PluginBase());
+			_engine.eval(reader);
+			for(JavaScriptAPI api : RedstoneLamp.getServerInstance().getPluginManager().getJavaScriptManager().getAPIClasses()) {
+				try {
+					_engine.put(api.getClass().getSimpleName(), api.getClass().newInstance());
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+			Invocable inv = (Invocable) _engine;
+			RedstoneLamp.getServerInstance().getPluginManager().getPluginArray().add(inv);
+		} catch(FileNotFoundException e) {
+			e.printStackTrace();
+		} catch(ScriptException e) {
+			e.printStackTrace();
+		}
 	}
 }
