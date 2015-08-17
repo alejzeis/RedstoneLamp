@@ -91,7 +91,7 @@ public class PocketPlayer extends Human implements Player{
             loadPlayerData();
         }
         if(!uuid.toString().equals(dbEntry.getUUID().toString())){
-            server.getLogger().error("UUID Does not match: {mine: "+uuid.toString()+", DB: "+dbEntry.getUUID().toString());
+            server.getLogger().error("UUID Does not match: {mine: " + uuid.toString() + ", DB: " + dbEntry.getUUID().toString());
         }
         gamemode = dbEntry.getGamemode();
         health = dbEntry.getHealth();
@@ -201,7 +201,9 @@ public class PocketPlayer extends Human implements Player{
                 	l.setPitch(mpp.pitch);
                 	setLocation(l);
                 	getLocation().getLevel().broadcastMovement(this, mpp);
-                } //TODO: Show the player they didnt move
+                    return;
+                }
+                sendPosition(l, mpp.onGround);
                 break;
 
             case PENetworkInfo.TEXT_PACKET:
@@ -227,6 +229,23 @@ public class PocketPlayer extends Human implements Player{
                 }
                 break;
         }
+    }
+
+    /**
+     * NOTE TO PLUGIN DEVELOPERS: Please use <code>PocketPlayer.teleport()</code> instead.
+     * @param l
+     */
+    public void sendPosition(Location l, boolean onGround) {
+        MovePlayerPacket mpp = new MovePlayerPacket();
+        mpp.onGround = onGround;
+        mpp.eid = getId();
+        mpp.x = (float) l.getX();
+        mpp.y = (float) l.getY();
+        mpp.z = (float) l.getZ();
+        mpp.yaw = l.getYaw();
+        mpp.pitch = l.getPitch();
+        mpp.bodyYaw = l.getYaw(); //TODO: body yaw
+        sendDataPacket(mpp);
     }
 
     private void sendLoginPackets() {

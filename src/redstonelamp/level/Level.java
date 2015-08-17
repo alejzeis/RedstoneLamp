@@ -33,7 +33,7 @@ public class Level {
         this.server = server;
         this.name = getDefaultWorldDataFolder().getName();
         provider = new FakeLevelProvider(); //TODO: Change.
-        spawnLocation = new Location(128, 2, 128, this); //TODO: Change.
+        spawnLocation = new Location(128, 1, 128, this); //TODO: Change.
         gamemode = 1; //TODO: Change.
     }
 
