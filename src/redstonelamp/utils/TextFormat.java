@@ -60,6 +60,18 @@ public enum TextFormat {
 	public boolean isFormatChar() {
 		return format;
 	}
+	
+	public static String stripColors(String input) {
+		char[] ri = input.toCharArray();
+		StringBuilder stripped = new StringBuilder();
+		for(int i = 0; i < ri.length; i++) {
+			if(ri[i] == ESCAPE)
+				i+=2;
+			stripped.append(ri[i]);
+		}
+		return stripped.toString();
+	}
+	
 }
 /*
 public class TextFormat {

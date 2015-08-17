@@ -80,7 +80,6 @@ public class PCProtocolHandler extends IoHandlerAdapter {
 
 	@SuppressWarnings("unchecked")
 	private void sendStatusReply(IoSession session) {
-
 		JSONObject root = new JSONObject();
 		JSONObject version = new JSONObject();
 		JSONObject players = new JSONObject();
