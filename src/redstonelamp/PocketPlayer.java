@@ -220,7 +220,8 @@ public class PocketPlayer extends Human implements Player{
                 }
                 //TODO: break level blocks.
                 //TODO: Check survival, add/remove inventory etc.
-
+                RemoveBlockPacket rbp = (RemoveBlockPacket) packet;
+                server.getNetwork().broadcastPacket(rbp, PocketPlayer.class);
                 break;
 
             case PENetworkInfo.ANIMATE_PACKET:
@@ -301,6 +302,7 @@ public class PocketPlayer extends Human implements Player{
         sendDataPacket(sdp);
 
         server.getLogger().info(username+" ["+identifier+"] logged in with entity id "+getId()+" at [x: "+Math.round(getLocation().getX())+", y: "+Math.round(getLocation().getY())+", z: "+Math.round(getLocation().getZ())+"]");
+        server.getLogger().debug("Players online: "+server.getOnlinePlayers().size());
         
         sendMetadata();
 
@@ -324,7 +326,7 @@ public class PocketPlayer extends Human implements Player{
         sendDataPacket(rp);
 
         SetTimePacket stp = new SetTimePacket();
-        stp.time = 2;
+        stp.time = (int) getLocation().getLevel().getTime();
         stp.started = true;
         sendDataPacket(stp);
 
@@ -332,13 +334,6 @@ public class PocketPlayer extends Human implements Player{
         server.getEventManager().getEventExecutor().execute(new PlayerJoinEvent(this));
 
         spawnToAll(server);
-
-        for(Player player : server.getOnlinePlayers()){
-            if(player instanceof PocketPlayer){ //TODO: Spawn to PC
-                ((PocketPlayer) player).spawnTo(this);
-                spawnTo(player);
-            }
-        }
     }
 
     private void sendMetadata() {

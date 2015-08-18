@@ -147,6 +147,7 @@ public class Network {
     }
 
     private void registerPackets(){
+        packets.put(AnimatePacket.ID, AnimatePacket.class);
         packets.put(BatchPacket.ID, BatchPacket.class);
         packets.put(ContainerSetContentPacket.ID, ContainerSetContentPacket.class);
         packets.put(DisconnectPacket.ID, DisconnectPacket.class);
@@ -161,6 +162,7 @@ public class Network {
         packets.put(StartGamePacket.ID, StartGamePacket.class);
         packets.put(TextPacket.ID, TextPacket.class);
         packets.put(MovePlayerPacket.ID, MovePlayerPacket.class);
+        packets.put(RemoveBlockPacket.ID, RemoveBlockPacket.class);
     }
 
     public void shutdown() {

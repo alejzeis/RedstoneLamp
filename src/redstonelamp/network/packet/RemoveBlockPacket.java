@@ -23,7 +23,10 @@ public class RemoveBlockPacket extends DataPacket{
 
     @Override
     protected void _encode(DynamicByteBuffer bb) {
-
+        bb.putLong(eid);
+        bb.putInt(x);
+        bb.putInt(z);
+        bb.putByte(y);
     }
 
     @Override

@@ -151,11 +151,9 @@ public class Level {
 
     public void spawnToAll(Player p){
         for(Player player : server.getOnlinePlayers()){
-            if(player != this){
-                if(player instanceof PocketPlayer && this instanceof Player) {
-                    p.spawnTo(player);
-                    player.spawnTo((Player) this);
-                }
+            if(player != p && player.getLocation().getLevel() == this) {
+                p.spawnTo(player);
+                player.spawnTo(p);
             }
         }
     }
