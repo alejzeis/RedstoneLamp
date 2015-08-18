@@ -1,6 +1,8 @@
 package redstonelamp;
 
 import org.apache.mina.core.session.IoSession;
+import redstonelamp.auth.AuthenticationAgent;
+import redstonelamp.auth.pc.PCAuthAgent;
 import redstonelamp.entity.Entity;
 import redstonelamp.entity.Human;
 import redstonelamp.network.packet.DataPacket;
@@ -12,6 +14,7 @@ import redstonelamp.network.pc.ProtocolState;
 import redstonelamp.network.pc.packet.handshake.HandshakePacket;
 import redstonelamp.network.pc.packet.login.LoginDisconnectPacket;
 import redstonelamp.network.pc.packet.login.LoginStartPacket;
+import redstonelamp.network.pc.packet.login.LoginSuccessPacket;
 import redstonelamp.utils.Skin;
 import redstonelamp.utils.TextFormat;
 
@@ -23,11 +26,15 @@ import java.util.UUID;
  */
 public class DesktopPlayer extends Human implements Player{
 	private String displayName = "Steve"; //TODO: Remove init when ready
+    private String username;
+    private UUID uuid;
+
     private Server server;
     private PCInterface pcInterface;
 
     private final IoSession ioSession;
     private ProtocolState protocolState;
+    private boolean compressionActivated;
 
     public DesktopPlayer(PCInterface pcInterface, Server server, IoSession session){
         super(server.getNextEntityId());
@@ -74,7 +81,30 @@ public class DesktopPlayer extends Human implements Player{
         switch(id){
             case PCNetworkInfo.LOGIN_LOGIN_START:
                 LoginStartPacket lsp = (LoginStartPacket) packet;
+                //TODO: Initiate auth at EncryptionKeyReponse
+                AuthenticationAgent.AuthenticationResponse response = server.getAuthenticationManager().getAgent(PCAuthAgent.class).authenticate(lsp.name, null);
+                if(!response.allowed){
+                    LoginDisconnectPacket ldp = new LoginDisconnectPacket();
+                    switch (response.reason){
+                        case "redstonelamp.authFailed.serverFull":
+                            ldp.message = new Chat("Server full.");
+                            break;
+                        default:
+                            ldp.message = new Chat(response.reason);
+                            break;
+                    }
+                    sendDataPacket(ldp);
+                    close("", response.reason, false);
+                    return;
+                }
+                uuid = response.uuid;
 
+                LoginSuccessPacket reply = new LoginSuccessPacket();
+                reply.uuid = uuid;
+                reply.username = lsp.name;
+                sendDataPacket(reply);
+
+                protocolState = ProtocolState.STATE_PLAY;
                 break;
         }
     }
@@ -106,6 +136,8 @@ public class DesktopPlayer extends Human implements Player{
         server.broadcast(getName()+message);
         server.getLogger().info(getName()+" ["+getIdentifier()+"]: logged out with reason: "+reason);
         server.removePlayer(this);
+
+        ioSession.close(false); //Close after all write requests finish
     }
 
     @Override
@@ -177,5 +209,9 @@ public class DesktopPlayer extends Human implements Player{
 
     public ProtocolState getProtocolState() {
         return protocolState;
+    }
+
+    public boolean isCompressionActivated() {
+        return compressionActivated;
     }
 }

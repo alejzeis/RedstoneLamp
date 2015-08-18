@@ -26,8 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PCInterface implements NetworkInterface{
     private Server server;
-    private Map<Integer, Class<? extends PCDataPacket>> playPackets = new ConcurrentHashMap<>();
 
+    private Map<Integer, Class<? extends PCDataPacket>> playPackets = new ConcurrentHashMap<>();
     private Map<Integer, Class<? extends PCDataPacket>> loginPackets = new ConcurrentHashMap<>(); //Login packets from the client
 
     private IoAcceptor acceptor;
@@ -39,7 +39,7 @@ public class PCInterface implements NetworkInterface{
         server.getLogger().info("Starting Minecraft: PC server v"+PCNetworkInfo.MC_VERSION+" (protocol "+PCNetworkInfo.MC_PROTOCOL+").");
         acceptor = new NioSocketAcceptor();
         acceptor.getFilterChain().addLast("logger", new LoggingFilter());
-        acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new HeaderEncoder(), new HeaderDecoder()));
+        acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new HeaderEncoder(this), new HeaderDecoder(this)));
 
         handler = new PCProtocolHandler(this);
         acceptor.setHandler(handler);

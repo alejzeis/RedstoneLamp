@@ -1,5 +1,6 @@
 package redstonelamp;
 
+import redstonelamp.auth.AuthenticationManager;
 import redstonelamp.cmd.CommandManager;
 import redstonelamp.event.Event;
 import redstonelamp.event.EventManager;
@@ -50,8 +51,9 @@ public class Server implements Runnable {
     private PluginManager pluginManager;
     private EventManager eventManager;
     private CommandManager commandManager;
-    private boolean shuttingDown = false;
+    private AuthenticationManager authManager;
 
+    private boolean shuttingDown = false;
     private int nextEntityID = 0;
 
     private boolean onlineMode = false;
@@ -99,6 +101,8 @@ public class Server implements Runnable {
         RedstoneLamp.registerDefaultCommands();
 
         eventManager.registerEvents(new InternalListener(this));
+
+        authManager = new AuthenticationManager(this);
 
         logger.info("Done! Type \"help\" for help.");
         cli = new BufferedReader(new InputStreamReader(System.in));
@@ -353,5 +357,9 @@ public class Server implements Runnable {
 
     public boolean isOnlineMode() {
         return onlineMode;
+    }
+
+    public AuthenticationManager getAuthenticationManager() {
+        return authManager;
     }
 }
