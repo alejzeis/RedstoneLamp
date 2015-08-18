@@ -143,7 +143,10 @@ public class PluginLoader {
 			_engine.eval(reader);
 			for(JavaScriptAPI api : RedstoneLamp.getServerInstance().getPluginManager().getJavaScriptManager().getAPIClasses()) {
 				try {
-					_engine.put(api.getClass().getSimpleName(), api.getClass().newInstance());
+					if(api.getClass().getSimpleName().toLowerCase().equals("javascriptpluginapi"))
+						_engine.put("api", api.getClass().newInstance());
+					else
+						_engine.put(api.getClass().getSimpleName().toLowerCase(), api.getClass().newInstance());
 				} catch (InstantiationException e) {
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {

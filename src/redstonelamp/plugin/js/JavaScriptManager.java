@@ -3,12 +3,14 @@ package redstonelamp.plugin.js;
 import java.util.ArrayList;
 
 import redstonelamp.RedstoneLamp;
+import redstonelamp.plugin.js.api.JavaScriptPluginAPI;
 
 public class JavaScriptManager {
 	private ArrayList<JavaScriptAPI> api;
 	
 	public JavaScriptManager() {
 		this.api = new ArrayList<JavaScriptAPI>();
+		this.addAPI(new JavaScriptPluginAPI());
 	}
 	
 	public void addAPI(JavaScriptAPI api) {
