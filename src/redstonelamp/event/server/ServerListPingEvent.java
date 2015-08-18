@@ -1,20 +1,15 @@
 package redstonelamp.event.server;
 
+import redstonelamp.event.Event;
 import redstonelamp.utils.ServerIcon;
 
-public class ServerListPingEvent extends ServerEvent {
-
+public class ServerListPingEvent extends Event {
 	private String tag = null;
 	private int protocol = -1;
 	private int maxPlayers = -1;
 	private int onlinePlayers = -1;
 	private String motd = null;
 	private ServerIcon icon = null;
-
-	@Override
-	public String getEventName() {
-		return null;
-	}
 
 	public void setProtocolTag(String tag) {
 		this.tag = tag;

@@ -177,9 +177,9 @@ public class PocketPlayer extends Human implements Player{
 
             case PENetworkInfo.MOVE_PLAYER_PACKET:
                 MovePlayerPacket mpp = (MovePlayerPacket) packet;
-                PlayerMoveEvent pme = new PlayerMoveEvent(this);
-                server.throwEvent(pme);
                 Location l = getLocation();
+                PlayerMoveEvent pme = new PlayerMoveEvent(this, l);
+                server.throwEvent(pme);
                 if(!pme.isCanceled()) {
                 	//TODO: check movement
                 	l.setX(mpp.x);

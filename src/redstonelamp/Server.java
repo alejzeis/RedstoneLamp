@@ -166,7 +166,6 @@ public class Server implements Runnable {
     public void addPlayer(Player player){
         synchronized (players){
             players.add(player);
-            throwEvent(new PlayerJoinEvent(player));
         }
     }
 
