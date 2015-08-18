@@ -17,8 +17,8 @@ import javax.script.ScriptException;
 
 import org.apache.commons.io.FilenameUtils;
 
-import redstonelamp.event.Listener;
 import redstonelamp.plugin.js.JavaScriptAPI;
+import redstonelamp.plugin.js.api.JavaScriptPluginAPI;
 import redstonelamp.RedstoneLamp;
 import redstonelamp.cmd.CommandListener;
 import redstonelamp.resources.annotations.RedstonePlugin;
@@ -139,14 +139,11 @@ public class PluginLoader {
 			ScriptEngineManager _manager = new ScriptEngineManager();
 			ScriptEngine _engine = _manager.getEngineByName("JavaScript");
 			Reader reader = new InputStreamReader(new FileInputStream(plugin));
-			_engine.put("PluginBase", new PluginBase());
+			_engine.put("api", new JavaScriptPluginAPI());
 			_engine.eval(reader);
 			for(JavaScriptAPI api : RedstoneLamp.getServerInstance().getPluginManager().getJavaScriptManager().getAPIClasses()) {
 				try {
-					if(api.getClass().getSimpleName().toLowerCase().equals("javascriptpluginapi"))
-						_engine.put("api", api.getClass().newInstance());
-					else
-						_engine.put(api.getClass().getSimpleName().toLowerCase(), api.getClass().newInstance());
+					_engine.put(api.getClass().getSimpleName().toLowerCase(), api.getClass().newInstance());
 				} catch (InstantiationException e) {
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
