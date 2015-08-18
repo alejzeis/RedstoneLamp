@@ -44,6 +44,11 @@ public class DesktopPlayer extends Human implements Player{
 
         protocolState = ProtocolState.STATE_HANDSHAKE;
     }
+    
+    @Override
+    public Server getServer() {
+    	return server;
+    }
 
     @Override
     public void handleDataPacket(DataPacket packet) {

@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.time.Instant;
 import java.util.List;
 import java.util.Properties;
@@ -137,7 +138,7 @@ public class Server implements Runnable {
         try {
             network.tick();
             mainLevel.tick();
-            getEventManager().getEventExecutor().execute(new ServerTickEvent());
+            throwEvent(new ServerTickEvent());
             RedstoneLamp.getAsync().execute(() -> {
                 String line = null;
                 try {
@@ -162,7 +163,7 @@ public class Server implements Runnable {
     public void addPlayer(Player player){
         synchronized (players){
             players.add(player);
-            getEventManager().getEventExecutor().execute(new PlayerJoinEvent(player));
+            throwEvent(new PlayerJoinEvent(player));
         }
     }
 
@@ -187,6 +188,31 @@ public class Server implements Runnable {
 		logger.noTag(message);
 		for(Player p : getOnlinePlayers()) {
 			p.sendMessage(message);
+		}
+	}
+	
+	/**
+	 * Throws an event
+	 * 
+	 * @param e
+	 */
+	public void throwEvent(Event e) {
+		for(Listener l : RedstoneLamp.getServerInstance().getEventManager().getListeners()) {
+			l.onEvent(e);
+			Method[] methods = l.getClass().getDeclaredMethods();
+			for(Method method : methods) {
+				method.setAccessible(true);
+				Class<?>[] params = method.getParameterTypes();
+				if(params.length == 1) {
+					if(params[0].equals(e.getClass())) {
+						try {
+							method.invoke(l, e);
+						} catch(Exception ex) {
+							ex.printStackTrace();
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -335,7 +361,7 @@ public class Server implements Runnable {
     public void stop() {
         shuttingDown = true;
     	logger.info("Stopping the server...");
-    	getEventManager().getEventExecutor().execute(new ServerStopEvent());
+    	throwEvent(new ServerStopEvent());
     	try {
     		if(cli instanceof BufferedReader)
     			cli.close();

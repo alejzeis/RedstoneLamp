@@ -92,7 +92,7 @@ public class PCProtocolHandler extends IoHandlerAdapter {
 		event.setOnlinePlayers(pcInterface.getServer().getOnlinePlayers().size());
 		event.setMotd(pcInterface.getServer().getMotd());
 		event.setIcon(pcInterface.getServer().getIcon());
-		pcInterface.getServer().getEventManager().getEventExecutor().execute(event);
+		pcInterface.getServer().throwEvent(event);
 
 		version.put("name", event.getProtocolTag());
 		version.put("protocol", event.getProtocol());

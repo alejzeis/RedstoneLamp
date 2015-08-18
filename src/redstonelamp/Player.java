@@ -49,6 +49,13 @@ public interface Player {
      * @return InetSocketAddress
      */
      InetSocketAddress getAddress();
+     
+     /**
+      * Returns the players server
+      * 
+      * @return Server
+      */
+     Server getServer();
 
     /**
      * Returns true if the player is online

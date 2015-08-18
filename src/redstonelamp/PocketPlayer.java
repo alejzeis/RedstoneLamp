@@ -77,6 +77,11 @@ public class PocketPlayer extends Human implements Player{
 
         spawnTo(this);
     }
+    
+    @Override
+    public Server getServer() {
+    	return server;
+    }
 
     private void loadPlayerData() {
         //TODO: Load actual data
@@ -173,7 +178,7 @@ public class PocketPlayer extends Human implements Player{
             case PENetworkInfo.MOVE_PLAYER_PACKET:
                 MovePlayerPacket mpp = (MovePlayerPacket) packet;
                 PlayerMoveEvent pme = new PlayerMoveEvent(this);
-                server.getEventManager().getEventExecutor().execute(pme);
+                server.throwEvent(pme);
                 Location l = getLocation();
                 if(!pme.isCanceled()) {
                 	//TODO: check movement
@@ -193,17 +198,25 @@ public class PocketPlayer extends Human implements Player{
                 switch (tp.type){
                     case TextPacket.TYPE_RAW:
                     	if(!tp.message.toLowerCase().startsWith("/")) {
-                    		server.getEventManager().getEventExecutor().execute(pce);
-                    		if(!pce.isCanceled())
-                    			server.broadcast("<"+username+"> "+tp.message);
+                    		server.throwEvent(pce);
+                    		if(!pce.isCanceled()) {
+                    			server.getLogger().info(pce.getFormat());
+                    			for(Player p : pce.getRecipents()) {
+                    				p.sendMessage(pce.getFormat());
+                    			}
+                    		}	
                     	} else
                     		server.getCommandManager().getCommandExecutor().executeCommand(tp.message, this);
                     break;
                     case TextPacket.TYPE_CHAT:
                     	if(!tp.message.toLowerCase().startsWith("/")) {
-                    		server.getEventManager().getEventExecutor().execute(pce);
-                    		if(!pce.isCanceled())
-                    			server.broadcast("<"+tp.source+"> "+tp.message);
+                    		server.throwEvent(pce);
+                    		if(!pce.isCanceled()) {
+                    			server.getLogger().info(pce.getFormat());
+                    			for(Player p : pce.getRecipents()) {
+                    				p.sendMessage(pce.getFormat());
+                    			}
+                    		}	
                     	} else
                     		server.getCommandManager().getCommandExecutor().executeCommand(tp.message, this);
                     break;
@@ -285,7 +298,7 @@ public class PocketPlayer extends Human implements Player{
         sendDataPacket(stp);
 
         server.broadcast(TextFormat.YELLOW+username+" joined the game.");
-        server.getEventManager().getEventExecutor().execute(new PlayerJoinEvent(this));
+        server.throwEvent(new PlayerJoinEvent(this));
 
         spawnToAll(server);
 
@@ -340,7 +353,7 @@ public class PocketPlayer extends Human implements Player{
             message = reason != "" ? reason : "disconnectionScreen.noReason";
         }
         PlayerKickEvent evt = new PlayerKickEvent(this, reason);
-        server.getEventManager().getEventExecutor().execute(evt);
+        server.throwEvent(evt);
         if(!evt.isCanceled()) {
             close(" left the game.", message, true);
             return true;
@@ -370,7 +383,7 @@ public class PocketPlayer extends Human implements Player{
 
             server.getLogger().info(username + "["+identifier+"] logged out: "+reason);
             server.broadcast(TextFormat.YELLOW + username + message);
-            server.getEventManager().getEventExecutor().execute(new PlayerQuitEvent(this));
+            server.throwEvent(new PlayerQuitEvent(this));
             
             server.removePlayer(this);
         }
