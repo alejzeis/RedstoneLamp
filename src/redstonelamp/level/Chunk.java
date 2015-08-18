@@ -3,7 +3,7 @@ package redstonelamp.level;
 /**
  * Represents a 16 * 16 * 128 chunk section.
  */
-public class ChunkSection {
+public class Chunk {
 
     private int chunkX;
     private int chunkZ;
@@ -15,9 +15,9 @@ public class ChunkSection {
     private byte[] heightmap;
     private byte[] biomeColors;
 
-    public ChunkSection(){}
+    public Chunk(){}
 
-    public ChunkSection(byte[] blockIds, byte[] blockMeta, byte[] skylight, byte[] blocklight, byte[] heightmap, byte[] biomeColors){
+    public Chunk(byte[] blockIds, byte[] blockMeta, byte[] skylight, byte[] blocklight, byte[] heightmap, byte[] biomeColors){
         this.blockIds = blockIds;
         this.blockMeta = blockMeta;
         this.skylight = skylight;

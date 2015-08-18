@@ -267,7 +267,7 @@ public class PocketPlayer extends Human implements Player{
         sendDataPacket(sgp);
 
         SetTimePacket stp = new SetTimePacket();
-        stp.time = 1;
+        stp.time = (int) getLocation().getLevel().getTime();
         stp.started = true;
         sendDataPacket(stp);
 

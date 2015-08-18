@@ -10,6 +10,7 @@ import redstonelamp.item.ItemValues;
 import redstonelamp.level.Level;
 import redstonelamp.level.LevelProvider;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -100,5 +101,10 @@ public class AnvilLevelProvider implements LevelProvider{
     @Override
     public void shutdown() {
 
+    }
+
+    @Override
+    public void loadLevelData(File file) throws IOException {
+        //TODO
     }
 }

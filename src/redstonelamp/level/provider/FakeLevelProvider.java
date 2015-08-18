@@ -4,6 +4,8 @@ import redstonelamp.item.ItemValues;
 import redstonelamp.level.LevelProvider;
 import redstonelamp.utils.DynamicByteBuffer;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -42,6 +44,11 @@ public class FakeLevelProvider implements LevelProvider{
 
     @Override
     public void shutdown() {
+
+    }
+
+    @Override
+    public void loadLevelData(File file) throws IOException {
 
     }
 }

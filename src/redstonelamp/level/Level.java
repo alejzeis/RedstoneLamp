@@ -1,9 +1,14 @@
 package redstonelamp.level;
 
+import org.apache.commons.io.FileUtils;
+import org.spout.nbt.CompoundTag;
+import org.spout.nbt.Tag;
+import org.spout.nbt.stream.NBTInputStream;
 import redstonelamp.Player;
 import redstonelamp.PocketPlayer;
 import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
+import redstonelamp.level.generator.FlatGenerator;
 import redstonelamp.level.location.ChunkLocation;
 import redstonelamp.level.location.Location;
 import redstonelamp.level.provider.FakeLevelProvider;
@@ -12,7 +17,8 @@ import redstonelamp.level.provider.leveldb.LevelDBProvider;
 import redstonelamp.network.packet.FullChunkDataPacket;
 import redstonelamp.network.packet.MovePlayerPacket;
 
-import java.io.File;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -28,23 +34,27 @@ public class Level {
     private Server server;
     private LevelProvider provider;
     private Map<Player, List<ChunkLocation>> chunksToSend = new ConcurrentHashMap<>();
+
     private int gamemode;
+    private long time;
     private Location spawnLocation;
 
     public Level(Server server){
         this.server = server;
         this.name = getDefaultWorldDataFolder().getName();
-        //provider = new FakeLevelProvider(); //TODO: Change.
-        //provider = new AnvilLevelProvider(this);
-        provider = new LevelDBProvider(this, getDefaultWorldDataFolder());
-        spawnLocation = new Location(128, 1, 128, this); //TODO: Change.
-        gamemode = 1; //TODO: Change.
+        try {
+            provider = new LevelDBProvider(this, new FlatGenerator(), new File(getDefaultWorldDataFolder()+File.separator+"db"));
+            provider.loadLevelData(new File(getDefaultWorldDataFolder() + File.separator + "level.dat"));
+        } catch (IOException e) {
+            server.getLogger().error("FAILED TO LOAD LEVEL DATA! " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public void tick(){
         if(chunksToSend.keySet().isEmpty()){
-        return;
-    }
+            return;
+        }
         int sent = 0;
         for(Player player : chunksToSend.keySet()){
             if(sent >= CHUNKS_PER_TICK) break;
@@ -180,6 +190,14 @@ public class Level {
         server.getOnlinePlayers().stream().filter(p -> p.getLocation().getLevel() == this && p != player).forEach(p -> p.sendDataPacket(mpp));
     }
 
+    public void setSpawnLocation(Location location){
+        spawnLocation = location;
+    }
+
+    public void setGamemode(int gamemode){
+        this.gamemode = gamemode;
+    }
+
     public String getName() {
         return name;
     }
@@ -194,5 +212,13 @@ public class Level {
 
     public Server getServer() {
         return server;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 }
