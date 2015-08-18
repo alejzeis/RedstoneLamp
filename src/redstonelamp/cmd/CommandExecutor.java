@@ -1,5 +1,8 @@
 package redstonelamp.cmd;
 
+import javax.script.Invocable;
+import javax.script.ScriptException;
+
 import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
 import redstonelamp.event.cmd.CommandExecuteEvent;
@@ -20,8 +23,21 @@ public class CommandExecutor {
 		server.getEventManager().getEventExecutor().execute(new CommandExecuteEvent());
 		for(int i = 0; i < (server.getCommandManager().getCommandMap().commands.size()); i++) {
 			if(command.startsWith(server.getCommandManager().getCommandMap().commands.get(i))) {
-				server.getCommandManager().getCommandMap().listeners.get(i).onCommand(commandSender, cmd, label, args);
-				executed = true;
+				if(server.getCommandManager().getCommandMap().listeners.get(i) != null) {
+					server.getCommandManager().getCommandMap().listeners.get(i).onCommand(commandSender, cmd, label, args);
+					executed = true;
+				}
+			}
+		}
+		for(Object plugin : server.getPluginManager().getPluginArray()) {
+			if(plugin instanceof Invocable) {
+				Invocable p = (Invocable) plugin;
+				try {
+					p.invokeFunction("onCommand", commandSender, cmd, label, args);
+					executed = true;
+				} catch(NoSuchMethodException e) {} catch(ScriptException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		if(!executed)
