@@ -96,6 +96,19 @@ public class Network {
         );
     }
 
+    /**
+     * Broadcasts a DataPacket to all players on this network.
+     * @param packet The Packet to be sent.
+     * @param playerClazz The type of player (PocketPlayer, DesktopPlayer etc)
+     */
+    public void broadcastPacket(DataPacket packet, Class<? extends Player> playerClazz){
+        for(Player p : server.getOnlinePlayers()){
+            if(p.getClass().getName().equals(playerClazz.getName())){
+                p.sendDataPacket(packet);
+            }
+        }
+    }
+
     public void setName(String name){
         for(NetworkInterface networkInterface : interfaces){
             networkInterface.setName(name);

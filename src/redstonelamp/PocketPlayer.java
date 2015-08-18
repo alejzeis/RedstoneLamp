@@ -17,22 +17,7 @@ import redstonelamp.item.Item;
 import redstonelamp.level.location.Location;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.PENetworkInfo;
-import redstonelamp.network.packet.AdventureSettingsPacket;
-import redstonelamp.network.packet.BatchPacket;
-import redstonelamp.network.packet.ContainerSetContentPacket;
-import redstonelamp.network.packet.DataPacket;
-import redstonelamp.network.packet.DisconnectPacket;
-import redstonelamp.network.packet.LoginPacket;
-import redstonelamp.network.packet.MovePlayerPacket;
-import redstonelamp.network.packet.PlayStatusPacket;
-import redstonelamp.network.packet.RespawnPacket;
-import redstonelamp.network.packet.SetDifficultyPacket;
-import redstonelamp.network.packet.SetHealthPacket;
-import redstonelamp.network.packet.SetSpawnPositionPacket;
-import redstonelamp.network.packet.SetTimePacket;
-import redstonelamp.network.packet.StartGamePacket;
-import redstonelamp.network.packet.TextPacket;
-import redstonelamp.network.packet.UnknownDataPacket;
+import redstonelamp.network.packet.*;
 import redstonelamp.security.BanSecurity;
 import redstonelamp.utils.Skin;
 import redstonelamp.utils.TextFormat;
@@ -227,6 +212,27 @@ public class PocketPlayer extends Human implements Player{
                     		server.getCommandManager().getCommandExecutor().executeCommand(tp.message, this);
                     break;
                 }
+                break;
+
+            case PENetworkInfo.REMOVE_BLOCK_PACKET:
+                if(!spawned /*|| alive*/) {
+                    break;
+                }
+                //TODO: break level blocks.
+                //TODO: Check survival, add/remove inventory etc.
+
+                break;
+
+            case PENetworkInfo.ANIMATE_PACKET:
+                if(!spawned /*|| !alive*/){
+                    break;
+                }
+                AnimatePacket ap = (AnimatePacket) packet;
+
+                AnimatePacket ap2 = new AnimatePacket();
+                ap2.eid = getId();
+                ap2.action = ap.action;
+                server.getNetwork().broadcastPacket(ap2, PocketPlayer.class);
                 break;
         }
     }
