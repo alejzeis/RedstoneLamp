@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.script.Invocable;
+import javax.script.ScriptException;
+
 public class Server implements Runnable {
     private boolean debugMode = false;
     private String motd;
@@ -210,6 +213,17 @@ public class Server implements Runnable {
 						} catch(Exception ex) {
 							ex.printStackTrace();
 						}
+					}
+				}
+			}
+			for(Object o : getPluginManager().getPluginArray()) {
+				if(o instanceof Invocable) {
+					Invocable i = (Invocable) o;
+					try {
+						String eventName = "on" + e.getClass().getSimpleName();
+						i.invokeFunction(eventName, e.getClass());
+					} catch (NoSuchMethodException ex) {} catch (ScriptException ex) {
+						ex.printStackTrace();
 					}
 				}
 			}
