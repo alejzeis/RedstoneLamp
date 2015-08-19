@@ -18,6 +18,7 @@ import java.util.Arrays;
 public class Human extends Entity{
 
     protected Skin skin;
+    protected String nametag;
     protected boolean isSlim;
 
     public Human(int id) {
@@ -86,6 +87,16 @@ public class Human extends Entity{
         em.set((byte) 16, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0)); //Player flags
         em.set((byte) 17, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_LONG, (long) 0));
         return em;
+    }
+
+    @Override
+    public void setNameTag(String tag) {
+        nametag = tag;
+    }
+
+    @Override
+    public String getNameTag() {
+        return nametag;
     }
 
     public String getName() {
