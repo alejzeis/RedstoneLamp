@@ -1,25 +1,5 @@
 package redstonelamp;
 
-import redstonelamp.auth.AuthenticationManager;
-import redstonelamp.cmd.CommandManager;
-import redstonelamp.event.Event;
-import redstonelamp.event.EventManager;
-import redstonelamp.event.Listener;
-import redstonelamp.event.player.PlayerJoinEvent;
-import redstonelamp.event.player.PlayerQuitEvent;
-import redstonelamp.event.server.ServerStopEvent;
-import redstonelamp.event.server.ServerTickEvent;
-import redstonelamp.item.Item;
-import redstonelamp.level.Level;
-import redstonelamp.level.provider.FakeLevelProvider;
-import redstonelamp.network.JRakLibInterface;
-import redstonelamp.network.Network;
-import redstonelamp.network.pc.PCInterface;
-import redstonelamp.plugin.PluginManager;
-import redstonelamp.utils.MainLogger;
-import redstonelamp.utils.ServerIcon;
-import redstonelamp.utils.TextFormat;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +12,24 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.script.Invocable;
 import javax.script.ScriptException;
+
+import redstonelamp.auth.AuthenticationManager;
+import redstonelamp.auth.pc.PCAuthAgent;
+import redstonelamp.cmd.CommandManager;
+import redstonelamp.event.Event;
+import redstonelamp.event.EventManager;
+import redstonelamp.event.Listener;
+import redstonelamp.event.server.ServerStopEvent;
+import redstonelamp.event.server.ServerTickEvent;
+import redstonelamp.item.Item;
+import redstonelamp.level.Level;
+import redstonelamp.level.provider.FakeLevelProvider;
+import redstonelamp.network.JRakLibInterface;
+import redstonelamp.network.Network;
+import redstonelamp.network.pc.PCInterface;
+import redstonelamp.plugin.PluginManager;
+import redstonelamp.utils.MainLogger;
+import redstonelamp.utils.ServerIcon;
 
 public class Server implements Runnable {
     private boolean debugMode = false;
@@ -107,6 +105,7 @@ public class Server implements Runnable {
         eventManager.registerEvents(new InternalListener(this));
 
         authManager = new AuthenticationManager(this);
+        authManager.registerAuthenticationAgent(new PCAuthAgent(authManager));
 
         logger.info("Done! Type \"help\" for help.");
         cli = new BufferedReader(new InputStreamReader(System.in));
@@ -166,7 +165,6 @@ public class Server implements Runnable {
     public void addPlayer(Player player){
         synchronized (players){
             players.add(player);
-            throwEvent(new PlayerJoinEvent(player));
         }
     }
 

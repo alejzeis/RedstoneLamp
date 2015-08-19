@@ -51,7 +51,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
     public void closeSession(String identifier, String reason) {
         server.getLogger().debug("Session "+identifier+" closed: "+reason);
         if(server.getPlayer(identifier) != null){
-            server.getPlayer(identifier).close("left the game", reason, true);
+            server.getPlayer(identifier).close(" left the game", reason, true);
         }
     }
 

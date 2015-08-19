@@ -20,7 +20,7 @@ public class CommandExecutor {
 		Command cmd = new Command(args[0]);
 		CommandSender commandSender = new CommandSender(sender);
 		String label = null; //TODO
-		server.throwEvent(new CommandExecuteEvent());
+		server.throwEvent(new CommandExecuteEvent(commandSender, cmd, label, args));
 		for(int i = 0; i < (server.getCommandManager().getCommandMap().commands.size()); i++) {
 			if(command.startsWith(server.getCommandManager().getCommandMap().commands.get(i))) {
 				if(server.getCommandManager().getCommandMap().listeners.get(i) != null) {

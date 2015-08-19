@@ -4,8 +4,7 @@ import redstonelamp.Player;
 import redstonelamp.event.Event;
 import redstonelamp.event.Listener;
 
-public class PlayerQuitEvent extends PlayerEvent {
-	private String type = "PlayerQuitEvent";
+public class PlayerQuitEvent extends Event {
 	private Player player;
 	private Event e = this;
 	
@@ -17,11 +16,7 @@ public class PlayerQuitEvent extends PlayerEvent {
 		listener.onEvent(e);
 	}
 	
-	public String getEventName() {
-		return type;
-	}
-	
 	public Player getPlayer() {
-		return player;
+		return this.player;
 	}
 }

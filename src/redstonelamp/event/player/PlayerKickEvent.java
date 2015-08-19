@@ -5,8 +5,7 @@ import redstonelamp.event.Cancellable;
 import redstonelamp.event.Event;
 import redstonelamp.event.Listener;
 
-public class PlayerKickEvent extends PlayerEvent implements Cancellable {
-	private String type = "PlayerKickEvent";
+public class PlayerKickEvent extends Event implements Cancellable {
 	private Player player;
 	private String reason;
 	private Event e = this;
@@ -22,21 +21,17 @@ public class PlayerKickEvent extends PlayerEvent implements Cancellable {
 		listener.onEvent(e);
 	}
 	
-	public String getEventName() {
-		return type;
-	}
-	
 	public Player getPlayer() {
-		return player;
+		return this.player;
 	}
 	
 	public String getReason() {
-		return reason;
+		return this.reason;
 	}
 
 	@Override
 	public boolean isCanceled() {
-		return canceled;
+		return this.canceled;
 	}
 
 	@Override

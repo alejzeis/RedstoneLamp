@@ -7,8 +7,7 @@ import redstonelamp.event.Cancellable;
 import redstonelamp.event.Event;
 import redstonelamp.event.Listener;
 
-public class PlayerChatEvent extends PlayerEvent implements Cancellable {
-	private String type = "PlayerChatEvent";
+public class PlayerChatEvent extends Event implements Cancellable {
 	private Player player;
 	private List<Player> recipents;
 	private String message;
@@ -28,28 +27,24 @@ public class PlayerChatEvent extends PlayerEvent implements Cancellable {
 		listener.onEvent(e);
 	}
 	
-	public String getEventName() {
-		return type;
-	}
-	
 	public Player getPlayer() {
-		return player;
+		return this.player;
 	}
 	
 	public List<Player> getRecipents() {
-		return recipents;
+		return this.recipents;
 	}
 	
 	public String getMessage() {
-		return message;
+		return this.message;
 	}
 	
 	public String getFormat() {
-		return format;
+		return this.format;
 	}
 	
 	public boolean isCanceled() {
-		return canceled;
+		return this.canceled;
 	}
 	
 	public void setPlayer(Player player) {

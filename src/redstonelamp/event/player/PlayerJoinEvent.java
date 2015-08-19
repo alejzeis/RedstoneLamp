@@ -4,8 +4,7 @@ import redstonelamp.Player;
 import redstonelamp.event.Event;
 import redstonelamp.event.Listener;
 
-public class PlayerJoinEvent extends PlayerEvent {
-	private String type = "PlayerJoinEvent";
+public class PlayerJoinEvent extends Event {
 	private Player player;
 	private Event e = this;
 	
@@ -17,11 +16,7 @@ public class PlayerJoinEvent extends PlayerEvent {
 		listener.onEvent(e);
 	}
 	
-	public String getEventName() {
-		return type;
-	}
-	
 	public Player getPlayer() {
-		return player;
+		return this.player;
 	}
 }
