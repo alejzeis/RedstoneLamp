@@ -186,7 +186,7 @@ public class PocketPlayer extends Human implements Player{
             case PENetworkInfo.MOVE_PLAYER_PACKET:
                 MovePlayerPacket mpp = (MovePlayerPacket) packet;
                 Location l = getLocation();
-                PlayerMoveEvent pme = new PlayerMoveEvent(this, l);
+                PlayerMoveEvent pme = new PlayerMoveEvent(this, mpp.onGround, l);
                 server.throwEvent(pme);
                 if(!pme.isCanceled()) {
                 	//TODO: check movement
@@ -199,7 +199,7 @@ public class PocketPlayer extends Human implements Player{
                 	getLocation().getLevel().broadcastMovement(this, mpp);
                     return;
                 }
-                sendPosition(l, mpp.onGround);
+                sendPosition(pme.getLocation(), pme.isOnGround());
                 break;
 
             case PENetworkInfo.TEXT_PACKET:
