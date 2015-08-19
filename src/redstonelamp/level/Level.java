@@ -27,6 +27,7 @@ public class Level {
     private Server server;
     private LevelProvider provider;
     private Map<Player, List<ChunkLocation>> chunksToSend = new ConcurrentHashMap<>();
+    private Map<ChunkLocation, Chunk> chunksLoaded = new ConcurrentHashMap<>();
 
     private int gamemode;
     private long time;

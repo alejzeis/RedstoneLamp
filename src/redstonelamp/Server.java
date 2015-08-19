@@ -383,7 +383,7 @@ public class Server implements Runnable {
      * Returns the next entityID.
      * @return nextEntityID.
      */
-    public int getNextEntityId() { //TODO: move to new EntityManager
+    public synchronized int getNextEntityId() { //TODO: move to new EntityManager
         return nextEntityID++;
     }
 
