@@ -50,12 +50,20 @@ public class Level {
             return;
         }
         int sent = 0;
+        int pLimit = CHUNKS_PER_TICK;
+        if(chunksToSend.keySet().size() > 1){
+            pLimit = CHUNKS_PER_TICK / chunksToSend.keySet().size();
+            if(pLimit == 0){
+                pLimit = 1;
+            }
+        }
         for(Player player : chunksToSend.keySet()){
             if(sent >= CHUNKS_PER_TICK) break;
 
+            int pSent = 0;
             List<ChunkLocation> chunks = chunksToSend.get(player);
             for(ChunkLocation location : chunks){
-                if(sent >= CHUNKS_PER_TICK) break;
+                if(pSent >= pLimit) break;
 
                 byte[] data = provider.orderChunk(location.getX() / 16, location.getZ() / 16);
                 FullChunkDataPacket dp = new FullChunkDataPacket();
@@ -65,6 +73,7 @@ public class Level {
                 player.sendDataPacket(dp);
                 chunks.remove(location);
                 sent++;
+                pSent++;
             }
             if(!chunks.isEmpty()){
                 chunksToSend.put(player, chunks);
