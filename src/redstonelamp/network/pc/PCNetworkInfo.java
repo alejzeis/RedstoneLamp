@@ -25,4 +25,5 @@ public class PCNetworkInfo {
     public final static int LOGIN_SET_COMPRESSION = 0x03;
 
     //Play packets
+    public final static int PLAY_JOIN_GAME = 0x01;
 }
