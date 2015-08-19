@@ -1,11 +1,8 @@
 package redstonelamp;
 
 import redstonelamp.cmd.CommandManager;
-import redstonelamp.event.Event;
 import redstonelamp.event.EventManager;
-import redstonelamp.event.Listener;
 import redstonelamp.event.player.PlayerJoinEvent;
-import redstonelamp.event.player.PlayerQuitEvent;
 import redstonelamp.event.server.ServerStopEvent;
 import redstonelamp.event.server.ServerTickEvent;
 import redstonelamp.io.playerdata.GenericPlayerDatabase;
@@ -19,7 +16,6 @@ import redstonelamp.network.pc.PCInterface;
 import redstonelamp.plugin.PluginManager;
 import redstonelamp.utils.MainLogger;
 import redstonelamp.utils.ServerIcon;
-import redstonelamp.utils.TextFormat;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -44,7 +40,7 @@ public class Server implements Runnable {
     private String bindInterface;
     private int bindPort;
 
-    private List<Player> players = new CopyOnWriteArrayList();
+    private final List<Player> players = new CopyOnWriteArrayList();
     private Network network;
     private Level mainLevel;
     private PlayerDatabase playerDatabase;

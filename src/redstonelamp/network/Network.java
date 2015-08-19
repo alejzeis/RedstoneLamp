@@ -29,15 +29,12 @@ public class Network {
     }
 
     public void tick(){
-        for(NetworkInterface networkInterface : interfaces){
-            networkInterface.processData();
-        }
+        interfaces.forEach(redstonelamp.network.NetworkInterface::processData);
+
         for(Player[] players : toSend.keySet()){
             List<DataPacket> packets = toSend.get(players);
             for(Player player : players){
-                for(DataPacket dp : packets){
-                    player.sendDirectDataPacket(dp);
-                }
+                packets.forEach(player::sendDirectDataPacket);
             }
             toSend.remove(players);
         }
@@ -166,14 +163,10 @@ public class Network {
     }
 
     public void shutdown() {
-        for(NetworkInterface _interface : interfaces){
-            _interface.shutdown();
-        }
+        interfaces.forEach(redstonelamp.network.NetworkInterface::shutdown);
     }
 
     public void emergencyShutdown() {
-        for(NetworkInterface _interface : interfaces){
-            _interface.emergencyShutdown();
-        }
+        interfaces.forEach(redstonelamp.network.NetworkInterface::emergencyShutdown);
     }
 }

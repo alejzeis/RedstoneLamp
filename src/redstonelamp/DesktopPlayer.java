@@ -1,10 +1,8 @@
 package redstonelamp;
 
 import org.apache.mina.core.session.IoSession;
-import redstonelamp.entity.Entity;
 import redstonelamp.entity.Human;
 import redstonelamp.network.packet.DataPacket;
-import redstonelamp.network.packet.TextPacket;
 import redstonelamp.network.pc.Chat;
 import redstonelamp.network.pc.PCInterface;
 import redstonelamp.network.pc.PCNetworkInfo;

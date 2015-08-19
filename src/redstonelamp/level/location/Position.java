@@ -5,7 +5,6 @@ import redstonelamp.level.Level;
 import redstonelamp.math.Vector3;
 import redstonelamp.utils.DynamicByteBuffer;
 
-import java.io.DataOutputStream;
 import java.nio.ByteOrder;
 
 public class Position extends Vector3 implements Storable{

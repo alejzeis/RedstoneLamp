@@ -9,11 +9,7 @@ public class CommandExecuteEvent extends Event {
 	private Event e = this;
 	
 	public void execute(Listener listener) {
-		RedstoneLamp.getAsync().execute(new Runnable() {
-			public void run() {
-				listener.onEvent(e);
-			}
-		});
+		RedstoneLamp.getAsync().execute(() -> listener.onEvent(e));
 	}
 	
 	public String getEventName() {

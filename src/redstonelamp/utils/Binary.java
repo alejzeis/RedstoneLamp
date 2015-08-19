@@ -134,13 +134,10 @@ public class Binary {
     }
 
     public byte[] writeUUID(UUID id){
-        String[] parts = id.toString().split(Pattern.quote("-"));
         ByteBuffer bb = ByteBuffer.allocate(16);
         bb.order(order);
-        bb.put(hex2bytes(parts[0]));
-        bb.put(hex2bytes(parts[1]));
-        bb.put(hex2bytes(parts[2]));
-        bb.put(hex2bytes(parts[3]));
+        bb.putLong(id.getMostSignificantBits());
+        bb.putLong(id.getLeastSignificantBits());
         return bb.array();
     }
 
@@ -286,14 +283,9 @@ public class Binary {
 
     public UUID readUUID(byte[] bytes) {
         DynamicByteBuffer bb = DynamicByteBuffer.newInstance(bytes, order);
-        String data = bytes2hex(bytes);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(data.substring(0, 8) + "-");
-        sb.append(data.substring(8, 12)+"-3"+data.substring(13, 16)+"-8");
-        sb.append(data.substring(17, 20)+"-");
-        sb.append(data.substring(20, 32));
-        return UUID.fromString(sb.toString());
+        long l = bb.getLong();
+        long l2 = bb.getLong();
+        return new UUID(l, l2);
     }
 
     /**
@@ -334,7 +326,7 @@ public class Binary {
     public static String dumpHexBytes(byte[] bytes){
         StringBuilder sb = new StringBuilder();
         for(byte b : bytes){
-            sb.append(String.format("%02X", b)+" ");
+            sb.append(String.format("%02X", b)).append(" ");
         }
         return sb.toString();
     }

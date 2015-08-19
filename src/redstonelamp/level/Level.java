@@ -1,9 +1,5 @@
 package redstonelamp.level;
 
-import org.apache.commons.io.FileUtils;
-import org.spout.nbt.CompoundTag;
-import org.spout.nbt.Tag;
-import org.spout.nbt.stream.NBTInputStream;
 import redstonelamp.Player;
 import redstonelamp.PocketPlayer;
 import redstonelamp.RedstoneLamp;
@@ -11,14 +7,11 @@ import redstonelamp.Server;
 import redstonelamp.level.generator.FlatGenerator;
 import redstonelamp.level.location.ChunkLocation;
 import redstonelamp.level.location.Location;
-import redstonelamp.level.provider.FakeLevelProvider;
-import redstonelamp.level.provider.anvil.AnvilLevelProvider;
 import redstonelamp.level.provider.leveldb.LevelDBProvider;
 import redstonelamp.network.packet.FullChunkDataPacket;
 import redstonelamp.network.packet.MovePlayerPacket;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;

@@ -6,7 +6,6 @@ import com.lb_stuff.mcmodify.minecraft.Chunk;
 import com.lb_stuff.mcmodify.minecraft.Dimension;
 import com.lb_stuff.mcmodify.minecraft.FileRegion;
 import com.lb_stuff.mcmodify.minecraft.World;
-import redstonelamp.item.ItemValues;
 import redstonelamp.level.Level;
 import redstonelamp.level.LevelProvider;
 

@@ -2,8 +2,6 @@ package redstonelamp.io.playerdata;
 
 import redstonelamp.io.InvalidDataException;
 import redstonelamp.level.location.Location;
-import redstonelamp.level.location.Position;
-import redstonelamp.utils.Binary;
 import redstonelamp.utils.DynamicByteBuffer;
 
 import java.nio.ByteOrder;

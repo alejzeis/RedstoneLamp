@@ -21,5 +21,5 @@ public enum ProtocolState {
     /**
      * The Play state, where all the game packets are sent.
      */
-    STATE_PLAY;
+    STATE_PLAY
 }
