@@ -45,9 +45,6 @@ public class HeaderEncoder extends DemuxingProtocolEncoder{
             if(!compression){ //Compression is disabled
                 bb.putVarInt(buffer.length);
                 bb.put(buffer);
-                IoBuffer buffer2 = IoBuffer.wrap(bb.toArray());
-                System.out.println("Wrote: "+buffer2.getHexDump());
-                out.write(buffer2);
                 return;
             } else if(buffer.length < threshold){ //Compression is enabled, but the packet is less than the threshold
                 byte[] uncompressedLenBytes = Binary.newInstance(ByteOrder.BIG_ENDIAN).writeVarInt(0);
