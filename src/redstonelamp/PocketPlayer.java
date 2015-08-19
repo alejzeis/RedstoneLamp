@@ -94,13 +94,11 @@ public class PocketPlayer extends Human implements Player{
             return;
         }
 
-        switch (packet.getBuffer()[0]){
+        if(packet instanceof UnknownDataPacket && server.isDebugMode())
+            server.getLogger().debug("Unknown Packet: 0x"+String.format("%02X", packet.getBuffer()[0]));
 
-            default:
-                if(packet instanceof UnknownDataPacket && server.isDebugMode()){
-                    server.getLogger().debug("Unknown Packet: 0x"+String.format("%02X", packet.getBuffer()[0]));
-                    break;
-                }
+
+        switch (packet.getBuffer()[0]){
 
             case PENetworkInfo.LOGIN_PACKET:
                 if(loggedIn){
@@ -235,6 +233,11 @@ public class PocketPlayer extends Human implements Player{
                 ap2.action = ap.action;
                 server.getNetwork().broadcastPacket(ap2, PocketPlayer.class);
                 break;
+
+            default:
+                if(server.isDebugMode()){
+                    server.getLogger().warning("Unhandled packet: 0x"+String.format("%02X", packet.getPID()));
+                }
         }
     }
 
