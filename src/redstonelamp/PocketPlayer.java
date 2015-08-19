@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import redstonelamp.entity.EntityMetadata;
 import redstonelamp.entity.Human;
+import redstonelamp.event.network.DataPacketReceiveEvent;
+import redstonelamp.event.network.DataPacketSendEvent;
 import redstonelamp.event.player.PlayerChatEvent;
 import redstonelamp.event.player.PlayerJoinEvent;
 import redstonelamp.event.player.PlayerKickEvent;
@@ -93,6 +95,11 @@ public class PocketPlayer extends Human implements Player{
             server.getNetwork().processBatch((BatchPacket) packet, this);
             return;
         }
+
+        DataPacketReceiveEvent evt = new DataPacketReceiveEvent(packet, this);
+        server.getEventManager().getEventExecutor().execute(evt);
+        if(evt.isCanceled())
+            return;
 
         if(packet instanceof UnknownDataPacket && server.isDebugMode())
             server.getLogger().debug("Unknown Packet: 0x"+String.format("%02X", packet.getBuffer()[0]));
@@ -360,7 +367,12 @@ public class PocketPlayer extends Human implements Player{
         if(!connected){
             return;
         }
-        //TODO: Call datapacket send event
+
+        DataPacketSendEvent evt = new DataPacketSendEvent(packet, this);
+        server.getEventManager().getEventExecutor().execute(evt);
+        if(evt.isCanceled())
+            return;
+
         rakLibInterface.sendPacket(this, packet, false, true);
     }
 
@@ -369,7 +381,12 @@ public class PocketPlayer extends Human implements Player{
         if(!connected){
             return;
         }
-        //TODO: Call datapacket send event
+
+        DataPacketSendEvent evt = new DataPacketSendEvent(packet, this);
+        server.getEventManager().getEventExecutor().execute(evt);
+        if(evt.isCanceled())
+            return;
+
         rakLibInterface.sendPacket(this, packet, false, false);
     }
 
@@ -379,7 +396,7 @@ public class PocketPlayer extends Human implements Player{
         if(admin){
             message = "Kicked by admin. Reason: "+ reason;
         } else {
-            message = reason != "" ? reason : "disconnectionScreen.noReason";
+            message = (reason.equals("") ? "disconnectionScreen.noReason" : reason);
         }
         PlayerKickEvent evt = new PlayerKickEvent(this, reason);
         server.getEventManager().getEventExecutor().execute(evt);
