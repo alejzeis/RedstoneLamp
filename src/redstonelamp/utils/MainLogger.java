@@ -7,9 +7,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 
 import org.apache.commons.io.FileUtils;
 
+import org.apache.commons.io.IOUtils;
 import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
 
@@ -133,6 +135,8 @@ public class MainLogger {
 		} catch (IOException e) {
 			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 			System.out.println(sdf.format(cal.getTime()) + " [ERROR] Unable to write log!");
+		} catch(ConcurrentModificationException e){
+			System.out.println("Failed to write log! "+e.getClass().getName()+": "+e.getMessage());
 		}
 	}
 }

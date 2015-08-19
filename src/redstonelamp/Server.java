@@ -60,7 +60,7 @@ public class Server implements Runnable {
     private AuthenticationManager authManager;
 
     private boolean shuttingDown = false;
-    private int nextEntityID = 0;
+    private int nextEntityID = 1;
     private File playerDatbaseLocation;
 
     private boolean onlineMode = false;
@@ -422,6 +422,7 @@ public class Server implements Runnable {
 			p.kick("Server closed.", true);
 		}
         mainLevel.shutdown();
+        savePlayerDatabase();
     	pluginManager.getPluginLoader().disablePlugins();
         network.shutdown();
     	logger.close();
