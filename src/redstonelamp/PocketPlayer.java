@@ -16,6 +16,7 @@ import redstonelamp.event.player.PlayerQuitEvent;
 import redstonelamp.inventory.PlayerInventory;
 import redstonelamp.io.playerdata.PlayerDatabase;
 import redstonelamp.item.Item;
+import redstonelamp.item.ItemValues;
 import redstonelamp.level.location.Location;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.PENetworkInfo;
@@ -226,7 +227,18 @@ public class PocketPlayer extends Human implements Player{
                 //TODO: break level blocks.
                 //TODO: Check survival, add/remove inventory etc.
                 RemoveBlockPacket rbp = (RemoveBlockPacket) packet;
-                server.getNetwork().broadcastPacket(rbp, PocketPlayer.class);
+                UpdateBlockPacket ubp = new UpdateBlockPacket();
+
+                UpdateBlockPacket.Record r = new UpdateBlockPacket.Record();
+                r.x = rbp.x;
+                r.y = rbp.y;
+                r.z = rbp.z;
+                r.blockId = ItemValues.AIR; //TODO
+                r.blockData = 0;
+                r.flags = UpdateBlockPacket.FLAG_NONE;
+
+                ubp.records = Arrays.asList(r);
+                server.getNetwork().broadcastPacket(ubp, PocketPlayer.class);
                 break;
 
             case PENetworkInfo.ANIMATE_PACKET:
