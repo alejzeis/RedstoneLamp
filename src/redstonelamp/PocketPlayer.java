@@ -350,6 +350,8 @@ public class PocketPlayer extends Human implements Player{
     }
     
     public void doFirstSpawn(){
+        spawned = true;
+
         PlayStatusPacket psp = new PlayStatusPacket();
         psp.status = PlayStatusPacket.Status.PLAYER_SPAWN;
         sendDataPacket(psp);
