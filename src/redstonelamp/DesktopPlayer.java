@@ -15,6 +15,9 @@ import redstonelamp.network.pc.packet.handshake.HandshakePacket;
 import redstonelamp.network.pc.packet.login.LoginDisconnectPacket;
 import redstonelamp.network.pc.packet.login.LoginStartPacket;
 import redstonelamp.network.pc.packet.login.LoginSuccessPacket;
+import redstonelamp.network.pc.packet.login.SetCompressionPacket;
+import redstonelamp.network.pc.packet.play.JoinGamePacket;
+import redstonelamp.utils.Binary;
 import redstonelamp.utils.Skin;
 import redstonelamp.utils.TextFormat;
 
@@ -54,6 +57,7 @@ public class DesktopPlayer extends Human implements Player{
 
     @Override
     public void handleDataPacket(DataPacket packet) {
+        System.out.println("DataPacket: 0x"+String.format("%02X", packet.getPID()));
         if(protocolState == ProtocolState.STATE_HANDSHAKE){
             handleHandshakePacket(packet);
         } else if(protocolState == ProtocolState.STATE_LOGIN){
@@ -106,12 +110,31 @@ public class DesktopPlayer extends Human implements Player{
                 }
                 uuid = response.uuid;
 
+                SetCompressionPacket scp = new SetCompressionPacket();
+                //scp.threshold = 512; //TODO: Get threshold from YAML config
+                scp.threshold = -1;
+                sendDataPacket(scp);
+
+                /*
+                compressionActivated = true;
+                compressionThreshold = 512;
+                */
+
                 LoginSuccessPacket reply = new LoginSuccessPacket();
                 reply.uuid = uuid;
                 reply.username = lsp.name;
                 sendDataPacket(reply);
 
                 protocolState = ProtocolState.STATE_PLAY;
+
+                JoinGamePacket jgp = new JoinGamePacket(); //TODO: replace dummy values
+                jgp.entityID = 0; //Player Entity ID is always zero? Not sure if this is for PC too
+                jgp.difficulty = 1;
+                jgp.dimension = 0;
+                jgp.gamemode = 1;
+                jgp.maxPlayers = (byte) server.getMaxPlayers(); //TODO: maxPlayers over 256 may result in encoding failure
+                jgp.levelType = "flat";
+                sendDataPacket(jgp);
                 break;
         }
     }

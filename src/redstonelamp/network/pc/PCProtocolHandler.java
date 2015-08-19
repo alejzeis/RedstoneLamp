@@ -38,7 +38,7 @@ public class PCProtocolHandler extends IoHandlerAdapter {
 
 		Player player = pcInterface.getServer().getPlayer(session.getRemoteAddress().toString());
 		if (player instanceof DesktopPlayer) {
-			PCDataPacket packet = null;
+			PCDataPacket packet;
 			if(((DesktopPlayer) player).getProtocolState() == ProtocolState.STATE_LOGIN) {
 				packet = pcInterface.getLoginPacket(pkt.packetID);
 			} else {
