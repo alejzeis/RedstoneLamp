@@ -20,6 +20,7 @@ import redstonelamp.item.Item;
 import redstonelamp.item.ItemValues;
 import redstonelamp.level.Chunk;
 import redstonelamp.level.location.Location;
+import redstonelamp.math.Vector3;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.PENetworkInfo;
 import redstonelamp.network.packet.*;
@@ -266,6 +267,30 @@ public class PocketPlayer extends Human implements Player{
                 ap2.eid = getId();
                 ap2.action = ap.action;
                 server.getNetwork().broadcastPacket(ap2, PocketPlayer.class);
+                break;
+
+            case PENetworkInfo.USE_ITEM_PACKET:
+                if(!spawned /*|| !alive*/){
+                    break;
+                }
+                UseItemPacket uip = new UseItemPacket();
+                Vector3 vector = new Vector3(uip.x, uip.y, uip.z);
+
+                if(uip.face >= 0 && uip.face <= 5) { //Block place
+                    UpdateBlockPacket ubp2 = new UpdateBlockPacket();
+
+                    UpdateBlockPacket.Record record = new UpdateBlockPacket.Record();
+                    record.x = vector.getX();
+                    record.y = (byte) vector.getY();
+                    record.z = vector.getZ();
+                    record.blockId = (byte) uip.item;
+                    record.blockData = (byte) uip.meta;
+                    record.flags = UpdateBlockPacket.FLAG_ALL_PRIORITY;
+
+                    ubp2.records = Arrays.asList(record);
+                    server.getNetwork().broadcastPacket(ubp2, PocketPlayer.class);
+                    //vector.distanceSquared(new Vector3((int) getLocation().getX(), (int) getLocation().getY(), (int) getLocation().getZ()))
+                }
                 break;
 
             default:
