@@ -40,14 +40,16 @@ public class HeaderDecoder extends DemuxingProtocolDecoder{
         System.out.println("length is: "+len);
 
         if(compression) {
-            int oldPos = in.position();
+            int old = in.position();
             int uncompressedLen = readVarInt(in);
-            in.position(oldPos);
+            int varLen = old - in.position(); //Calculate the length of the VarInt, so we can get the correct amount of data
 
             if(in.remaining() >= len){
-                byte[] data = new byte[len];
+                byte[] data = new byte[len - varLen];
                 in.get(data);
-                data = CompressionUtils.zlibInflate(data);
+                if(uncompressedLen > 0){ //If uncompressedLength is zero, then the packet is not compressed
+                    data = CompressionUtils.zlibInflate(data);
+                }
                 out.write(new MinecraftPacket(data));
                 return true;
             } else {

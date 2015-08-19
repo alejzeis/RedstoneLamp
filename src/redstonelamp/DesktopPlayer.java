@@ -34,7 +34,9 @@ public class DesktopPlayer extends Human implements Player{
 
     private final IoSession ioSession;
     private ProtocolState protocolState;
-    private boolean compressionActivated;
+
+    private boolean compressionActivated = false;
+    private int compressionThreshold = -1;
 
     public DesktopPlayer(PCInterface pcInterface, Server server, IoSession session){
         super(server.getNextEntityId());
@@ -218,5 +220,9 @@ public class DesktopPlayer extends Human implements Player{
 
     public boolean isCompressionActivated() {
         return compressionActivated;
+    }
+
+    public int getCompressionThreshold() {
+        return compressionThreshold;
     }
 }
