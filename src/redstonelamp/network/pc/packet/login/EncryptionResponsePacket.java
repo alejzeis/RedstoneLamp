@@ -9,7 +9,7 @@ import redstonelamp.utils.DynamicByteBuffer;
  *
  * @author jython234
  */
-public class EncryptionResponse extends PCDataPacket{
+public class EncryptionResponsePacket extends PCDataPacket{
     public final static int ID = PCNetworkInfo.LOGIN_ENCRYPTION_RESPONSE;
 
     public byte[] sharedSecret;
