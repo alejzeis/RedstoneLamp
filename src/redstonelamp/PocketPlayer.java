@@ -103,7 +103,7 @@ public class PocketPlayer extends Human implements Player{
         }
 
         DataPacketReceiveEvent evt = new DataPacketReceiveEvent(packet, this);
-        server.getEventManager().getEventExecutor().execute(evt);
+        server.throwEvent(evt);
         if(evt.isCanceled())
             return;
 
@@ -382,7 +382,7 @@ public class PocketPlayer extends Human implements Player{
         }
 
         DataPacketSendEvent evt = new DataPacketSendEvent(packet, this);
-        server.getEventManager().getEventExecutor().execute(evt);
+        server.throwEvent(evt);
         if(evt.isCanceled())
             return;
 
@@ -396,7 +396,7 @@ public class PocketPlayer extends Human implements Player{
         }
 
         DataPacketSendEvent evt = new DataPacketSendEvent(packet, this);
-        server.getEventManager().getEventExecutor().execute(evt);
+        server.throwEvent(evt);
         if(evt.isCanceled())
             return;
 
