@@ -1,6 +1,7 @@
 package redstonelamp;
 
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ import redstonelamp.inventory.PlayerInventory;
 import redstonelamp.io.playerdata.PlayerDatabase;
 import redstonelamp.item.Item;
 import redstonelamp.item.ItemValues;
+import redstonelamp.level.Chunk;
 import redstonelamp.level.location.Location;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.PENetworkInfo;
@@ -337,7 +339,7 @@ public class PocketPlayer extends Human implements Player{
         sendDataPacket(sdp);
 
         server.getLogger().info(username+" ["+identifier+"] logged in with entity id "+getId()+" at [x: "+Math.round(getLocation().getX())+", y: "+Math.round(getLocation().getY())+", z: "+Math.round(getLocation().getZ())+"]");
-        server.getLogger().debug("Players online: "+server.getOnlinePlayers().size());
+        server.getLogger().debug("Players online: " + server.getOnlinePlayers().size());
         
         sendMetadata();
 
@@ -555,7 +557,19 @@ public class PocketPlayer extends Human implements Player{
 	public void setDisplayName(String name) {
 		displayName = name;
 	}
-    
+
+    @Override
+    public byte[] orderChunk(Chunk chunk) {
+        ByteBuffer bb = ByteBuffer.allocate(83200);
+        bb.put(chunk.getBlockIds());
+        bb.put(chunk.getBlockMeta());
+        bb.put(chunk.getSkylight());
+        bb.put(chunk.getBlocklight());
+        bb.put(chunk.getHeightmap());
+        bb.put(chunk.getBiomeColors());
+        return bb.array();
+    }
+
     public void ban() {
         ban_security.addPlayer(username);
         close(" left the game", "You have been banned!", true);

@@ -1,5 +1,6 @@
 package redstonelamp;
 
+import redstonelamp.level.Chunk;
 import redstonelamp.level.location.Location;
 import redstonelamp.network.packet.DataPacket;
 import redstonelamp.utils.Skin;
@@ -131,4 +132,6 @@ public interface Player {
     void spawnTo(Player player);
 
     void despawnFrom(Player player);
+
+    byte[] orderChunk(Chunk chunk);
 }

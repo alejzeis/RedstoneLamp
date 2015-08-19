@@ -16,7 +16,9 @@ import redstonelamp.level.Chunk;
 import redstonelamp.level.Level;
 import redstonelamp.level.LevelProvider;
 import redstonelamp.level.generator.Generator;
+import redstonelamp.level.location.ChunkLocation;
 import redstonelamp.level.location.Location;
+import redstonelamp.utils.DynamicByteBuffer;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -109,6 +111,7 @@ public class LevelDBProvider implements LevelProvider{
     }
 
     @Override
+    @Deprecated
     public synchronized byte[] orderChunk(int x, int z) {
         byte[] key = Key.getKey(x, z, KeyType.TERRAIN_DATA);
         byte[] data = db.get(key);
@@ -125,6 +128,34 @@ public class LevelDBProvider implements LevelProvider{
             db.put(key, data);
         }
         return data; //The MCPE format stores in Network-ready format! :)
+    }
+
+    @Override
+    public Chunk getChunk(ChunkLocation chunkLocation) {
+        byte[] key = Key.getKey(chunkLocation.getX(), chunkLocation.getZ(), KeyType.TERRAIN_DATA);
+        byte[] data = db.get(key);
+        if(data == null){
+            Chunk c = generator.generateChunk(chunkLocation.getX(), chunkLocation.getZ());
+            ByteBuffer bb = ByteBuffer.allocate(83200);
+            bb.put(c.getBlockIds());
+            bb.put(c.getBlockMeta());
+            bb.put(c.getSkylight());
+            bb.put(c.getBlocklight());
+            bb.put(c.getHeightmap());
+            bb.put(c.getBiomeColors());
+            data = bb.array();
+            db.put(key, data);
+            return c;
+        }
+        DynamicByteBuffer bb = DynamicByteBuffer.newInstance(data);
+        Chunk c = new Chunk();
+        c.setBlockIds(bb.get(16 * 16 * 128));
+        c.setBlockMeta(bb.get(16384));
+        c.setSkylight(bb.get(16384));
+        c.setBlocklight(bb.get(16384));
+        c.setHeightmap(bb.get(256));
+        c.setBiomeColors(bb.get(1024));
+        return c;
     }
 
     @Override

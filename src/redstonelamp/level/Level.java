@@ -39,10 +39,71 @@ public class Level {
         try {
             provider = new LevelDBProvider(this, new FlatGenerator(), new File(getDefaultWorldDataFolder()+File.separator+"db"));
             provider.loadLevelData(new File(getDefaultWorldDataFolder() + File.separator + "level.dat"));
+
+            if(Boolean.parseBoolean(server.getProperties().getProperty("load-spawn-chunks", "true")))
+                loadSpawnChunks();
         } catch (IOException e) {
             server.getLogger().error("FAILED TO LOAD LEVEL DATA! " + e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void loadSpawnChunks() {
+        long start = System.currentTimeMillis();
+        server.getLogger().info("Preparing Level "+getName()+" (loading spawn chunks)");
+        List<ChunkLocation> chunks = new CopyOnWriteArrayList<>();
+        int centerX = (int) getSpawnLocation().getX();
+        int centerZ = (int) getSpawnLocation().getZ();
+
+        int cornerX = centerX - 64;
+        int cornerZ = centerZ + 64;
+
+        int x = cornerX;
+        int z = cornerZ;
+
+        int chunkNum = 0;
+        try{
+            while(chunkNum < 96){
+                chunks.add(new ChunkLocation(x / 16, z / 16));
+
+                if(x < cornerX + 144){
+                    x = x + 16;
+                } else {
+                    x = cornerX;
+                    z = z - 16;
+                }
+                chunkNum++;
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        chunks.forEach(this::loadChunk);
+        server.getLogger().info("Level "+getName()+" ready! ("+(System.currentTimeMillis() - start)+" ms)");
+    }
+
+    public void loadChunk(ChunkLocation location) {
+        if(isChunkLoaded(location)){
+            throw new IllegalArgumentException("Chunk "+location+" already loaded!");
+        }
+        chunksLoaded.put(location, provider.getChunk(location));
+    }
+
+    public boolean isChunkLoaded(ChunkLocation location){
+        for(ChunkLocation loc : chunksLoaded.keySet()){
+            if(loc.getX() == location.getX() && loc.getZ() == location.getZ()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Chunk getLoadedChunkAt(ChunkLocation location) {
+        for(ChunkLocation loc : chunksLoaded.keySet()){
+            if(loc.getX() == location.getX() && loc.getZ() == location.getZ()){
+                return chunksLoaded.get(loc);
+            }
+        }
+        return null;
     }
 
     public void tick(){
@@ -65,7 +126,7 @@ public class Level {
             for(ChunkLocation location : chunks){
                 if(pSent >= pLimit) break;
 
-                byte[] data = provider.orderChunk(location.getX() / 16, location.getZ() / 16);
+                byte[] data = player.orderChunk(getChunkAt(location));
                 FullChunkDataPacket dp = new FullChunkDataPacket();
                 dp.x = location.getX();
                 dp.z = location.getZ();
@@ -82,6 +143,23 @@ public class Level {
                 chunksToSend.remove(player);
             }
         }
+    }
+
+    public Chunk getChunkAt(ChunkLocation location) {
+        Chunk c = getLoadedChunkAt(location);
+        if(c == null){
+            loadChunk(location);
+            return getChunkAt(location);
+        }
+        return c;
+    }
+
+    public void unloadChunk(ChunkLocation location){
+        Chunk c = getLoadedChunkAt(location);
+        if(c == null){
+            throw new IllegalArgumentException("Chunk "+location+" not loaded!");
+        }
+        chunksLoaded.remove(c);
     }
 
     public void queueLoginChunks(Player player){
@@ -104,7 +182,7 @@ public class Level {
             while(chunkNum < 96){
                 //System.out.println("ChunkSender chunk "+x+", "+z);
 
-                chunks.add(new ChunkLocation(x, z));
+                chunks.add(new ChunkLocation(x / 16, z / 16));
 
                 if(x < cornerX + 144){
                     x = x + 16;

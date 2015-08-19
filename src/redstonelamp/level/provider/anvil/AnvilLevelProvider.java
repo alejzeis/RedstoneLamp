@@ -8,6 +8,7 @@ import com.lb_stuff.mcmodify.minecraft.FileRegion;
 import com.lb_stuff.mcmodify.minecraft.World;
 import redstonelamp.level.Level;
 import redstonelamp.level.LevelProvider;
+import redstonelamp.level.location.ChunkLocation;
 
 import java.io.File;
 import java.io.IOException;
@@ -95,6 +96,11 @@ public class AnvilLevelProvider implements LevelProvider{
             e.printStackTrace();
         }
         return new byte[0];
+    }
+
+    @Override
+    public redstonelamp.level.Chunk getChunk(ChunkLocation chunkLocation) {
+        return null;
     }
 
     @Override
