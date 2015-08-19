@@ -3,7 +3,6 @@ package redstonelamp.event;
 import java.util.ArrayList;
 
 public class EventManager {
-	private EventExecutor eventExecutor = new EventExecutor();
 	private ArrayList<Listener> listeners = new ArrayList<Listener>();
 	
 	/**
@@ -22,14 +21,5 @@ public class EventManager {
 	 */
 	public void registerEvents(Listener listener) {
 		getListeners().add(listener);
-	}
-	
-	/**
-	 * Returns the event executor
-	 * 
-	 * @return EventExecutor
-	 */
-	public EventExecutor getEventExecutor() {
-		return eventExecutor;
 	}
 }

@@ -3,6 +3,7 @@ package redstonelamp.cmd;
 import redstonelamp.Player;
 import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
+import redstonelamp.utils.TextFormat;
 
 public class CommandSender {
 	private Object sender;
@@ -20,7 +21,7 @@ public class CommandSender {
 		if(sender instanceof Player)
 			((Player) sender).sendMessage(message);
 		if(sender instanceof Server)
-			RedstoneLamp.getServerInstance().getLogger().info(message);
+			RedstoneLamp.getServerInstance().getLogger().info(TextFormat.stripColors(message));
 	}
 	
 	/**

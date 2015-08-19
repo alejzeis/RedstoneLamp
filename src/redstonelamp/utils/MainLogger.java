@@ -25,6 +25,7 @@ public class MainLogger {
 	 * @param String
 	 */
 	public void info(String message) {
+		message = TextFormat.stripColors(message);
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		message = sdf.format(cal.getTime()) + " [INFO] " + message;
@@ -39,6 +40,7 @@ public class MainLogger {
 	 * @param String
 	 */
 	public void debug(String message) {
+		message = TextFormat.stripColors(message);
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		message = sdf.format(cal.getTime()) + " [DEBUG] " + message;
@@ -53,6 +55,7 @@ public class MainLogger {
 	 * @param String
 	 */
 	public void warn(String message) {
+		message = TextFormat.stripColors(message);
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		message = sdf.format(cal.getTime()) + " [WARNING] " + message;
@@ -66,6 +69,7 @@ public class MainLogger {
 	 * @param String
 	 */
 	public void warning(String message) {
+		message = TextFormat.stripColors(message);
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		message = sdf.format(cal.getTime()) + " [WARNING] " + message;
@@ -79,6 +83,7 @@ public class MainLogger {
 	 * @param String
 	 */
 	public void error(String message) {
+		message = TextFormat.stripColors(message);
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		message = sdf.format(cal.getTime()) + " [ERROR] " + message;
@@ -92,6 +97,7 @@ public class MainLogger {
 	 * @param String
 	 */
 	public void fatal(String message) {
+		message = TextFormat.stripColors(message);
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		message = sdf.format(cal.getTime()) + " [FATAL] " + message;
@@ -104,12 +110,14 @@ public class MainLogger {
 	}
 
 	public void noTag(String message) {
+		message = TextFormat.stripColors(message);
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		System.out.println(sdf.format(cal.getTime()) + " " + message);
 	}
 	
 	public void writeToLog(String string) {
+		string = TextFormat.stripColors(string);
 		lines.add(string);
 	}
 	

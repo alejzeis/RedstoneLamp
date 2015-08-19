@@ -8,7 +8,7 @@ public @interface RedstonePlugin {
 	/**
 	 * The plugin name
 	 */
-	String name() default "";
+	String name();
 	
 	/**
 	 * The current version of the plugin

@@ -38,7 +38,7 @@ public class PCProtocolHandler extends IoHandlerAdapter {
 
 		Player player = pcInterface.getServer().getPlayer(session.getRemoteAddress().toString());
 		if (player instanceof DesktopPlayer) {
-			PCDataPacket packet = null;
+			PCDataPacket packet;
 			if(((DesktopPlayer) player).getProtocolState() == ProtocolState.STATE_LOGIN) {
 				packet = pcInterface.getLoginPacket(pkt.packetID);
 			} else {
@@ -80,7 +80,6 @@ public class PCProtocolHandler extends IoHandlerAdapter {
 
 	@SuppressWarnings("unchecked")
 	private void sendStatusReply(IoSession session) {
-
 		JSONObject root = new JSONObject();
 		JSONObject version = new JSONObject();
 		JSONObject players = new JSONObject();
@@ -93,7 +92,7 @@ public class PCProtocolHandler extends IoHandlerAdapter {
 		event.setOnlinePlayers(pcInterface.getServer().getOnlinePlayers().size());
 		event.setMotd(pcInterface.getServer().getMotd());
 		event.setIcon(pcInterface.getServer().getIcon());
-		pcInterface.getServer().getEventManager().getEventExecutor().execute(event);
+		pcInterface.getServer().throwEvent(event);
 
 		version.put("name", event.getProtocolTag());
 		version.put("protocol", event.getProtocol());

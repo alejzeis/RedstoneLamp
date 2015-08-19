@@ -73,7 +73,7 @@ public class Human extends Entity{
         }
     }
 
-    private EntityMetadata getFakeMetadata(){
+    protected EntityMetadata getFakeMetadata(){
         EntityMetadata em = new EntityMetadata();
         em.set((byte) 0, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0)); //Is player on fire
         em.set((byte) 1, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_SHORT, (short) 300)); //Strange Air thing

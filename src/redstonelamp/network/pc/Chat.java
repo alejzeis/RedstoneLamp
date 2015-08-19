@@ -1,6 +1,7 @@
 package redstonelamp.network.pc;
 
 import org.json.simple.JSONObject;
+
 import redstonelamp.utils.TextFormat;
 
 import java.util.ArrayList;
@@ -27,7 +28,8 @@ public class Chat {
      * https://github.com/GlowstoneMC/Glowstone/blob/master/src/main/java/net/glowstone/util/TextMessage.java
      * @return The Chat message, as a JSON string.
      */
-    public String buildJSON() {
+    @SuppressWarnings("unchecked")
+	public String buildJSON() {
         List<JSONObject> objects = new ArrayList<>();
         StringBuilder sb = new StringBuilder(); //The builder for the message
         TextFormat color = null;
@@ -86,7 +88,8 @@ public class Chat {
      * @param color
      * @param formatting
      */
-    private void append(List<JSONObject> objects, StringBuilder sb, TextFormat color, Set<TextFormat> formatting) {
+    @SuppressWarnings("unchecked")
+	private void append(List<JSONObject> objects, StringBuilder sb, TextFormat color, Set<TextFormat> formatting) {
         if(sb.length() == 0){
             return;
         }

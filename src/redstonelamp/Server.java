@@ -1,8 +1,25 @@
 package redstonelamp;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Method;
+import java.time.Instant;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.script.Invocable;
+import javax.script.ScriptException;
+
+import redstonelamp.auth.AuthenticationManager;
+import redstonelamp.auth.pc.PCAuthAgent;
 import redstonelamp.cmd.CommandManager;
+import redstonelamp.event.Event;
 import redstonelamp.event.EventManager;
 import redstonelamp.event.player.PlayerJoinEvent;
+import redstonelamp.event.Listener;
 import redstonelamp.event.server.ServerStopEvent;
 import redstonelamp.event.server.ServerTickEvent;
 import redstonelamp.io.playerdata.GenericPlayerDatabase;
@@ -16,15 +33,6 @@ import redstonelamp.network.pc.PCInterface;
 import redstonelamp.plugin.PluginManager;
 import redstonelamp.utils.MainLogger;
 import redstonelamp.utils.ServerIcon;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.time.Instant;
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Server implements Runnable {
     private boolean debugMode = false;
@@ -49,8 +57,9 @@ public class Server implements Runnable {
     private PluginManager pluginManager;
     private EventManager eventManager;
     private CommandManager commandManager;
-    private boolean shuttingDown = false;
+    private AuthenticationManager authManager;
 
+    private boolean shuttingDown = false;
     private int nextEntityID = 0;
     private File playerDatbaseLocation;
 
@@ -106,7 +115,7 @@ public class Server implements Runnable {
         network.registerInterface(new JRakLibInterface(this));
         network.registerInterface(new PCInterface(this));
         network.setName(motd);
-
+        
         pluginManager = new PluginManager();
 
         pluginManager.getPluginLoader().loadPlugins();
@@ -114,6 +123,9 @@ public class Server implements Runnable {
         RedstoneLamp.registerDefaultCommands();
 
         eventManager.registerEvents(new InternalListener(this));
+
+        authManager = new AuthenticationManager(this);
+        authManager.registerAuthenticationAgent(new PCAuthAgent(authManager));
 
         logger.info("Done! Type \"help\" for help.");
         cli = new BufferedReader(new InputStreamReader(System.in));
@@ -148,7 +160,7 @@ public class Server implements Runnable {
         try {
             network.tick();
             mainLevel.tick();
-            getEventManager().getEventExecutor().execute(new ServerTickEvent());
+            throwEvent(new ServerTickEvent());
             RedstoneLamp.getAsync().execute(() -> {
                 String line = null;
                 try {
@@ -173,7 +185,6 @@ public class Server implements Runnable {
     public void addPlayer(Player player){
         synchronized (players){
             players.add(player);
-            getEventManager().getEventExecutor().execute(new PlayerJoinEvent(player));
         }
     }
 
@@ -198,6 +209,42 @@ public class Server implements Runnable {
 		logger.noTag(message);
 		for(Player p : getOnlinePlayers()) {
 			p.sendMessage(message);
+		}
+	}
+	
+	/**
+	 * Throws an event
+	 * 
+	 * @param e
+	 */
+	public void throwEvent(Event e) {
+		for(Listener l : RedstoneLamp.getServerInstance().getEventManager().getListeners()) {
+			l.onEvent(e);
+			Method[] methods = l.getClass().getDeclaredMethods();
+			for(Method method : methods) {
+				method.setAccessible(true);
+				Class<?>[] params = method.getParameterTypes();
+				if(params.length == 1) {
+					if(params[0].equals(e.getClass())) {
+						try {
+							method.invoke(l, e);
+						} catch(Exception ex) {
+							ex.printStackTrace();
+						}
+					}
+				}
+			}
+			for(Object o : getPluginManager().getPluginArray()) {
+				if(o instanceof Invocable) {
+					Invocable i = (Invocable) o;
+					try {
+						String eventName = "on" + e.getClass().getSimpleName();
+						i.invokeFunction(eventName, e.getClass());
+					} catch (NoSuchMethodException ex) {} catch (ScriptException ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
 		}
 	}
 
@@ -366,7 +413,7 @@ public class Server implements Runnable {
     public void stop() {
         shuttingDown = true;
     	logger.info("Stopping the server...");
-    	getEventManager().getEventExecutor().execute(new ServerStopEvent());
+    	throwEvent(new ServerStopEvent());
     	try {
     		if(cli instanceof BufferedReader)
     			cli.close();
@@ -392,5 +439,9 @@ public class Server implements Runnable {
 
     public boolean isOnlineMode() {
         return onlineMode;
+    }
+
+    public AuthenticationManager getAuthenticationManager() {
+        return authManager;
     }
 }
