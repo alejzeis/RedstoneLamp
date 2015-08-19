@@ -1,9 +1,7 @@
 package redstonelamp.entity;
 
 import redstonelamp.Player;
-import redstonelamp.PocketPlayer;
 import redstonelamp.Server;
-import redstonelamp.item.Item;
 import redstonelamp.item.ItemValues;
 import redstonelamp.network.packet.AddPlayerPacket;
 import redstonelamp.network.packet.PlayerArmorEquipmentPacket;
@@ -11,7 +9,6 @@ import redstonelamp.network.packet.RemovePlayerPacket;
 import redstonelamp.utils.Skin;
 
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  * Abstract class for NPC/Player (Human)
@@ -29,8 +26,8 @@ public class Human extends Entity{
 
     @Override
     public void spawnTo(Player player) {
+        super.spawnTo(player);
         if(player != this){
-            super.spawnTo(player);
 
             AddPlayerPacket app = new AddPlayerPacket();
             app.clientID = getId();
