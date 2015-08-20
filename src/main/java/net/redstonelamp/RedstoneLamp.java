@@ -23,8 +23,9 @@ package net.redstonelamp;
  */
 public class RedstoneLamp {
     public static final String SOFTWARE = "RedstoneLamp";
-    public static final String SOFTWARE_VERSION = "v1.2.0";
-    public static final String SOFTWARE_STATE = "development";
+    public static final String SOFTWARE_VERSION = "1.2.0";
+    public static final String SOFTWARE_STATE = "DEV";
+    public static final double API_VERSION = 1.5;
 
     public static void main(String[] args){
         //TODO
