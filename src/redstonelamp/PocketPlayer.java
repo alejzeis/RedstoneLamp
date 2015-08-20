@@ -280,10 +280,17 @@ public class PocketPlayer extends Human implements Player{
                     UpdateBlockPacket ubp2 = new UpdateBlockPacket();
 
                     UpdateBlockPacket.Record record = new UpdateBlockPacket.Record();
+                    /*
                     record.x = vector.getX();
                     record.y = (byte) vector.getY();
                     record.z = vector.getZ();
+                    */
+                    record.x = uip.x;
+                    record.y = (byte) uip.y;
+                    record.z = uip.z;
+
                     record.blockId = (byte) uip.item;
+                    //record.blockData = (byte) (0xb << 4 | (uip.meta & 0xF));
                     record.blockData = (byte) uip.meta;
                     record.flags = UpdateBlockPacket.FLAG_ALL_PRIORITY;
 
