@@ -113,8 +113,14 @@ public class Server implements Runnable {
         }
 
         network = new Network(this);
-        network.registerInterface(new JRakLibInterface(this));
-        network.registerInterface(new PCInterface(this));
+        if(Boolean.parseBoolean(((String)RedstoneLamp.yaml.getInMap("enable-servers").get("mcpe"))))
+        	network.registerInterface(new JRakLibInterface(this));
+        if(Boolean.parseBoolean(((String)RedstoneLamp.yaml.getInMap("enable-servers").get("mcpc"))))
+        	network.registerInterface(new PCInterface(this));
+        if(!Boolean.parseBoolean(((String)RedstoneLamp.yaml.getInMap("enable-servers").get("mcpe"))) && !Boolean.parseBoolean(((String)RedstoneLamp.yaml.getInMap("enable-servers").get("mcpc")))) {
+        	network.registerInterface(new JRakLibInterface(this));
+        	network.registerInterface(new PCInterface(this));
+        }
         network.setName(motd);
         
         pluginManager = new PluginManager();

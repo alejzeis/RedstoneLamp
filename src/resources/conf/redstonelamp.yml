@@ -6,6 +6,10 @@ settings:
     send-usage: true
     async-workers: 4
 
+enable-servers:
+    mcpe: true
+    mcpc: true
+
 debug:
     enabled: false
     commands: false
