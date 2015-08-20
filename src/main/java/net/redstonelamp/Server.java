@@ -17,6 +17,8 @@
 package net.redstonelamp;
 
 import net.redstonelamp.config.ServerConfig;
+import net.redstonelamp.network.NetworkManager;
+import net.redstonelamp.ticker.RedstoneTicker;
 import net.redstonelamp.ui.Logger;
 
 import java.util.ArrayList;
@@ -27,10 +29,12 @@ import java.util.List;
  *
  * @author RedstoneLamp Team
  */
-public class Server {
+public class Server implements Runnable{
     private final List<Runnable> shutdownTasks = new ArrayList<>(); //List of tasks to be run on shutdown
     private final Logger logger;
     private final ServerConfig config;
+    private final RedstoneTicker ticker;
+    private final NetworkManager network;
 
     /**
      * Package-private constructor used by the RedstoneLamp run class
@@ -38,10 +42,16 @@ public class Server {
      * @param config The server's configuration
      */
     Server(Logger logger, ServerConfig config) {
+        ticker = new RedstoneTicker(this, 50);
         this.logger = logger;
         this.config = config;
+        this.network = new NetworkManager(this);
         logger.info(RedstoneLamp.getSoftwareVersionString() +" is licensed under the Lesser GNU General Public License version 3");
+    }
 
+    @Override
+    public void run() {
+        ticker.start();
     }
 
     /**
@@ -62,5 +72,9 @@ public class Server {
      */
     public Logger getLogger() {
         return logger;
+    }
+
+    public RedstoneTicker getTicker() {
+        return ticker;
     }
 }

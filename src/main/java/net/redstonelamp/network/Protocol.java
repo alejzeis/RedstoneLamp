@@ -43,6 +43,22 @@ public abstract class Protocol {
     public abstract String getDescription();
 
     /**
+     * Handles a <code>UniversalPacket</code>
+     * @param packet The <code>UniversalPacket</code>
+     * @return If the packet was handled successfully
+     */
+    public abstract boolean handlePacket(UniversalPacket packet);
+
+    /**
+     * Send a <code>UniversalPacket</code>
+     * @param packet The <code>UniversalPacket</code> to be sent
+     * @return If the packet was sent successfully
+     */
+    public boolean sendPacket(UniversalPacket packet) {
+        return manager.sendPacket(packet, this);
+    }
+
+    /**
      * Get the <code>NetworkManager</code> that this protocol belongs to.
      * @return The <code>NetworkManager</code> the protocol belongs to.
      */

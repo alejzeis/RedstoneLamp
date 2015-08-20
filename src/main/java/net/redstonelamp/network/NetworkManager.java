@@ -17,6 +17,7 @@
 package net.redstonelamp.network;
 
 import net.redstonelamp.Server;
+import net.redstonelamp.ticker.CallableTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,11 @@ public class NetworkManager {
      */
     public NetworkManager(Server server) {
         this.server = server;
+        server.getTicker().addRepeatingTask(new CallableTask("tick", this), 1);
+    }
+
+    public void tick(long tick) {
+        //TODO
     }
 
     /**
@@ -47,6 +53,16 @@ public class NetworkManager {
             protocols.add(protocol);
         }
         server.getLogger().info("Registered protocol: "+protocol.getName());
+    }
+
+    public boolean sendPacket(UniversalPacket packet, Protocol sentFrom) {
+        synchronized (protocols) {
+            if(!protocols.contains(sentFrom)) {
+                throw new IllegalArgumentException("Protocol "+sentFrom+" is not registered!");
+            }
+        }
+        //TODO
+        return true;
     }
 
     /**
