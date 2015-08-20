@@ -14,17 +14,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp;
-
 /**
- * Main Startup file for RedstoneLamp.
- *
+ * This package contains configuration classes used by the server for easy file configurations.
  * @author RedstoneLamp Team
  */
-public class RedstoneLamp {
-
-    public static void main(String[] args){
-        //TODO
-    }
-
-}
+package net.redstonelamp.config;
