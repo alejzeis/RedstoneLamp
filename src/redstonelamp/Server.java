@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.nio.BufferUnderflowException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Properties;
@@ -21,6 +22,8 @@ import redstonelamp.event.EventManager;
 import redstonelamp.event.Listener;
 import redstonelamp.event.server.ServerStopEvent;
 import redstonelamp.event.server.ServerTickEvent;
+import redstonelamp.io.playerdata.GenericPlayerDatabase;
+import redstonelamp.io.playerdata.PlayerDatabase;
 import redstonelamp.item.Item;
 import redstonelamp.level.Level;
 import redstonelamp.level.provider.FakeLevelProvider;
@@ -28,11 +31,12 @@ import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.Network;
 import redstonelamp.network.pc.PCInterface;
 import redstonelamp.plugin.PluginManager;
+import redstonelamp.resources.YamlConfiguration;
 import redstonelamp.utils.MainLogger;
 import redstonelamp.utils.ServerIcon;
 
 public class Server implements Runnable {
-    private boolean debugMode = false;
+    private boolean debugMode;
     private String motd;
     private ServerIcon icon;
     private int maxPlayers;
@@ -45,9 +49,10 @@ public class Server implements Runnable {
     private String bindInterface;
     private int bindPort;
 
-    private List<Player> players = new CopyOnWriteArrayList();
+    private final List<Player> players = new CopyOnWriteArrayList();
     private Network network;
     private Level mainLevel;
+    private PlayerDatabase playerDatabase;
     private BufferedReader cli;
     
     private PluginManager pluginManager;
@@ -56,7 +61,8 @@ public class Server implements Runnable {
     private AuthenticationManager authManager;
 
     private boolean shuttingDown = false;
-    private int nextEntityID = 0;
+    private int nextEntityID = 1;
+    private File playerDatbaseLocation;
 
     private boolean onlineMode = false;
 
@@ -83,19 +89,40 @@ public class Server implements Runnable {
         logger.info("This server is running " + RedstoneLamp.SOFTWARE + " version " + RedstoneLamp.VERSION + " \"" + RedstoneLamp.CODENAME + "\" (API " + RedstoneLamp.API_VERSION + ")");
         logger.info(RedstoneLamp.SOFTWARE + " is distributed under the " + RedstoneLamp.LICENSE);
 
+        RedstoneLamp.setServerInstance(this);
+
         mainLevel = new Level(this);
         if(mainLevel.getProvider() instanceof FakeLevelProvider){
             logger.warning("This server is using a FakeLevelProvider, world changes and spawn positions are not saved.");
         }
         Item.init();
         logger.debug("Items initialized ("+Item.getCreativeItems().size()+" creative items)");
-        
-        network = new Network(this);
-        network.registerInterface(new JRakLibInterface(this));
-        network.registerInterface(new PCInterface(this));
-        network.setName(motd);
 
-        RedstoneLamp.setServerInstance(this);
+        try {
+            playerDatbaseLocation = new File("players.dat");
+            playerDatabase = new GenericPlayerDatabase();
+            if(!playerDatbaseLocation.exists()){
+                playerDatbaseLocation.createNewFile();
+            } else {
+                playerDatabase.loadFromFile(getPlayerDatbaseLocation());
+            }
+        } catch (IOException | BufferUnderflowException e) {
+            logger.error("FAILED TO LOAD PLAYER DATABASE!!! "+e.getClass().getName()+": "+e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        network = new Network(this);
+        if(Boolean.parseBoolean(((String)RedstoneLamp.yaml.getInMap("enable-servers").get("mcpe"))))
+        	network.registerInterface(new JRakLibInterface(this));
+        if(Boolean.parseBoolean(((String)RedstoneLamp.yaml.getInMap("enable-servers").get("mcpc"))))
+        	network.registerInterface(new PCInterface(this));
+        if(!Boolean.parseBoolean(((String)RedstoneLamp.yaml.getInMap("enable-servers").get("mcpe"))) && !Boolean.parseBoolean(((String)RedstoneLamp.yaml.getInMap("enable-servers").get("mcpc")))) {
+        	network.registerInterface(new JRakLibInterface(this));
+        	network.registerInterface(new PCInterface(this));
+        }
+        network.setName(motd);
+        
         pluginManager = new PluginManager();
 
         pluginManager.getPluginLoader().loadPlugins();
@@ -245,6 +272,10 @@ public class Server implements Runnable {
         return properties;
     }
 
+    public YamlConfiguration getRedstoneLampSettings() {
+        return RedstoneLamp.yaml;
+    }
+
     /**
      * Returns the server logger
      * 
@@ -363,8 +394,28 @@ public class Server implements Runnable {
      * Returns the next entityID.
      * @return nextEntityID.
      */
-    public int getNextEntityId() { //TODO: move to new EntityManager
+    public synchronized int getNextEntityId() { //TODO: move to new EntityManager
         return nextEntityID++;
+    }
+
+    /**
+     * Get the PlayerDatabase implementation for this server.
+     * @return The PlayerDatabase used by the server.
+     */
+    public PlayerDatabase getPlayerDatabase() {
+        return playerDatabase;
+    }
+
+    /**
+     * Saves the server's PlayerDatabase.
+     */
+    public void savePlayerDatabase() {
+        try {
+            playerDatabase.save(getPlayerDatbaseLocation());
+        } catch (IOException e) {
+            getLogger().warning("Failed to save PlayerDatabase! java.io.IOException: "+e.getMessage());
+            e.printStackTrace();
+        }
     }
     
     /**
@@ -379,9 +430,10 @@ public class Server implements Runnable {
     			cli.close();
 		} catch (IOException e) {}
 		for(Player p : getOnlinePlayers()) {
-			p.kick("Server closed.", true);
+			p.close(" left the game", ((String) RedstoneLamp.yaml.getInMap("settings").get("shutdown-message")), true);
 		}
         mainLevel.shutdown();
+        savePlayerDatabase();
     	pluginManager.getPluginLoader().disablePlugins();
         network.shutdown();
     	logger.close();
@@ -390,8 +442,12 @@ public class Server implements Runnable {
     }
 
     public boolean isShuttingDown() {
-		return shuttingDown;
-	}
+        return shuttingDown;
+    }
+
+    public File getPlayerDatbaseLocation() {
+        return playerDatbaseLocation;
+    }
 
     public boolean isOnlineMode() {
         return onlineMode;

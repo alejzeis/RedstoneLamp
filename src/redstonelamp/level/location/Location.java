@@ -1,11 +1,16 @@
 package redstonelamp.level.location;
 
+import redstonelamp.RedstoneLamp;
+import redstonelamp.io.Storable;
 import redstonelamp.level.Level;
+import redstonelamp.utils.DynamicByteBuffer;
+
+import java.nio.ByteOrder;
 
 /**
  * Represents a location in a world.
  */
-public class Location {
+public class Location implements Storable{
     private double x = 0;
     private double y = 0;
     private double z = 0;
@@ -73,5 +78,28 @@ public class Location {
 
     public Level getLevel() {
         return level;
+    }
+
+    @Override
+    public byte[] store() {
+        DynamicByteBuffer bb = DynamicByteBuffer.newInstance(ByteOrder.LITTLE_ENDIAN);
+        bb.putDouble(x);
+        bb.putDouble(y);
+        bb.putDouble(z);
+        bb.putFloat(yaw);
+        bb.putFloat(pitch);
+        bb.putString(level.getName());
+        return bb.toArray();
+    }
+
+    @Override
+    public void load(byte[] source) {
+        DynamicByteBuffer bb = DynamicByteBuffer.newInstance(source, ByteOrder.LITTLE_ENDIAN);
+        x = bb.getDouble();
+        y = bb.getDouble();
+        z = bb.getDouble();
+        yaw = bb.getFloat();
+        pitch = bb.getFloat();
+        level = RedstoneLamp.getServerInstance().getMainLevel(); //TODO: Set correct level.
     }
 }

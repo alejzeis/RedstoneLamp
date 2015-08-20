@@ -1,45 +1,40 @@
 package redstonelamp.resources;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.HashMap;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.Map;
 
-import org.yaml.snakeyaml.Yaml;
+import com.esotericsoftware.yamlbeans.YamlException;
+import com.esotericsoftware.yamlbeans.YamlReader;
 
 public class YamlConfiguration {
-	private File file;
-	private FileWriter writer;
-	private Map<String, Object> data;
-	private Yaml yaml = new Yaml();
+	private YamlReader reader;
+	private Object obj;
+	private Map map;
 	
-	public YamlConfiguration(String file) throws IOException {
-		this.data = new HashMap<String, Object>();
-		this.file = new File(file);
-		this.writer = new FileWriter(this.file);
+	public YamlConfiguration(String yaml) throws FileNotFoundException, YamlException {
+		reader = new YamlReader(new FileReader(yaml));
+		obj = reader.read();
+		map = (Map) obj;
 	}
 	
-	public YamlConfiguration set(String key, Object value) {
-		this.data.put(key, value);
-		return this;
+	public YamlReader getReader() {
+		return this.reader;
 	}
 	
-	public Object get(Object key) {
-		return this.data.get(key);
+	public Object getObject() {
+		return this.obj;
 	}
 	
-	public void save() {
-		this.yaml.dump(this.data, this.writer);
+	public Map getMap() {
+		return this.map;
 	}
 	
-	public boolean close() {
-		try {
-			this.writer.close();
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
+	public Map getInMap(String map) {
+		if(this.map.get(map) instanceof Map) {
+			Map newMap = (Map) this.map.get(map);
+			return newMap;
 		}
-		return false;
+		return this.map;
 	}
 }

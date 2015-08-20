@@ -1,11 +1,18 @@
 package redstonelamp;
 
 import java.io.*;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.io.FileUtils;
+
+import com.esotericsoftware.yamlbeans.YamlException;
+
 import redstonelamp.cmd.defaults.*;
+import redstonelamp.resources.YamlConfiguration;
 import redstonelamp.utils.MainLogger;
 
 public class RedstoneLamp implements Runnable{
@@ -17,6 +24,7 @@ public class RedstoneLamp implements Runnable{
 	public static String LICENSE = "GNU GENERAL PUBLIC LICENSE v3";
 	
 	public static Properties properties;
+	public static YamlConfiguration yaml;
 	private static Server SERVER_INSTANCE;
 	private static ExecutorService async;
 	private static MainLogger logger;
@@ -29,7 +37,8 @@ public class RedstoneLamp implements Runnable{
 	public void run(){
 		try {
 			properties = loadProperties();
-			int workers = Integer.parseInt(properties.getProperty("async-workers", "4"));
+			yaml = loadYaml();
+			int workers = Integer.parseInt(((String) yaml.getInMap("settings").get("async-workers")));
 			async = Executors.newFixedThreadPool(workers);
 			logger.debug("Created " + workers + " Async threads!");
 			new Server(properties, logger);
@@ -43,36 +52,38 @@ public class RedstoneLamp implements Runnable{
 		Properties properties = new Properties();
 		File propFile = new File("server.properties");
 		if(!propFile.exists()){
-			propFile.createNewFile();
-			properties.put("motd", "A Minecraft Server");
-			properties.put("server-ip", "0.0.0.0");
-			properties.put("max-players", "20");
-			properties.put("white-list", "false");
-			properties.put("level-name", "world");
-			properties.put("level-type", "DEFAULT");
-			properties.put("level-seed", "");
-			properties.put("spawn-npcs", "true");
-			properties.put("spawn-animals", "true");
-			properties.put("spawn-monsters", "true");
-			properties.put("hardcore", "false");
-			properties.put("enable-rcon", "false");
-			properties.put("force-gamemode", "false");
-			properties.put("enable-query", "false");
-			properties.put("allow-flight", "false");
-			properties.put("announce-player-achievements", "true");
-			properties.put("pvp", "true");
-			properties.put("difficulty", "1");
-			properties.put("gamemode", "0");
-			properties.put("view-distance", "10");
-			properties.put("generate-structures", "true");
-			properties.put("mcpe-port", "19132");
-			properties.put("mcpc-port", "25565");
-			properties.put("debug", "false");
-			properties.put("async-workers", "4");
-			properties.store(new FileWriter(propFile), "RedstoneLamp properties");
+			URL url = this.getClass().getResource("/resources/conf/server.properties");
+			File dest = new File("./server.properties");
+			try {
+				FileUtils.copyURLToFile(url, dest);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		properties.load(new FileReader(propFile));
 		return properties;
+	}
+	
+	public YamlConfiguration loadYaml() {
+		File propFile = new File("redstonelamp.yml");
+		if(!propFile.exists()){
+			URL url = this.getClass().getResource("/resources/conf/redstonelamp.yml");
+			File dest = new File("./redstonelamp.yml");
+			try {
+				FileUtils.copyURLToFile(url, dest);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		YamlConfiguration yaml = null;
+		try {
+			yaml = new YamlConfiguration("redstonelamp.yml");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (YamlException e) {
+			e.printStackTrace();
+		}
+		return yaml;
 	}
 
 	protected static void setServerInstance(Server server){

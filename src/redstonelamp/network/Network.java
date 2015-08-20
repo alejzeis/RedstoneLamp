@@ -29,15 +29,12 @@ public class Network {
     }
 
     public void tick(){
-        for(NetworkInterface networkInterface : interfaces){
-            networkInterface.processData();
-        }
+        interfaces.forEach(redstonelamp.network.NetworkInterface::processData);
+
         for(Player[] players : toSend.keySet()){
             List<DataPacket> packets = toSend.get(players);
             for(Player player : players){
-                for(DataPacket dp : packets){
-                    player.sendDirectDataPacket(dp);
-                }
+                packets.forEach(player::sendDirectDataPacket);
             }
             toSend.remove(players);
         }
@@ -96,6 +93,19 @@ public class Network {
         );
     }
 
+    /**
+     * Broadcasts a DataPacket to all players on this network.
+     * @param packet The Packet to be sent.
+     * @param playerClazz The type of player (PocketPlayer, DesktopPlayer etc)
+     */
+    public void broadcastPacket(DataPacket packet, Class<? extends Player> playerClazz){
+        for(Player p : server.getOnlinePlayers()){
+            if(p.getClass().getName().equals(playerClazz.getName())){
+                p.sendDataPacket(packet);
+            }
+        }
+    }
+
     public void setName(String name){
         for(NetworkInterface networkInterface : interfaces){
             networkInterface.setName(name);
@@ -134,6 +144,7 @@ public class Network {
     }
 
     private void registerPackets(){
+        packets.put(AnimatePacket.ID, AnimatePacket.class);
         packets.put(BatchPacket.ID, BatchPacket.class);
         packets.put(ContainerSetContentPacket.ID, ContainerSetContentPacket.class);
         packets.put(DisconnectPacket.ID, DisconnectPacket.class);
@@ -148,17 +159,14 @@ public class Network {
         packets.put(StartGamePacket.ID, StartGamePacket.class);
         packets.put(TextPacket.ID, TextPacket.class);
         packets.put(MovePlayerPacket.ID, MovePlayerPacket.class);
+        packets.put(RemoveBlockPacket.ID, RemoveBlockPacket.class);
     }
 
     public void shutdown() {
-        for(NetworkInterface _interface : interfaces){
-            _interface.shutdown();
-        }
+        interfaces.forEach(redstonelamp.network.NetworkInterface::shutdown);
     }
 
     public void emergencyShutdown() {
-        for(NetworkInterface _interface : interfaces){
-            _interface.emergencyShutdown();
-        }
+        interfaces.forEach(redstonelamp.network.NetworkInterface::emergencyShutdown);
     }
 }

@@ -1,9 +1,7 @@
 package redstonelamp.entity;
 
 import redstonelamp.Player;
-import redstonelamp.PocketPlayer;
 import redstonelamp.Server;
-import redstonelamp.item.Item;
 import redstonelamp.item.ItemValues;
 import redstonelamp.network.packet.AddPlayerPacket;
 import redstonelamp.network.packet.PlayerArmorEquipmentPacket;
@@ -11,7 +9,6 @@ import redstonelamp.network.packet.RemovePlayerPacket;
 import redstonelamp.utils.Skin;
 
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  * Abstract class for NPC/Player (Human)
@@ -21,6 +18,7 @@ import java.util.Map;
 public class Human extends Entity{
 
     protected Skin skin;
+    protected String nametag;
     protected boolean isSlim;
 
     public Human(int id) {
@@ -29,8 +27,8 @@ public class Human extends Entity{
 
     @Override
     public void spawnTo(Player player) {
+        super.spawnTo(player);
         if(player != this){
-            super.spawnTo(player);
 
             AddPlayerPacket app = new AddPlayerPacket();
             app.clientID = getId();
@@ -89,6 +87,16 @@ public class Human extends Entity{
         em.set((byte) 16, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0)); //Player flags
         em.set((byte) 17, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_LONG, (long) 0));
         return em;
+    }
+
+    @Override
+    public void setNameTag(String tag) {
+        nametag = tag;
+    }
+
+    @Override
+    public String getNameTag() {
+        return nametag;
     }
 
     public String getName() {

@@ -36,9 +36,7 @@ public class ContainerSetContentPacket extends DataPacket{
         }
         if(windowId == SPECIAL_INVENTORY && hotbar.size() > 0){
             bb.putShort((short) hotbar.size());
-            for(Integer i : hotbar){
-                bb.putInt(i);
-            }
+            hotbar.forEach(bb::putInt);
         } else {
             bb.putShort((short) 0);
         }

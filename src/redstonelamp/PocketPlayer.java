@@ -1,37 +1,29 @@
 package redstonelamp;
 
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.UUID;
 
 import redstonelamp.entity.EntityMetadata;
 import redstonelamp.entity.Human;
+import redstonelamp.event.network.DataPacketReceiveEvent;
+import redstonelamp.event.network.DataPacketSendEvent;
 import redstonelamp.event.player.PlayerChatEvent;
 import redstonelamp.event.player.PlayerJoinEvent;
 import redstonelamp.event.player.PlayerKickEvent;
 import redstonelamp.event.player.PlayerMoveEvent;
 import redstonelamp.event.player.PlayerQuitEvent;
 import redstonelamp.inventory.PlayerInventory;
+import redstonelamp.io.playerdata.PlayerDatabase;
 import redstonelamp.item.Item;
+import redstonelamp.item.ItemValues;
+import redstonelamp.level.Chunk;
 import redstonelamp.level.location.Location;
+import redstonelamp.math.Vector3;
 import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.PENetworkInfo;
-import redstonelamp.network.packet.AdventureSettingsPacket;
-import redstonelamp.network.packet.BatchPacket;
-import redstonelamp.network.packet.ContainerSetContentPacket;
-import redstonelamp.network.packet.DataPacket;
-import redstonelamp.network.packet.DisconnectPacket;
-import redstonelamp.network.packet.LoginPacket;
-import redstonelamp.network.packet.MovePlayerPacket;
-import redstonelamp.network.packet.PlayStatusPacket;
-import redstonelamp.network.packet.RespawnPacket;
-import redstonelamp.network.packet.SetDifficultyPacket;
-import redstonelamp.network.packet.SetHealthPacket;
-import redstonelamp.network.packet.SetSpawnPositionPacket;
-import redstonelamp.network.packet.SetTimePacket;
-import redstonelamp.network.packet.StartGamePacket;
-import redstonelamp.network.packet.TextPacket;
-import redstonelamp.network.packet.UnknownDataPacket;
+import redstonelamp.network.packet.*;
 import redstonelamp.security.BanSecurity;
 import redstonelamp.utils.Skin;
 import redstonelamp.utils.TextFormat;
@@ -55,9 +47,11 @@ public class PocketPlayer extends Human implements Player{
     private boolean loggedIn = false;
     private boolean spawned = false;
 
+    private PlayerDatabase.DatabaseEntry dbEntry;
     private PlayerInventory inventory;
 
     private int gamemode;
+    private int health;
 
     private JRakLibInterface rakLibInterface;
     
@@ -71,9 +65,8 @@ public class PocketPlayer extends Human implements Player{
         this.identifier = identifier;
         this.address = new InetSocketAddress(address, port);
         this.clientId = clientId;
-        connected = true;
 
-        loadPlayerData();
+        connected = true;
 
         spawnTo(this);
     }
@@ -84,9 +77,21 @@ public class PocketPlayer extends Human implements Player{
     }
 
     private void loadPlayerData() {
-        //TODO: Load actual data
-        gamemode = 1;
+        if(dbEntry.getGamemode() == -1){ //We need a new entry
+            dbEntry.setGamemode(server.getMainLevel().getGamemode());
+            dbEntry.setHealth(20);
+            dbEntry.setLocation(server.getMainLevel().getSpawnLocation());
+            dbEntry.setUUID(uuid);
+            server.getPlayerDatabase().putEntry(dbEntry);
 
+            loadPlayerData();
+        }
+        if(!uuid.toString().equals(dbEntry.getUUID().toString())){
+            server.getLogger().error("UUID Does not match: {mine: " + uuid.toString() + ", DB: " + dbEntry.getUUID().toString());
+        }
+        gamemode = dbEntry.getGamemode();
+        health = dbEntry.getHealth();
+        setLocation(dbEntry.getLocation());
     }
 
     @Override
@@ -100,13 +105,16 @@ public class PocketPlayer extends Human implements Player{
             return;
         }
 
-        switch (packet.getBuffer()[0]){
+        DataPacketReceiveEvent evt = new DataPacketReceiveEvent(packet, this);
+        server.throwEvent(evt);
+        if(evt.isCanceled())
+            return;
 
-            default:
-                if(packet instanceof UnknownDataPacket && server.isDebugMode()){
-                    server.getLogger().debug("Unknown Packet: 0x"+String.format("%02X", packet.getBuffer()[0]));
-                    break;
-                }
+        if(packet instanceof UnknownDataPacket && server.isDebugMode())
+            server.getLogger().debug("Unknown Packet: 0x"+String.format("%02X", packet.getBuffer()[0]));
+
+
+        switch (packet.getBuffer()[0]){
 
             case PENetworkInfo.LOGIN_PACKET:
                 if(loggedIn){
@@ -166,9 +174,12 @@ public class PocketPlayer extends Human implements Player{
                     }
                 }
 
+                dbEntry = server.getPlayerDatabase().getEntry(uuid);
+                loadPlayerData();
+
                 loggedIn = true;
 
-                setLocation(new Location(128, 2, 128, server.getMainLevel()));
+                //setLocation(new Location(128, 2, 128, server.getMainLevel()));
 
                 sendLoginPackets();
 
@@ -178,7 +189,7 @@ public class PocketPlayer extends Human implements Player{
             case PENetworkInfo.MOVE_PLAYER_PACKET:
                 MovePlayerPacket mpp = (MovePlayerPacket) packet;
                 Location l = getLocation();
-                PlayerMoveEvent pme = new PlayerMoveEvent(this, l);
+                PlayerMoveEvent pme = new PlayerMoveEvent(this, mpp.onGround, l);
                 server.throwEvent(pme);
                 if(!pme.isCanceled()) {
                 	//TODO: check movement
@@ -189,7 +200,9 @@ public class PocketPlayer extends Human implements Player{
                 	l.setPitch(mpp.pitch);
                 	setLocation(l);
                 	getLocation().getLevel().broadcastMovement(this, mpp);
-                } //TODO: Show the player they didnt move
+                    return;
+                }
+                sendPosition(pme.getLocation(), pme.isOnGround());
                 break;
 
             case PENetworkInfo.TEXT_PACKET:
@@ -222,7 +235,93 @@ public class PocketPlayer extends Human implements Player{
                     break;
                 }
                 break;
+
+            case PENetworkInfo.REMOVE_BLOCK_PACKET:
+                if(!spawned /*|| alive*/) {
+                    break;
+                }
+                //TODO: break level blocks.
+                //TODO: Check survival, add/remove inventory etc.
+                RemoveBlockPacket rbp = (RemoveBlockPacket) packet;
+                UpdateBlockPacket ubp = new UpdateBlockPacket();
+
+                UpdateBlockPacket.Record r = new UpdateBlockPacket.Record();
+                r.x = rbp.x;
+                r.y = rbp.y;
+                r.z = rbp.z;
+                r.blockId = ItemValues.AIR; //TODO
+                r.blockData = 0;
+                r.flags = UpdateBlockPacket.FLAG_ALL_PRIORITY;
+
+                ubp.records = Arrays.asList(r);
+                server.getNetwork().broadcastPacket(ubp, PocketPlayer.class);
+                break;
+
+            case PENetworkInfo.ANIMATE_PACKET:
+                if(!spawned /*|| !alive*/){
+                    break;
+                }
+                AnimatePacket ap = (AnimatePacket) packet;
+
+                AnimatePacket ap2 = new AnimatePacket();
+                ap2.eid = getId();
+                ap2.action = ap.action;
+                server.getNetwork().broadcastPacket(ap2, PocketPlayer.class);
+                break;
+
+            case PENetworkInfo.USE_ITEM_PACKET:
+                if(!spawned /*|| !alive*/){
+                    break;
+                }
+                UseItemPacket uip = new UseItemPacket();
+                Vector3 vector = new Vector3(uip.x, uip.y, uip.z);
+
+                if(uip.face >= 0 && uip.face <= 5) { //Block place
+                    UpdateBlockPacket ubp2 = new UpdateBlockPacket();
+
+                    UpdateBlockPacket.Record record = new UpdateBlockPacket.Record();
+                    /*
+                    record.x = vector.getX();
+                    record.y = (byte) vector.getY();
+                    record.z = vector.getZ();
+                    */
+                    record.x = uip.x;
+                    record.y = (byte) uip.y;
+                    record.z = uip.z;
+
+                    record.blockId = (byte) uip.item;
+                    //record.blockData = (byte) (0xb << 4 | (uip.meta & 0xF));
+                    record.blockData = (byte) uip.meta;
+                    record.flags = UpdateBlockPacket.FLAG_ALL_PRIORITY;
+
+                    ubp2.records = Arrays.asList(record);
+                    server.getNetwork().broadcastPacket(ubp2, PocketPlayer.class);
+                    //vector.distanceSquared(new Vector3((int) getLocation().getX(), (int) getLocation().getY(), (int) getLocation().getZ()))
+                }
+                break;
+
+            default:
+                if(server.isDebugMode()){
+                    server.getLogger().warning("Unhandled packet: 0x"+String.format("%02X", packet.getPID()));
+                }
         }
+    }
+
+    /**
+     * NOTE TO PLUGIN DEVELOPERS: Please use <code>PocketPlayer.teleport()</code> instead.
+     * @param l
+     */
+    public void sendPosition(Location l, boolean onGround) {
+        MovePlayerPacket mpp = new MovePlayerPacket();
+        mpp.onGround = onGround;
+        mpp.eid = getId();
+        mpp.x = (float) l.getX();
+        mpp.y = (float) l.getY();
+        mpp.z = (float) l.getZ();
+        mpp.yaw = l.getYaw();
+        mpp.pitch = l.getPitch();
+        mpp.bodyYaw = l.getYaw(); //TODO: body yaw
+        sendDataPacket(mpp);
     }
 
     private void sendLoginPackets() {
@@ -239,12 +338,12 @@ public class PocketPlayer extends Human implements Player{
         sgp.spawnY = (int) getLocation().getY();
         sgp.spawnZ = (int) getLocation().getZ();
         sgp.generator = 1;
-        sgp.gamemode = 1; //CREATIVE
+        sgp.gamemode = gamemode;
         sgp.eid = 0; //Player EntityID is always 0
         sendDataPacket(sgp);
 
         SetTimePacket stp = new SetTimePacket();
-        stp.time = 1;
+        stp.time = (int) getLocation().getLevel().getTime();
         stp.started = true;
         sendDataPacket(stp);
 
@@ -257,12 +356,14 @@ public class PocketPlayer extends Human implements Player{
         AdventureSettingsPacket asp = new AdventureSettingsPacket();
         int flags = 0;
         flags |= 0x20; //Allow nametags
-        flags |= 0x80; //Allow flight
+        if(gamemode == 1) {
+            flags |= 0x80; //Allow flight
+        }
         asp.flags = flags;
         sendDataPacket(asp);
 
         SetHealthPacket shp = new SetHealthPacket();
-        shp.health = 20;
+        shp.health = health;
         sendDataPacket(shp);
 
         SetDifficultyPacket sdp = new SetDifficultyPacket();
@@ -270,6 +371,7 @@ public class PocketPlayer extends Human implements Player{
         sendDataPacket(sdp);
 
         server.getLogger().info(username+" ["+identifier+"] logged in with entity id "+getId()+" at [x: "+Math.round(getLocation().getX())+", y: "+Math.round(getLocation().getY())+", z: "+Math.round(getLocation().getZ())+"]");
+        server.getLogger().debug("Players online: " + server.getOnlinePlayers().size());
         
         sendMetadata();
 
@@ -282,6 +384,8 @@ public class PocketPlayer extends Human implements Player{
     }
     
     public void doFirstSpawn(){
+        spawned = true;
+
         PlayStatusPacket psp = new PlayStatusPacket();
         psp.status = PlayStatusPacket.Status.PLAYER_SPAWN;
         sendDataPacket(psp);
@@ -293,7 +397,7 @@ public class PocketPlayer extends Human implements Player{
         sendDataPacket(rp);
 
         SetTimePacket stp = new SetTimePacket();
-        stp.time = 2;
+        stp.time = (int) getLocation().getLevel().getTime();
         stp.started = true;
         sendDataPacket(stp);
 
@@ -301,13 +405,6 @@ public class PocketPlayer extends Human implements Player{
         server.throwEvent(new PlayerJoinEvent(this));
 
         spawnToAll(server);
-
-        for(Player player : server.getOnlinePlayers()){
-            if(player instanceof PocketPlayer){ //TODO: Spawn to PC
-                ((PocketPlayer) player).spawnTo(this);
-                spawnTo(player);
-            }
-        }
     }
 
     private void sendMetadata() {
@@ -319,7 +416,12 @@ public class PocketPlayer extends Human implements Player{
         if(!connected){
             return;
         }
-        //TODO: Call datapacket send event
+
+        DataPacketSendEvent evt = new DataPacketSendEvent(packet, this);
+        server.throwEvent(evt);
+        if(evt.isCanceled())
+            return;
+
         rakLibInterface.sendPacket(this, packet, false, true);
     }
 
@@ -328,7 +430,12 @@ public class PocketPlayer extends Human implements Player{
         if(!connected){
             return;
         }
-        //TODO: Call datapacket send event
+
+        DataPacketSendEvent evt = new DataPacketSendEvent(packet, this);
+        server.throwEvent(evt);
+        if(evt.isCanceled())
+            return;
+
         rakLibInterface.sendPacket(this, packet, false, false);
     }
 
@@ -338,7 +445,7 @@ public class PocketPlayer extends Human implements Player{
         if(admin){
             message = "Kicked by admin. Reason: "+ reason;
         } else {
-            message = reason != "" ? reason : "disconnectionScreen.noReason";
+            message = (reason.equals("") ? "disconnectionScreen.noReason" : reason);
         }
         PlayerKickEvent evt = new PlayerKickEvent(this, reason);
         server.throwEvent(evt);
@@ -482,7 +589,19 @@ public class PocketPlayer extends Human implements Player{
 	public void setDisplayName(String name) {
 		displayName = name;
 	}
-    
+
+    @Override
+    public byte[] orderChunk(Chunk chunk) {
+        ByteBuffer bb = ByteBuffer.allocate(83200);
+        bb.put(chunk.getBlockIds());
+        bb.put(chunk.getBlockMeta());
+        bb.put(chunk.getSkylight());
+        bb.put(chunk.getBlocklight());
+        bb.put(chunk.getHeightmap());
+        bb.put(chunk.getBiomeColors());
+        return bb.array();
+    }
+
     public void ban() {
         ban_security.addPlayer(username);
         close(" left the game", "You have been banned!", true);

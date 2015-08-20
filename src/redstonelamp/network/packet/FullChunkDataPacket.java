@@ -20,11 +20,10 @@ public class FullChunkDataPacket extends DataPacket{
 
     @Override
     protected void _encode(DynamicByteBuffer bb) {
-        bb.putInt(x / 16);
-        bb.putInt(z / 16);
+        bb.putInt(x);
+        bb.putInt(z);
         bb.putInt(payload.length);
         bb.put(payload);
-        System.out.println("Chunk "+(x / 16)+", "+(z / 16));
     }
 
     @Override

@@ -1,17 +1,17 @@
 package redstonelamp.utils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 
 import org.apache.commons.io.FileUtils;
 
+import org.apache.commons.io.IOUtils;
 import redstonelamp.RedstoneLamp;
 import redstonelamp.Server;
 
@@ -46,7 +46,9 @@ public class MainLogger {
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		message = sdf.format(cal.getTime()) + " [DEBUG] " + message;
-		if(Boolean.parseBoolean(RedstoneLamp.properties.getProperty("debug", "false")))
+		if(RedstoneLamp.getServerInstance() != null && RedstoneLamp.getServerInstance().isDebugMode())
+			System.out.println(message);
+		else if(Boolean.parseBoolean(((String)RedstoneLamp.yaml.getInMap("debug").get("enabled"))))
 			System.out.println(message);
 		writeToLog(message);
 	}
@@ -135,6 +137,8 @@ public class MainLogger {
 		} catch (IOException e) {
 			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 			System.out.println(sdf.format(cal.getTime()) + " [ERROR] Unable to write log!");
+		} catch(ConcurrentModificationException e){
+			System.out.println("Failed to write log! "+e.getClass().getName()+": "+e.getMessage());
 		}
 	}
 }

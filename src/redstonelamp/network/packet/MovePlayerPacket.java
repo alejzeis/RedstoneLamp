@@ -11,6 +11,10 @@ import redstonelamp.utils.DynamicByteBuffer;
 public class MovePlayerPacket extends DataPacket{
     public final static byte ID = PENetworkInfo.MOVE_PLAYER_PACKET;
 
+    public final static byte MODE_NORMAL = 0;
+    public final static byte MODE_RESET = 1;
+    public final static byte MODE_ROTATION = 2;
+
     public long eid;
     public float x;
     public float y;
@@ -18,7 +22,7 @@ public class MovePlayerPacket extends DataPacket{
     public float yaw;
     public float bodyYaw;
     public float pitch;
-    public byte mode;
+    public byte mode = MODE_NORMAL;
     public boolean onGround;
 
     @Override

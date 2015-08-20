@@ -1,51 +1,19 @@
-package redstonelamp.level.provider;
+package redstonelamp.level.generator;
 
 import redstonelamp.item.ItemValues;
 import redstonelamp.level.Chunk;
-import redstonelamp.level.LevelProvider;
-import redstonelamp.level.location.ChunkLocation;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
- * A simple implementation of <code>LevelProvider</code> that does not save or store the level.
+ * Created by jython234 on 8/17/2015.
+ *
+ * @author jython234
  */
-@Deprecated
-public class FakeLevelProvider implements LevelProvider{
-    @Override
-    public byte[] orderChunk(int x, int z) {
-        ByteBuffer bb = ByteBuffer.allocate(83200);
-        for(int blockX = 0; blockX < 16; blockX++){
-            for(int blockZ = 0; blockZ < 16; blockZ++){
-                bb.put((byte) ItemValues.GRASS);
-                for(int blockY = 0; blockY < 127; blockY++){
-                    bb.put((byte) ItemValues.AIR);
-                }
-            }
-        }
-        bb.put(new byte[16384]);
-        for(int i = 0; i < 16384; i++){  //Skylight
-            bb.put((byte) 0xFF);
-        }
-        for(int i = 0; i < 16384; i++){ //BlockLight
-            bb.put((byte) 0);
-        }
-        for(int i = 0; i < 256; i++){ //Heightmap
-            bb.put((byte) 0xFF);
-        }
-        for(int i = 0; i < 256; i++){ //Biome Colors
-            bb.put((byte) 0x01);
-            bb.put((byte) 0x85);
-            bb.put((byte) 0xB2);
-            bb.put((byte) 0x4A);
-        }
-        return bb.array();
-    }
+public class FlatGenerator implements Generator{
 
     @Override
-    public Chunk getChunk(ChunkLocation chunkLocation) {
+    public Chunk generateChunk(int cx, int cz) {
         Chunk c = new Chunk();
 
         ByteBuffer bb = ByteBuffer.allocate(16 * 16 * 128);
@@ -92,15 +60,5 @@ public class FakeLevelProvider implements LevelProvider{
         }
         c.setBiomeColors(colors.array());
         return c;
-    }
-
-    @Override
-    public void shutdown() {
-
-    }
-
-    @Override
-    public void loadLevelData(File file) throws IOException {
-
     }
 }

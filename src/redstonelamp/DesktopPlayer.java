@@ -5,8 +5,8 @@ import redstonelamp.auth.AuthenticationAgent;
 import redstonelamp.auth.pc.PCAuthAgent;
 import redstonelamp.entity.Entity;
 import redstonelamp.entity.Human;
+import redstonelamp.level.Chunk;
 import redstonelamp.network.packet.DataPacket;
-import redstonelamp.network.packet.TextPacket;
 import redstonelamp.network.pc.Chat;
 import redstonelamp.network.pc.PCInterface;
 import redstonelamp.network.pc.PCNetworkInfo;
@@ -236,6 +236,11 @@ public class DesktopPlayer extends Human implements Player{
 	public void setDisplayName(String name) {
 		displayName = name;
 	}
+
+    @Override
+    public byte[] orderChunk(Chunk chunk) {
+        return new byte[0];
+    }
 
     public ProtocolState getProtocolState() {
         return protocolState;

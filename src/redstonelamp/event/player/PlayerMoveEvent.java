@@ -9,12 +9,15 @@ import redstonelamp.level.location.Location;
 public class PlayerMoveEvent extends Event implements Cancellable {
 	private Player player;
 	private Event e = this;
+
 	private Location location;
+	private boolean onGround;
 	private boolean canceled;
 	
-	public PlayerMoveEvent(Player player, Location location) {
+	public PlayerMoveEvent(Player player, boolean onGround, Location location) {
 		this.player = player;
 		this.location = location;
+		this.onGround = onGround;
 	}
 
 	public void execute(Listener listener) {
@@ -35,5 +38,13 @@ public class PlayerMoveEvent extends Event implements Cancellable {
 	
 	public void setCanceled(boolean canceled) {
 		this.canceled = canceled;
+	}
+
+	public boolean isOnGround() {
+		return onGround;
+	}
+
+	public void setOnGround(boolean onGround) {
+		this.onGround = onGround;
 	}
 }

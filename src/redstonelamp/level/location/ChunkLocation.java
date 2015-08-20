@@ -26,4 +26,20 @@ public class ChunkLocation {
     public void setX(int x) {
         this.x = x;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof ChunkLocation){
+            int x = ((ChunkLocation) obj).getX();
+            int z = ((ChunkLocation) obj).getZ();
+            return (x == this.x) && (z == this.z);
+        } else {
+            return obj.equals(this);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "ChunkLocation: "+x+", "+z;
+    }
 }
