@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.nio.BufferUnderflowException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Properties;
@@ -105,8 +106,8 @@ public class Server implements Runnable {
             } else {
                 playerDatabase.loadFromFile(getPlayerDatbaseLocation());
             }
-        } catch (IOException e) {
-            logger.error("FAILED TO LOAD PLAYER DATABASE!!! java.io.IOException: "+e.getMessage());
+        } catch (IOException | BufferUnderflowException e) {
+            logger.error("FAILED TO LOAD PLAYER DATABASE!!! "+e.getClass().getName()+": "+e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }

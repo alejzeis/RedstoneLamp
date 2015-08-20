@@ -251,7 +251,7 @@ public class PocketPlayer extends Human implements Player{
                 r.z = rbp.z;
                 r.blockId = ItemValues.AIR; //TODO
                 r.blockData = 0;
-                r.flags = UpdateBlockPacket.FLAG_NONE;
+                r.flags = UpdateBlockPacket.FLAG_ALL_PRIORITY;
 
                 ubp.records = Arrays.asList(r);
                 server.getNetwork().broadcastPacket(ubp, PocketPlayer.class);
