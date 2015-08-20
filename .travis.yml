@@ -1,14 +1,16 @@
 language: java
 
-sudo: required
+sudo: false
 
-before_install:
-  - wget -q -O - http://get.redstonelamp.net/travis/before_install.sh | bash
+#before_install:
+  #- wget -q -O - http://get.redstonelamp.net/travis/before_install.sh | bash
 
-script: ant compile
+install: echo "Dummy thing to prevent travis from doing strange maven thing."
 
-after_success:
-  - wget -q -O - http://get.redstonelamp.net/travis/after_success.sh | bash
+script: mvn license:check compile
+
+#after_success:
+  #- wget -q -O - http://get.redstonelamp.net/travis/after_success.sh | bash
 
 jdk:
   - oraclejdk8

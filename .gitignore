@@ -1,6 +1,8 @@
 /bin/
 /.classpath
 /.project
+/.idea
+/*.iml
 /plugins/
 /worlds/
 /players/
