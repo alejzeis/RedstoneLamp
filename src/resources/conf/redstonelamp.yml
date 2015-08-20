@@ -20,3 +20,6 @@ spawn-limit:
     animals: 15
     water-animals: 5
     ambient: 15
+
+worlds:
+    - world
