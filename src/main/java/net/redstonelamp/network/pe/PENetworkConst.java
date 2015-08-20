@@ -14,28 +14,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp;
+package net.redstonelamp.network.pe;
 
 /**
- * Main Startup file for RedstoneLamp.
+ * This "interface" contains the MCPE Networking constants.
  *
  * @author RedstoneLamp Team
  */
-public class RedstoneLamp {
-    public static final String SOFTWARE = "RedstoneLamp";
-    public static final String SOFTWARE_VERSION = "v1.2.0";
-    public static final String SOFTWARE_STATE = "development";
-
-    public static void main(String[] args){
-        //TODO
-    }
+public interface PENetworkConst {
+    /**
+     * The Minecraft: Pocket Edition version this software implements.
+     */
+    public static final String MCPE_VERSION = "v0.12.1";
 
     /**
-     * Get the software's version string.
-     * @return The version string (example: RedstoneLamp v1.0.0-development)
+     * The Minecraft: Pocket Edition network protocol version this software implements.
      */
-    public static String getSoftwareVersionString(){
-        return SOFTWARE + " " + SOFTWARE_VERSION + "-" + SOFTWARE_STATE;
-    }
+    public static final int MCPE_PROTOCOL = 34;
 
 }

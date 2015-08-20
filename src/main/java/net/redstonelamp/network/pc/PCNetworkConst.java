@@ -14,28 +14,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp;
+package net.redstonelamp.network.pc;
 
 /**
- * Main Startup file for RedstoneLamp.
+ * This "interface" contains the MCPC network constants.
  *
  * @author RedstoneLamp Team
  */
-public class RedstoneLamp {
-    public static final String SOFTWARE = "RedstoneLamp";
-    public static final String SOFTWARE_VERSION = "v1.2.0";
-    public static final String SOFTWARE_STATE = "development";
-
-    public static void main(String[] args){
-        //TODO
-    }
+public interface PCNetworkConst {
+    /**
+     * The Minecraft version this software implements.
+     */
+    public static final String MC_VERSION = "v1.8.8";
 
     /**
-     * Get the software's version string.
-     * @return The version string (example: RedstoneLamp v1.0.0-development)
+     * The Minecraft network protocol version this software implements.
      */
-    public static String getSoftwareVersionString(){
-        return SOFTWARE + " " + SOFTWARE_VERSION + "-" + SOFTWARE_STATE;
-    }
+    public static final int MC_PROTOCOL = 47;
 
 }

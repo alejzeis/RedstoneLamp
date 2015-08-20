@@ -30,6 +30,7 @@ import java.util.List;
 public class Server {
     private final List<Runnable> shutdownTasks = new ArrayList<>(); //List of tasks to be run on shutdown
     private final Logger logger;
+    private final ServerConfig config;
 
     /**
      * Package-private constructor used by the RedstoneLamp run class
@@ -38,6 +39,9 @@ public class Server {
      */
     Server(Logger logger, ServerConfig config) {
         this.logger = logger;
+        this.config = config;
+        logger.info(RedstoneLamp.getSoftwareVersionString() +" is licensed under the Lesser GNU General Public License version 3");
+
     }
 
     /**

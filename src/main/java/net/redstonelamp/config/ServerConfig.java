@@ -16,11 +16,53 @@
  */
 package net.redstonelamp.config;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 /**
- * Server configuration class. TODO
+ * Server configuration class that uses Java Properties files.
  *
  * @author RedstoneLamp Team
  */
 public class ServerConfig {
+    private Properties properties;
 
+    /**
+     * Create a new <code>ServerConfig</code> instance and load the config from the specified <code>configLocation</code>
+     * @param configLocation
+     * @throws java.io.IOException If the configuration can not be loaded.
+     */
+    public ServerConfig(File configLocation) throws IOException {
+        properties = new Properties();
+        properties.load(new FileInputStream(configLocation));
+    }
+
+    /**
+     * Gets a <code>String</code> from the configuration belonging to the <code>property</code>
+     * @param property The Property to get the value from
+     * @return The property's value, as a <code>String</code>
+     */
+    public String getString(String property) {
+        return properties.getProperty(property);
+    }
+
+    /**
+     * Gets a <code>Boolean</code> from the configuration belonging to the <code>property</code>
+     * @param property The Property to get the value from
+     * @return The property's value, as a <code>Boolean</code>
+     */
+    public boolean getBoolean(String property) {
+        return Boolean.parseBoolean(properties.getProperty(property));
+    }
+
+    /**
+     * Gets an <code>Integer</code> from the configuration belonging to the <code>property</code>
+     * @param property The Property to get the value from
+     * @return The property's value, as an <code>Integer</code>
+     */
+    public int getInt(String property) {
+        return Integer.parseInt(properties.getProperty(property));
+    }
 }

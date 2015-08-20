@@ -14,28 +14,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp;
-
 /**
- * Main Startup file for RedstoneLamp.
- *
+ * This package contains all the networking classes and packages used by the RedstoneLamp server.
  * @author RedstoneLamp Team
  */
-public class RedstoneLamp {
-    public static final String SOFTWARE = "RedstoneLamp";
-    public static final String SOFTWARE_VERSION = "v1.2.0";
-    public static final String SOFTWARE_STATE = "development";
-
-    public static void main(String[] args){
-        //TODO
-    }
-
-    /**
-     * Get the software's version string.
-     * @return The version string (example: RedstoneLamp v1.0.0-development)
-     */
-    public static String getSoftwareVersionString(){
-        return SOFTWARE + " " + SOFTWARE_VERSION + "-" + SOFTWARE_STATE;
-    }
-
-}
+package net.redstonelamp.network;
