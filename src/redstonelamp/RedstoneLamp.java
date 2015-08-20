@@ -2,6 +2,7 @@ package redstonelamp;
 
 import java.io.*;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,7 +38,7 @@ public class RedstoneLamp implements Runnable{
 		try {
 			properties = loadProperties();
 			yaml = loadYaml();
-			int workers = Integer.parseInt(properties.getProperty("async-workers", "4"));
+			int workers = Integer.parseInt(((String) yaml.getInMap("settings").get("async-workers")));
 			async = Executors.newFixedThreadPool(workers);
 			logger.debug("Created " + workers + " Async threads!");
 			new Server(properties, logger);

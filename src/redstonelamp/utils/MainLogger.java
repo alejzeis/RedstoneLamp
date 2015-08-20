@@ -46,7 +46,9 @@ public class MainLogger {
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		message = sdf.format(cal.getTime()) + " [DEBUG] " + message;
-		if(Boolean.parseBoolean(RedstoneLamp.properties.getProperty("debug", "false")))
+		if(RedstoneLamp.getServerInstance() != null && RedstoneLamp.getServerInstance().isDebugMode())
+			System.out.println(message);
+		else if(Boolean.parseBoolean(((String)RedstoneLamp.yaml.getInMap("debug").get("enabled"))))
 			System.out.println(message);
 		writeToLog(message);
 	}

@@ -29,4 +29,12 @@ public class YamlConfiguration {
 	public Map getMap() {
 		return this.map;
 	}
+	
+	public Map getInMap(String map) {
+		if(this.map.get(map) instanceof Map) {
+			Map newMap = (Map) this.map.get(map);
+			return newMap;
+		}
+		return this.map;
+	}
 }

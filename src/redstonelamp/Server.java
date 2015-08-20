@@ -19,7 +19,6 @@ import redstonelamp.auth.pc.PCAuthAgent;
 import redstonelamp.cmd.CommandManager;
 import redstonelamp.event.Event;
 import redstonelamp.event.EventManager;
-import redstonelamp.event.player.PlayerJoinEvent;
 import redstonelamp.event.Listener;
 import redstonelamp.event.server.ServerStopEvent;
 import redstonelamp.event.server.ServerTickEvent;
@@ -32,11 +31,12 @@ import redstonelamp.network.JRakLibInterface;
 import redstonelamp.network.Network;
 import redstonelamp.network.pc.PCInterface;
 import redstonelamp.plugin.PluginManager;
+import redstonelamp.resources.YamlConfiguration;
 import redstonelamp.utils.MainLogger;
 import redstonelamp.utils.ServerIcon;
 
 public class Server implements Runnable {
-    private boolean debugMode = false;
+    private boolean debugMode;
     private String motd;
     private ServerIcon icon;
     private int maxPlayers;
@@ -266,6 +266,10 @@ public class Server implements Runnable {
         return properties;
     }
 
+    public YamlConfiguration getRedstoneLampSettings() {
+        return RedstoneLamp.yaml;
+    }
+
     /**
      * Returns the server logger
      * 
@@ -420,7 +424,7 @@ public class Server implements Runnable {
     			cli.close();
 		} catch (IOException e) {}
 		for(Player p : getOnlinePlayers()) {
-			p.kick("Server closed.", true);
+			p.close(" left the game", ((String) RedstoneLamp.yaml.getInMap("settings").get("shutdown-message")), true);
 		}
         mainLevel.shutdown();
         savePlayerDatabase();
