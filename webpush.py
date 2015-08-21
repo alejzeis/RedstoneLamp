@@ -18,6 +18,9 @@
 import ftplib, os, sys
 
 VALID_BRANCH = "rewrite"
+BUILD_DIR = os.environ['TRAVIS_BUILD_DIR']
+os.chdir(BUILD_DIR)
+print "Changed to TRAVIS_BUILD_DIR: "+BUILD_DIR
 
 if "false" in os.environ['TRAVIS_SECURE_ENV_VARS']:
 	print "Secure vars not enabled, exiting..."
@@ -32,7 +35,7 @@ if not (VALID_BRANCH in os.environ['TRAVIS_BRANCH']):
 	sys.exit(0)
 
 VERSION = "1.2.0"
-BUILD = (int(os.environ['TRAVIS_BUILD_NUMBER']) - 456) + 14
+BUILD = (int(os.environ['TRAVIS_BUILD_NUMBER']) - 457) + 14
 MCPE_VERSION = "0.12.1"
 MCPC_VERSION = "1.8.8"
 STABABILITY = "DEV"
