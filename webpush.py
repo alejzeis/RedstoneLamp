@@ -1,3 +1,20 @@
+#
+# This file is part of RedstoneLamp.
+#
+# RedstoneLamp is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# RedstoneLamp is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 import ftplib, os, sys
 
 VALID_BRANCH = "rewrite"
@@ -15,7 +32,7 @@ if not (VALID_BRANCH in os.environ['TRAVIS_BRANCH']):
 	sys.exit(0)
 
 VERSION = "1.2.0"
-BUILD = (int(os.environ['TRAVIS_BUILD_NUMBER']) - 453) + 14
+BUILD = (int(os.environ['TRAVIS_BUILD_NUMBER']) - 454) + 14
 MCPE_VERSION = "0.12.1"
 MCPC_VERSION = "1.8.8"
 STABABILITY = "DEV"
