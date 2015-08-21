@@ -35,14 +35,14 @@ if not (VALID_BRANCH in os.environ['TRAVIS_BRANCH']):
 	sys.exit(0)
 
 VERSION = "1.2.0"
-BUILD = (int(os.environ['TRAVIS_BUILD_NUMBER']) - 457) + 14
+BUILD = (int(os.environ['TRAVIS_BUILD_NUMBER']) - 458) + 14
 MCPE_VERSION = "0.12.1"
 MCPC_VERSION = "1.8.8"
 STABABILITY = "DEV"
 
 def findJar():
-	jar = "RedstoneLamp-"+VERSION+"-"+STABABILITY+".jar"
-	path = "target/"+jar
+	jar = "RedstoneLamp"+VERSION+"-"+str(BUILD)+"-"+MCPE_VERSION+"|"+MCPC_VERSION+"-"+STABABILITY+".jar"
+	path = "target/"+"RedstoneLamp-"+VERSION+"-"+STABABILITY+".jar"
 	if os.path.exists(path):
 		return (jar, path)
 	else:
@@ -60,7 +60,7 @@ print "Logging in..."
 d = f.login(user, passwd)
 print "Response: "+d
 print "Sending "+jarPath+" as "+jarUpload
-r = f.storbinary("STOR "+jarPath, open(jarPath, 'rb'))
+r = f.storbinary("STOR "+jarUpload, open(jarPath, 'rb'))
 print "Response: "+r
 print "Disconnecting..."
 f.quit()
