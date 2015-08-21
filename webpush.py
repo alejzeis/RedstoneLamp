@@ -23,8 +23,8 @@ if "false" in os.environ['TRAVIS_SECURE_ENV_VARS']:
 	print "Secure vars not enabled, exiting..."
 	sys.exit(0)
 
-if "false" in os.environ['TRAVIS_PULL_REQUEST']:
-	print "Build is a pull request, exiting..."
+if not ("false" in os.environ['TRAVIS_PULL_REQUEST']):
+	print "Build is a pull request ("+os.environ['TRAVIS_PULL_REQUEST']+", exiting..."
 	sys.exit(0)
 	
 if not (VALID_BRANCH in os.environ['TRAVIS_BRANCH']):
@@ -32,7 +32,7 @@ if not (VALID_BRANCH in os.environ['TRAVIS_BRANCH']):
 	sys.exit(0)
 
 VERSION = "1.2.0"
-BUILD = (int(os.environ['TRAVIS_BUILD_NUMBER']) - 455) + 14
+BUILD = (int(os.environ['TRAVIS_BUILD_NUMBER']) - 456) + 14
 MCPE_VERSION = "0.12.1"
 MCPC_VERSION = "1.8.8"
 STABABILITY = "DEV"
