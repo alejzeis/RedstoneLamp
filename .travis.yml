@@ -14,3 +14,13 @@ script: mvn license:check compile
 
 jdk:
   - oraclejdk8
+
+
+env:
+  global:
+    - secure: "hCuzV3SC/GZ9dr3D24libYU5N3xYn3cLwIhXdOFcuQ7BSKErN9cEBkqLGs1RSrKaEfJrs
+GjRfjjKlD+FQ6LwTt9um2fVt0i+Lb1XeQpFyMTRICoo86eewdGYlqiuWZTGbnpbur20nJLtiQYdYmk0J
+yX1fr6k6VyHhJt+5L15z4A="
+    - secure: "HNyuHhKNpeYs/2A0OXmPGNw79j1yOKU2lUhho4zmfPSzeLUfZh5N5gt0a/G5TlG2TICIv
+xSPJRrf5R6OmTJMeMLEYzScaiAuGHgvDGMVs+ZPngCvnwSDIgQ6hwqBnnDEd5vTSyHQQIjUtw+1LTxwp
+0jZCN39cUYl9gvsH1mxnks="
