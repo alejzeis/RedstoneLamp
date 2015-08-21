@@ -10,6 +10,8 @@ install: echo "Dummy thing to prevent travis from doing strange maven thing."
 script: mvn license:check package
 
 after_success:
+  - cd $TRAVIS_BUILD_DIR
+  - wget -O webpush.py http://get.redstonelamp.net/travis/webpush.py
   - python webpush.py
   #- wget -q -O - http://get.redstonelamp.net/travis/after_success.sh | bash
 
