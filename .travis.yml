@@ -7,14 +7,17 @@ sudo: false
 
 install: echo "Dummy thing to prevent travis from doing strange maven thing."
 
-script: mvn license:check compile
+script: mvn license:check package
 
-#after_success:
+after_success:
+  - python webpush.py
   #- wget -q -O - http://get.redstonelamp.net/travis/after_success.sh | bash
+
+after_failure:
+  - echo "Build failed! Not uploading JAR"
 
 jdk:
   - oraclejdk8
-
 
 env:
   global:
