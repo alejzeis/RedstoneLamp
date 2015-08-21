@@ -41,7 +41,7 @@ public class RedstoneLamp {
     
     private void getDefaultResources() {
         if(!new File("server.properties").isFile()) {
-            URL url = this.getClass().getResource("/server.properties");
+            URL url = this.getClass().getResource("/conf/server.properties");
             File dest = new File("./server.properties");
             try {
                 FileUtils.copyURLToFile(url, dest);
@@ -50,7 +50,7 @@ public class RedstoneLamp {
             }
         }
         if(!new File("redstonelamp.yml").isFile()) {
-            URL url = this.getClass().getResource("/redstonelamp.yml");
+            URL url = this.getClass().getResource("/conf/redstonelamp.yml");
             File dest = new File("./redstonelamp.yml");
             try {
                 FileUtils.copyURLToFile(url, dest);
