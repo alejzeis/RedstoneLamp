@@ -1,3 +1,4 @@
+/.settings/
 /bin/
 /target/
 /.classpath
@@ -12,4 +13,4 @@
 /logs/
 /banned-players.txt
 /banned-ips.txt
-players.dat
+/players.dat

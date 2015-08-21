@@ -16,6 +16,12 @@
  */
 package net.redstonelamp;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+
+import org.apache.commons.io.FileUtils;
+
 /**
  * Main Startup file for RedstoneLamp.
  *
@@ -28,7 +34,30 @@ public class RedstoneLamp {
     public static final double API_VERSION = 1.5;
 
     public static void main(String[] args){
+        RedstoneLamp main = new RedstoneLamp();
+        main.getDefaultResources();
         //TODO
+    }
+    
+    private void getDefaultResources() {
+        if(!new File("server.properties").isFile()) {
+            URL url = this.getClass().getResource("/server.properties");
+            File dest = new File("./server.properties");
+            try {
+                FileUtils.copyURLToFile(url, dest);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if(!new File("redstonelamp.yml").isFile()) {
+            URL url = this.getClass().getResource("/redstonelamp.yml");
+            File dest = new File("./redstonelamp.yml");
+            try {
+                FileUtils.copyURLToFile(url, dest);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
