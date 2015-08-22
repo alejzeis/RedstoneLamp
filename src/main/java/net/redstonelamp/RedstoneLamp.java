@@ -20,7 +20,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import net.redstonelamp.config.ServerConfig;
+import net.redstonelamp.ui.Log4j2ConsoleOut;
+import net.redstonelamp.ui.Logger;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Main Startup file for RedstoneLamp.
@@ -36,7 +40,16 @@ public class RedstoneLamp {
     public static void main(String[] args){
         RedstoneLamp main = new RedstoneLamp();
         main.getDefaultResources();
-        //TODO
+
+        try {
+            ServerConfig config = new ServerConfig(new File("server.properties"));
+            Server server = new Server(new Logger(new Log4j2ConsoleOut("RedstoneLamp")), config); //TODO: Correct logger
+            server.run();
+        } catch (IOException e) {
+            LogManager.getRootLogger().fatal("Could not init server! "+e.getClass().getName()+": "+e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
     
     private void getDefaultResources() {
