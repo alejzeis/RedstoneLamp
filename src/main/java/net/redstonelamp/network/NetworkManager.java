@@ -41,7 +41,7 @@ public class NetworkManager {
     }
 
     public void tick(long tick) {
-        //TODO
+        protocols.forEach(Protocol::tick);
     }
 
     /**

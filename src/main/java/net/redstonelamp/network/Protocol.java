@@ -16,7 +16,13 @@
  */
 package net.redstonelamp.network;
 
+import net.redstonelamp.Player;
 import net.redstonelamp.Server;
+import net.redstonelamp.request.LoginRequest;
+import net.redstonelamp.request.Request;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Base class for a Protocol.
@@ -25,9 +31,38 @@ import net.redstonelamp.Server;
  */
 public abstract class Protocol {
     private NetworkManager manager;
+    private final Map<String, Player> players = new ConcurrentHashMap<>();
+    protected NetworkInterface _interface;
 
+    /**
+     * Abstract Protocol constructor, all implementing classes MUST SET _interface IN CONSTRUCTOR.
+     * @param manager
+     */
     public Protocol(NetworkManager manager){
         this.manager = manager;
+    }
+
+    protected final void tick() {
+        try {
+            UniversalPacket packet;
+            while((packet = _interface.readPacket()) != null) {
+                Request r = handlePacket(packet);
+                if(r != null) {
+                    if (players.containsKey(packet.getAddress().toString())) {
+                        players.get(packet.getAddress().toString()).handleRequest(r);
+                    } else {
+                        if(r instanceof LoginRequest) {
+                            Player player = manager.getServer().openSession(packet.getAddress(), this, (LoginRequest) r);
+                            players.put(player.getIdentifier(), player);
+                        } else {
+                            manager.getServer().getLogger().warning("Failed to open session, Request: "+r.getClass().getName());
+                        }
+                    }
+                }
+            }
+        } catch (LowLevelNetworkException e) {
+            manager.getServer().getLogger().trace(e);
+        }
     }
 
     /**
@@ -43,11 +78,11 @@ public abstract class Protocol {
     public abstract String getDescription();
 
     /**
-     * Handles a <code>UniversalPacket</code>
+     * Handles a <code>UniversalPacket</code> and translates it into a <code>Request</code>
      * @param packet The <code>UniversalPacket</code>
-     * @return If the packet was handled successfully
+     * @return The Request if translated, null if not.
      */
-    public abstract boolean handlePacket(UniversalPacket packet);
+    public abstract Request handlePacket(UniversalPacket packet);
 
     /**
      * Send a <code>UniversalPacket</code>
@@ -55,7 +90,13 @@ public abstract class Protocol {
      * @return If the packet was sent successfully
      */
     public boolean sendPacket(UniversalPacket packet) {
-        return manager.sendPacket(packet, this);
+        try {
+            _interface.sendPacket(packet);
+            return true;
+        } catch (LowLevelNetworkException e) {
+            manager.getServer().getLogger().trace(e);
+            return false;
+        }
     }
 
     /**

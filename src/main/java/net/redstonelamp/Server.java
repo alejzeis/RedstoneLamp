@@ -18,11 +18,15 @@ package net.redstonelamp;
 
 import net.redstonelamp.config.ServerConfig;
 import net.redstonelamp.network.NetworkManager;
+import net.redstonelamp.network.Protocol;
+import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.ticker.RedstoneTicker;
 import net.redstonelamp.ui.Logger;
 
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The base RedstoneLamp server, which handles the ticker.
@@ -35,6 +39,7 @@ public class Server implements Runnable{
     private final ServerConfig config;
     private final RedstoneTicker ticker;
     private final NetworkManager network;
+    private final List<Player> players = new CopyOnWriteArrayList<>();
 
     /**
      * Package-private constructor used by the RedstoneLamp run class
@@ -51,6 +56,7 @@ public class Server implements Runnable{
 
     @Override
     public void run() {
+        logger.info(RedstoneLamp.SOFTWARE+" is now running.");
         ticker.start();
     }
 
@@ -62,6 +68,29 @@ public class Server implements Runnable{
         synchronized (shutdownTasks) {
             shutdownTasks.add(r);
         }
+    }
+
+    /**
+     * INTERNAL METHOD
+     * @param address
+     * @param protocol
+     * @param loginRequest
+     * @return
+     */
+    public Player openSession(SocketAddress address, Protocol protocol, LoginRequest loginRequest) {
+        logger.debug("Opened Session: "+address.toString());
+        Player player = new Player(protocol, address.toString());
+        players.add(player);
+        return player;
+    }
+
+    /**
+     * INTERNAL METHOD!
+     * @param player
+     */
+    public void closeSession(Player player) {
+        logger.debug("Closed Session: "+player.getIdentifier());
+        players.remove(player);
     }
 
     //All Setter/Getter methods BELOW here.
