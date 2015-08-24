@@ -50,6 +50,7 @@ public class PEProtocol extends Protocol{
 
     @Override
     public Request handlePacket(UniversalPacket packet) {
+        getManager().getServer().getLogger().debug("");
         return null;
     }
 }

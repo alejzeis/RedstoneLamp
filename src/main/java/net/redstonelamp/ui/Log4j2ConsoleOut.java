@@ -24,7 +24,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author RedstoneLamp Team
  */
-public class Log4j2ConsoleOut implements ConsoleOut{
+public class Log4j2ConsoleOut extends ConsoleOut{
     private final org.apache.logging.log4j.Logger logger;
 
     /**
@@ -32,6 +32,7 @@ public class Log4j2ConsoleOut implements ConsoleOut{
      * @param logger The log4j2 logger.
      */
     public Log4j2ConsoleOut(Logger logger) {
+        super(logger.getName());
         this.logger = logger;
     }
 
@@ -40,6 +41,7 @@ public class Log4j2ConsoleOut implements ConsoleOut{
      * @param name The log4j2 Logger name.
      */
     public Log4j2ConsoleOut(String name) {
+        super(name);
         logger = LogManager.getLogger(name);
     }
 

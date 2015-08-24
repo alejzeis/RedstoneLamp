@@ -17,7 +17,10 @@
 package net.redstonelamp.network;
 
 
+import net.redstonelamp.nio.DynamicByteBuffer;
+
 import java.net.SocketAddress;
+import java.nio.ByteOrder;
 
 /**
  * A universal packet, not binded to ANY protocol.
@@ -27,15 +30,39 @@ import java.net.SocketAddress;
 public class UniversalPacket {
     private byte[] buffer;
     private SocketAddress address;
+    private DynamicByteBuffer bb;
 
     /**
-     * Create a new UniversalPacket with the specified <code>buffer</code> and belonging to the <code>address</code>
+     * Create a new UniversalPacket with the specified <code>buffer</code> and belonging to the <code>address</code>.
+     * The ByteOrder of the underlying DynamicByteBuffer will be Big Endian.
      * @param buffer The buffer this packet contains.
      * @param address The address this packet came/was sent from.
      */
     public UniversalPacket(byte[] buffer, SocketAddress address) {
         this.buffer = buffer;
         this.address = address;
+        bb = DynamicByteBuffer.wrapBytes(buffer, ByteOrder.BIG_ENDIAN);
+    }
+
+    /**
+     * Create a new UniversalPacket with the specified <code>buffer</code> in <code>order</code> and belonging to the <code>address</code>
+     * @param buffer The buffer this packet contains.
+     * @param order The ByteOrder of the above byte array. This can be Little Endian or Big Endian and is used in creating
+     *              the underlying DynamicByteBuffer.
+     * @param address The address this packet came/was sent from.
+     */
+    public UniversalPacket(byte[] buffer, ByteOrder order, SocketAddress address) {
+        this.buffer = buffer;
+        this.address = address;
+        bb = DynamicByteBuffer.wrapBytes(buffer, order);
+    }
+
+    /**
+     * Returns the DynamicByteBuffer of the packet <code>buffer</code>. This DOES NOT create a new instance of the buffer.
+     * @return The DynamicByteBuffer belonging to the packet.
+     */
+    public DynamicByteBuffer bb() {
+        return bb;
     }
 
     /**

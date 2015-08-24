@@ -21,35 +21,53 @@ package net.redstonelamp.ui;
  *
  * @author RedstoneLamp Team
  */
-public interface ConsoleOut {
+public abstract class ConsoleOut {
+    private final String name;
+
+    /**
+     * Create a new ConsoleOut with the specified <code>name</code>
+     * @param name The name of this ConsoleOut
+     */
+    public ConsoleOut(String name) {
+        this.name = name;
+    }
+
     /**
      * Write a TRACE Level message to this <code>ConsoleOut</code>.
      * @param msg The Message to be written.
      */
-    void trace(String msg);
+    public abstract void trace(String msg);
     /**
      * Write a DEBUG Level message to this <code>ConsoleOut</code>.
      * @param msg The Message to be written.
      */
-    void debug(String msg);
+    public abstract void debug(String msg);
     /**
      * Write an INFO Level message to this <code>ConsoleOut</code>.
      * @param msg The Message to be written.
      */
-    void info(String msg);
+    public abstract void info(String msg);
     /**
      * Write a WARNING Level message to this <code>ConsoleOut</code>.
      * @param msg The Message to be written.
      */
-    void warning(String msg);
+    public abstract void warning(String msg);
     /**
      * Write an ERROR Level message to this <code>ConsoleOut</code>.
      * @param msg The Message to be written.
      */
-    void error(String msg);
+    public abstract void error(String msg);
     /**
      * Write a FATAL Level message to this <code>ConsoleOut</code>.
      * @param msg The Message to be written.
      */
-    void fatal(String msg);
+    public abstract void fatal(String msg);
+
+    /**
+     * Get the name of the ConsoleOut
+     * @return The name of the ConsoleOut
+     */
+    public String getName() {
+        return name;
+    }
 }

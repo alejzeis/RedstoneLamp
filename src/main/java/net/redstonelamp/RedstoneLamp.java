@@ -71,6 +71,16 @@ public class RedstoneLamp {
                 e.printStackTrace();
             }
         }
+        File log4j2 = new File("log4j2.xml");
+        if(!log4j2.isFile()) {
+            URL url = this.getClass().getResource("/log4j2-default.xml");
+            try {
+                FileUtils.copyURLToFile(url, log4j2);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        System.setProperty("log4j.configurationFile", "log4j2.xml");
     }
 
     /**

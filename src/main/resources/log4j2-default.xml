@@ -26,7 +26,7 @@ If you are looking for the debug options, look at the comments below in the file
         <!-- TO ACTIVATE DEBUG LOGGING:
             Change every "info" to "debug" between this comment and the next.
         -->
-        <Logger name="BlockServer" level="info" additivity="false">
+        <Logger name="RedstoneLamp" level="info" additivity="false">
             <appender-ref ref="file-log" level="info"/>
             <appender-ref ref="console-log" level="info"/>
         </Logger>

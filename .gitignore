@@ -11,6 +11,7 @@
 /server.properties
 /redstonelamp.yml
 /logs/
+/log4j2.xml
 /banned-players.txt
 /banned-ips.txt
 /players.dat

@@ -131,4 +131,8 @@ public class Logger {
             trace(str);
         }
     }
+
+    public Class<? extends ConsoleOut> getConsoleOutClass() {
+        return out.getClass();
+    }
 }

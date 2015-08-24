@@ -65,12 +65,14 @@ public class RedstoneTicker {
             lastTickMilli = System.currentTimeMillis();
             tick++;
             tick();
+
             // calculate server load
             long now = System.currentTimeMillis();
             long diff = now - lastTickMilli;
             loadMeasure = diff * 100D /  sleep;
             if(loadMeasure > 80D){
                 AntiSpam.act(() -> server.getLogger().warning("The server load is too high! (%f / 100)", loadMeasure), ANTISPAM_LOAD_MEASURE_TOO_HIGH, 5000);
+                //server.getLogger().warning("The server load is too high! (%f / 100)", loadMeasure);
                 continue;
             }
             long need = sleep - diff;
@@ -79,6 +81,20 @@ public class RedstoneTicker {
             }catch(InterruptedException e){
                 e.printStackTrace();
             }
+            /*
+            long diff = System.currentTimeMillis() - lastTickMilli;
+            if(diff < sleep) {
+                long need = sleep - diff;
+                try {
+                    Thread.sleep(need);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                AntiSpam.act(() -> server.getLogger().warning("The server load is too high! ("+diff+">"+sleep+")"), ANTISPAM_LOAD_MEASURE_TOO_HIGH, 5000);
+            }
+            */
+
         }
         synchronized(tasks){
             for(RegisteredTask task: tasks){

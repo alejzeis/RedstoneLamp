@@ -16,6 +16,7 @@
  */
 package net.redstonelamp.network.pe;
 
+import net.beaconpe.jraklib.JRakLib;
 import net.beaconpe.jraklib.Logger;
 import net.beaconpe.jraklib.protocol.EncapsulatedPacket;
 import net.beaconpe.jraklib.server.JRakLibServer;
@@ -26,8 +27,11 @@ import net.redstonelamp.network.LowLevelNetworkException;
 import net.redstonelamp.network.NetworkInterface;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.ticker.CallableTask;
+import net.redstonelamp.ui.ConsoleOut;
 import net.redstonelamp.ui.Log4j2ConsoleOut;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Deque;
@@ -42,20 +46,41 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
     private final Server server;
     private final JRakLibServer rakLibServer;
     private final ServerHandler handler;
+    private net.redstonelamp.ui.Logger logger;
 
     private Deque<UniversalPacket> packetQueue = new ConcurrentLinkedDeque<>();
 
     private CallableTask tickTask = new CallableTask("tick", this);
 
     public JRakLibInterface(Server server) {
-        //TODO: Correct console out, port, and interface
+        //TODO: Correct port and interface
         this.server = server;
+
+        setupLogger();
         rakLibServer = new JRakLibServer(new JRakLibLogger(new net.redstonelamp.ui.Logger(new Log4j2ConsoleOut("JRakLib"))), 19132, "0.0.0.0");
         handler = new ServerHandler(rakLibServer, this);
 
-        server.getTicker().addRepeatingTask(tickTask, 0);
+        handler.sendOption("name", "MCPE;RedstoneLamp test server;0.12.1;"+PENetworkConst.MCPE_PROTOCOL+";0;1");
 
-        server.getLogger().info("Started JRakLib Network Interface on 0.0.0.0:19132");
+        server.getTicker().addRepeatingTask(tickTask, 1);
+
+        logger.info("Started JRakLib Interface on 0.0.0.0:19132");
+    }
+
+    private void setupLogger() {
+        try {
+            Constructor c = server.getLogger().getConsoleOutClass().getConstructor(String.class);
+            logger = new net.redstonelamp.ui.Logger((ConsoleOut) c.newInstance("JRakLibInterface"));
+            logger.debug("Logger created.");
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     public void tick(long tick) {
@@ -77,22 +102,29 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
 
     @Override
     public void sendPacket(UniversalPacket packet) throws LowLevelNetworkException {
-
+        //Assume packet is to be encapsulated
+        EncapsulatedPacket pk = new EncapsulatedPacket();
+        pk.messageIndex = 0;
+        pk.reliability = 2;
+        pk.buffer = packet.getBuffer();
+        logger.buffer("("+packet.getAddress().toString()+") PACKET OUT: ", pk.buffer, "");
+        handler.sendEncapsulated(packet.getAddress().toString(), pk, (byte) ((byte) 0 | JRakLib.PRIORITY_NORMAL));
     }
 
     @Override
     public void openSession(String identifier, String address, int port, long clientID) {
-
+        logger.debug("("+identifier+") openSession: {clientID: "+clientID+"}");
     }
 
     @Override
     public void closeSession(String identifier, String reason) {
-
+        logger.debug("("+identifier+") closeSession: {reason: "+reason+"}");
     }
 
     @Override
     public void handleEncapsulated(String identifier, EncapsulatedPacket encapsulatedPacket, int flags) {
         UniversalPacket packet = new UniversalPacket(encapsulatedPacket.buffer, new JRakLibIdentifierAddress(identifier));
+        logger.buffer("("+identifier+") PACKET IN: ", packet.getBuffer(), "");
         packetQueue.addLast(packet);
     }
 

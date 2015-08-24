@@ -19,6 +19,7 @@ package net.redstonelamp;
 import net.redstonelamp.config.ServerConfig;
 import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
+import net.redstonelamp.network.pe.PEProtocol;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.ticker.RedstoneTicker;
 import net.redstonelamp.ui.Logger;
@@ -52,6 +53,8 @@ public class Server implements Runnable{
         this.config = config;
         this.network = new NetworkManager(this);
         logger.info(RedstoneLamp.getSoftwareVersionString() +" is licensed under the Lesser GNU General Public License version 3");
+
+        network.registerProtocol(new PEProtocol(network));
     }
 
     @Override
