@@ -22,6 +22,7 @@ import net.beaconpe.jraklib.protocol.EncapsulatedPacket;
 import net.beaconpe.jraklib.server.JRakLibServer;
 import net.beaconpe.jraklib.server.ServerHandler;
 import net.beaconpe.jraklib.server.ServerInstance;
+import net.redstonelamp.Player;
 import net.redstonelamp.Server;
 import net.redstonelamp.network.LowLevelNetworkException;
 import net.redstonelamp.network.NetworkInterface;
@@ -46,15 +47,17 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
     private final Server server;
     private final JRakLibServer rakLibServer;
     private final ServerHandler handler;
+    private final PEProtocol protocol;
     private net.redstonelamp.ui.Logger logger;
 
     private Deque<UniversalPacket> packetQueue = new ConcurrentLinkedDeque<>();
 
     private CallableTask tickTask = new CallableTask("tick", this);
 
-    public JRakLibInterface(Server server) {
+    public JRakLibInterface(Server server, PEProtocol protocol) {
         //TODO: Correct port and interface
         this.server = server;
+        this.protocol = protocol;
 
         setupLogger();
         rakLibServer = new JRakLibServer(new JRakLibLogger(new net.redstonelamp.ui.Logger(new Log4j2ConsoleOut("JRakLib"))), 19132, "0.0.0.0");
@@ -119,6 +122,10 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
     @Override
     public void closeSession(String identifier, String reason) {
         logger.debug("("+identifier+") closeSession: {reason: "+reason+"}");
+        Player player = server.getPlayer(new JRakLibIdentifierAddress(identifier));
+        if(player != null) {
+            server.closeSession(player);  //TODO: player.close()
+        }
     }
 
     @Override
@@ -142,6 +149,16 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
     @Override
     public void handleOption(String option, String value) {
 
+    }
+
+    /**
+     * INTERNAL METHOD!
+     * Close a session for no reason
+     * @param identifier
+     * @param reason
+     */
+    public void _internalClose(String identifier, String reason) {
+        handler.closeSession(identifier, reason);
     }
 
     /**

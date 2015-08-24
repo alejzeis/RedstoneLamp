@@ -19,7 +19,15 @@ package net.redstonelamp.network.pe;
 import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.network.UniversalPacket;
+import net.redstonelamp.network.pe.sub.PESubprotocolManager;
+import net.redstonelamp.network.pe.sub.Subprotocol;
+import net.redstonelamp.nio.BinaryBuffer;
 import net.redstonelamp.request.Request;
+
+import java.net.SocketAddress;
+import java.nio.ByteOrder;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The Minecraft: Pocket Edition Protocol implementation
@@ -28,6 +36,9 @@ import net.redstonelamp.request.Request;
  */
 public class PEProtocol extends Protocol{
 
+    private final Map<String, Subprotocol> addressToSubprotocols = new HashMap<>();
+    private final PESubprotocolManager subprotocols;
+
     /**
      * Construct new PEProtocol.
      *
@@ -35,7 +46,8 @@ public class PEProtocol extends Protocol{
      */
     public PEProtocol(NetworkManager manager) {
         super(manager);
-        _interface = new JRakLibInterface(manager.getServer());
+        subprotocols = new PESubprotocolManager(this);
+        _interface = new JRakLibInterface(manager.getServer(), this);
     }
 
     @Override
@@ -48,9 +60,40 @@ public class PEProtocol extends Protocol{
         return "Minecraft: Pocket Edition protocol, version "+PENetworkConst.MCPE_VERSION+" (protocol: "+PENetworkConst.MCPE_PROTOCOL+")";
     }
 
-    @Override
-    public Request handlePacket(UniversalPacket packet) {
+    /**
+     * default method that sends the correct packets in event of a subprotocol not found
+     * @param sendTo
+     */
+    private void defaultNoSubprotocolFoundDisconnect(SocketAddress sendTo) {
+        BinaryBuffer bb = BinaryBuffer.newInstance(5, ByteOrder.BIG_ENDIAN);
+        bb.putByte(PENetworkConst.PLAY_STATUS_PACKET);
+        bb.putInt(1); //LOGIN_FAILED_CLIENT
+        sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, sendTo));
 
-        return null;
+        String message = "disconnectionScreen.outdatedClient";
+        bb = BinaryBuffer.newInstance(3 + message.getBytes().length, ByteOrder.BIG_ENDIAN);
+        bb.putByte(PENetworkConst.DISCONNECT_PACKET);
+        bb.putString(message);
+        sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, sendTo));
+    }
+
+    @Override
+    public Request[] handlePacket(UniversalPacket packet) {
+        if(addressToSubprotocols.containsKey(packet.getAddress().toString())) {
+            return addressToSubprotocols.get(packet.getAddress().toString()).handlePacket(packet);
+        } else {
+            getManager().getServer().getLogger().debug("Searching for subprotocol for "+packet.getAddress().toString());
+            Subprotocol s = subprotocols.findSubprotocol(packet);
+            if(s != null) {
+                getManager().getServer().getLogger().debug("Found subprotocol for "+s.getMCPEVersion()+" ("+s.getProtocolVersion()+")");
+                packet.bb().setPosition(0); //Reset the position to zero
+                return s.handlePacket(packet); //TODO: Since finding the protocol already processes the packet, we are doing the same thing twice
+            } else {
+                getManager().getServer().getLogger().info("Could not find protocol for "+packet.getAddress().toString()+", disconnecting.");
+                defaultNoSubprotocolFoundDisconnect(packet.getAddress());
+                ((JRakLibInterface) _interface)._internalClose(packet.getAddress().toString(), "no subprotocol found");
+                return new Request[] {null};
+            }
+        }
     }
 }

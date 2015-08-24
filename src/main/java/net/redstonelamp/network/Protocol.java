@@ -46,16 +46,18 @@ public abstract class Protocol {
         try {
             UniversalPacket packet;
             while((packet = _interface.readPacket()) != null) {
-                Request r = handlePacket(packet);
-                if(r != null) {
-                    if (players.containsKey(packet.getAddress().toString())) {
-                        players.get(packet.getAddress().toString()).handleRequest(r);
-                    } else {
-                        if(r instanceof LoginRequest) {
-                            Player player = manager.getServer().openSession(packet.getAddress(), this, (LoginRequest) r);
-                            players.put(player.getIdentifier(), player);
+                Request[] requests = handlePacket(packet);
+                for(Request r : requests) {
+                    if (r != null) {
+                        if (players.containsKey(packet.getAddress().toString())) {
+                            players.get(packet.getAddress().toString()).handleRequest(r);
                         } else {
-                            manager.getServer().getLogger().warning("Failed to open session, Request: "+r.getClass().getName());
+                            if (r instanceof LoginRequest) {
+                                Player player = manager.getServer().openSession(packet.getAddress(), this, (LoginRequest) r);
+                                players.put(player.getIdentifier(), player);
+                            } else {
+                                manager.getServer().getLogger().warning("Failed to open session, Request: " + r.getClass().getName());
+                            }
                         }
                     }
                 }
@@ -82,7 +84,7 @@ public abstract class Protocol {
      * @param packet The <code>UniversalPacket</code>
      * @return The Request if translated, null if not.
      */
-    public abstract Request handlePacket(UniversalPacket packet);
+    public abstract Request[] handlePacket(UniversalPacket packet);
 
     /**
      * Send a <code>UniversalPacket</code>

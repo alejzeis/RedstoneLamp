@@ -17,7 +17,7 @@
 package net.redstonelamp.network;
 
 
-import net.redstonelamp.nio.DynamicByteBuffer;
+import net.redstonelamp.nio.BinaryBuffer;
 
 import java.net.SocketAddress;
 import java.nio.ByteOrder;
@@ -30,7 +30,7 @@ import java.nio.ByteOrder;
 public class UniversalPacket {
     private byte[] buffer;
     private SocketAddress address;
-    private DynamicByteBuffer bb;
+    private BinaryBuffer bb;
 
     /**
      * Create a new UniversalPacket with the specified <code>buffer</code> and belonging to the <code>address</code>.
@@ -41,7 +41,7 @@ public class UniversalPacket {
     public UniversalPacket(byte[] buffer, SocketAddress address) {
         this.buffer = buffer;
         this.address = address;
-        bb = DynamicByteBuffer.wrapBytes(buffer, ByteOrder.BIG_ENDIAN);
+        bb = BinaryBuffer.wrapBytes(buffer, ByteOrder.BIG_ENDIAN);
     }
 
     /**
@@ -54,14 +54,14 @@ public class UniversalPacket {
     public UniversalPacket(byte[] buffer, ByteOrder order, SocketAddress address) {
         this.buffer = buffer;
         this.address = address;
-        bb = DynamicByteBuffer.wrapBytes(buffer, order);
+        bb = BinaryBuffer.wrapBytes(buffer, order);
     }
 
     /**
      * Returns the DynamicByteBuffer of the packet <code>buffer</code>. This DOES NOT create a new instance of the buffer.
      * @return The DynamicByteBuffer belonging to the packet.
      */
-    public DynamicByteBuffer bb() {
+    public BinaryBuffer bb() {
         return bb;
     }
 

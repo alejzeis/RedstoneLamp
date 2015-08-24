@@ -74,6 +74,21 @@ public class Server implements Runnable{
     }
 
     /**
+     * Get a Player by their address. Be warned as with different protocols there could be
+     * two players playing from the same address.
+     * @param address The SocketAddress where the player is connecting from
+     * @return The Player, if found, null if not
+     */
+    public Player getPlayer(SocketAddress address) {
+        for(Player player : players) {
+            if(player.getIdentifier().equals(address.toString())) {
+                return player;
+            }
+        }
+        return null;
+    }
+
+    /**
      * INTERNAL METHOD
      * @param address
      * @param protocol
