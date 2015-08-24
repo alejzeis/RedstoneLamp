@@ -22,7 +22,7 @@ import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.request.Request;
 
 /**
- * Created by jython234 on 8/23/2015.
+ * The Minecraft: Pocket Edition Protocol implementation
  *
  * @author RedstoneLamp Team
  */
@@ -50,7 +50,7 @@ public class PEProtocol extends Protocol{
 
     @Override
     public Request handlePacket(UniversalPacket packet) {
-        getManager().getServer().getLogger().debug("");
+
         return null;
     }
 }
