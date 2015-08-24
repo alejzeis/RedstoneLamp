@@ -220,4 +220,12 @@ public class BinaryBuffer {
     public byte[] toArray() {
         return bb.array();
     }
+
+    /**
+     * Skip <code>bytes</code> amount of bytes in the buffer (equivalent to setPosition(getPosition() + len))
+     * @param bytes The amount of bytes to skip in the buffer
+     */
+    public void skip(int bytes) {
+        setPosition(getPosition() + bytes);
+    }
 }

@@ -16,9 +16,13 @@
  */
 package net.redstonelamp.network.pe.sub;
 
+import net.redstonelamp.Player;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.PEProtocol;
 import net.redstonelamp.request.Request;
+import net.redstonelamp.response.Response;
+
+import java.net.SocketAddress;
 
 /**
  * Represents a sub-protocol of the MCPE protocol. Each subprotocol handles a different version of the MCPE protocol.
@@ -40,6 +44,15 @@ public abstract class Subprotocol {
      * @return A translated Request if successful, null if not
      */
     public abstract Request[] handlePacket(UniversalPacket up);
+
+    /**
+     * Translates a  <code>Response</code> to a <code>UniversalPacket</code> array.
+     * The Response may translate to more than one packet.
+     * @param response The Response to be translated
+     * @param address The SocketAddress the packets will be sent to.
+     * @return A UniversalPacket array, containing all the packets the response needs.
+     */
+    public abstract UniversalPacket[] translateResponse(Response response, SocketAddress address);
 
     /**
      * Get the version of MCPE that this subprotocol implements as a String

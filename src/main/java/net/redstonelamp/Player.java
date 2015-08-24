@@ -17,7 +17,12 @@
 package net.redstonelamp;
 
 import net.redstonelamp.network.Protocol;
+import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.request.Request;
+import net.redstonelamp.response.LoginResponse;
+import net.redstonelamp.response.Response;
+
+import java.net.SocketAddress;
 
 /**
  * Protocol-independent Player class. Represents a Player on the server
@@ -26,7 +31,14 @@ import net.redstonelamp.request.Request;
  */
 public class Player {
     private final Protocol protocol;
+    private final Server server;
+    private final SocketAddress address;
     private final String identifier;
+
+    private String username;
+    private int clientID;
+    private byte[] skin;
+    private boolean slim;
 
     /**
      * Construct a new Player instance belonging to the specified <code>Protocol</code> with the <code>identifier</code>
@@ -34,20 +46,65 @@ public class Player {
      * @param identifier The client's identifier. This is the address the player is connecting from, in the format:
      *                   [ip]:[port]
      */
+    @Deprecated
     public Player(Protocol protocol, String identifier) {
         this.protocol = protocol;
         this.identifier = identifier;
+        address = null;
+
+        server = protocol.getManager().getServer();
+    }
+    /**
+     * Construct a new Player instance belonging to the specified <code>Protocol</code> connecting from
+     * <code>address</code>
+     * @param protocol The protocol this player belongs to
+     * @param address The SocketAddress this player is connecting from
+     */
+    public Player(Protocol protocol, SocketAddress address) {
+        this.protocol = protocol;
+        this.address = address;
+
+        identifier = address.toString();
+        server = protocol.getManager().getServer();
+    }
+
+    /**
+     * Sends a <code>Response</code> to the client. If they are available please use API methods.
+     * @param r The Response to be sent.
+     */
+    public void sendResponse(Response r) {
+        protocol.sendResponse(r, this);
     }
 
     public void handleRequest(Request request) {
+        if(request instanceof LoginRequest) {
+            LoginRequest lr = (LoginRequest) request;
+            username = lr.username;
+            clientID = (int) lr.clientId;
+            skin = lr.skin;
+            slim = lr.slim;
 
+            LoginResponse response = new LoginResponse(true);
+            if(server.getPlayers().size() > server.getMaxPlayers()) {
+                response.loginAllowed = false;
+                response.loginNotAllowedReason = "redstonelamp.loginFailed.serverFull";
+            }
+            protocol.sendResponse(response, this);
+            server.getLogger().info(username+"["+address.toString()+"] disconnected: server full");
+            server.closeSession(this); //TODO: close the interface
+        }
     }
 
     public Protocol getProtocol() {
         return protocol;
     }
 
+    @Deprecated
     public String getIdentifier() {
         return identifier;
+    }
+
+    public SocketAddress getAddress() {
+        return address;
     }
 }

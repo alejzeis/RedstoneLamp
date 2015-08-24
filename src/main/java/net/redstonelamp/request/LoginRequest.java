@@ -25,6 +25,8 @@ public class LoginRequest extends Request{
     public String username;
     public long clientId;
     public long authid;
+    public byte[] skin;
+    public boolean slim;
 
     public LoginRequest(String username){
         this.username = username;

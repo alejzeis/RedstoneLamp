@@ -42,6 +42,8 @@ public class Server implements Runnable{
     private final NetworkManager network;
     private final List<Player> players = new CopyOnWriteArrayList<>();
 
+    private int maxPlayers;
+
     /**
      * Package-private constructor used by the RedstoneLamp run class
      * @param logger The server's logger
@@ -55,6 +57,12 @@ public class Server implements Runnable{
         logger.info(RedstoneLamp.getSoftwareVersionString() +" is licensed under the Lesser GNU General Public License version 3");
 
         network.registerProtocol(new PEProtocol(network));
+
+        loadProperties(config);
+    }
+
+    private void loadProperties(ServerConfig config) {
+        maxPlayers = config.getInt("max-players");
     }
 
     @Override
@@ -97,7 +105,7 @@ public class Server implements Runnable{
      */
     public Player openSession(SocketAddress address, Protocol protocol, LoginRequest loginRequest) {
         logger.debug("Opened Session: "+address.toString());
-        Player player = new Player(protocol, address.toString());
+        Player player = new Player(protocol, address);
         players.add(player);
         return player;
     }
@@ -107,7 +115,7 @@ public class Server implements Runnable{
      * @param player
      */
     public void closeSession(Player player) {
-        logger.debug("Closed Session: "+player.getIdentifier());
+        logger.debug("Closed Session: "+player.getAddress().toString());
         players.remove(player);
     }
 
@@ -123,5 +131,13 @@ public class Server implements Runnable{
 
     public RedstoneTicker getTicker() {
         return ticker;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
     }
 }

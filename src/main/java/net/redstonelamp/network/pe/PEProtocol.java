@@ -16,13 +16,17 @@
  */
 package net.redstonelamp.network.pe;
 
+import net.redstonelamp.Player;
 import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
+import net.redstonelamp.network.pe.sub.v27.SubprotocolV27;
+import net.redstonelamp.network.pe.sub.v34.SubprotocolV34;
 import net.redstonelamp.nio.BinaryBuffer;
 import net.redstonelamp.request.Request;
+import net.redstonelamp.response.Response;
 
 import java.net.SocketAddress;
 import java.nio.ByteOrder;
@@ -48,6 +52,9 @@ public class PEProtocol extends Protocol{
         super(manager);
         subprotocols = new PESubprotocolManager(this);
         _interface = new JRakLibInterface(manager.getServer(), this);
+
+        subprotocols.registerSubprotocol(new SubprotocolV27(subprotocols));
+        subprotocols.registerSubprotocol(new SubprotocolV34(subprotocols));
     }
 
     @Override
@@ -85,6 +92,7 @@ public class PEProtocol extends Protocol{
             getManager().getServer().getLogger().debug("Searching for subprotocol for "+packet.getAddress().toString());
             Subprotocol s = subprotocols.findSubprotocol(packet);
             if(s != null) {
+                addressToSubprotocols.put(packet.getAddress().toString(), s);
                 getManager().getServer().getLogger().debug("Found subprotocol for "+s.getMCPEVersion()+" ("+s.getProtocolVersion()+")");
                 packet.bb().setPosition(0); //Reset the position to zero
                 return s.handlePacket(packet); //TODO: Since finding the protocol already processes the packet, we are doing the same thing twice
@@ -94,6 +102,15 @@ public class PEProtocol extends Protocol{
                 ((JRakLibInterface) _interface)._internalClose(packet.getAddress().toString(), "no subprotocol found");
                 return new Request[] {null};
             }
+        }
+    }
+
+    @Override
+    protected UniversalPacket[] _sendResponse(Response response, Player player) {
+        if(addressToSubprotocols.containsKey(player.getAddress().toString())) {
+            return addressToSubprotocols.get(player.getAddress().toString()).translateResponse(response, player.getAddress());
+        } else {
+            throw new IllegalArgumentException("Player "+player.getAddress().toString()+" not found in subprotocol map!");
         }
     }
 }

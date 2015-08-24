@@ -20,6 +20,7 @@ import net.redstonelamp.Player;
 import net.redstonelamp.Server;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.request.Request;
+import net.redstonelamp.response.Response;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,7 +55,8 @@ public abstract class Protocol {
                         } else {
                             if (r instanceof LoginRequest) {
                                 Player player = manager.getServer().openSession(packet.getAddress(), this, (LoginRequest) r);
-                                players.put(player.getIdentifier(), player);
+                                players.put(player.getAddress().toString(), player);
+                                player.handleRequest(r);
                             } else {
                                 manager.getServer().getLogger().warning("Failed to open session, Request: " + r.getClass().getName());
                             }
@@ -85,6 +87,25 @@ public abstract class Protocol {
      * @return The Request if translated, null if not.
      */
     public abstract Request[] handlePacket(UniversalPacket packet);
+
+    /**
+     * Send a <code>Response</code> by translating it into a native packet
+     * @param response The Response to be sent
+     * @param player The Player the response is being sent from
+     */
+    public void sendResponse(Response response, Player player) {
+        UniversalPacket[] packets = _sendResponse(response, player);
+        for(UniversalPacket packet : packets) {
+            try {
+                _interface.sendPacket(packet);
+            } catch (LowLevelNetworkException e) {
+                manager.getServer().getLogger().error(e.getClass().getName()+" while sending response "+response.getClass().getName()+": "+e.getMessage());
+                manager.getServer().getLogger().trace(e);
+            }
+        }
+    }
+
+    protected abstract UniversalPacket[] _sendResponse(Response response, Player player);
 
     /**
      * Send a <code>UniversalPacket</code>
