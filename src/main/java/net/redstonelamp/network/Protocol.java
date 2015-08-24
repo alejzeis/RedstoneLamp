@@ -18,6 +18,7 @@ package net.redstonelamp.network;
 
 import net.redstonelamp.Player;
 import net.redstonelamp.Server;
+import net.redstonelamp.network.netInterface.NetworkInterface;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.request.Request;
 import net.redstonelamp.response.Response;
@@ -97,7 +98,7 @@ public abstract class Protocol {
         UniversalPacket[] packets = _sendResponse(response, player);
         for(UniversalPacket packet : packets) {
             try {
-                _interface.sendPacket(packet);
+                _interface.sendPacket(packet, false);
             } catch (LowLevelNetworkException e) {
                 manager.getServer().getLogger().error(e.getClass().getName()+" while sending response "+response.getClass().getName()+": "+e.getMessage());
                 manager.getServer().getLogger().trace(e);
@@ -105,7 +106,51 @@ public abstract class Protocol {
         }
     }
 
+    /**
+     * Send a <code>Response</code> by translating it into a native packet.
+     * The packet will be sent IMMEDIATLY and should skip any queues the underlying NetworkInterface
+     * has.
+     * @param response The Response to be sent
+     * @param player The Player the response is being sent from
+     */
+    public void sendImmediateResponse(Response response, Player player) {
+        UniversalPacket[] packets = _sendResponse(response, player);
+        for(UniversalPacket packet : packets) {
+            try {
+                _interface.sendPacket(packet, true);
+            } catch (LowLevelNetworkException e) {
+                manager.getServer().getLogger().error(e.getClass().getName()+" while sending response "+response.getClass().getName()+": "+e.getMessage());
+                manager.getServer().getLogger().trace(e);
+            }
+        }
+    }
+
+    /**
+     * Special method called whenever a player is closing. Please use <code>Player.kick()</code> or <code>Player.close()</code> as those
+     * methods call this one.
+     * @param player The Player closing
+     */
+    public final void close(Player player) {
+        players.remove(player.getAddress().toString());
+        onClose(player);
+    }
+
+    /**
+     * This method translates a <code>Response</code> to a UniversalPacket array
+     * @param response
+     * @param player
+     * @return
+     */
     protected abstract UniversalPacket[] _sendResponse(Response response, Player player);
+
+    /**
+     * This method is called whenever a Player is closed. You can override this method if you have to
+     * do extra things when a session is closed.
+     * @param player The player which is closing.
+     */
+    protected void onClose(Player player) {
+
+    }
 
     /**
      * Send a <code>UniversalPacket</code>
@@ -114,7 +159,7 @@ public abstract class Protocol {
      */
     public boolean sendPacket(UniversalPacket packet) {
         try {
-            _interface.sendPacket(packet);
+            _interface.sendPacket(packet, false);
             return true;
         } catch (LowLevelNetworkException e) {
             manager.getServer().getLogger().trace(e);

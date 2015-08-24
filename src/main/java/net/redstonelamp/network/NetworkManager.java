@@ -17,6 +17,7 @@
 package net.redstonelamp.network;
 
 import net.redstonelamp.Server;
+import net.redstonelamp.network.netInterface.AdvancedNetworkInterface;
 import net.redstonelamp.ticker.CallableTask;
 
 import java.util.ArrayList;
@@ -55,14 +56,14 @@ public class NetworkManager {
         server.getLogger().info("Registered protocol: "+protocol.getName());
     }
 
-    public boolean sendPacket(UniversalPacket packet, Protocol sentFrom) {
-        synchronized (protocols) {
-            if(!protocols.contains(sentFrom)) {
-                throw new IllegalArgumentException("Protocol "+sentFrom+" is not registered!");
-            }
-        }
-        //TODO
-        return true;
+    /**
+     * Sets the name of all AdvancedNetworkInterfaces registered
+     * @param name The name to be set to
+     */
+    public void setName(String name) {
+        protocols.stream().filter(protocol -> protocol._interface instanceof AdvancedNetworkInterface).forEach(protocol -> {
+            ((AdvancedNetworkInterface) protocol._interface).setName(name);
+        });
     }
 
     /**

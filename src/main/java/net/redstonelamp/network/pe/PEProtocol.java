@@ -113,4 +113,10 @@ public class PEProtocol extends Protocol{
             throw new IllegalArgumentException("Player "+player.getAddress().toString()+" not found in subprotocol map!");
         }
     }
+
+    @Override
+    protected void onClose(Player player) {
+        addressToSubprotocols.remove(player.getAddress().toString());
+        ((JRakLibInterface) _interface)._internalClose(player.getAddress().toString(), "server disconnect");
+    }
 }

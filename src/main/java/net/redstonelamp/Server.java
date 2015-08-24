@@ -42,6 +42,7 @@ public class Server implements Runnable{
     private final NetworkManager network;
     private final List<Player> players = new CopyOnWriteArrayList<>();
 
+    private String motd;
     private int maxPlayers;
 
     /**
@@ -54,15 +55,16 @@ public class Server implements Runnable{
         this.logger = logger;
         this.config = config;
         this.network = new NetworkManager(this);
+        loadProperties(config);
         logger.info(RedstoneLamp.getSoftwareVersionString() +" is licensed under the Lesser GNU General Public License version 3");
 
         network.registerProtocol(new PEProtocol(network));
-
-        loadProperties(config);
+        network.setName(motd);
     }
 
     private void loadProperties(ServerConfig config) {
         maxPlayers = config.getInt("max-players");
+        motd = config.getString("motd");
     }
 
     @Override

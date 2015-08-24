@@ -22,6 +22,7 @@ import net.redstonelamp.network.pe.sub.Subprotocol;
 import net.redstonelamp.nio.BinaryBuffer;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.request.Request;
+import net.redstonelamp.response.DisconnectResponse;
 import net.redstonelamp.response.LoginResponse;
 import net.redstonelamp.response.Response;
 import net.redstonelamp.utils.CompressionUtils;
@@ -95,6 +96,15 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                 bb = BinaryBuffer.newInstance(3 + message.getBytes().length, ByteOrder.BIG_ENDIAN);
                 bb.putByte(DISCONNECT_PACKET);
                 bb.putString(message);
+
+                packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+            }
+        } else if(response instanceof DisconnectResponse) {
+            DisconnectResponse dr = (DisconnectResponse) response;
+            if(dr.notifyClient) {
+                bb = BinaryBuffer.newInstance(3 + dr.reason.getBytes().length, ByteOrder.BIG_ENDIAN);
+                bb.putByte(DISCONNECT_PACKET);
+                bb.putString(dr.reason);
 
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
             }

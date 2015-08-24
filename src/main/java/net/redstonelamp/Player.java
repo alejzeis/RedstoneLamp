@@ -19,6 +19,7 @@ package net.redstonelamp;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.request.Request;
+import net.redstonelamp.response.DisconnectResponse;
 import net.redstonelamp.response.LoginResponse;
 import net.redstonelamp.response.Response;
 
@@ -39,6 +40,8 @@ public class Player {
     private int clientID;
     private byte[] skin;
     private boolean slim;
+
+    private boolean spawned = false;
 
     /**
      * Construct a new Player instance belonging to the specified <code>Protocol</code> with the <code>identifier</code>
@@ -88,11 +91,28 @@ public class Player {
             if(server.getPlayers().size() > server.getMaxPlayers()) {
                 response.loginAllowed = false;
                 response.loginNotAllowedReason = "redstonelamp.loginFailed.serverFull";
+                protocol.sendImmediateResponse(response, this);
+                close("", "redstonelamp.loginFailed.serverFull", false);
+                return;
             }
-            protocol.sendResponse(response, this);
-            server.getLogger().info(username+"["+address.toString()+"] disconnected: server full");
-            server.closeSession(this); //TODO: close the interface
+            sendResponse(response);
         }
+    }
+
+    public void close(String leaveMessage, String reason, boolean notifyClient) {
+        DisconnectResponse dr = new DisconnectResponse(reason);
+        dr.notifyClient = notifyClient;
+
+        protocol.sendImmediateResponse(dr, this);
+
+        protocol.close(this);
+        server.closeSession(this);
+        server.getLogger().info(username+"["+identifier+"] logged out with reason: "+reason);
+        /*
+        if(leaveMessage != "") {
+            server.broadcastMessage(username + leaveMessage);
+        }
+        */
     }
 
     public Protocol getProtocol() {
@@ -106,5 +126,9 @@ public class Player {
 
     public SocketAddress getAddress() {
         return address;
+    }
+
+    public boolean isSpawned() {
+        return spawned;
     }
 }

@@ -14,7 +14,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.network;
+package net.redstonelamp.network.netInterface;
+
+import net.redstonelamp.network.LowLevelNetworkException;
+import net.redstonelamp.network.UniversalPacket;
 
 /**
  * Represents an interface that can read and write packets
@@ -31,6 +34,7 @@ public interface NetworkInterface {
     /**
      * Sends a packet using the underlying socket. This method should NOT block.
      * @param packet The <code>UniversalPacket</code> to be sent.
+     * @param immediate If the packet should be sent immediately.
      */
-    void sendPacket(UniversalPacket packet) throws LowLevelNetworkException;
+    void sendPacket(UniversalPacket packet, boolean immediate) throws LowLevelNetworkException;
 }

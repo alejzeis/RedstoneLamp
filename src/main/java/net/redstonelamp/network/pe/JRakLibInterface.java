@@ -25,7 +25,7 @@ import net.beaconpe.jraklib.server.ServerInstance;
 import net.redstonelamp.Player;
 import net.redstonelamp.Server;
 import net.redstonelamp.network.LowLevelNetworkException;
-import net.redstonelamp.network.NetworkInterface;
+import net.redstonelamp.network.netInterface.AdvancedNetworkInterface;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.ticker.CallableTask;
 import net.redstonelamp.ui.ConsoleOut;
@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  *
  * @author RedstoneLamp Team
  */
-public class JRakLibInterface implements ServerInstance, NetworkInterface{
+public class JRakLibInterface implements ServerInstance, AdvancedNetworkInterface{
     private final Server server;
     private final JRakLibServer rakLibServer;
     private final ServerHandler handler;
@@ -104,14 +104,14 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
     }
 
     @Override
-    public void sendPacket(UniversalPacket packet) throws LowLevelNetworkException {
+    public void sendPacket(UniversalPacket packet, boolean immediate) throws LowLevelNetworkException {
         //Assume packet is to be encapsulated
         EncapsulatedPacket pk = new EncapsulatedPacket();
         pk.messageIndex = 0;
         pk.reliability = 2;
         pk.buffer = packet.getBuffer();
         logger.buffer("("+packet.getAddress().toString()+") PACKET OUT: ", pk.buffer, "");
-        handler.sendEncapsulated(packet.getAddress().toString(), pk, (byte) ((byte) 0 | JRakLib.PRIORITY_NORMAL));
+        handler.sendEncapsulated(packet.getAddress().toString(), pk, (byte) ((byte) 0 | (immediate ? JRakLib.PRIORITY_IMMEDIATE : JRakLib.PRIORITY_NORMAL)));
     }
 
     @Override
@@ -124,7 +124,11 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
         logger.debug("("+identifier+") closeSession: {reason: "+reason+"}");
         Player player = server.getPlayer(new JRakLibIdentifierAddress(identifier));
         if(player != null) {
-            server.closeSession(player);  //TODO: player.close()
+            if(player.isSpawned()) {
+                player.close(" left the game", reason, false);
+            } else {
+                player.close("", reason, false);
+            }
         }
     }
 
@@ -159,6 +163,11 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
      */
     public void _internalClose(String identifier, String reason) {
         handler.closeSession(identifier, reason);
+    }
+
+    @Override
+    public void setName(String name) {
+        handler.sendOption("name", "MCPE;"+name+";"+PENetworkConst.MCPE_PROTOCOL+";"+PENetworkConst.MCPE_VERSION+";"+server.getPlayers().size()+";"+server.getMaxPlayers());
     }
 
     /**
