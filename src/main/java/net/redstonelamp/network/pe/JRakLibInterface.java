@@ -63,7 +63,7 @@ public class JRakLibInterface implements ServerInstance, NetworkInterface{
         rakLibServer = new JRakLibServer(new JRakLibLogger(new net.redstonelamp.ui.Logger(new Log4j2ConsoleOut("JRakLib"))), 19132, "0.0.0.0");
         handler = new ServerHandler(rakLibServer, this);
 
-        handler.sendOption("name", "MCPE;RedstoneLamp test server;0.12.1;"+PENetworkConst.MCPE_PROTOCOL+";0;1");
+        handler.sendOption("name", "MCPE;RedstoneLamp test server;"+PENetworkConst.MCPE_PROTOCOL+";0.12.1;0;1");
 
         server.getTicker().addRepeatingTask(tickTask, 1);
 

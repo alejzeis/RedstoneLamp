@@ -29,3 +29,7 @@ yX1fr6k6VyHhJt+5L15z4A="
     - secure: "HNyuHhKNpeYs/2A0OXmPGNw79j1yOKU2lUhho4zmfPSzeLUfZh5N5gt0a/G5TlG2TICIv
 xSPJRrf5R6OmTJMeMLEYzScaiAuGHgvDGMVs+ZPngCvnwSDIgQ6hwqBnnDEd5vTSyHQQIjUtw+1LTxwp
 0jZCN39cUYl9gvsH1mxnks="
+    - rlVersion="1.2.0"
+    - mcpeVersion="0.12.1"
+    - mcpcVersion="1.8.8"
+    - stability="DEV"
