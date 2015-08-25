@@ -16,12 +16,13 @@
  */
 package net.redstonelamp;
 
+import net.redstonelamp.level.position.Position;
 import net.redstonelamp.network.Protocol;
+import net.redstonelamp.request.ChunkRequest;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.request.Request;
-import net.redstonelamp.response.DisconnectResponse;
-import net.redstonelamp.response.LoginResponse;
-import net.redstonelamp.response.Response;
+import net.redstonelamp.request.SpawnRequest;
+import net.redstonelamp.response.*;
 
 import java.net.SocketAddress;
 
@@ -40,6 +41,8 @@ public class Player {
     private int clientID;
     private byte[] skin;
     private boolean slim;
+
+    private Position position;
 
     private boolean spawned = false;
 
@@ -69,6 +72,13 @@ public class Player {
 
         identifier = address.toString();
         server = protocol.getManager().getServer();
+
+        loadPlayerData();
+    }
+
+    private void loadPlayerData() {
+        //TODO: Load real data
+        position = server.getLevelManager().getMainLevel().getSpawnPosition();
     }
 
     /**
@@ -91,7 +101,7 @@ public class Player {
             skin = lr.skin;
             slim = lr.slim;
 
-            LoginResponse response = new LoginResponse(true, 1, 128, 2, 128);
+            LoginResponse response = new LoginResponse(true, 1, (float) getPosition().getX(), (float) getPosition().getY(), (float) getPosition().getZ());
             if(server.getPlayers().size() > server.getMaxPlayers()) {
                 response.loginAllowed = false;
                 response.loginNotAllowedReason = "redstonelamp.loginFailed.serverFull";
@@ -101,8 +111,13 @@ public class Player {
             }
             sendResponse(response);
             server.getLogger().info(username+"["+address+"] logged in."); //TODO: more info
-
-
+        } else if(request instanceof ChunkRequest) {
+            ChunkRequest r = (ChunkRequest) request;
+            ChunkResponse response = new ChunkResponse(getPosition().getLevel().getChunkAt(r.position));
+            sendResponse(response);
+        } else if(request instanceof SpawnRequest) {
+            SpawnResponse sr = new SpawnResponse(getPosition());
+            sendResponse(sr);
         }
     }
 
@@ -112,9 +127,9 @@ public class Player {
 
         protocol.sendImmediateResponse(dr, this);
 
-        protocol.close(this);
         server.closeSession(this);
         server.getLogger().info(username+"["+identifier+"] logged out with reason: "+reason);
+        protocol.close(this);
         /*
         if(leaveMessage != "") {
             server.broadcastMessage(username + leaveMessage);
@@ -137,5 +152,13 @@ public class Player {
 
     public boolean isSpawned() {
         return spawned;
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
     }
 }

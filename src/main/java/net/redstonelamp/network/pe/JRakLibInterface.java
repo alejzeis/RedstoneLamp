@@ -117,6 +117,7 @@ public class JRakLibInterface implements ServerInstance, AdvancedNetworkInterfac
     @Override
     public void openSession(String identifier, String address, int port, long clientID) {
         logger.debug("("+identifier+") openSession: {clientID: "+clientID+"}");
+        protocol.openSession(identifier);
     }
 
     @Override

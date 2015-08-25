@@ -1,4 +1,7 @@
-package net.redstonelamp.level;
+package net.redstonelamp.level.provider;
+
+import net.redstonelamp.level.Chunk;
+import net.redstonelamp.level.ChunkPosition;
 
 import java.io.File;
 import java.io.IOException;

@@ -21,17 +21,18 @@ import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
 import net.redstonelamp.nio.BinaryBuffer;
+import net.redstonelamp.request.ChunkRequest;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.request.Request;
-import net.redstonelamp.response.DisconnectResponse;
-import net.redstonelamp.response.LoginResponse;
-import net.redstonelamp.response.Response;
+import net.redstonelamp.response.*;
 import net.redstonelamp.utils.CompressionUtils;
 
 import java.net.SocketAddress;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.DataFormatException;
 
 /**
@@ -70,7 +71,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
 
     @Override
     public UniversalPacket[] translateResponse(Response response, SocketAddress address) {
-        List<UniversalPacket> packets = new ArrayList<>();
+        List<UniversalPacket> packets = new CopyOnWriteArrayList<>();
         BinaryBuffer bb;
         if(response instanceof LoginResponse) {
             LoginResponse lr = (LoginResponse) response;
@@ -80,7 +81,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                 bb.putInt(0); //LOGIN_SUCCESS
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
 
-                bb = BinaryBuffer.newInstance(44, ByteOrder.BIG_ENDIAN);
+                bb = BinaryBuffer.newInstance(48, ByteOrder.BIG_ENDIAN);
                 bb.putByte(START_GAME_PACKET);
                 bb.putInt(-1); //seed
                 bb.putInt(lr.generator);
@@ -118,6 +119,8 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
 
                 //TODO: If creative, send items
+
+                getProtocol().getChunkSender().registerChunkRequests(getProtocol().getServer().getPlayer(address), 96);
             } else {
                 String message;
                 switch (lr.loginNotAllowedReason) {
@@ -148,7 +151,39 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
 
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
             }
+        } else if(response instanceof ChunkResponse) {
+            ChunkResponse cr = (ChunkResponse) response;
+
+            BinaryBuffer ordered = BinaryBuffer.newInstance(83200, ByteOrder.BIG_ENDIAN);
+            ordered.put(cr.chunk.getBlockIds());
+            ordered.put(cr.chunk.getBlockMeta());
+            ordered.put(cr.chunk.getSkylight());
+            ordered.put(cr.chunk.getBlocklight());
+            ordered.put(cr.chunk.getHeightmap());
+            ordered.put(cr.chunk.getBiomeColors());
+
+            byte[] orderedData = ordered.toArray();
+            ordered = null;
+
+            bb = BinaryBuffer.newInstance(83213, ByteOrder.BIG_ENDIAN);
+            bb.putByte(FULL_CHUNK_DATA_PACKET);
+            bb.putInt(cr.chunk.getPosition().getX());
+            bb.putInt(cr.chunk.getPosition().getZ());
+            bb.putInt(orderedData.length);
+            bb.put(orderedData);
+
+            packets.add(new UniversalPacket(Arrays.copyOf(bb.toArray(), bb.getPosition()), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof SpawnResponse) {
+            SpawnResponse sr = (SpawnResponse) response;
+
+            bb = BinaryBuffer.newInstance(5, ByteOrder.BIG_ENDIAN);
+            bb.putByte(PLAY_STATUS_PACKET);
+            bb.putInt(3); //PLAY_SPAWN
+
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }
+
+
         //Compress packets
         packets.stream().filter(packet -> packet.getBuffer().length >= 512 && packet.getBuffer()[0] != BATCH_PACKET).forEach(packet -> { //Compress packets
             byte[] compressed = CompressionUtils.zlibDeflate(packet.getBuffer(), 7);

@@ -17,6 +17,8 @@
 package net.redstonelamp;
 
 import net.redstonelamp.config.ServerConfig;
+import net.redstonelamp.level.LevelManager;
+import net.redstonelamp.level.position.Position;
 import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.network.pe.PEProtocol;
@@ -44,6 +46,7 @@ public class Server implements Runnable{
 
     private String motd;
     private int maxPlayers;
+    private LevelManager levelManager;
 
     /**
      * Package-private constructor used by the RedstoneLamp run class
@@ -55,6 +58,8 @@ public class Server implements Runnable{
         this.logger = logger;
         this.config = config;
         this.network = new NetworkManager(this);
+        this.levelManager = new LevelManager(this);
+        levelManager.init();
         loadProperties(config);
         logger.info(RedstoneLamp.getSoftwareVersionString() +" is licensed under the Lesser GNU General Public License version 3");
 
@@ -143,5 +148,13 @@ public class Server implements Runnable{
 
     public int getMaxPlayers() {
         return maxPlayers;
+    }
+
+    public ServerConfig getConfig() {
+        return config;
+    }
+
+    public LevelManager getLevelManager() {
+        return levelManager;
     }
 }

@@ -31,7 +31,9 @@ import net.redstonelamp.response.Response;
 import java.net.SocketAddress;
 import java.nio.ByteOrder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The Minecraft: Pocket Edition Protocol implementation
@@ -41,7 +43,9 @@ import java.util.Map;
 public class PEProtocol extends Protocol{
 
     private final Map<String, Subprotocol> addressToSubprotocols = new HashMap<>();
+    private final List<String> hasBeenOpened = new CopyOnWriteArrayList<>(); //List of sessions open
     private final PESubprotocolManager subprotocols;
+    private final PeChunkSender sender;
 
     /**
      * Construct new PEProtocol.
@@ -51,6 +55,7 @@ public class PEProtocol extends Protocol{
     public PEProtocol(NetworkManager manager) {
         super(manager);
         subprotocols = new PESubprotocolManager(this);
+        sender = new PeChunkSender(this);
         _interface = new JRakLibInterface(manager.getServer(), this);
 
         subprotocols.registerSubprotocol(new SubprotocolV27(subprotocols));
@@ -118,5 +123,15 @@ public class PEProtocol extends Protocol{
     protected void onClose(Player player) {
         addressToSubprotocols.remove(player.getAddress().toString());
         ((JRakLibInterface) _interface)._internalClose(player.getAddress().toString(), "server disconnect");
+    }
+
+    protected void openSession(String session) {
+        if(!hasBeenOpened.contains(session)) {
+            hasBeenOpened.add(session);
+        }
+    }
+
+    public PeChunkSender getChunkSender() {
+        return sender;
     }
 }

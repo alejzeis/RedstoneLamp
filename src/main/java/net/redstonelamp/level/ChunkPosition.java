@@ -50,4 +50,21 @@ public class ChunkPosition {
     public void setZ(int z) {
         this.z = z;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof ChunkPosition) {
+            ChunkPosition pos = (ChunkPosition) obj;
+            if(pos.getX() == getX() && pos.getZ() == getZ()) {
+                return true;
+            }
+            return false;
+        }
+        return obj.equals(this);
+    }
+
+    @Override
+    public String toString() {
+        return "ChunkPosition: {x: "+x+", z:"+z+"}";
+    }
 }
