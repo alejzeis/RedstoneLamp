@@ -79,6 +79,10 @@ public class Player {
         protocol.sendResponse(r, this);
     }
 
+    /**
+     * Handles a Request from the client.
+     * @param request The request from the client
+     */
     public void handleRequest(Request request) {
         if(request instanceof LoginRequest) {
             LoginRequest lr = (LoginRequest) request;
@@ -87,7 +91,7 @@ public class Player {
             skin = lr.skin;
             slim = lr.slim;
 
-            LoginResponse response = new LoginResponse(true);
+            LoginResponse response = new LoginResponse(true, 1, 128, 2, 128);
             if(server.getPlayers().size() > server.getMaxPlayers()) {
                 response.loginAllowed = false;
                 response.loginNotAllowedReason = "redstonelamp.loginFailed.serverFull";
@@ -96,6 +100,9 @@ public class Player {
                 return;
             }
             sendResponse(response);
+            server.getLogger().info(username+"["+address+"] logged in."); //TODO: more info
+
+
         }
     }
 

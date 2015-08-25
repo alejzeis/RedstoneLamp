@@ -84,6 +84,33 @@ public class Server implements Runnable{
     }
 
     /**
+     * INTERNAL METHOD
+     * @param address
+     * @param protocol
+     * @param loginRequest
+     * @return
+     */
+    public Player openSession(SocketAddress address, Protocol protocol, LoginRequest loginRequest) {
+        logger.debug("Opened Session: "+address.toString());
+        Player player = new Player(protocol, address);
+        players.add(player);
+        network.setName(motd); //Update the amount of players online
+        return player;
+    }
+
+    /**
+     * INTERNAL METHOD!
+     * @param player
+     */
+    public void closeSession(Player player) {
+        logger.debug("Closed Session: "+player.getAddress().toString());
+        players.remove(player);
+        network.setName(motd); //Update the amount of players online
+    }
+
+    //All Setter/Getter methods BELOW here.
+
+    /**
      * Get a Player by their address. Be warned as with different protocols there could be
      * two players playing from the same address.
      * @param address The SocketAddress where the player is connecting from
@@ -97,31 +124,6 @@ public class Server implements Runnable{
         }
         return null;
     }
-
-    /**
-     * INTERNAL METHOD
-     * @param address
-     * @param protocol
-     * @param loginRequest
-     * @return
-     */
-    public Player openSession(SocketAddress address, Protocol protocol, LoginRequest loginRequest) {
-        logger.debug("Opened Session: "+address.toString());
-        Player player = new Player(protocol, address);
-        players.add(player);
-        return player;
-    }
-
-    /**
-     * INTERNAL METHOD!
-     * @param player
-     */
-    public void closeSession(Player player) {
-        logger.debug("Closed Session: "+player.getAddress().toString());
-        players.remove(player);
-    }
-
-    //All Setter/Getter methods BELOW here.
 
     /**
      * Retrieve the server's logger.

@@ -24,11 +24,31 @@ package net.redstonelamp.response;
  */
 public class LoginResponse extends Response{
     public static final String DEFAULT_loginNotAllowedReason = "redstonelamp.loginFailed.noReason";
+    public static final int DEFAULT_generator = 1;
+    public static final long DEFAULT_entityID = 0; //Player entity ID is always 0
 
     public boolean loginAllowed;
     public String loginNotAllowedReason = DEFAULT_loginNotAllowedReason;
 
-    public LoginResponse(boolean loginAllowed) {
+    public int generator = DEFAULT_generator;
+    public int gamemode;
+    public long entityID = DEFAULT_entityID;
+    public int spawnX;
+    public int spawnY;
+    public int spawnZ;
+    public float x;
+    public float y;
+    public float z;
+
+    public LoginResponse(boolean loginAllowed, int gamemode, float x, float y, float z) {
         this.loginAllowed = loginAllowed;
+        this.gamemode = gamemode;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+
+        spawnX = (int) x;
+        spawnY = (int) y;
+        spawnZ = (int) z;
     }
 }

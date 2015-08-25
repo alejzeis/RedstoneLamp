@@ -16,6 +16,7 @@
  */
 package net.redstonelamp.network.pe.sub.v27;
 
+import net.beaconpe.jraklib.Binary;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
@@ -78,6 +79,45 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                 bb.putByte(PLAY_STATUS_PACKET);
                 bb.putInt(0); //LOGIN_SUCCESS
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+
+                bb = BinaryBuffer.newInstance(44, ByteOrder.BIG_ENDIAN);
+                bb.putByte(START_GAME_PACKET);
+                bb.putInt(-1); //seed
+                bb.putInt(lr.generator);
+                bb.putInt(lr.gamemode);
+                bb.putLong(lr.entityID);
+                bb.putInt(lr.spawnX);
+                bb.putInt(lr.spawnY);
+                bb.putInt(lr.spawnZ);
+                bb.putFloat(lr.x);
+                bb.putFloat(lr.y);
+                bb.putFloat(lr.z);
+                packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+
+                bb = BinaryBuffer.newInstance(6, ByteOrder.BIG_ENDIAN);
+                bb.putByte(SET_TIME_PACKET);
+                bb.putInt(0); //TODO: Correct time
+                bb.putByte((byte) 1);
+                packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+
+                bb = BinaryBuffer.newInstance(10, ByteOrder.BIG_ENDIAN);
+                bb.putByte(SET_SPAWN_POSITION_PACKET);
+                bb.putInt(lr.spawnX);
+                bb.putInt(lr.spawnZ);
+                bb.putByte((byte) lr.spawnY);
+                packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+
+                bb = BinaryBuffer.newInstance(5, ByteOrder.BIG_ENDIAN);
+                bb.putByte(SET_HEALTH_PACKET);
+                bb.putInt(20); //TODO: Correct health
+                packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+
+                bb = BinaryBuffer.newInstance(5, ByteOrder.BIG_ENDIAN);
+                bb.putByte(SET_DIFFICULTY_PACKET);
+                bb.putInt(1); //TODO: Correct difficulty
+                packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+
+                //TODO: If creative, send items
             } else {
                 String message;
                 switch (lr.loginNotAllowedReason) {

@@ -22,7 +22,7 @@ package net.redstonelamp.network.pe.sub.v34;
  * This file is based on the PocketMine-MP file at https://github.com/PocketMine/PocketMine-MP/blob/mcpe-0.12/src/pocketmine/network/protocol/Info.php
  * PocketMine-MP is licensed under the LGPL v3. All credit to the PocketMine team
  *
- * @author RedstoneLamp Team
+ * @author PocketMine Team (translated by RedstoneLamp Team)
  */
 public interface ProtocolConst34 {
     /**

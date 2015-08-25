@@ -163,6 +163,14 @@ public class BinaryBuffer {
         put(ByteBuffer.allocate(8).order(getOrder()).putLong(l).array());
     }
 
+    public void putFloat(float f) {
+        put(ByteBuffer.allocate(4).order(getOrder()).putFloat(f).array());
+    }
+
+    public void putDouble(double d) {
+        put(ByteBuffer.allocate(8).order(getOrder()).putDouble(d).array());
+    }
+
     public void putString(String s) {
         putShort((short) s.getBytes().length);
         put(s.getBytes());
