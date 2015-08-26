@@ -139,6 +139,14 @@ public class BinaryBuffer {
         return bb.getLong();
     }
 
+    public float getFloat() {
+        return bb.getFloat();
+    }
+
+    public double getDouble() {
+        return bb.getDouble();
+    }
+
     /**
      * Get a single short prefixed string from the buffer (2 + str bytes)
      * @return A single short prefixed string

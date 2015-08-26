@@ -18,14 +18,12 @@ package net.redstonelamp.network.pe.sub.v27;
 
 import net.beaconpe.jraklib.Binary;
 import net.redstonelamp.Player;
+import net.redstonelamp.level.position.Position;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
 import net.redstonelamp.nio.BinaryBuffer;
-import net.redstonelamp.request.ChatRequest;
-import net.redstonelamp.request.ChunkRequest;
-import net.redstonelamp.request.LoginRequest;
-import net.redstonelamp.request.Request;
+import net.redstonelamp.request.*;
 import net.redstonelamp.response.*;
 import net.redstonelamp.utils.CompressionUtils;
 
@@ -88,6 +86,26 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             	// TODO: Throw PlayerChatEvent
             	requests.add(cr);
             	break;
+            case MOVE_PLAYER_PACKET:
+                Position position = new Position(getProtocol().getServer().getPlayer(up.getAddress()).getPosition().getLevel());
+                up.bb().skip(8); //Skip entity ID
+                float x = up.bb().getFloat();
+                float y = up.bb().getFloat();
+                float z = up.bb().getFloat();
+                float yaw = up.bb().getFloat();
+                up.bb().skip(4); //Skip bodyYaw
+                float pitch = up.bb().getFloat();
+                up.bb().skip(1); //Skip mode
+                boolean onGround = up.bb().getByte() > 0;
+                position.setX(x);
+                position.setY(y);
+                position.setZ(z);
+                position.setYaw(yaw);
+                position.setPitch(pitch);
+
+                PlayerMoveRequest pmr = new PlayerMoveRequest(position, onGround);
+                requests.add(pmr);
+                break;
         }
         return requests.toArray(new Request[requests.size()]);
     }
@@ -237,6 +255,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
         } else if(response instanceof TeleportResponse) {
             TeleportResponse tr = (TeleportResponse) response;
             bb = BinaryBuffer.newInstance(36, ByteOrder.BIG_ENDIAN);
+            bb.putByte(MOVE_PLAYER_PACKET);
             bb.putLong(player.getEntityID());
             bb.putFloat((float) tr.pos.getX());
             bb.putFloat((float) tr.pos.getY());
@@ -259,6 +278,30 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                 bb.putByte((byte) 0); //TYPE_RAW
                 bb.putString(cr.message);
             }
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof AddPlayerResponse) {
+            Player p = ((AddPlayerResponse) response).player;
+            byte[] meta = p.getMetadata().toBytes();
+            //bb = BinaryBuffer.newInstance(56 + p.getSkin().length + p.getNametag().getBytes().length + meta.length, ByteOrder.BIG_ENDIAN);
+            bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+            bb.putByte(ADD_PLAYER_PACKET);
+            bb.putLong(p.getEntityID()); //Prevent client from knowing the real clientID
+            bb.putString(p.getNametag());
+            bb.putLong(p.getEntityID());
+            bb.putFloat((float) p.getPosition().getX());
+            bb.putFloat((float) p.getPosition().getY());
+            bb.putFloat((float) p.getPosition().getZ());
+            bb.putFloat(0f); //Speed X
+            bb.putFloat(0f); //Speed y
+            bb.putFloat(0f); //speed z
+            bb.putFloat(p.getPosition().getYaw());
+            bb.putFloat(p.getPosition().getYaw()); //TODO: head yaw
+            bb.putShort((short) 0);
+            bb.putShort((short) 0);
+            bb.putByte((byte) (p.isSlim() ? 1 : 0));
+            bb.putShort((short) p.getSkin().length);
+            bb.put(p.getSkin());
+            bb.put(meta);
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }
 

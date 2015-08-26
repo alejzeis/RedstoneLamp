@@ -18,6 +18,8 @@ package net.redstonelamp.entity;
 
 import net.redstonelamp.Player;
 import net.redstonelamp.metadata.*;
+import net.redstonelamp.response.AddPlayerResponse;
+import net.redstonelamp.response.RemovePlayerResponse;
 
 /**
  * An entity implementation of a Player. This is the Player's
@@ -25,7 +27,7 @@ import net.redstonelamp.metadata.*;
  *
  * @author RedstoneLamp Team
  */
-public class PlayerEntity extends Entity{
+public abstract class PlayerEntity extends Entity{
 
     @Override
     protected void initEntity() {
@@ -46,6 +48,21 @@ public class PlayerEntity extends Entity{
 
     @Override
     public void spawnTo(Player player) {
+        if(player != this) {
+            if(this instanceof Player) {
+                Player me = ((Player) this);
+                player.sendResponse(new AddPlayerResponse(me));
+            }
+        }
+    }
 
+    @Override
+    public void despawnFrom(Player player) {
+        if(player != this) {
+            if(this instanceof Player) {
+                Player me = ((Player) this);
+                player.sendResponse(new RemovePlayerResponse(me));
+            }
+        }
     }
 }

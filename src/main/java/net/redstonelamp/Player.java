@@ -24,18 +24,8 @@ import net.redstonelamp.network.Protocol;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.v27.ProtocolConst27;
 import net.redstonelamp.nio.BinaryBuffer;
-import net.redstonelamp.request.ChatRequest;
-import net.redstonelamp.request.ChunkRequest;
-import net.redstonelamp.request.LoginRequest;
-import net.redstonelamp.request.Request;
-import net.redstonelamp.request.SpawnRequest;
-import net.redstonelamp.response.ChatResponse;
-import net.redstonelamp.response.ChunkResponse;
-import net.redstonelamp.response.DisconnectResponse;
-import net.redstonelamp.response.LoginResponse;
-import net.redstonelamp.response.Response;
-import net.redstonelamp.response.SpawnResponse;
-import net.redstonelamp.response.TeleportResponse;
+import net.redstonelamp.request.*;
+import net.redstonelamp.response.*;
 
 /**
  * Protocol-independent Player class. Represents a Player on the server
@@ -149,11 +139,24 @@ public class Player extends PlayerEntity{
             sendResponse(sr);
             TeleportResponse tr = new TeleportResponse(getPosition(), true);
             sendResponse(tr);
+
+            server.getPlayers().stream().filter(player -> player != this && player.getPosition().getLevel() == getPosition().getLevel()).forEach(player -> {
+                spawnTo(player);
+                player.spawnTo(this);
+            });
+
             server.getLogger().debug("Player "+username+" spawned (took "+(System.currentTimeMillis() - startLogin)+" ms)");
             //server.broadcastMessage(username+" joined the game.");
         } else if(request instanceof ChatRequest) {
             ChatRequest cr = (ChatRequest) request;
             server.broadcastMessage("<"+username+"> "+cr.message);
+        } else if(request instanceof PlayerMoveRequest) {
+            PlayerMoveRequest pmr = (PlayerMoveRequest) request;
+            if(gamemode == 1) {
+                PlayerMoveResponse response = new PlayerMoveResponse(getEntityID(), pmr.position, pmr.onGround);
+                setPosition(pmr.position);
+                server.broadcastResponse(response);
+            } //TODO: Check movement if in survival
         }
     }
 
@@ -192,5 +195,13 @@ public class Player extends PlayerEntity{
 
     public int getGamemode() {
         return gamemode;
+    }
+
+    public byte[] getSkin() {
+        return skin;
+    }
+
+    public boolean isSlim() {
+        return slim;
     }
 }
