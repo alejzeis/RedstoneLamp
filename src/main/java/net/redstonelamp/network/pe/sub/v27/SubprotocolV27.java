@@ -44,8 +44,6 @@ import java.util.zip.DataFormatException;
  */
 public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
 	
-	int increment = 0;
-	
     public SubprotocolV27(PESubprotocolManager manager) {
         super(manager);
     }
@@ -57,7 +55,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
         if(id == BATCH_PACKET) {
             return processBatch(up);
         }
-
+        
         switch (id) {
             case LOGIN_PACKET:
                 getProtocol().getServer().getLogger().debug("Got Login packet!");
@@ -72,20 +70,21 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             case TEXT_PACKET:
             	ChatRequest cr = new ChatRequest(up.bb().getByte());
             	switch(cr.type) {
-            		case ChatRequest.TYPE_CHAT:
+            		case TEXT_CHAT:
             			cr.source = up.bb().getString();
-            		case ChatRequest.TYPE_RAW:
-            		case ChatRequest.TYPE_POPUP:
-            		case ChatRequest.TYPE_TIP:
+            		case TEXT_RAW:
+            		case TEXT_POPUP:
+            		case TEXT_TIP:
             			cr.message = up.bb().getString();
             			break;
-            		case ChatRequest.TYPE_TRANSLATION:
+            		case TEXT_TRANSLATION:
             			cr.message = up.bb().getString();
             			for(int i = 0; i < up.bb().getByte(); i++)
             				cr.parameters[i] = up.bb().getString();
             			break;
             	}
             	// TODO: Throw PlayerChatEvent
+            	getProtocol().getServer().getPlayer(up.getAddress()).sendPopup("You sent a message!");
             	requests.add(cr);
             	break;
         }
@@ -252,14 +251,21 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN); //Self-expand
             bb.putByte(TEXT_PACKET);
             if(cr.source != "") {
-                bb.putByte((byte) 1); //TYPE_CHAT
+                bb.putByte(TEXT_CHAT); //TYPE_CHAT
                 bb.putString(cr.source);
                 bb.putString(cr.message);
             } else {
-                bb.putByte((byte) 0); //TYPE_RAW
+                bb.putByte(TEXT_RAW); //TYPE_RAW
                 bb.putString(cr.message);
             }
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof PopupResponse) {
+        	PopupResponse pr = (PopupResponse) response;
+        	bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+        	bb.putByte(TEXT_PACKET);
+        	bb.putByte(TEXT_POPUP); // TYPE_POPUP
+        	bb.putString(pr.message);
+        	packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }
 
         //Compress packets

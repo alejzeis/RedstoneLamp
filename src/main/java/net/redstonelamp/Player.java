@@ -33,6 +33,7 @@ import net.redstonelamp.response.ChatResponse;
 import net.redstonelamp.response.ChunkResponse;
 import net.redstonelamp.response.DisconnectResponse;
 import net.redstonelamp.response.LoginResponse;
+import net.redstonelamp.response.PopupResponse;
 import net.redstonelamp.response.Response;
 import net.redstonelamp.response.SpawnResponse;
 import net.redstonelamp.response.TeleportResponse;
@@ -110,6 +111,10 @@ public class Player extends PlayerEntity{
     
     public void sendMessage(String s) {
     	protocol.sendImmediateResponse(new ChatResponse(s), this);
+    }
+    
+    public void sendPopup(String s) {
+    	protocol.sendImmediateResponse(new PopupResponse(s), this);
     }
 
     /**

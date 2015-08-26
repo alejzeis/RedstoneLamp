@@ -82,4 +82,10 @@ public interface ProtocolConst27 {
     public static final byte FULL_CHUNK_DATA_PACKET = (byte) 0xaf;
     public static final byte SET_DIFFICULTY_PACKET = (byte) 0xb0;
     public static final byte BATCH_PACKET = (byte) 0xb1;
+    
+    public static final byte TEXT_RAW = (byte) 0x00;
+	public static final byte TEXT_CHAT = (byte) 0x01;
+	public static final byte TEXT_TRANSLATION = (byte) 0x02;
+	public static final byte TEXT_POPUP = (byte) 0x03;
+	public static final byte TEXT_TIP = (byte) 0x04;
 }
