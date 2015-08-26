@@ -21,6 +21,8 @@ import net.redstonelamp.metadata.*;
 import net.redstonelamp.response.AddPlayerResponse;
 import net.redstonelamp.response.RemovePlayerResponse;
 
+import java.util.Arrays;
+
 /**
  * An entity implementation of a Player. This is the Player's
  * parent class.
@@ -31,6 +33,7 @@ public abstract class PlayerEntity extends Entity{
 
     @Override
     protected void initEntity() {
+        /*
         MetadataDictionary data = new MetadataDictionary();
         data.put((byte) 0, new MetadataByte((byte) 0)); //TODO: Is player on fire
         data.put((byte) 1, new MetadataShort((short) 300)); //Air
@@ -43,6 +46,19 @@ public abstract class PlayerEntity extends Entity{
         data.put((byte) 16, new MetadataByte((byte) 0)); //Player flags
         data.put((byte) 17, new MetadataLong((byte) 0));
         setMetadata(data);
+        */
+        EntityMetadata em = new EntityMetadata();
+        em.set((byte) 0, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 1)); //Is player on fire
+        em.set((byte) 1, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_SHORT, (short) 300)); //Strange Air thing
+        em.set((byte) 2, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_STRING, getNametag())); //nametag
+        em.set((byte) 3, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 1)); //Hide nametag?
+        em.set((byte) 4, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0)); //silent thing
+        em.set((byte) 7, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_INT, 0)); //Potion color
+        em.set((byte) 8, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0)); //Potion ambient
+        em.set((byte) 15, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 1)); //No ai
+        em.set((byte) 16, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_BYTE, (byte) 0)); //Player flags
+        em.set((byte) 17, Arrays.asList((Object) EntityMetadata.DataType.DATA_TYPE_LONG, (long) 0));
+        setMetadata(em);
         super.initEntity();
     }
 
