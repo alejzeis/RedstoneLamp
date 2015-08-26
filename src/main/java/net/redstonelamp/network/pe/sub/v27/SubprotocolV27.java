@@ -16,17 +16,6 @@
  */
 package net.redstonelamp.network.pe.sub.v27;
 
-import net.beaconpe.jraklib.Binary;
-import net.redstonelamp.network.UniversalPacket;
-import net.redstonelamp.network.pe.sub.PESubprotocolManager;
-import net.redstonelamp.network.pe.sub.Subprotocol;
-import net.redstonelamp.nio.BinaryBuffer;
-import net.redstonelamp.request.ChunkRequest;
-import net.redstonelamp.request.LoginRequest;
-import net.redstonelamp.request.Request;
-import net.redstonelamp.response.*;
-import net.redstonelamp.utils.CompressionUtils;
-
 import java.net.SocketAddress;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -34,6 +23,22 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.DataFormatException;
+
+import net.redstonelamp.Player;
+import net.redstonelamp.network.UniversalPacket;
+import net.redstonelamp.network.pe.sub.PESubprotocolManager;
+import net.redstonelamp.network.pe.sub.Subprotocol;
+import net.redstonelamp.nio.BinaryBuffer;
+import net.redstonelamp.request.ChatRequest;
+import net.redstonelamp.request.LoginRequest;
+import net.redstonelamp.request.Request;
+import net.redstonelamp.response.ChatResponse;
+import net.redstonelamp.response.ChunkResponse;
+import net.redstonelamp.response.DisconnectResponse;
+import net.redstonelamp.response.LoginResponse;
+import net.redstonelamp.response.Response;
+import net.redstonelamp.response.SpawnResponse;
+import net.redstonelamp.utils.CompressionUtils;
 
 /**
  * A subprotocol implementation for the MCPE version 0.11.1 (protocol 27)
@@ -65,6 +70,24 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
 
                 requests.add(lr);
                 break;
+            case TEXT_PACKET:
+            	ChatRequest cr = new ChatRequest(up.bb().getByte());
+            	switch(cr.type) {
+            		case ChatRequest.TYPE_CHAT:
+            			cr.source = up.bb().getString();
+            		case ChatRequest.TYPE_RAW:
+            		case ChatRequest.TYPE_POPUP:
+            		case ChatRequest.TYPE_TIP:
+            			cr.message = up.bb().getString();
+            			break;
+            		case ChatRequest.TYPE_TRANSLATION:
+            			cr.message = up.bb().getString();
+            			for(int i = 0; i < up.bb().getByte(); i++)
+            				cr.parameters[i] = up.bb().getString();
+            	}
+            	// TODO: Throw PlayerChatEvent
+            	requests.add(cr);
+            	break;
         }
         return requests.toArray(new Request[requests.size()]);
     }
@@ -181,8 +204,9 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             bb.putInt(3); //PLAY_SPAWN
 
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof ChatResponse) {
+        	// I have no idea if this should even EXIST here - SuperstarGamer, 2015
         }
-
 
         //Compress packets
         packets.stream().filter(packet -> packet.getBuffer().length >= 512 && packet.getBuffer()[0] != BATCH_PACKET).forEach(packet -> { //Compress packets
