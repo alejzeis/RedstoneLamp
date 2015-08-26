@@ -2,8 +2,9 @@ language: java
 
 sudo: false
 
-#before_install:
-  #- wget -q -O - http://get.redstonelamp.net/travis/before_install.sh | bash
+before_install:
+ #- wget -q -O - http://get.redstonelamp.net/travis/before_install.sh | bash
+  - sed -i.bak -e 's|https://nexus.codehaus.org/snapshots/|https://oss.sonatype.org/content/repositories/codehaus-snapshots/|g' ~/.m2/settings.xml
 
 install: echo "Dummy thing to prevent travis from doing strange maven thing."
 
