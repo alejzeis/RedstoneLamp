@@ -142,7 +142,7 @@ public class Server implements Runnable{
      */
     public Player getPlayer(SocketAddress address) {
         for(Player player : players) {
-            if(player.getIdentifier().equals(address.toString())) {
+            if(player.getAddress().toString().equals(address.toString())) {
                 return player;
             }
         }
