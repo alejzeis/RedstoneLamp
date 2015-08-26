@@ -101,6 +101,10 @@ public class Player extends PlayerEntity{
     public void sendMessage(String s) {
     	protocol.sendImmediateResponse(new ChatResponse(s), this);
     }
+    
+    public void sendPopup(String s) {
+    	protocol.sendImmediateResponse(new PopupResponse(s), this);
+    }
 
     /**
      * Handles a Request from the client.
