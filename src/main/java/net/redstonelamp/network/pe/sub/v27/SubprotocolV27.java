@@ -87,11 +87,6 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             	}
             	// TODO: Throw PlayerChatEvent
             	requests.add(cr);
-            	for(Player p : getProtocol().getServer().getPlayers()) {
-            		System.out.println(p.getNametag() + " should receive a message");
-            		increment++;
-            		p.sendMessage("This is message #" + increment);
-            	}
             	break;
         }
         return requests.toArray(new Request[requests.size()]);
@@ -256,20 +251,13 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             ChatResponse cr = (ChatResponse) response;
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN); //Self-expand
             bb.putByte(TEXT_PACKET);
-            switch(cr.type) {
-                case ChatRequest.TYPE_CHAT:
-                    bb.putString(cr.source);
-                case ChatRequest.TYPE_RAW:
-                case ChatRequest.TYPE_POPUP:
-                case ChatRequest.TYPE_TIP:
-                    bb.putString(cr.message);
-                    break;
-                case ChatRequest.TYPE_TRANSLATION:
-                    bb.putString(cr.message);
-                    bb.putByte((byte) cr.parameters.length);
-                    for(String param : cr.parameters) {
-                        bb.putString(param);
-                    }
+            if(cr.source != "") {
+                bb.putByte((byte) 1); //TYPE_CHAT
+                bb.putString(cr.source);
+                bb.putString(cr.message);
+            } else {
+                bb.putByte((byte) 0); //TYPE_RAW
+                bb.putString(cr.message);
             }
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }

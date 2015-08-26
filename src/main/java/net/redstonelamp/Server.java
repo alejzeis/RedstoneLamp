@@ -23,6 +23,7 @@ import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.network.pe.PEProtocol;
 import net.redstonelamp.request.LoginRequest;
+import net.redstonelamp.response.Response;
 import net.redstonelamp.ticker.RedstoneTicker;
 import net.redstonelamp.ui.Logger;
 
@@ -112,6 +113,23 @@ public class Server implements Runnable{
         logger.debug("Closed Session: "+player.getAddress().toString());
         players.remove(player);
         network.setName(motd); //Update the amount of players online
+    }
+
+    /**
+     * Broadcasts a response to ALL players on the server. Please use API methods if
+     * available.
+     * @param r The Request to be broadcasted
+     */
+    public void broadcastResponse(Response r) {
+        for(Player player : players) {
+            player.sendResponse(r);
+        }
+    }
+
+    public void broadcastMessage(String message) {
+        for(Player player : players) {
+            player.sendMessage(message);
+        }
     }
 
     //All Setter/Getter methods BELOW here.

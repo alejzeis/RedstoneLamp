@@ -109,11 +109,7 @@ public class Player extends PlayerEntity{
     }
     
     public void sendMessage(String s) {
-    	BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
-    	bb.putByte(ProtocolConst27.TEXT_PACKET);
-    	bb.putByte(ChatRequest.TYPE_RAW);
-    	bb.putString(s);
-    	protocol.sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, this.getAddress()));
+    	protocol.sendImmediateResponse(new ChatResponse(s), this);
     }
 
     /**
@@ -157,17 +153,7 @@ public class Player extends PlayerEntity{
             //server.broadcastMessage(username+" joined the game.");
         } else if(request instanceof ChatRequest) {
             ChatRequest cr = (ChatRequest) request;
-            switch (cr.type) {
-                case ChatRequest.TYPE_CHAT:
-                    for(Player player : server.getPlayers()) {
-                        player.sendResponse(new ChatResponse(cr.type, cr.source, cr.message));
-                    }
-                    break;
-                default:
-                    for(Player player : server.getPlayers()) {
-                        player.sendResponse(new ChatResponse(ChatRequest.TYPE_RAW, "", "<"+username+"> "+cr.message));
-                    }
-            }
+            server.broadcastMessage("<"+username+"> "+cr.message);
         }
     }
 
