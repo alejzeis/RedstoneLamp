@@ -49,10 +49,10 @@ public abstract class Subprotocol {
      * Translates a  <code>Response</code> to a <code>UniversalPacket</code> array.
      * The Response may translate to more than one packet.
      * @param response The Response to be translated
-     * @param address The SocketAddress the packets will be sent to.
+     * @param player The Player this response was sent from
      * @return A UniversalPacket array, containing all the packets the response needs.
      */
-    public abstract UniversalPacket[] translateResponse(Response response, SocketAddress address);
+    public abstract UniversalPacket[] translateResponse(Response response, Player player);
 
     /**
      * Get the version of MCPE that this subprotocol implements as a String

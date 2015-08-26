@@ -16,6 +16,19 @@
  */
 package net.redstonelamp.network.pe.sub.v27;
 
+import net.beaconpe.jraklib.Binary;
+import net.redstonelamp.Player;
+import net.redstonelamp.network.UniversalPacket;
+import net.redstonelamp.network.pe.sub.PESubprotocolManager;
+import net.redstonelamp.network.pe.sub.Subprotocol;
+import net.redstonelamp.nio.BinaryBuffer;
+import net.redstonelamp.request.ChatRequest;
+import net.redstonelamp.request.ChunkRequest;
+import net.redstonelamp.request.LoginRequest;
+import net.redstonelamp.request.Request;
+import net.redstonelamp.response.*;
+import net.redstonelamp.utils.CompressionUtils;
+
 import java.net.SocketAddress;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -23,22 +36,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.DataFormatException;
-
-import net.redstonelamp.Player;
-import net.redstonelamp.network.UniversalPacket;
-import net.redstonelamp.network.pe.sub.PESubprotocolManager;
-import net.redstonelamp.network.pe.sub.Subprotocol;
-import net.redstonelamp.nio.BinaryBuffer;
-import net.redstonelamp.request.ChatRequest;
-import net.redstonelamp.request.LoginRequest;
-import net.redstonelamp.request.Request;
-import net.redstonelamp.response.ChatResponse;
-import net.redstonelamp.response.ChunkResponse;
-import net.redstonelamp.response.DisconnectResponse;
-import net.redstonelamp.response.LoginResponse;
-import net.redstonelamp.response.Response;
-import net.redstonelamp.response.SpawnResponse;
-import net.redstonelamp.utils.CompressionUtils;
 
 /**
  * A subprotocol implementation for the MCPE version 0.11.1 (protocol 27)
@@ -93,7 +90,8 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
     }
 
     @Override
-    public UniversalPacket[] translateResponse(Response response, SocketAddress address) {
+    public UniversalPacket[] translateResponse(Response response, Player player) {
+        SocketAddress address = player.getAddress();
         List<UniversalPacket> packets = new CopyOnWriteArrayList<>();
         BinaryBuffer bb;
         if(response instanceof LoginResponse) {
@@ -199,13 +197,74 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
         } else if(response instanceof SpawnResponse) {
             SpawnResponse sr = (SpawnResponse) response;
 
+            int flags = 0;
+            flags |= 0x20;
+            if(player.getGamemode() == 1) {
+                flags |= 0x80; //allow flight
+            }
+            bb = BinaryBuffer.newInstance(5, ByteOrder.BIG_ENDIAN);
+            bb.putByte(ADVENTURE_SETTINGS_PACKET);
+            bb.putInt(flags);
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+
+            byte[] metadata = player.getMetadata().toBytes();
+            bb = BinaryBuffer.newInstance(9 + metadata.length, ByteOrder.BIG_ENDIAN);
+            bb.putByte(SET_ENTITY_DATA_PACKET);
+            bb.putLong(0); //Player Entity ID is always zero to themselves
+            bb.put(metadata);
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+
+            bb = BinaryBuffer.newInstance(6, ByteOrder.BIG_ENDIAN);
+            bb.putByte(SET_TIME_PACKET);
+            bb.putInt(player.getPosition().getLevel().getTime());
+            bb.putByte((byte) 1);
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+
+            bb = BinaryBuffer.newInstance(13, ByteOrder.BIG_ENDIAN);
+            bb.putByte(RESPAWN_PACKET);
+            bb.putFloat((float) player.getPosition().getX());
+            bb.putFloat((float) player.getPosition().getY());
+            bb.putFloat((float) player.getPosition().getZ());
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+
             bb = BinaryBuffer.newInstance(5, ByteOrder.BIG_ENDIAN);
             bb.putByte(PLAY_STATUS_PACKET);
             bb.putInt(3); //PLAY_SPAWN
-
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof TeleportResponse) {
+            TeleportResponse tr = (TeleportResponse) response;
+            bb = BinaryBuffer.newInstance(36, ByteOrder.BIG_ENDIAN);
+            bb.putLong(player.getEntityID());
+            bb.putFloat((float) tr.pos.getX());
+            bb.putFloat((float) tr.pos.getY());
+            bb.putFloat((float) tr.pos.getZ());
+            bb.putFloat(tr.pos.getYaw());
+            bb.putFloat(tr.bodyYaw);
+            bb.putFloat(tr.pos.getPitch());
+            bb.putByte((byte) 0); //MODE_NORMAL
+            bb.putByte((byte) (tr.onGround ? 1 : 0));
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         } else if(response instanceof ChatResponse) {
         	// I have no idea if this should even EXIST here - SuperstarGamer, 2015
+            ChatResponse cr = (ChatResponse) response;
+            bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN); //Self-expand
+            bb.putByte(TEXT_PACKET);
+            switch(cr.type) {
+                case ChatRequest.TYPE_CHAT:
+                    bb.putString(cr.source);
+                case ChatRequest.TYPE_RAW:
+                case ChatRequest.TYPE_POPUP:
+                case ChatRequest.TYPE_TIP:
+                    bb.putString(cr.message);
+                    break;
+                case ChatRequest.TYPE_TRANSLATION:
+                    bb.putString(cr.message);
+                    bb.putByte((byte) cr.parameters.length);
+                    for(String param : cr.parameters) {
+                        bb.putString(param);
+                    }
+            }
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }
 
         //Compress packets

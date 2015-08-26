@@ -119,7 +119,7 @@
                         <exclude>**/README</exclude>
                         <exclude>**/**.log</exclude>
                         <exclude>**/LICENSE</exclude>
-                        <exclude>worlds</exclude>
+                        <exclude>worlds/**</exclude>
                         <exclude>server.properties</exclude>
                         <exclude>redstonelamp.yml</exclude>
                         <exclude>src/test/resources/**</exclude>

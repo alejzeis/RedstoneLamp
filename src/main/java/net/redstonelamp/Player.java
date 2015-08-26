@@ -16,12 +16,10 @@
  */
 package net.redstonelamp;
 
+import net.redstonelamp.entity.PlayerEntity;
 import net.redstonelamp.level.position.Position;
 import net.redstonelamp.network.Protocol;
-import net.redstonelamp.request.ChunkRequest;
-import net.redstonelamp.request.LoginRequest;
-import net.redstonelamp.request.Request;
-import net.redstonelamp.request.SpawnRequest;
+import net.redstonelamp.request.*;
 import net.redstonelamp.response.*;
 
 import java.net.SocketAddress;
@@ -31,20 +29,21 @@ import java.net.SocketAddress;
  *
  * @author RedstoneLamp Team
  */
-public class Player {
+public class Player extends PlayerEntity{
     private final Protocol protocol;
     private final Server server;
     private final SocketAddress address;
     private final String identifier;
+
+    private long startLogin;
 
     private String username;
     private int clientID;
     private byte[] skin;
     private boolean slim;
 
-    private Position position;
-
     private boolean spawned = false;
+    private int gamemode;
 
     /**
      * Construct a new Player instance belonging to the specified <code>Protocol</code> with the <code>identifier</code>
@@ -78,7 +77,14 @@ public class Player {
 
     private void loadPlayerData() {
         //TODO: Load real data
-        position = server.getLevelManager().getMainLevel().getSpawnPosition();
+        setPosition(server.getLevelManager().getMainLevel().getSpawnPosition());
+        gamemode = 1;
+    }
+
+    @Override
+    protected void initEntity() {
+        setEntityID(server.getNextEntityID());
+        super.initEntity();
     }
 
     /**
@@ -96,12 +102,15 @@ public class Player {
     public void handleRequest(Request request) {
         if(request instanceof LoginRequest) {
             LoginRequest lr = (LoginRequest) request;
+            startLogin = System.currentTimeMillis();
             username = lr.username;
             clientID = (int) lr.clientId;
             skin = lr.skin;
             slim = lr.slim;
 
-            LoginResponse response = new LoginResponse(true, 1, (float) getPosition().getX(), (float) getPosition().getY(), (float) getPosition().getZ());
+            setNametag(username);
+
+            LoginResponse response = new LoginResponse(true, gamemode, (float) getPosition().getX(), (float) getPosition().getY(), (float) getPosition().getZ());
             if(server.getPlayers().size() > server.getMaxPlayers()) {
                 response.loginAllowed = false;
                 response.loginNotAllowedReason = "redstonelamp.loginFailed.serverFull";
@@ -110,7 +119,10 @@ public class Player {
                 return;
             }
             sendResponse(response);
-            server.getLogger().info(username+"["+address+"] logged in."); //TODO: more info
+            initEntity();
+            server.getLogger().info(username+"["+address+"] logged in with entity ID "+getEntityID()+" in level \""+getPosition().getLevel().getName()+"\""
+                    +" at position [x: "+getPosition().getX()+", y: "+getPosition().getY()+", z: "+getPosition().getZ()+"]"
+            );
         } else if(request instanceof ChunkRequest) {
             ChunkRequest r = (ChunkRequest) request;
             ChunkResponse response = new ChunkResponse(getPosition().getLevel().getChunkAt(r.position));
@@ -118,6 +130,23 @@ public class Player {
         } else if(request instanceof SpawnRequest) {
             SpawnResponse sr = new SpawnResponse(getPosition());
             sendResponse(sr);
+            TeleportResponse tr = new TeleportResponse(getPosition(), true);
+            sendResponse(tr);
+            server.getLogger().debug("Player "+username+" spawned (took "+(System.currentTimeMillis() - startLogin)+" ms)");
+            //server.broadcastMessage(username+" joined the game.");
+        } else if(request instanceof ChatRequest) {
+            ChatRequest cr = (ChatRequest) request;
+            switch (cr.type) {
+                case ChatRequest.TYPE_CHAT:
+                    for(Player player : server.getPlayers()) {
+                        player.sendResponse(new ChatResponse(cr.type, cr.source, cr.message));
+                    }
+                    break;
+                default:
+                    for(Player player : server.getPlayers()) {
+                        player.sendResponse(new ChatResponse(ChatRequest.TYPE_RAW, "", "<"+username+"> "+cr.message));
+                    }
+            }
         }
     }
 
@@ -154,11 +183,7 @@ public class Player {
         return spawned;
     }
 
-    public Position getPosition() {
-        return position;
-    }
-
-    public void setPosition(Position position) {
-        this.position = position;
+    public int getGamemode() {
+        return gamemode;
     }
 }

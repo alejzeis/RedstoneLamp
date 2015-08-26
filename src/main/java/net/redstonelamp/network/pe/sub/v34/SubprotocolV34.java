@@ -16,6 +16,7 @@
  */
 package net.redstonelamp.network.pe.sub.v34;
 
+import net.redstonelamp.Player;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
@@ -57,7 +58,7 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
     }
 
     @Override
-    public UniversalPacket[] translateResponse(Response response, SocketAddress address) {
+    public UniversalPacket[] translateResponse(Response response, Player player) {
         return new UniversalPacket[0];
     }
 

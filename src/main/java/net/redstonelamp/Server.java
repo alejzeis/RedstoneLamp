@@ -47,6 +47,7 @@ public class Server implements Runnable{
     private String motd;
     private int maxPlayers;
     private LevelManager levelManager;
+    private int nextEntityID = 1;
 
     /**
      * Package-private constructor used by the RedstoneLamp run class
@@ -156,5 +157,9 @@ public class Server implements Runnable{
 
     public LevelManager getLevelManager() {
         return levelManager;
+    }
+
+    protected int getNextEntityID() {
+        return nextEntityID++;
     }
 }

@@ -106,7 +106,7 @@ public class LevelDBProvider implements LevelProvider{
 
     private void genNewLevelData(File file) throws IOException {
         IntTag x = new IntTag("SpawnX", 128);
-        IntTag y = new IntTag("SpawnY", 2); //TODO: Correct positions
+        IntTag y = new IntTag("SpawnY", 1); //TODO: Correct positions
         IntTag z = new IntTag("SpawnZ", 128);
         IntTag gamemode = new IntTag("GameType", 1);
         LongTag time = new LongTag("Time", 1);

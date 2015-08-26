@@ -113,7 +113,7 @@ public class PEProtocol extends Protocol{
     @Override
     protected UniversalPacket[] _sendResponse(Response response, Player player) {
         if(addressToSubprotocols.containsKey(player.getAddress().toString())) {
-            return addressToSubprotocols.get(player.getAddress().toString()).translateResponse(response, player.getAddress());
+            return addressToSubprotocols.get(player.getAddress().toString()).translateResponse(response, player);
         } else {
             throw new IllegalArgumentException("Player "+player.getAddress().toString()+" not found in subprotocol map!");
         }
