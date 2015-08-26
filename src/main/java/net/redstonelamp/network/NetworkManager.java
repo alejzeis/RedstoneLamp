@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -28,39 +28,42 @@ import java.util.List;
  *
  * @author RedstoneLamp Team
  */
-public class NetworkManager {
+public class NetworkManager{
     private final Server server;
     private final List<Protocol> protocols = new ArrayList<>();
 
     /**
      * Create a new NetworkManager belonging to the specified <code>Server</code>
+     *
      * @param server The <code>Server</code> this NetworkManager belongs to.
      */
-    public NetworkManager(Server server) {
+    public NetworkManager(Server server){
         this.server = server;
         server.getTicker().addRepeatingTask(new CallableTask("tick", this), 1);
     }
 
-    public void tick(long tick) {
+    public void tick(long tick){
         protocols.forEach(Protocol::tick);
     }
 
     /**
      * Register a <code>Protocol</code> to this NetworkManager
+     *
      * @param protocol The <code>Protocol</code> to be registered
      */
-    public synchronized void registerProtocol(Protocol protocol) {
-        synchronized (protocols) {
+    public synchronized void registerProtocol(Protocol protocol){
+        synchronized(protocols){
             protocols.add(protocol);
         }
-        server.getLogger().info("Registered protocol: "+protocol.getName());
+        server.getLogger().info("Registered protocol: " + protocol.getName());
     }
 
     /**
      * Sets the name of all AdvancedNetworkInterfaces registered
+     *
      * @param name The name to be set to
      */
-    public void setName(String name) {
+    public void setName(String name){
         protocols.stream().filter(protocol -> protocol._interface instanceof AdvancedNetworkInterface).forEach(protocol -> {
             ((AdvancedNetworkInterface) protocol._interface).setName(name);
         });
@@ -68,13 +71,14 @@ public class NetworkManager {
 
     /**
      * Get a <code>Protocol</code> by it's Class
+     *
      * @param clazz The Class of the <code>Protocol</code>
      * @return The <code>Protocol</code> if registered, null if not.
      */
-    public synchronized Protocol getProtocol(Class<? extends Protocol> clazz) {
-        synchronized (protocols) {
-            for(Protocol protocol : protocols) {
-                if(protocol.getClass().getName().equals(clazz.getName())) {
+    public synchronized Protocol getProtocol(Class<? extends Protocol> clazz){
+        synchronized(protocols){
+            for(Protocol protocol : protocols){
+                if(protocol.getClass().getName().equals(clazz.getName())){
                     return protocol;
                 }
             }
@@ -84,9 +88,10 @@ public class NetworkManager {
 
     /**
      * Get the <code>Server</code> the NetworkManager belongs to.
+     *
      * @return The <code>Server</code> this NetworkManager belongs to.
      */
-    public Server getServer() {
+    public Server getServer(){
         return server;
     }
 }

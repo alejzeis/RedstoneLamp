@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ import net.redstonelamp.level.position.Position;
 public class SpawnResponse extends Response{
     private Position spawnPosition;
 
-    public SpawnResponse(Position spawnPosition) {
+    public SpawnResponse(Position spawnPosition){
         this.spawnPosition = spawnPosition;
     }
 }

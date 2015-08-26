@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ import java.util.zip.Inflater;
  *
  * @author RedstoneLamp Team
  */
-public class CompressionUtils {
+public class CompressionUtils{
 
     public static byte[] zlibDeflate(byte[] uncompressed, int level){
         Deflater deflater = new Deflater(level, false);
@@ -39,7 +39,7 @@ public class CompressionUtils {
         return Arrays.copyOf(compressed, len);
     }
 
-    public static byte[] zlibInflate(byte[] compressed) throws DataFormatException {
+    public static byte[] zlibInflate(byte[] compressed) throws DataFormatException{
         Inflater inflater = new Inflater();
         inflater.setInput(compressed);
         byte[] uncompressed = new byte[64 * 64 * 64];
@@ -49,7 +49,7 @@ public class CompressionUtils {
         return Arrays.copyOf(uncompressed, len);
     }
 
-    public static byte[] zlibInflate(byte[] compressed, int size) throws DataFormatException {
+    public static byte[] zlibInflate(byte[] compressed, int size) throws DataFormatException{
         Inflater inflater = new Inflater();
         inflater.setInput(compressed, 0, size);
         byte[] uncompressed = new byte[64 * 64 * 64];

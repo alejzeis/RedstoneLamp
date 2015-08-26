@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -21,9 +21,10 @@ package net.redstonelamp.network.pe.sub.v27;
  * <br>
  * This file is based on the PocketMine-MP file at https://github.com/PocketMine/PocketMine-MP/blob/master/src/pocketmine/network/protocol/Info.php
  * PocketMine-MP is licensed under the LGPL v3. All credit to the PocketMine team
+ *
  * @author PocketMine Team (translated by RedstoneLamp Team)
  */
-public interface ProtocolConst27 {
+public interface ProtocolConst27{
     /**
      * The Minecraft: Pocket Edition version this subprotocol implements.
      */
@@ -82,10 +83,10 @@ public interface ProtocolConst27 {
     public static final byte FULL_CHUNK_DATA_PACKET = (byte) 0xaf;
     public static final byte SET_DIFFICULTY_PACKET = (byte) 0xb0;
     public static final byte BATCH_PACKET = (byte) 0xb1;
-    
+
     public static final byte TEXT_RAW = (byte) 0x00;
-	public static final byte TEXT_CHAT = (byte) 0x01;
-	public static final byte TEXT_TRANSLATION = (byte) 0x02;
-	public static final byte TEXT_POPUP = (byte) 0x03;
-	public static final byte TEXT_TIP = (byte) 0x04;
+    public static final byte TEXT_CHAT = (byte) 0x01;
+    public static final byte TEXT_TRANSLATION = (byte) 0x02;
+    public static final byte TEXT_POPUP = (byte) 0x03;
+    public static final byte TEXT_TIP = (byte) 0x04;
 }

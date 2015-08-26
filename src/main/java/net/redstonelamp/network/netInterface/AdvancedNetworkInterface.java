@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -22,9 +22,10 @@ package net.redstonelamp.network.netInterface;
  *
  * @author RedstoneLamp Team
  */
-public interface AdvancedNetworkInterface extends NetworkInterface {
+public interface AdvancedNetworkInterface extends NetworkInterface{
     /**
      * Set the name of the server, which should show up on any pings to the interface
+     *
      * @param name The name to be set to.
      */
     void setName(String name);

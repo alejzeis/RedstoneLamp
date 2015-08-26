@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ package net.redstonelamp.network.pc;
  *
  * @author RedstoneLamp Team
  */
-public interface PCNetworkConst {
+public interface PCNetworkConst{
     /**
      * The Minecraft version this software implements.
      */

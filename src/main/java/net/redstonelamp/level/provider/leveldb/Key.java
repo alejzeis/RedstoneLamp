@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ import java.nio.ByteOrder;
  *
  * @author RedstoneLamp Team
  */
-public enum Key {
+public enum Key{
     /**
      * This type contains the 16 * 16 * 128 chunk data for the specified coordinates. The format
      * for the chunk data is: blockIds + blockMeta + skylight + blocklight + heightmap + biomeColors.
@@ -56,17 +56,18 @@ public enum Key {
 
     private byte type;
 
-    Key(byte type) {
+    Key(byte type){
         this.type = type;
     }
 
     /**
      * Assemble the full Key into a byte array.
      * The format is (position x, position z, type)
+     *
      * @param position The ChunkPosition of which chunk to get the data from
      * @return The fully assembled Key, as a byte array
      */
-    public byte[] assembleKey(ChunkPosition position) {
+    public byte[] assembleKey(ChunkPosition position){
         BinaryBuffer bb = BinaryBuffer.newInstance(9, ByteOrder.LITTLE_ENDIAN);
         bb.putInt(position.getX());
         bb.putInt(position.getZ());
@@ -76,9 +77,10 @@ public enum Key {
 
     /**
      * Get the type of Key for this Key instance.
+     *
      * @return The Key type.
      */
-    public byte getKeyType() {
+    public byte getKeyType(){
         return type;
     }
 }

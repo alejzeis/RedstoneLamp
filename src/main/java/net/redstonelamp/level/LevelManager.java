@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -17,10 +17,8 @@
 package net.redstonelamp.level;
 
 import net.redstonelamp.Server;
-import net.redstonelamp.level.provider.leveldb.LevelDBProvider;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,12 +27,12 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author RedstoneLamp Team
  */
-public class LevelManager {
+public class LevelManager{
     private final Server server;
     private final Map<String, Level> levels = new ConcurrentHashMap<>();
     private Level mainLevel;
 
-    public LevelManager(Server server) {
+    public LevelManager(Server server){
         this.server = server;
     }
 
@@ -42,21 +40,21 @@ public class LevelManager {
      * INTERNAL METHOD!
      * Used in Server to initialize the LevelManager class.
      */
-    public void init() {
+    public void init(){
         String name = server.getConfig().getString("level-name");
         File levelDir = new File("worlds" + File.separator + name);
-        if(!levelDir.isDirectory()) {
+        if(!levelDir.isDirectory()){
             levelDir.mkdirs();
         }
         mainLevel = new Level(this, levelDir, "levelDB"); //TODO: correct provider
         levels.put(mainLevel.getName(), mainLevel);
     }
 
-    public Server getServer() {
+    public Server getServer(){
         return server;
     }
 
-    public Level getMainLevel() {
+    public Level getMainLevel(){
         return mainLevel;
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -23,11 +23,11 @@ package net.redstonelamp.level.provider;
  */
 public class LevelLoadException extends RuntimeException{
 
-    public LevelLoadException(String message) {
+    public LevelLoadException(String message){
         super(message);
     }
 
-    public LevelLoadException(Exception e) {
+    public LevelLoadException(Exception e){
         super(e);
     }
 

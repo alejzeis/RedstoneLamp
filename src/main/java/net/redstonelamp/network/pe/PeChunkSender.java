@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -18,13 +18,10 @@ package net.redstonelamp.network.pe;
 
 import net.redstonelamp.Player;
 import net.redstonelamp.level.ChunkPosition;
-import net.redstonelamp.network.UniversalPacket;
-import net.redstonelamp.nio.BinaryBuffer;
 import net.redstonelamp.request.ChunkRequest;
 import net.redstonelamp.request.SpawnRequest;
 import net.redstonelamp.ticker.CallableTask;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,18 +33,18 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author RedstoneLamp Team
  */
-public class PeChunkSender {
+public class PeChunkSender{
     public static final int REQUESTS_PER_TICK = 4; //TODO: correct this
 
     private PEProtocol protocol;
     private Map<Player, List<ChunkPosition>> requestChunks = new ConcurrentHashMap<>();
 
-    public PeChunkSender(PEProtocol protocol) {
+    public PeChunkSender(PEProtocol protocol){
         this.protocol = protocol;
         protocol.getServer().getTicker().addRepeatingTask(new CallableTask("tick", this), 1);
     }
 
-    public void tick(long tick) {
+    public void tick(long tick){
         if(requestChunks.keySet().isEmpty()){
             return;
         }
@@ -75,7 +72,7 @@ public class PeChunkSender {
             }
             if(!chunks.isEmpty()){
                 requestChunks.put(player, chunks);
-            } else {
+            }else{
                 System.out.println("ready!");
                 player.handleRequest(new SpawnRequest());
                 requestChunks.remove(player);
@@ -83,8 +80,8 @@ public class PeChunkSender {
         }
     }
 
-    public void registerChunkRequests(Player player, int chunksNum) {
-        if(requestChunks.containsKey(player)) {
+    public void registerChunkRequests(Player player, int chunksNum){
+        if(requestChunks.containsKey(player)){
             throw new IllegalArgumentException("Already in map");
         }
         List<ChunkPosition> chunks = new CopyOnWriteArrayList<>();
@@ -102,23 +99,23 @@ public class PeChunkSender {
         int chunkNum = 0;
         try{
             while(chunkNum < 96){
-                System.out.println("ChunkSender chunk "+x+", "+z);
+                System.out.println("ChunkSender chunk " + x + ", " + z);
 
                 chunks.add(new ChunkPosition(x / 16, z / 16));
 
                 if(x < cornerX + 144){
                     x = x + 16;
-                } else {
+                }else{
                     x = cornerX;
                     z = z - 16;
                 }
                 chunkNum++;
             }
-        } catch(Exception e){
+        }catch(Exception e){
             e.printStackTrace();
         }
 
-        synchronized (requestChunks) {
+        synchronized(requestChunks){
             requestChunks.put(player, chunks);
         }
     }

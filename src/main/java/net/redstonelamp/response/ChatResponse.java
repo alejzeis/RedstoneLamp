@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -16,13 +16,13 @@
  */
 package net.redstonelamp.response;
 
-public class ChatResponse extends Response {
-	
-	public String source = "";
-	public String message;
-	
-	public ChatResponse(String message) {
-		this.message = message;
-	}
-	
+public class ChatResponse extends Response{
+
+    public String source = "";
+    public String message;
+
+    public ChatResponse(String message){
+        this.message = message;
+    }
+
 }

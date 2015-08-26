@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ import net.redstonelamp.Player;
 public class RemovePlayerResponse extends Response{
     public Player player;
 
-    public RemovePlayerResponse(Player player) {
+    public RemovePlayerResponse(Player player){
         this.player = player;
     }
 }

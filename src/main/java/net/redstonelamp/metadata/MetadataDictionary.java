@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -44,45 +44,45 @@ public class MetadataDictionary extends Dictionary<Byte, MetadataElement>{
     }
 
     @Override
-    public int size() {
+    public int size(){
         return entries.size();
     }
 
     @Override
-    public boolean isEmpty() {
+    public boolean isEmpty(){
         return entries.isEmpty();
     }
 
     @Override
-    public Enumeration<Byte> keys() {
+    public Enumeration<Byte> keys(){
         return new MetadataEnumeration(entries.keySet().toArray());
     }
 
     @Override
-    public Enumeration<MetadataElement> elements() {
+    public Enumeration<MetadataElement> elements(){
         return new MetadataEnumeration(entries.values().toArray());
     }
 
     @Override
-    public MetadataElement get(Object key) {
+    public MetadataElement get(Object key){
         return entries.get(key);
     }
 
     @Override
-    public MetadataElement put(Byte key, MetadataElement value) {
+    public MetadataElement put(Byte key, MetadataElement value){
         return entries.put(key, value);
     }
 
     @Override
-    public MetadataElement remove(Object key) {
+    public MetadataElement remove(Object key){
         return entries.remove(key);
     }
 
-    public void fromBytes(byte[] bytes) {
+    public void fromBytes(byte[] bytes){
         BinaryBuffer bb = BinaryBuffer.wrapBytes(bytes, ByteOrder.LITTLE_ENDIAN);
         while(true){
             byte b = bb.getByte();
-            if(b == -127) {
+            if(b == -127){
                 break;
             }
 
@@ -92,7 +92,7 @@ public class MetadataDictionary extends Dictionary<Byte, MetadataElement>{
             MetadataElement element;
             if(index == 17){
                 element = new MetadataLong(0);
-            } else {
+            }else{
                 element = getElementByType(type);
             }
             element.fromBytes(bb);
@@ -102,13 +102,13 @@ public class MetadataDictionary extends Dictionary<Byte, MetadataElement>{
         }
     }
 
-    private MetadataElement getElementByType(byte type) {
+    private MetadataElement getElementByType(byte type){
         if(elements.containsKey(type)){
-            try {
+            try{
                 return elements.get(type).newInstance();
-            } catch (InstantiationException e) {
+            }catch(InstantiationException e){
                 e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            }catch(IllegalAccessException e){
                 e.printStackTrace();
             }
         }
@@ -124,7 +124,7 @@ public class MetadataDictionary extends Dictionary<Byte, MetadataElement>{
         return bb.toArray();
     }
 
-    public static class MetadataEnumeration implements Enumeration {
+    public static class MetadataEnumeration implements Enumeration{
         private List list;
         private int position = 0;
 
@@ -140,12 +140,12 @@ public class MetadataDictionary extends Dictionary<Byte, MetadataElement>{
         }
 
         @Override
-        public boolean hasMoreElements() {
+        public boolean hasMoreElements(){
             return position < list.size();
         }
 
         @Override
-        public Object nextElement() {
+        public Object nextElement(){
             return list.get(position++);
         }
     }

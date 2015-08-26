@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  */
 /**
  * Contains Ticker related classes and interfaces.
+ *
  * @author RedstoneLamp Team
  */
 package net.redstonelamp.ticker;

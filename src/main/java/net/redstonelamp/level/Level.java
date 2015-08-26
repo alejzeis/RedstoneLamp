@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author RedstoneLamp Team
  */
-public class Level {
+public class Level{
     private final LevelManager manager;
     private List<Chunk> loadedChunks = new CopyOnWriteArrayList<>();
     private LevelProvider provider;
@@ -44,32 +44,32 @@ public class Level {
     private int time;
     private Generator generator;
 
-    public Level(LevelManager manager, File levelDir, String providerName) {
+    public Level(LevelManager manager, File levelDir, String providerName){
         this.manager = manager;
         this.name = levelDir.getName();
 
         generator = new FlatGenerator(); //TODO: correct generator
 
-        switch (providerName) {
+        switch(providerName){
             case "levelDB":
                 provider = new LevelDBProvider(this, new File(levelDir + File.separator + "db"));
                 break;
             default:
-                manager.getServer().getLogger().error("Could not resolve providerName: "+providerName);
-                throw new LevelLoadException("Could not resolve providerName: "+providerName);
+                manager.getServer().getLogger().error("Could not resolve providerName: " + providerName);
+                throw new LevelLoadException("Could not resolve providerName: " + providerName);
         }
 
-        try {
+        try{
             provider.loadLevelData(new File(levelDir + File.separator + "level.dat"));
-        } catch (IOException e) {
-            manager.getServer().getLogger().error("Failed to load Level: "+name);
+        }catch(IOException e){
+            manager.getServer().getLogger().error("Failed to load Level: " + name);
             throw new LevelLoadException(e);
         }
     }
 
-    public Chunk getChunkAt(ChunkPosition position) {
-        for(Chunk c : loadedChunks) {
-            if(c.getPosition().equals(position)) {
+    public Chunk getChunkAt(ChunkPosition position){
+        for(Chunk c : loadedChunks){
+            if(c.getPosition().equals(position)){
                 return c;
             }
         }
@@ -78,53 +78,53 @@ public class Level {
         return c;
     }
 
-    public void loadChunk(ChunkPosition position) {
-        for(Chunk c : loadedChunks) {
-            if(c.getPosition().equals(position)) {
-                throw new IllegalArgumentException("Chunk "+position+" already loaded!");
+    public void loadChunk(ChunkPosition position){
+        for(Chunk c : loadedChunks){
+            if(c.getPosition().equals(position)){
+                throw new IllegalArgumentException("Chunk " + position + " already loaded!");
             }
         }
         Chunk c = provider.getChunk(position);
         loadedChunks.add(c);
     }
 
-    public void unloadChunk(ChunkPosition position) {
+    public void unloadChunk(ChunkPosition position){
         loadedChunks.stream().filter(c -> c.getPosition().equals(position)).forEach(loadedChunks::remove);
     }
 
-    public LevelManager getManager() {
+    public LevelManager getManager(){
         return manager;
     }
 
-    public String getName() {
+    public String getName(){
         return name;
     }
 
-    public void setSpawnPosition(Position spawnPosition) {
+    public void setSpawnPosition(Position spawnPosition){
         this.spawnPosition = spawnPosition;
     }
 
-    public void setGamemode(int gamemode) {
+    public void setGamemode(int gamemode){
         this.gamemode = gamemode;
     }
 
-    public void setTime(long time) {
+    public void setTime(long time){
         this.time = (int) time;
     }
 
-    public int getTime() {
+    public int getTime(){
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(int time){
         this.time = time;
     }
 
-    public Generator getGenerator() {
+    public Generator getGenerator(){
         return generator;
     }
 
-    public Position getSpawnPosition() {
+    public Position getSpawnPosition(){
         return spawnPosition;
     }
 }

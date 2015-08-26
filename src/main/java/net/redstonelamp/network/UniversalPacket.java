@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ import java.nio.ByteOrder;
  *
  * @author RedstoneLamp Team
  */
-public class UniversalPacket {
+public class UniversalPacket{
     private byte[] buffer;
     private SocketAddress address;
     private BinaryBuffer bb;
@@ -35,10 +35,11 @@ public class UniversalPacket {
     /**
      * Create a new UniversalPacket with the specified <code>buffer</code> and belonging to the <code>address</code>.
      * The ByteOrder of the underlying DynamicByteBuffer will be Big Endian.
-     * @param buffer The buffer this packet contains.
+     *
+     * @param buffer  The buffer this packet contains.
      * @param address The address this packet came/was sent from.
      */
-    public UniversalPacket(byte[] buffer, SocketAddress address) {
+    public UniversalPacket(byte[] buffer, SocketAddress address){
         this.buffer = buffer;
         this.address = address;
         bb = BinaryBuffer.wrapBytes(buffer, ByteOrder.BIG_ENDIAN);
@@ -46,12 +47,13 @@ public class UniversalPacket {
 
     /**
      * Create a new UniversalPacket with the specified <code>buffer</code> in <code>order</code> and belonging to the <code>address</code>
-     * @param buffer The buffer this packet contains.
-     * @param order The ByteOrder of the above byte array. This can be Little Endian or Big Endian and is used in creating
-     *              the underlying DynamicByteBuffer.
+     *
+     * @param buffer  The buffer this packet contains.
+     * @param order   The ByteOrder of the above byte array. This can be Little Endian or Big Endian and is used in creating
+     *                the underlying DynamicByteBuffer.
      * @param address The address this packet came/was sent from.
      */
-    public UniversalPacket(byte[] buffer, ByteOrder order, SocketAddress address) {
+    public UniversalPacket(byte[] buffer, ByteOrder order, SocketAddress address){
         this.buffer = buffer;
         this.address = address;
         bb = BinaryBuffer.wrapBytes(buffer, order);
@@ -59,25 +61,28 @@ public class UniversalPacket {
 
     /**
      * Returns the DynamicByteBuffer of the packet <code>buffer</code>. This DOES NOT create a new instance of the buffer.
+     *
      * @return The DynamicByteBuffer belonging to the packet.
      */
-    public BinaryBuffer bb() {
+    public BinaryBuffer bb(){
         return bb;
     }
 
     /**
      * Get the address this packet came/was sent from.
+     *
      * @return The packet's original address.
      */
-    public SocketAddress getAddress() {
+    public SocketAddress getAddress(){
         return address;
     }
 
     /**
      * Get the buffer of this packet.
+     *
      * @return The buffer, as a byte array.
      */
-    public byte[] getBuffer() {
+    public byte[] getBuffer(){
         return buffer;
     }
 }

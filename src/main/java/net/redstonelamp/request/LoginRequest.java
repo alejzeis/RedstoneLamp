@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ public class LoginRequest extends Request{
     }
 
     @Override
-    public void execute() {
+    public void execute(){
         //TODO?
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -25,9 +25,10 @@ import java.io.IOException;
 /**
  * Represents a level I/O storage provider.
  */
-public interface LevelProvider {
+public interface LevelProvider{
     /**
      * Get a Chunk from a ChunkPosition
+     *
      * @param position The Position of the chunk
      * @return The chunk from the disk
      */
@@ -41,6 +42,7 @@ public interface LevelProvider {
     /**
      * Load the Level data such as the spawn position and level time
      * from the disk.
+     *
      * @param file The File that contains the level data
      * @throws IOException If there is an error while loading the data.
      */

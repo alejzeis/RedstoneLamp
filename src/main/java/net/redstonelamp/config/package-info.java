@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  */
 /**
  * This package contains configuration classes used by the server for easy file configurations.
+ *
  * @author RedstoneLamp Team
  */
 package net.redstonelamp.config;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ public class PlayerMoveResponse extends Response{
     public boolean onGround;
     public long entityID;
 
-    public PlayerMoveResponse(long eid, Position pos, boolean onGround) {
+    public PlayerMoveResponse(long eid, Position pos, boolean onGround){
         this.pos = pos;
         this.onGround = onGround;
         bodyYaw = pos.getYaw();

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -21,7 +21,9 @@ package net.redstonelamp.ticker;
  *
  * @author RedstoneLamp Team
  */
-public interface Task {
+public interface Task{
     void onRun(long tick);
-    default void onFinalize(){}
+
+    default void onFinalize(){
+    }
 }

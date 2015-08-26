@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -22,24 +22,23 @@ import net.redstonelamp.network.pe.PEProtocol;
 import net.redstonelamp.request.Request;
 import net.redstonelamp.response.Response;
 
-import java.net.SocketAddress;
-
 /**
  * Represents a sub-protocol of the MCPE protocol. Each subprotocol handles a different version of the MCPE protocol.
  *
  * @author RedstoneLamp Team
  */
-public abstract class Subprotocol {
+public abstract class Subprotocol{
     private final PESubprotocolManager manager;
     private final PEProtocol protocol;
 
-    protected Subprotocol(PESubprotocolManager manager) {
+    protected Subprotocol(PESubprotocolManager manager){
         this.manager = manager;
         protocol = manager.getProtocol();
     }
 
     /**
      * Handle a <code>UniversalPacket</code> and translate it into a <code>Request</code>
+     *
      * @param up The UniversalPacket recieved
      * @return A translated Request if successful, null if not
      */
@@ -48,37 +47,42 @@ public abstract class Subprotocol {
     /**
      * Translates a  <code>Response</code> to a <code>UniversalPacket</code> array.
      * The Response may translate to more than one packet.
+     *
      * @param response The Response to be translated
-     * @param player The Player this response was sent from
+     * @param player   The Player this response was sent from
      * @return A UniversalPacket array, containing all the packets the response needs.
      */
     public abstract UniversalPacket[] translateResponse(Response response, Player player);
 
     /**
      * Get the version of MCPE that this subprotocol implements as a String
+     *
      * @return The version of MCPE that this subprotocol implements
      */
     public abstract String getMCPEVersion();
 
     /**
      * Get the protocol version of MCPE that this subprotocol implements
+     *
      * @return The protocol version of MCPE that this subprotocol implements
      */
     public abstract int getProtocolVersion();
 
     /**
      * Get the SubprotocolManager for this Subprotocol
+     *
      * @return The Subprotocol manager that manages this subprotocol
      */
-    public PESubprotocolManager getManager() {
+    public PESubprotocolManager getManager(){
         return manager;
     }
 
     /**
      * Get the PEProtocol for this Subprotocol
+     *
      * @return The PEProtocol this Subprotocol belongs to
      */
-    public PEProtocol getProtocol() {
+    public PEProtocol getProtocol(){
         return protocol;
     }
 }

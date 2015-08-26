@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  */
 /**
  * This package contains all the networking classes and packages used by the RedstoneLamp server.
+ *
  * @author RedstoneLamp Team
  */
 package net.redstonelamp.network;

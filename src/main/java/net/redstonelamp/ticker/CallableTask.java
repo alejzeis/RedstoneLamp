@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -28,22 +28,22 @@ public class CallableTask implements Task{
     private final Object instance;
     private final Method method;
 
-    public CallableTask(String methodName, Object instance) {
+    public CallableTask(String methodName, Object instance){
         this.instance = instance;
-        try {
+        try{
             method = instance.getClass().getMethod(methodName, long.class);
-        } catch (NoSuchMethodException e) {
+        }catch(NoSuchMethodException e){
             throw new IllegalArgumentException(e);
         }
     }
 
     @Override
-    public void onRun(long tick) {
-        try {
+    public void onRun(long tick){
+        try{
             method.invoke(instance, tick);
-        } catch (IllegalAccessException e) {
+        }catch(IllegalAccessException e){
             e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        }catch(InvocationTargetException e){
             e.printStackTrace();
         }
     }

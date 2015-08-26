@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  */
 /**
  * This package contains the networking classes used by the Minecraft: PC edition server.
+ *
  * @author RedstoneLamp Team
  */
 package net.redstonelamp.network.pc;
