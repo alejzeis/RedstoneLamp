@@ -23,12 +23,16 @@ import net.redstonelamp.level.position.Position;
  *
  * @author RedstoneLamp Team
  */
-public class PlayerMoveResponse extends TeleportResponse{
-
+public class PlayerMoveResponse extends Response{
+    public Position pos;
+    public float bodyYaw;
+    public boolean onGround;
     public long entityID;
 
     public PlayerMoveResponse(long eid, Position pos, boolean onGround) {
-        super(pos, onGround);
+        this.pos = pos;
+        this.onGround = onGround;
+        bodyYaw = pos.getYaw();
         entityID = eid;
     }
 }

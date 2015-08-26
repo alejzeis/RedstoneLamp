@@ -314,6 +314,27 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
         	bb.putByte(TEXT_POPUP); // TYPE_POPUP
         	bb.putString(pr.message);
         	packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof RemovePlayerResponse) {
+            RemovePlayerResponse rpp = (RemovePlayerResponse) response;
+            bb = BinaryBuffer.newInstance(9, ByteOrder.BIG_ENDIAN);
+            bb.putByte(REMOVE_PLAYER_PACKET);
+            bb.putLong(rpp.player.getEntityID());
+            bb.putLong(rpp.player.getEntityID());
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof PlayerMoveResponse) {
+            PlayerMoveResponse pmr = (PlayerMoveResponse) response;
+            bb = BinaryBuffer.newInstance(36, ByteOrder.BIG_ENDIAN);
+            bb.putByte(MOVE_PLAYER_PACKET);
+            bb.putLong(player.getEntityID());
+            bb.putFloat((float) pmr.pos.getX());
+            bb.putFloat((float) pmr.pos.getY());
+            bb.putFloat((float) pmr.pos.getZ());
+            bb.putFloat(pmr.pos.getYaw());
+            bb.putFloat(pmr.bodyYaw);
+            bb.putFloat(pmr.pos.getPitch());
+            bb.putByte((byte) 0); //MODE_NORMAL
+            bb.putByte((byte) (pmr.onGround ? 1 : 0));
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }
 
         //Compress packets

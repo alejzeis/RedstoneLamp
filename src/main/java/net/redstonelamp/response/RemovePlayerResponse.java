@@ -23,9 +23,10 @@ import net.redstonelamp.Player;
  *
  * @author RedstoneLamp Team
  */
-public class RemovePlayerResponse extends AddPlayerResponse{
+public class RemovePlayerResponse extends Response{
+    public Player player;
 
     public RemovePlayerResponse(Player player) {
-        super(player);
+        this.player = player;
     }
 }

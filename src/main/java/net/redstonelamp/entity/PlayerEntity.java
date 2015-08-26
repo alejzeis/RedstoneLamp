@@ -39,7 +39,7 @@ public abstract class PlayerEntity extends Entity{
         data.put((byte) 4, new MetadataByte((byte) 0)); //silent
         data.put((byte) 7, new MetadataInt(0)); //Potion color
         data.put((byte) 8, new MetadataByte((byte) 0)); //Potion ambient
-        data.put((byte) 15, new MetadataByte((byte) 0)); //No ai
+        data.put((byte) 15, new MetadataByte((byte) 1)); //No ai
         data.put((byte) 16, new MetadataByte((byte) 0)); //Player flags
         data.put((byte) 17, new MetadataLong((byte) 0));
         setMetadata(data);
@@ -51,7 +51,7 @@ public abstract class PlayerEntity extends Entity{
         if(player != this) {
             if(this instanceof Player) {
                 Player me = ((Player) this);
-                player.sendResponse(new AddPlayerResponse(me));
+                player.getProtocol().sendImmediateResponse(new AddPlayerResponse(me), player);
             }
         }
     }
@@ -61,7 +61,7 @@ public abstract class PlayerEntity extends Entity{
         if(player != this) {
             if(this instanceof Player) {
                 Player me = ((Player) this);
-                player.sendResponse(new RemovePlayerResponse(me));
+                player.getProtocol().sendImmediateResponse(new RemovePlayerResponse(me), player);
             }
         }
     }

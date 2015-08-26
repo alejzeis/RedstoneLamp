@@ -159,7 +159,9 @@ public class Player extends PlayerEntity{
             if(gamemode == 1) {
                 PlayerMoveResponse response = new PlayerMoveResponse(getEntityID(), pmr.position, pmr.onGround);
                 setPosition(pmr.position);
-                server.broadcastResponse(response);
+                server.getPlayers().stream().filter(player -> player != this).forEach(player -> {
+                    player.sendResponse(response);
+                });
             } //TODO: Check movement if in survival
         }
     }
@@ -169,6 +171,8 @@ public class Player extends PlayerEntity{
         dr.notifyClient = notifyClient;
 
         protocol.sendImmediateResponse(dr, this);
+
+        server.getPlayers().stream().filter(player -> player != this && player.getPosition().getLevel() == getPosition().getLevel()).forEach(this::despawnFrom);
 
         server.closeSession(this);
         server.getLogger().info(username+"["+identifier+"] logged out with reason: "+reason);
