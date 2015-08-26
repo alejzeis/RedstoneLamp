@@ -43,7 +43,9 @@ import java.util.zip.DataFormatException;
  * @author RedstoneLamp Team
  */
 public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
-
+	
+	int increment = 0;
+	
     public SubprotocolV27(PESubprotocolManager manager) {
         super(manager);
     }
@@ -81,9 +83,15 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             			cr.message = up.bb().getString();
             			for(int i = 0; i < up.bb().getByte(); i++)
             				cr.parameters[i] = up.bb().getString();
+            			break;
             	}
             	// TODO: Throw PlayerChatEvent
             	requests.add(cr);
+            	for(Player p : getProtocol().getServer().getPlayers()) {
+            		System.out.println(p.getNametag() + " should receive a message");
+            		increment++;
+            		p.sendMessage("This is message #" + increment);
+            	}
             	break;
         }
         return requests.toArray(new Request[requests.size()]);
@@ -245,7 +253,6 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             bb.putByte((byte) (tr.onGround ? 1 : 0));
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         } else if(response instanceof ChatResponse) {
-        	// I have no idea if this should even EXIST here - SuperstarGamer, 2015
             ChatResponse cr = (ChatResponse) response;
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN); //Self-expand
             bb.putByte(TEXT_PACKET);

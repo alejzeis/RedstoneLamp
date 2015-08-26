@@ -16,13 +16,26 @@
  */
 package net.redstonelamp;
 
-import net.redstonelamp.entity.PlayerEntity;
-import net.redstonelamp.level.position.Position;
-import net.redstonelamp.network.Protocol;
-import net.redstonelamp.request.*;
-import net.redstonelamp.response.*;
-
 import java.net.SocketAddress;
+import java.nio.ByteOrder;
+
+import net.redstonelamp.entity.PlayerEntity;
+import net.redstonelamp.network.Protocol;
+import net.redstonelamp.network.UniversalPacket;
+import net.redstonelamp.network.pe.sub.v27.ProtocolConst27;
+import net.redstonelamp.nio.BinaryBuffer;
+import net.redstonelamp.request.ChatRequest;
+import net.redstonelamp.request.ChunkRequest;
+import net.redstonelamp.request.LoginRequest;
+import net.redstonelamp.request.Request;
+import net.redstonelamp.request.SpawnRequest;
+import net.redstonelamp.response.ChatResponse;
+import net.redstonelamp.response.ChunkResponse;
+import net.redstonelamp.response.DisconnectResponse;
+import net.redstonelamp.response.LoginResponse;
+import net.redstonelamp.response.Response;
+import net.redstonelamp.response.SpawnResponse;
+import net.redstonelamp.response.TeleportResponse;
 
 /**
  * Protocol-independent Player class. Represents a Player on the server
@@ -93,6 +106,14 @@ public class Player extends PlayerEntity{
      */
     public void sendResponse(Response r) {
         protocol.sendResponse(r, this);
+    }
+    
+    public void sendMessage(String s) {
+    	BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+    	bb.putByte(ProtocolConst27.TEXT_PACKET);
+    	bb.putByte(ChatRequest.TYPE_RAW);
+    	bb.putString(s);
+    	protocol.sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, this.getAddress()));
     }
 
     /**
