@@ -40,7 +40,7 @@ public class MetadataDictionary extends Dictionary<Byte, MetadataElement>{
         elements.put((byte) 1, MetadataShort.class);
         elements.put((byte) 2, MetadataInt.class);
         elements.put((byte) 4, MetadataString.class);
-        elements.put((byte) 7, MetadataLong.class);
+        elements.put((byte) 8, MetadataLong.class);
     }
 
     @Override
@@ -116,12 +116,21 @@ public class MetadataDictionary extends Dictionary<Byte, MetadataElement>{
     }
 
     public byte[] toBytes(){
-        BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.LITTLE_ENDIAN);
+        BinaryBuffer bb = BinaryBuffer.newInstance(getLength() + 1, ByteOrder.LITTLE_ENDIAN);
         for(Byte key : entries.keySet()){
             MetadataElement element = entries.get(key);
             element.toBytes(bb, key);
         }
+        bb.putByte((byte) 0x7f);
         return bb.toArray();
+    }
+
+    public int getLength() {
+        final int[] len = {entries.keySet().size()};
+        entries.values().forEach(e -> {
+            len[0] = len[0] + e.getLength();
+        });
+        return len[0];
     }
 
     public static class MetadataEnumeration implements Enumeration {

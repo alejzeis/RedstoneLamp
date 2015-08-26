@@ -46,6 +46,11 @@ public class MetadataLong extends MetadataElement{
 
     @Override
     public byte getIdentifier() {
-        return 7;
+        return 8;
+    }
+
+    @Override
+    public int getLength() {
+        return 8;
     }
 }

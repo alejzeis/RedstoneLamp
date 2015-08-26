@@ -257,7 +257,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         } else if(response instanceof TeleportResponse) {
             TeleportResponse tr = (TeleportResponse) response;
-            bb = BinaryBuffer.newInstance(36, ByteOrder.BIG_ENDIAN);
+            bb = BinaryBuffer.newInstance(35, ByteOrder.BIG_ENDIAN);
             bb.putByte(MOVE_PLAYER_PACKET);
             bb.putLong(player.getEntityID());
             bb.putFloat((float) tr.pos.getX());
@@ -323,7 +323,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         } else if(response instanceof PlayerMoveResponse) {
             PlayerMoveResponse pmr = (PlayerMoveResponse) response;
-            bb = BinaryBuffer.newInstance(36, ByteOrder.BIG_ENDIAN);
+            bb = BinaryBuffer.newInstance(35, ByteOrder.BIG_ENDIAN);
             bb.putByte(MOVE_PLAYER_PACKET);
             bb.putLong(player.getEntityID());
             bb.putFloat((float) pmr.pos.getX());

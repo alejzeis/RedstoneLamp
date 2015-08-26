@@ -33,7 +33,7 @@ public abstract class MetadataElement {
     public abstract byte getIdentifier();
 
     public byte getKey(byte index){
-        return (byte) (getIdentifier() << 5 | index & 0x1F);
+        return (byte) ((getIdentifier() << 5) | (index & 0x1F));
     }
 
     public byte getIndex() {
@@ -43,4 +43,6 @@ public abstract class MetadataElement {
     public void setIndex(byte index) {
         this.index = index;
     }
+
+    public abstract int getLength();
 }
