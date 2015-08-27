@@ -52,7 +52,7 @@ public class YamlConfig{
      * @return
      */
     public YamlReader getReader(){
-        return this.reader;
+        return reader;
     }
 
     /**
@@ -61,7 +61,7 @@ public class YamlConfig{
      * @return
      */
     public Object getObject(){
-        return this.obj;
+        return obj;
     }
 
     /**
@@ -70,20 +70,19 @@ public class YamlConfig{
      * @return
      */
     public Map getMap(){
-        return this.map;
+        return map;
     }
 
     /**
      * Returns a Map of a Map in the YAML file
      *
-     * @param map
+     * @param mapName
      * @return
      */
-    public Map getInMap(String map){
-        if(this.map.get(map) instanceof Map){
-            Map newMap = (Map) this.map.get(map);
-            return newMap;
+    public Map getInMap(String mapName){
+        if(map.get(mapName) instanceof Map){
+            return (Map) map.get(mapName);
         }
-        return this.map;
+        return map;
     }
 }

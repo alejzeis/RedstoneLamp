@@ -204,7 +204,7 @@ public class BinaryBuffer{
         StringBuilder sb = new StringBuilder();
         byte[] data = bb.array();
         for(byte b : data){
-            sb.append(String.format("%02X", b) + " ");
+            sb.append(String.format("%02X", b)).append(" ");
         }
         return sb.toString();
     }

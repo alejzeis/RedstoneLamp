@@ -64,7 +64,7 @@ public abstract class Entity{
      * @param id The EntityID of the player
      */
     protected void setEntityID(int id){
-        this.entityID = id;
+        entityID = id;
     }
 
     public MetadataDictionary getMetadata(){

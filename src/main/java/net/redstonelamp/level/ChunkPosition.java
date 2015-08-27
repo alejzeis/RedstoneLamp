@@ -76,10 +76,7 @@ public class ChunkPosition{
     public boolean equals(Object obj){
         if(obj instanceof ChunkPosition){
             ChunkPosition pos = (ChunkPosition) obj;
-            if(pos.getX() == getX() && pos.getZ() == getZ()){
-                return true;
-            }
-            return false;
+            return pos.getX() == getX() && pos.getZ() == getZ();
         }
         return obj.equals(this);
     }

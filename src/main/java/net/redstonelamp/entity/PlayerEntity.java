@@ -50,7 +50,7 @@ public abstract class PlayerEntity extends Entity{
     public void spawnTo(Player player){
         if(player != this){
             if(this instanceof Player){
-                Player me = ((Player) this);
+                Player me = (Player) this;
                 player.getProtocol().sendImmediateResponse(new AddPlayerResponse(me), player);
             }
         }
@@ -60,7 +60,7 @@ public abstract class PlayerEntity extends Entity{
     public void despawnFrom(Player player){
         if(player != this){
             if(this instanceof Player){
-                Player me = ((Player) this);
+                Player me = (Player) this;
                 player.getProtocol().sendImmediateResponse(new RemovePlayerResponse(me), player);
             }
         }

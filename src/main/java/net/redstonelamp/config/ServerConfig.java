@@ -33,7 +33,7 @@ public class ServerConfig{
      * Create a new <code>ServerConfig</code> instance and load the config from the specified <code>configLocation</code>
      *
      * @param configLocation
-     * @throws java.io.IOException If the configuration can not be loaded.
+     * @throws IOException If the configuration can not be loaded.
      */
     public ServerConfig(File configLocation) throws IOException{
         properties = new Properties();

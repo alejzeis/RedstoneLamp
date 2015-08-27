@@ -24,7 +24,7 @@ import net.redstonelamp.level.position.Position;
  * @author RedstoneLamp Team
  */
 public class SpawnResponse extends Response{
-    private Position spawnPosition;
+    public Position spawnPosition;
 
     public SpawnResponse(Position spawnPosition){
         this.spawnPosition = spawnPosition;

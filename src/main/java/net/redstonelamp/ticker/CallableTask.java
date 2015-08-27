@@ -41,9 +41,7 @@ public class CallableTask implements Task{
     public void onRun(long tick){
         try{
             method.invoke(instance, tick);
-        }catch(IllegalAccessException e){
-            e.printStackTrace();
-        }catch(InvocationTargetException e){
+        }catch(IllegalAccessException | InvocationTargetException e){
             e.printStackTrace();
         }
     }

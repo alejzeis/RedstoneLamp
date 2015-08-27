@@ -37,7 +37,7 @@ public class PeChunkSender{
     public static final int REQUESTS_PER_TICK = 4; //TODO: correct this
 
     private PEProtocol protocol;
-    private Map<Player, List<ChunkPosition>> requestChunks = new ConcurrentHashMap<>();
+    private final Map<Player, List<ChunkPosition>> requestChunks = new ConcurrentHashMap<>();
 
     public PeChunkSender(PEProtocol protocol){
         this.protocol = protocol;

@@ -112,7 +112,7 @@ public class LevelDBProvider implements LevelProvider{
         IntTag gamemode = new IntTag("GameType", 1);
         LongTag time = new LongTag("Time", 1);
 
-        CompoundTag c = new CompoundTag("world data", Arrays.asList(new Tag[]{x, y, z, gamemode, time}));
+        CompoundTag c = new CompoundTag("world data", Arrays.asList(x, y, z, gamemode, time));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         out.write(new byte[8]); //Fake header
         NBTOutputStream nbt = new NBTOutputStream(out, false, true);

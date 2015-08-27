@@ -64,9 +64,7 @@ public class NetworkManager{
      * @param name The name to be set to
      */
     public void setName(String name){
-        protocols.stream().filter(protocol -> protocol._interface instanceof AdvancedNetworkInterface).forEach(protocol -> {
-            ((AdvancedNetworkInterface) protocol._interface).setName(name);
-        });
+        protocols.stream().filter(protocol -> protocol._interface instanceof AdvancedNetworkInterface).forEach(protocol -> ((AdvancedNetworkInterface) protocol._interface).setName(name));
     }
 
     /**

@@ -59,8 +59,8 @@ public class Server implements Runnable{
         ticker = new RedstoneTicker(this, 50);
         this.logger = logger;
         this.config = config;
-        this.network = new NetworkManager(this);
-        this.levelManager = new LevelManager(this);
+        network = new NetworkManager(this);
+        levelManager = new LevelManager(this);
         levelManager.init();
         loadProperties(config);
         logger.info(RedstoneLamp.getSoftwareVersionString() + " is licensed under the Lesser GNU General Public License version 3");

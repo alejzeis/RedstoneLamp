@@ -46,7 +46,7 @@ public class Level{
 
     public Level(LevelManager manager, File levelDir, String providerName){
         this.manager = manager;
-        this.name = levelDir.getName();
+        name = levelDir.getName();
 
         generator = new FlatGenerator(); //TODO: correct generator
 

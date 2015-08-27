@@ -160,9 +160,7 @@ public class Player extends PlayerEntity{
             if(gamemode == 1){
                 PlayerMoveResponse response = new PlayerMoveResponse(getEntityID(), pmr.position, pmr.onGround);
                 setPosition(pmr.position);
-                server.getPlayers().stream().filter(player -> player != this).forEach(player -> {
-                    player.sendResponse(response);
-                });
+                server.getPlayers().stream().filter(player -> player != this).forEach(player -> player.sendResponse(response));
             } //TODO: Check movement if in survival
         }
     }

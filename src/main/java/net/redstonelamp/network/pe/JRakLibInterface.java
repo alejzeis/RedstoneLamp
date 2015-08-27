@@ -75,13 +75,7 @@ public class JRakLibInterface implements ServerInstance, AdvancedNetworkInterfac
             Constructor c = server.getLogger().getConsoleOutClass().getConstructor(String.class);
             logger = new net.redstonelamp.ui.Logger((ConsoleOut) c.newInstance("JRakLibInterface"));
             logger.debug("Logger created.");
-        }catch(NoSuchMethodException e){
-            e.printStackTrace();
-        }catch(InvocationTargetException e){
-            e.printStackTrace();
-        }catch(InstantiationException e){
-            e.printStackTrace();
-        }catch(IllegalAccessException e){
+        }catch(NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e){
             e.printStackTrace();
         }
     }
@@ -112,7 +106,7 @@ public class JRakLibInterface implements ServerInstance, AdvancedNetworkInterfac
         pk.reliability = 2;
         pk.buffer = packet.getBuffer();
         logger.buffer("(" + packet.getAddress().toString() + ") PACKET OUT: ", pk.buffer, "");
-        handler.sendEncapsulated(packet.getAddress().toString(), pk, (byte) ((byte) 0 | (immediate ? JRakLib.PRIORITY_IMMEDIATE : JRakLib.PRIORITY_NORMAL)));
+        handler.sendEncapsulated(packet.getAddress().toString(), pk, immediate ? JRakLib.PRIORITY_IMMEDIATE : JRakLib.PRIORITY_NORMAL);
     }
 
     @Override
