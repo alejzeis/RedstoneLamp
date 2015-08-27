@@ -51,24 +51,27 @@ import java.util.Arrays;
  */
 public class LevelDBProvider implements LevelProvider{
     private final Level level;
+    private final File levelDir;
+    private final String name;
     private final DB database;
-
     private CompoundTag levelData;
 
     /**
      * Create a new LevelDBProvider and load the database.
      *
      * @param level       The Level class that this provider provides to.
-     * @param databaseDir The directory in which the database files are contained.
-     *                    This is usually "db".
+     * @param levelDir    The level directory.
      */
-    public LevelDBProvider(Level level, File databaseDir){
+    public LevelDBProvider(Level level, Level.LevelParameters params){
         this.level = level;
+        name = params.name;
+        levelDir = params.levelDir;
 
         Options options = new Options();
         options.createIfMissing(true);
         options.compressionType(CompressionType.ZLIB);
 
+        File databaseDir = new File(levelDir, "db");
         try{
             database = Iq80DBFactory.factory.open(databaseDir, options);
         }catch(IOException e){
@@ -132,7 +135,8 @@ public class LevelDBProvider implements LevelProvider{
     }
 
     @Override
-    public void loadLevelData(File file) throws IOException{
+    public void init() throws IOException{
+        File file = new File(levelDir, "level.dat");
         if(!file.exists()){
             level.getManager().getServer().getLogger().info("Couldn't find level.dat, creating new...");
             genNewLevelData(file);
@@ -162,6 +166,11 @@ public class LevelDBProvider implements LevelProvider{
         level.setSpawnPosition(new Position(x, y, z, level));
         level.setGamemode((int) getTag("GameType").getValue());
         level.setTime((long) getTag("Time").getValue());
+    }
+
+    @Override
+    public String getName(){
+        return name;
     }
 
     public Tag getTag(String name){

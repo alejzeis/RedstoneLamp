@@ -19,8 +19,8 @@ package net.redstonelamp.level.provider;
 import net.redstonelamp.level.Chunk;
 import net.redstonelamp.level.ChunkPosition;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Represents a level I/O storage provider.
@@ -43,8 +43,13 @@ public interface LevelProvider{
      * Load the Level data such as the spawn position and level time
      * from the disk.
      *
-     * @param file The File that contains the level data
      * @throws IOException If there is an error while loading the data.
      */
-    void loadLevelData(File file) throws IOException;
+    void init() throws IOException;
+
+    String getName();
+
+    public static interface LevelProviderType{
+        public LevelProvider get(Map<String, Object> args);
+    }
 }

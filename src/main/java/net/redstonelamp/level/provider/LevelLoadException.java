@@ -27,7 +27,7 @@ public class LevelLoadException extends RuntimeException{
         super(message);
     }
 
-    public LevelLoadException(Exception e){
+    public LevelLoadException(Throwable e){
         super(e);
     }
 

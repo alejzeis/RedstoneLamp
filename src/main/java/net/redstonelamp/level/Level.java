@@ -21,10 +21,10 @@ import net.redstonelamp.level.generator.Generator;
 import net.redstonelamp.level.position.Position;
 import net.redstonelamp.level.provider.LevelLoadException;
 import net.redstonelamp.level.provider.LevelProvider;
-import net.redstonelamp.level.provider.leveldb.LevelDBProvider;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -44,27 +44,26 @@ public class Level{
     private int time;
     private Generator generator;
 
-    public Level(LevelManager manager, File levelDir, String providerName){
+    public Level(LevelManager manager, String providerName, LevelParameters params){
         this.manager = manager;
-        name = levelDir.getName();
-
         generator = new FlatGenerator(); //TODO: correct generator
 
-        switch(providerName){
-            case "levelDB":
-                provider = new LevelDBProvider(this, new File(levelDir + File.separator + "db"));
-                break;
-            default:
-                manager.getServer().getLogger().error("Could not resolve providerName: " + providerName);
-                throw new LevelLoadException("Could not resolve providerName: " + providerName);
-        }
-
         try{
-            provider.loadLevelData(new File(levelDir + File.separator + "level.dat"));
+            provider = manager.getProvider(providerName).newInstance(this, params);
+        }catch(NullPointerException e){
+            throw new LevelLoadException("Unknown level provider " + providerName);
+        }catch(InvocationTargetException e){
+            throw new LevelLoadException(e.getTargetException());
+        }catch(IllegalAccessException | InstantiationException e){
+            throw new LevelLoadException(e);
+        }
+        try{
+            provider.init();
         }catch(IOException e){
             manager.getServer().getLogger().error("Failed to load Level: " + name);
             throw new LevelLoadException(e);
         }
+        name = provider.getName();
     }
 
     public Chunk getChunkAt(ChunkPosition position){
@@ -126,5 +125,10 @@ public class Level{
 
     public Position getSpawnPosition(){
         return spawnPosition;
+    }
+
+    public static class LevelParameters{
+        public String name;
+        public File levelDir;
     }
 }
