@@ -30,8 +30,8 @@ public abstract class Entity {
     private int entityID;
     private Position position;
     private String nametag;
-    //private MetadataDictionary metadata;
-    private EntityMetadata metadata;
+    private MetadataDictionary metadata;
+    //private EntityMetadata metadata;
     private boolean initialized = false;
 
     protected void initEntity() {
@@ -66,11 +66,11 @@ public abstract class Entity {
         this.entityID = id;
     }
 
-    public EntityMetadata getMetadata() {
+    public MetadataDictionary getMetadata() {
         return metadata;
     }
 
-    protected void setMetadata(EntityMetadata metadata) {
+    protected void setMetadata(MetadataDictionary metadata) {
         this.metadata = metadata;
     }
 

@@ -231,7 +231,8 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
 
 
-            byte[] metadata = EntityMetadata.write(player.getMetadata());
+            //byte[] metadata = EntityMetadata.write(player.getMetadata());
+            byte[] metadata = player.getMetadata().toBytes();
             bb = BinaryBuffer.newInstance(9 + metadata.length, ByteOrder.BIG_ENDIAN);
             bb.putByte(SET_ENTITY_DATA_PACKET);
             bb.putLong(0); //Player Entity ID is always zero to themselves
@@ -285,7 +286,8 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         } else if(response instanceof AddPlayerResponse) {
             Player p = ((AddPlayerResponse) response).player;
-            byte[] meta = EntityMetadata.write(p.getMetadata());
+            //byte[] meta = EntityMetadata.write(p.getMetadata());
+            byte[] meta = p.getMetadata().toBytes();
             //bb = BinaryBuffer.newInstance(56 + p.getSkin().length + p.getNametag().getBytes().length + meta.length, ByteOrder.BIG_ENDIAN);
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
             bb.putByte(ADD_PLAYER_PACKET);
@@ -326,7 +328,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             PlayerMoveResponse pmr = (PlayerMoveResponse) response;
             bb = BinaryBuffer.newInstance(35, ByteOrder.BIG_ENDIAN);
             bb.putByte(MOVE_PLAYER_PACKET);
-            bb.putLong(player.getEntityID());
+            bb.putLong(pmr.entityID);
             bb.putFloat((float) pmr.pos.getX());
             bb.putFloat((float) pmr.pos.getY());
             bb.putFloat((float) pmr.pos.getZ());
