@@ -81,6 +81,7 @@ public class JavaPluginLoader extends PluginLoader{
 	@Override
 	public void enablePlugin() {
 		if(getState()!=PluginState.INITIALIZED)return;
+		PluginSystem.getLogger().log(Level.INFO, "Enabling "+name+" v."+version+"...");
 		this.plugin.onEnable();
 		setState(PluginState.ENABLED);
 	}
@@ -88,6 +89,7 @@ public class JavaPluginLoader extends PluginLoader{
 	@Override
 	public void disablePlugin() {
 		if(getState()!=PluginState.ENABLED)return;
+		PluginSystem.getLogger().log(Level.INFO, "Disabling "+name+" v."+version+"...");
 		this.plugin.onDisable();
 		setState(PluginState.DISABLED);
 	}

@@ -1,8 +1,10 @@
 package net.redstonelamp.plugin.java;
 
 import java.io.File;
+import java.util.logging.Level;
 
 import net.redstonelamp.plugin.PluginManager;
+import net.redstonelamp.plugin.PluginSystem;
 
 public class JavaPluginManager extends PluginManager{
 	/**
@@ -12,6 +14,7 @@ public class JavaPluginManager extends PluginManager{
 
 	@Override
 	public void loadPlugins() {
+		PluginSystem.getLogger().log(Level.INFO, "Loading java plugins...");
 		for(File x : PLUGINS_DIR.listFiles()){
 			if(x.getName().toLowerCase().endsWith(".jar")&&x.isFile()){
 				JavaPluginLoader load = new JavaPluginLoader(this, x);
