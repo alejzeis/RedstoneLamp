@@ -33,8 +33,8 @@ import lombok.Getter;
 import net.redstonelamp.plugin.PluginLoader;
 import net.redstonelamp.plugin.PluginManager;
 import net.redstonelamp.plugin.PluginSystem;
-import net.sourceforge.yamlbeans.YamlException;
-import net.sourceforge.yamlbeans.YamlReader;
+import com.esotericsoftware.yamlbeans.YamlException;
+import com.esotericsoftware.yamlbeans.YamlReader;
 
 public class JavaPluginLoader extends PluginLoader{
 	/**
