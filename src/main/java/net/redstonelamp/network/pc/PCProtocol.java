@@ -32,7 +32,7 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
 
     public PCProtocol(NetworkManager manager) {
         super(manager);
-        _interface = new MinaInterface(manager.getServer());
+        _interface = new MinaInterface(manager.getServer(), this);
     }
 
     @Override
