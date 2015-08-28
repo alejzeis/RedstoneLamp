@@ -148,6 +148,26 @@ public class BinaryBuffer {
     }
 
     /**
+     * Gets a Google Protocol Buffers VarInt from the buffer.
+     * Code is from: https://gist.github.com/thinkofdeath/e975ddee04e9c87faf22
+     * @return The VarInt, as an integer.
+     */
+    public int getVarInt() {
+        int i = 0;
+        int j = 0;
+        while (true) {
+            int k = getByte();
+
+            i |= (k & 0x7F) << j++ * 7;
+
+            if (j > 5) throw new RuntimeException("VarInt too big");
+
+            if ((k & 0x80) != 128) break;
+        }
+        return i;
+    }
+
+    /**
      * Get a single short prefixed string from the buffer (2 + str bytes)
      * @return A single short prefixed string
      */
@@ -182,6 +202,23 @@ public class BinaryBuffer {
     public void putString(String s) {
         putShort((short) s.getBytes().length);
         put(s.getBytes());
+    }
+
+    /**
+     * Puts a Google Protocol Buffers VarInt into the buffer
+     * Code is from: https://gist.github.com/thinkofdeath/e975ddee04e9c87faf22
+     * @param i The VarInt as an Integer.
+     */
+    public void putVarInt(int i) {
+        while (true) {
+            if ((i & 0xFFFFFF80) == 0) {
+                putByte((byte) i);
+                return;
+            }
+
+            putByte((byte) (i & 0x7F | 0x80));
+            i >>>= 7;
+        }
     }
 
     /**

@@ -174,7 +174,7 @@ public class JRakLibInterface implements ServerInstance, AdvancedNetworkInterfac
     /**
      * Wrapper JRakLib logger that wraps around a UI logger.
      *
-     * @author jython234
+     * @author RedstoneLamp Team
      */
     public static class JRakLibLogger implements Logger {
         private final net.redstonelamp.ui.Logger logger;
@@ -202,7 +202,7 @@ public class JRakLibInterface implements ServerInstance, AdvancedNetworkInterfac
     /**
      * A SocketAddress implementation of a JRakLib Identifier String.
      *
-     * @author jython234
+     * @author RedstoneLamp Team
      */
     public static class JRakLibIdentifierAddress extends SocketAddress {
         private final String identifier;
