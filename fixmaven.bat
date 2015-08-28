@@ -2,5 +2,5 @@
 :: The maven dependencies and adds them to the classpath for eclipse
 
 mvn eclipse:eclipse
-echo "Finished refresh of depencies!"
+echo "Finished refresh of dependencies!"
 pause
