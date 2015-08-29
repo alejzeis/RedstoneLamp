@@ -18,6 +18,7 @@ package net.redstonelamp.entity;
 
 import net.redstonelamp.Player;
 import net.redstonelamp.level.position.Position;
+import net.redstonelamp.metadata.EntityMetadata;
 import net.redstonelamp.metadata.MetadataDictionary;
 
 /**
@@ -30,6 +31,7 @@ public abstract class Entity{
     private Position position;
     private String nametag;
     private MetadataDictionary metadata;
+    //private EntityMetadata metadata;
     private boolean initialized = false;
 
     protected void initEntity(){

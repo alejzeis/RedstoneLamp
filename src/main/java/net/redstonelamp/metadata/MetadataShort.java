@@ -49,4 +49,9 @@ public class MetadataShort extends MetadataElement{
     public byte getIdentifier(){
         return 1;
     }
+
+    @Override
+    public int getLength() {
+        return 2;
+    }
 }

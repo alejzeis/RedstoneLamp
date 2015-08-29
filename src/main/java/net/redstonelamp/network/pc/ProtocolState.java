@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -14,36 +14,30 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.metadata;
-
-
-import net.redstonelamp.nio.BinaryBuffer;
+package net.redstonelamp.network.pc;
 
 /**
- * Represents an element in a MetadataDictionary.
+ * Represents different states of the Minecraft protocol
  *
  * @author RedstoneLamp Team
  */
-public abstract class MetadataElement{
-    private byte index;
-
-    public abstract void fromBytes(BinaryBuffer bb);
-
-    public abstract void toBytes(BinaryBuffer bb, int index);
-
-    public abstract byte getIdentifier();
-
-    public byte getKey(byte index){
-        return (byte) ((getIdentifier() << 5) | (index & 0x1F));
-    }
-
-    public byte getIndex(){
-        return index;
-    }
-
-    public void setIndex(byte index){
-        this.index = index;
-    }
-
-    public abstract int getLength();
+public enum ProtocolState {
+    /**
+     * The Handshake state is the first state when a client connects.
+     * Currently there is only one packet sent in this state.
+     */
+    STATE_HANDSHAKE,
+    /**
+     * The Status state is the state when the client pings the server for the
+     * MOTD.
+     */
+    STATE_STATUS,
+    /**
+     * The Login state is when the client and server authenticate.
+     */
+    STATE_LOGIN,
+    /**
+     * The Play state is the final state in which all game packets are sent.
+     */
+    STATE_PLAY;
 }

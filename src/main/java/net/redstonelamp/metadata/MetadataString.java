@@ -49,4 +49,9 @@ public class MetadataString extends MetadataElement{
     public byte getIdentifier(){
         return 4;
     }
+
+    @Override
+    public int getLength() {
+        return s.getBytes().length + 2;
+    }
 }

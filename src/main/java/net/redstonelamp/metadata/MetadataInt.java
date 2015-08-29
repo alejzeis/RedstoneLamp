@@ -50,4 +50,9 @@ public class MetadataInt extends MetadataElement{
     public byte getIdentifier(){
         return 2;
     }
+
+    @Override
+    public int getLength() {
+        return 4;
+    }
 }

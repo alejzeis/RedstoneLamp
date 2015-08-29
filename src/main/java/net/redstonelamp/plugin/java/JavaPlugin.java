@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -14,36 +14,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.metadata;
+package net.redstonelamp.plugin.java;
 
+import net.redstonelamp.plugin.Plugin;
 
-import net.redstonelamp.nio.BinaryBuffer;
+public abstract class JavaPlugin extends Plugin{
 
-/**
- * Represents an element in a MetadataDictionary.
- *
- * @author RedstoneLamp Team
- */
-public abstract class MetadataElement{
-    private byte index;
-
-    public abstract void fromBytes(BinaryBuffer bb);
-
-    public abstract void toBytes(BinaryBuffer bb, int index);
-
-    public abstract byte getIdentifier();
-
-    public byte getKey(byte index){
-        return (byte) ((getIdentifier() << 5) | (index & 0x1F));
-    }
-
-    public byte getIndex(){
-        return index;
-    }
-
-    public void setIndex(byte index){
-        this.index = index;
-    }
-
-    public abstract int getLength();
+	public JavaPlugin(String name, String version, String[] authors,
+			String website) {
+		super(name, version, authors, website);
+	}
+	
 }

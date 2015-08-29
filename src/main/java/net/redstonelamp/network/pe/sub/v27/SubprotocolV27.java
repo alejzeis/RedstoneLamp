@@ -18,6 +18,7 @@ package net.redstonelamp.network.pe.sub.v27;
 
 import net.redstonelamp.Player;
 import net.redstonelamp.level.position.Position;
+import net.redstonelamp.metadata.EntityMetadata;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
@@ -231,14 +232,15 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             bb.putInt(flags);
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
 
-            /*
+
+            //byte[] metadata = EntityMetadata.write(player.getMetadata());
             byte[] metadata = player.getMetadata().toBytes();
             bb = BinaryBuffer.newInstance(9 + metadata.length, ByteOrder.BIG_ENDIAN);
             bb.putByte(SET_ENTITY_DATA_PACKET);
             bb.putLong(0); //Player Entity ID is always zero to themselves
             bb.put(metadata);
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
-            */
+
 
             bb = BinaryBuffer.newInstance(6, ByteOrder.BIG_ENDIAN);
             bb.putByte(SET_TIME_PACKET);
@@ -259,7 +261,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }else if(response instanceof TeleportResponse){
             TeleportResponse tr = (TeleportResponse) response;
-            bb = BinaryBuffer.newInstance(36, ByteOrder.BIG_ENDIAN);
+            bb = BinaryBuffer.newInstance(35, ByteOrder.BIG_ENDIAN);
             bb.putByte(MOVE_PLAYER_PACKET);
             bb.putLong(player.getEntityID());
             bb.putFloat((float) tr.pos.getX());
@@ -286,9 +288,10 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }else if(response instanceof AddPlayerResponse){
             Player p = ((AddPlayerResponse) response).player;
+            //byte[] meta = EntityMetadata.write(p.getMetadata());
             byte[] meta = p.getMetadata().toBytes();
-            bb = BinaryBuffer.newInstance(56 + p.getSkin().length + p.getNametag().getBytes().length + meta.length, ByteOrder.BIG_ENDIAN);
-            //bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+            //bb = BinaryBuffer.newInstance(56 + p.getSkin().length + p.getNametag().getBytes().length + meta.length, ByteOrder.BIG_ENDIAN);
+            bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
             bb.putByte(ADD_PLAYER_PACKET);
             bb.putLong(p.getEntityID()); //Prevent client from knowing the real clientID
             bb.putString(p.getNametag());
@@ -325,9 +328,9 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }else if(response instanceof PlayerMoveResponse){
             PlayerMoveResponse pmr = (PlayerMoveResponse) response;
-            bb = BinaryBuffer.newInstance(36, ByteOrder.BIG_ENDIAN);
+            bb = BinaryBuffer.newInstance(35, ByteOrder.BIG_ENDIAN);
             bb.putByte(MOVE_PLAYER_PACKET);
-            bb.putLong(player.getEntityID());
+            bb.putLong(pmr.entityID);
             bb.putFloat((float) pmr.pos.getX());
             bb.putFloat((float) pmr.pos.getY());
             bb.putFloat((float) pmr.pos.getZ());
