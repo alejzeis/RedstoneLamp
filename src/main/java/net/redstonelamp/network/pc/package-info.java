@@ -14,9 +14,4 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * This package contains the networking classes used by the Minecraft: PC edition server.
- *
- * @author RedstoneLamp Team
- */
 package net.redstonelamp.network.pc;

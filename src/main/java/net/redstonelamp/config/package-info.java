@@ -14,9 +14,4 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * This package contains configuration classes used by the server for easy file configurations.
- *
- * @author RedstoneLamp Team
- */
 package net.redstonelamp.config;

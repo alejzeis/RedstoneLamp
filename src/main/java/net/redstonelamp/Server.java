@@ -21,9 +21,11 @@ import net.redstonelamp.level.LevelManager;
 import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.network.pe.PEProtocol;
+import net.redstonelamp.plugin.PluginSystem;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.response.Response;
 import net.redstonelamp.ticker.RedstoneTicker;
+import net.redstonelamp.ui.Log4j2ConsoleOut;
 import net.redstonelamp.ui.Logger;
 
 import java.net.SocketAddress;
@@ -43,6 +45,7 @@ public class Server implements Runnable{
     private final RedstoneTicker ticker;
     private final NetworkManager network;
     private final List<Player> players = new CopyOnWriteArrayList<>();
+    private final PluginSystem pluginSystem;
 
     private String motd;
     private int maxPlayers;
@@ -67,6 +70,9 @@ public class Server implements Runnable{
 
         network.registerProtocol(new PEProtocol(network));
         network.setName(motd);
+
+        pluginSystem = new PluginSystem();
+        pluginSystem.init(this, new Logger(new Log4j2ConsoleOut("PluginSystem")));
     }
 
     private void loadProperties(ServerConfig config){

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -80,7 +80,7 @@ public class JavaPluginLoader extends PluginLoader{
 		try{
 			mainClass = Class.forName(getProperties().getMain());
 			if(!(mainClass.isAssignableFrom(JavaPlugin.class))){
-				PluginSystem.getLogger().log(Level.SEVERE, name+" is in folder java-plugins, but does not extend JavaPlugin. Disabling!");
+				PluginSystem.getLogger().error(name+" is in folder java-plugins, but does not extend JavaPlugin. Disabling!");
 				setState(PluginState.UNLOADED);
 				return;
 			}
@@ -97,7 +97,7 @@ public class JavaPluginLoader extends PluginLoader{
 	@Override
 	public void enablePlugin() {
 		if(getState()!=PluginState.INITIALIZED)return;
-		PluginSystem.getLogger().log(Level.INFO, "Enabling "+name+" v."+version+"...");
+		PluginSystem.getLogger().info("Enabling " + name + " v." + version + "...");
 		this.plugin.onEnable();
 		setState(PluginState.ENABLED);
 	}
@@ -105,7 +105,7 @@ public class JavaPluginLoader extends PluginLoader{
 	@Override
 	public void disablePlugin() {
 		if(getState()!=PluginState.ENABLED)return;
-		PluginSystem.getLogger().log(Level.INFO, "Disabling "+name+" v."+version+"...");
+		PluginSystem.getLogger().info("Disabling " + name + " v." + version + "...");
 		this.plugin.onDisable();
 		setState(PluginState.DISABLED);
 	}

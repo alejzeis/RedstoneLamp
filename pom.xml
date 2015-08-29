@@ -134,11 +134,11 @@
                 <version>2.11</version>
                 <configuration>
                     <header>com/mycila/maven/plugin/license/templates/LGPL-3.txt</header>
-                    <!--
+
                     <headerDefinitions>
                         <headerDefinition>license-definitions.xml</headerDefinition>
                     </headerDefinitions>
-                    -->
+
                     <excludes>
                         <exclude>**/README</exclude>
                         <exclude>**/**.log</exclude>
