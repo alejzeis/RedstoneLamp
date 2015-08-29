@@ -49,9 +49,17 @@ public class Level{
 
         try{
             provider = manager.getProvider(providerName).newInstance(this, params);
-            generator = manager.getGenerator(generatorName).newInstance(this, params);
         }catch(NullPointerException e){
             throw new LevelLoadException("Unknown level provider " + providerName);
+        }catch(InvocationTargetException e){
+            throw new LevelLoadException(e.getTargetException());
+        }catch(IllegalAccessException | InstantiationException e){
+            throw new LevelLoadException(e);
+        }
+        try{
+            generator = manager.getGenerator(generatorName).newInstance(this, params);
+        }catch(NullPointerException e){
+            throw new LevelLoadException("Unknown level generator " + providerName);
         }catch(InvocationTargetException e){
             throw new LevelLoadException(e.getTargetException());
         }catch(IllegalAccessException | InstantiationException e){

@@ -43,7 +43,7 @@ public abstract class PlayerEntity extends Entity{
         data.put((byte) 8, new MetadataByte((byte) 0)); //Potion ambient
         data.put((byte) 15, new MetadataByte((byte) 0)); //No ai
         data.put((byte) 16, new MetadataByte((byte) 0)); //Player flags
-        data.put((byte) 17, new MetadataLong((byte) 0));
+        //data.put((byte) 17, new MetadataLong((byte) 0));
         setMetadata(data);
 
         /*
