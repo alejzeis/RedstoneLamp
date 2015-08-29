@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -32,8 +32,7 @@ import java.util.Arrays;
 public abstract class PlayerEntity extends Entity{
 
     @Override
-    protected void initEntity() {
-
+    protected void initEntity(){
         MetadataDictionary data = new MetadataDictionary();
         data.put((byte) 0, new MetadataByte((byte) 0)); //TODO: Is player on fire
         data.put((byte) 1, new MetadataShort((short) 300)); //Air
@@ -65,20 +64,20 @@ public abstract class PlayerEntity extends Entity{
     }
 
     @Override
-    public void spawnTo(Player player) {
-        if(player != this) {
-            if(this instanceof Player) {
-                Player me = ((Player) this);
+    public void spawnTo(Player player){
+        if(player != this){
+            if(this instanceof Player){
+                Player me = (Player) this;
                 player.getProtocol().sendImmediateResponse(new AddPlayerResponse(me), player);
             }
         }
     }
 
     @Override
-    public void despawnFrom(Player player) {
-        if(player != this) {
-            if(this instanceof Player) {
-                Player me = ((Player) this);
+    public void despawnFrom(Player player){
+        if(player != this){
+            if(this instanceof Player){
+                Player me = (Player) this;
                 player.getProtocol().sendImmediateResponse(new RemovePlayerResponse(me), player);
             }
         }

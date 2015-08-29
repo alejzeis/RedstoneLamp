@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ public class JavaPluginManager extends PluginManager{
 
 	@Override
 	public void loadPlugins() {
-		PluginSystem.getLogger().log(Level.INFO, "Loading java plugins...");
+		PluginSystem.getLogger().info("Loading java plugins...");
 		for(File x : PLUGINS_DIR.listFiles()){
 			if(x.getName().toLowerCase().endsWith(".jar")&&x.isFile()){
 				JavaPluginLoader load = new JavaPluginLoader(this, x);

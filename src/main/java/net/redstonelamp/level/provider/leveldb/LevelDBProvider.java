@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -51,33 +51,37 @@ import java.util.Arrays;
  */
 public class LevelDBProvider implements LevelProvider{
     private final Level level;
+    private final File levelDir;
+    private final String name;
     private final DB database;
-
     private CompoundTag levelData;
 
     /**
      * Create a new LevelDBProvider and load the database.
-     * @param level The Level class that this provider provides to.
-     * @param databaseDir The directory in which the database files are contained.
-     *                    This is usually "db".
+     *
+     * @param level       The Level class that this provider provides to.
+     * @param levelDir    The level directory.
      */
-    public LevelDBProvider(Level level, File databaseDir) {
+    public LevelDBProvider(Level level, Level.LevelParameters params){
         this.level = level;
+        name = params.name;
+        levelDir = params.levelDir;
 
         Options options = new Options();
         options.createIfMissing(true);
         options.compressionType(CompressionType.ZLIB);
 
-        try {
+        File databaseDir = new File(levelDir, "db");
+        try{
             database = Iq80DBFactory.factory.open(databaseDir, options);
-        } catch (IOException e) {
-            level.getManager().getServer().getLogger().error(e.getClass().getName()+" while loading LevelDB world "+databaseDir.getName());
+        }catch(IOException e){
+            level.getManager().getServer().getLogger().error(e.getClass().getName() + " while loading LevelDB world " + databaseDir.getName());
             throw new LevelLoadException(e);
         }
     }
 
     @Override
-    public Chunk getChunk(ChunkPosition position) {
+    public Chunk getChunk(ChunkPosition position){
         byte[] key = Key.TYPE_TERRAIN_DATA.assembleKey(position);
         byte[] data = database.get(key);
         if(data == null){
@@ -104,14 +108,14 @@ public class LevelDBProvider implements LevelProvider{
         return c;
     }
 
-    private void genNewLevelData(File file) throws IOException {
+    private void genNewLevelData(File file) throws IOException{
         IntTag x = new IntTag("SpawnX", 128);
         IntTag y = new IntTag("SpawnY", 3); //TODO: Correct positions
         IntTag z = new IntTag("SpawnZ", 128);
         IntTag gamemode = new IntTag("GameType", 1);
         LongTag time = new LongTag("Time", 1);
 
-        CompoundTag c = new CompoundTag("world data", Arrays.asList(new Tag[]{x, y, z, gamemode, time}));
+        CompoundTag c = new CompoundTag("world data", Arrays.asList(x, y, z, gamemode, time));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         out.write(new byte[8]); //Fake header
         NBTOutputStream nbt = new NBTOutputStream(out, false, true);
@@ -122,16 +126,17 @@ public class LevelDBProvider implements LevelProvider{
     }
 
     @Override
-    public void shutdown() {
-        try {
+    public void shutdown(){
+        try{
             database.close();
-        } catch (IOException e) {
-            level.getManager().getServer().getLogger().warning("Failed to close LevelDB database for level "+level.getName());
+        }catch(IOException e){
+            level.getManager().getServer().getLogger().warning("Failed to close LevelDB database for level " + level.getName());
         }
     }
 
     @Override
-    public void loadLevelData(File file) throws IOException {
+    public void init() throws IOException{
+        File file = new File(levelDir, "level.dat");
         if(!file.exists()){
             level.getManager().getServer().getLogger().info("Couldn't find level.dat, creating new...");
             genNewLevelData(file);
@@ -161,6 +166,11 @@ public class LevelDBProvider implements LevelProvider{
         level.setSpawnPosition(new Position(x, y, z, level));
         level.setGamemode((int) getTag("GameType").getValue());
         level.setTime((long) getTag("Time").getValue());
+    }
+
+    @Override
+    public String getName(){
+        return name;
     }
 
     public Tag getTag(String name){

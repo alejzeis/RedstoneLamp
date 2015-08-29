@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -18,19 +18,19 @@ package net.redstonelamp.request;
 
 
 public class ChatRequest extends Request{
-	
-	public byte type;
-	public String source;
-	public String message;
-	public String[] parameters;
-	
-	public ChatRequest(byte type) {
-		this.type = type;
-	}
-	
-	@Override
-	public void execute() {
-		// TODO?
-	}
-	
+
+    public byte type;
+    public String source;
+    public String message;
+    public String[] parameters;
+
+    public ChatRequest(byte type){
+        this.type = type;
+    }
+
+    @Override
+    public void execute(){
+        // TODO?
+    }
+
 }

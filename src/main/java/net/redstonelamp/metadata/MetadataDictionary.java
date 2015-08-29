@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author RedstoneLamp team
  */
+@SuppressWarnings("SuspiciousMethodCalls")
 public class MetadataDictionary extends Dictionary<Byte, MetadataElement>{
     private static Map<Byte, Class<? extends MetadataElement>> elements;
     private ConcurrentMap<Byte, MetadataElement> entries = new ConcurrentHashMap<>();
@@ -44,57 +45,56 @@ public class MetadataDictionary extends Dictionary<Byte, MetadataElement>{
     }
 
     @Override
-    public int size() {
+    public int size(){
         return entries.size();
     }
 
     @Override
-    public boolean isEmpty() {
+    public boolean isEmpty(){
         return entries.isEmpty();
     }
 
     @Override
-    public Enumeration<Byte> keys() {
-        return new MetadataEnumeration(entries.keySet().toArray());
+    public Enumeration<Byte> keys(){
+        List<Byte> list = new ArrayList<>(entries.size());
+        list.addAll(entries.keySet());
+        return new MetadataEnumeration<>(list);
     }
 
     @Override
-    public Enumeration<MetadataElement> elements() {
-        return new MetadataEnumeration(entries.values().toArray());
+    public Enumeration<MetadataElement> elements(){
+        List<MetadataElement> list = new ArrayList<>(entries.size());
+        list.addAll(entries.values());
+        return new MetadataEnumeration<>(list);
     }
 
     @Override
-    public MetadataElement get(Object key) {
+    public MetadataElement get(Object key){
         return entries.get(key);
     }
 
     @Override
-    public MetadataElement put(Byte key, MetadataElement value) {
+    public MetadataElement put(Byte key, MetadataElement value){
         return entries.put(key, value);
     }
 
     @Override
-    public MetadataElement remove(Object key) {
+    public MetadataElement remove(Object key){
         return entries.remove(key);
     }
 
-    public void fromBytes(byte[] bytes) {
+    public void fromBytes(byte[] bytes){
         BinaryBuffer bb = BinaryBuffer.wrapBytes(bytes, ByteOrder.LITTLE_ENDIAN);
         while(true){
             byte b = bb.getByte();
-            if(b == -127) {
+            if(b == -127){
                 break;
             }
 
             byte type = (byte) ((b & 0xE0) >> 5);
             byte index = (byte) (b & 0x1F);
 
-            MetadataElement element;
-            if(index == 17){
-                element = new MetadataLong(0);
-            } else {
-                element = getElementByType(type);
-            }
+            MetadataElement element = index == 17 ? new MetadataLong(0) : getElementByType(type);
             element.fromBytes(bb);
             element.setIndex(index);
 
@@ -102,17 +102,15 @@ public class MetadataDictionary extends Dictionary<Byte, MetadataElement>{
         }
     }
 
-    private MetadataElement getElementByType(byte type) {
+    private MetadataElement getElementByType(byte type){
         if(elements.containsKey(type)){
-            try {
+            try{
                 return elements.get(type).newInstance();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            }catch(InstantiationException | IllegalAccessException e){
                 e.printStackTrace();
             }
         }
-        return null;
+        throw new IllegalArgumentException();
     }
 
     public byte[] toBytes(){
@@ -133,28 +131,26 @@ public class MetadataDictionary extends Dictionary<Byte, MetadataElement>{
         return len[0];
     }
 
-    public static class MetadataEnumeration implements Enumeration {
-        private List list;
+    public static class MetadataEnumeration<T> implements Enumeration<T>{
+        private List<T> list;
         private int position = 0;
 
-        public MetadataEnumeration(List elements){
+        public MetadataEnumeration(List<T> elements){
             list = elements;
         }
 
-        public MetadataEnumeration(Object[] elements){
+        public MetadataEnumeration(T[] elements){
             list = new ArrayList<>();
-            for(Object element : elements){
-                list.add(element);
-            }
+            Collections.addAll(list, elements);
         }
 
         @Override
-        public boolean hasMoreElements() {
+        public boolean hasMoreElements(){
             return position < list.size();
         }
 
         @Override
-        public Object nextElement() {
+        public T nextElement(){
             return list.get(position++);
         }
     }

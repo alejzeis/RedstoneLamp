@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -29,12 +29,15 @@ public class RegisteredTask{
     public static RegisteredTask delay(Task task, int delay){
         return new RegisteredTask(task, delay, 0);
     }
+
     public static RegisteredTask repeat(Task task, int repeat){
         return new RegisteredTask(task, 1, repeat);
     }
+
     public static RegisteredTask delayAndRepeat(Task task, int delay, int repeat){
         return new RegisteredTask(task, delay, repeat);
     }
+
     public RegisteredTask(Task task, int delay, int repeat){
         this.task = task;
         leftTicks = delay;
@@ -45,6 +48,7 @@ public class RegisteredTask{
      * <font color="FF0000"><b>Warning: this method is frequently called.
      * Minimize the time to run this method.</b></font>
      * <br>Number of times run per second: number of tasks * TPS
+     *
      * @param tick the current ticker tick
      */
     public void check(long tick){

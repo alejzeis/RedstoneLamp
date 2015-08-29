@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -16,12 +16,11 @@
  */
 package net.redstonelamp.plugin;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import lombok.Getter;
+import net.redstonelamp.Server;
 import net.redstonelamp.plugin.PluginLoader.PluginState;
 import net.redstonelamp.plugin.java.JavaPluginManager;
+import net.redstonelamp.ui.Logger;
 
 public class PluginSystem {
 	/**
@@ -29,21 +28,24 @@ public class PluginSystem {
 	 */
 	@Getter private static final PluginManager[] pluginManagers = new PluginManager[]{new JavaPluginManager()};
 	@Getter private static Logger logger = null;
+	@Getter private static Server server = null;
 	
 	/**
 	 * Initializes the plugin system. Has to be called from the main server loop!
+	 * @param server The server this PluginSystem belongs to.
 	 * @param log Logger to print out information (maybe with a [PluginSystem] tag?)
 	 */
-	public void init(Logger log){
+	public void init(Server server, Logger log){
 		logger = log;
-		logger.log(Level.INFO, "Initializing plugin system...");
+		this.server = server;
+		logger.info("Initializing plugin system...");
 		PluginManager.init();
 	}
 	/**
 	 * Loads all plugins and initializes them
 	 */
 	public void loadPlugins(){
-		logger.log(Level.INFO, "Loading & initializing plugins...");
+		logger.info("Loading & initializing plugins...");
 		for(PluginManager mgr : pluginManagers)mgr.loadPlugins();
 		for(PluginManager mgr : pluginManagers){
 			for(PluginLoader l : mgr.getPluginLoaders()){
@@ -55,7 +57,7 @@ public class PluginSystem {
 	 * Enables all plugins
 	 */
 	public void enablePlugins(){
-		logger.log(Level.INFO, "Enabling plugins...");
+		logger.info("Enabling plugins...");
 		for(PluginManager mgr : pluginManagers){
 			for(PluginLoader l : mgr.getPluginLoaders()){
 				enablePlugin(l);
@@ -66,7 +68,7 @@ public class PluginSystem {
 	 * Disables all plugins
 	 */
 	public void disablePlugins(){
-		logger.log(Level.INFO, "Disabling plugins...");
+		logger.info("Disabling plugins...");
 		for(PluginManager mgr : pluginManagers){
 			for(PluginLoader l : mgr.getPluginLoaders()){
 				disablePlugin(l);
@@ -85,7 +87,7 @@ public class PluginSystem {
 		for(String depend : loader.getDependencies()){
 			PluginLoader dependency = getPluginLoader(depend);
 			if(dependency==null||dependency.getState()==PluginState.UNLOADED){
-				logger.log(Level.WARNING, loader.getName()+" v"+loader.getVersion()+" is missing dependency "+depend+"! Disabling!");
+				logger.warning( loader.getName()+" v"+loader.getVersion()+" is missing dependency "+depend+"! Disabling!");
 				loader.setState(PluginState.LOADED);
 				return;
 			}
@@ -119,17 +121,17 @@ public class PluginSystem {
 		for(String depend : loader.getDependencies()){
 			PluginLoader dependency = getPluginLoader(depend);
 			if(dependency==null||dependency.getState()==PluginState.UNLOADED||dependency.getState()==PluginState.LOADED){
-				logger.log(Level.WARNING, loader.getName()+" v"+loader.getVersion()+" is missing dependency "+depend+"! Disabling!");
+				logger.warning( loader.getName()+" v"+loader.getVersion()+" is missing dependency "+depend+"! Disabling!");
 				loader.setState(PluginState.DISABLED);
 				return;
 			}
 			if(dependency.getName().equalsIgnoreCase(loader.getName())){
-				logger.log(Level.WARNING, loader.getName()+" v"+loader.getVersion()+" is depending on itself! Disabling!");
+				logger.warning( loader.getName()+" v"+loader.getVersion()+" is depending on itself! Disabling!");
 				loader.setState(PluginState.DISABLED);
 				return;
 			}
 			if(dependency.dependsOn(loader.getName())||dependency.softDependsOn(loader.getName())){
-				logger.log(Level.WARNING, loader.getName()+" v"+loader.getVersion()+" could not be loaded, because its dependency \""+dependency.getName()+"\" is depending on the plugin itself! (Both plugins depend on each other)");
+				logger.warning( loader.getName()+" v"+loader.getVersion()+" could not be loaded, because its dependency \""+dependency.getName()+"\" is depending on the plugin itself! (Both plugins depend on each other)");
 				loader.setState(PluginState.DISABLED);
 				return;
 			}
@@ -145,12 +147,12 @@ public class PluginSystem {
 				continue;
 			}
 			if(dependency.getName().equalsIgnoreCase(loader.getName())){
-				logger.log(Level.WARNING, loader.getName()+" v"+loader.getVersion()+" is soft depending on itself! Disabling!");
+				logger.warning( loader.getName()+" v"+loader.getVersion()+" is soft depending on itself! Disabling!");
 				loader.setState(PluginState.DISABLED);
 				return;
 			}
 			if(dependency.dependsOn(loader.getName())||dependency.softDependsOn(loader.getName())){
-				logger.log(Level.WARNING, loader.getName()+" v"+loader.getVersion()+" could not be loaded, because its soft dependency \""+dependency.getName()+"\" is depending on the plugin itself! (Both plugins depend on each other)");
+				logger.warning( loader.getName()+" v"+loader.getVersion()+" could not be loaded, because its soft dependency \""+dependency.getName()+"\" is depending on the plugin itself! (Both plugins depend on each other)");
 				loader.setState(PluginState.DISABLED);
 				return;
 			}

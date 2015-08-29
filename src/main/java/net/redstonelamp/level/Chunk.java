@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ package net.redstonelamp.level;
  *
  * @author RedstoneLamp team
  */
-public class Chunk {
+public class Chunk{
 
     private final ChunkPosition position;
 
@@ -46,55 +46,55 @@ public class Chunk {
         this.biomeColors = biomeColors;
     }
 
-    public byte[] getBiomeColors() {
+    public byte[] getBiomeColors(){
         return biomeColors;
     }
 
-    public byte[] getHeightmap() {
+    public byte[] getHeightmap(){
         return heightmap;
     }
 
-    public byte[] getBlocklight() {
+    public byte[] getBlocklight(){
         return blocklight;
     }
 
-    public byte[] getSkylight() {
+    public byte[] getSkylight(){
         return skylight;
     }
 
-    public byte[] getBlockMeta() {
+    public byte[] getBlockMeta(){
         return blockMeta;
     }
 
-    public byte[] getBlockIds() {
+    public byte[] getBlockIds(){
         return blockIds;
     }
 
-    public void setBlockIds(byte[] blockIds) {
+    public void setBlockIds(byte[] blockIds){
         this.blockIds = blockIds;
     }
 
-    public void setBlockMeta(byte[] blockMeta) {
+    public void setBlockMeta(byte[] blockMeta){
         this.blockMeta = blockMeta;
     }
 
-    public void setSkylight(byte[] skylight) {
+    public void setSkylight(byte[] skylight){
         this.skylight = skylight;
     }
 
-    public void setBlocklight(byte[] blocklight) {
+    public void setBlocklight(byte[] blocklight){
         this.blocklight = blocklight;
     }
 
-    public void setHeightmap(byte[] heightmap) {
+    public void setHeightmap(byte[] heightmap){
         this.heightmap = heightmap;
     }
 
-    public void setBiomeColors(byte[] biomeColors) {
+    public void setBiomeColors(byte[] biomeColors){
         this.biomeColors = biomeColors;
     }
 
-    public ChunkPosition getPosition() {
+    public ChunkPosition getPosition(){
         return position;
     }
 }

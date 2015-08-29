@@ -47,17 +47,20 @@
             <artifactId>JRakLib</artifactId>
             <version>1.1-SNAPSHOT</version>
         </dependency>
+        
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>2.0-rc1</version>
         </dependency>
+        
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.6</version>
             <scope>provided</scope>
         </dependency>
+        
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
@@ -89,20 +92,23 @@
         </dependency>
 
         <dependency>
-			<groupId>com.googlecode.json-simple</groupId>
-			<artifactId>json-simple</artifactId>
-			<version>1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.esotericsoftware.yamlbeans</groupId>
-			<artifactId>yamlbeans</artifactId>
-			<version>1.09</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-		</dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.esotericsoftware.yamlbeans</groupId>
+            <artifactId>yamlbeans</artifactId>
+            <version>1.09</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+        
     </dependencies>
 
     <build>
@@ -128,11 +134,11 @@
                 <version>2.11</version>
                 <configuration>
                     <header>com/mycila/maven/plugin/license/templates/LGPL-3.txt</header>
-                    <!--
+
                     <headerDefinitions>
                         <headerDefinition>license-definitions.xml</headerDefinition>
                     </headerDefinitions>
-                    -->
+
                     <excludes>
                         <exclude>**/README</exclude>
                         <exclude>**/**.log</exclude>
@@ -166,7 +172,8 @@
                         <configuration>
                             <transformers>
                                 <!-- add Main-Class to manifest file -->
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>net.redstonelamp.RedstoneLamp</mainClass>
                                 </transformer>
                             </transformers>

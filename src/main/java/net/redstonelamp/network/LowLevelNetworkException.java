@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -23,9 +23,9 @@ import java.io.IOException;
  *
  * @author RedstoneLamp Team
  */
-public class LowLevelNetworkException extends IOException {
+public class LowLevelNetworkException extends IOException{
 
-    public LowLevelNetworkException(String message) {
+    public LowLevelNetworkException(String message){
         super(message);
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -17,10 +17,14 @@
 package net.redstonelamp.level;
 
 import net.redstonelamp.Server;
+import net.redstonelamp.level.provider.LevelProvider;
 import net.redstonelamp.level.provider.leveldb.LevelDBProvider;
 
 import java.io.File;
-import java.util.List;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,12 +33,13 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author RedstoneLamp Team
  */
-public class LevelManager {
+public class LevelManager{
     private final Server server;
+    private final Map<String, Constructor<? extends LevelProvider>> providers = new ConcurrentHashMap<>();
     private final Map<String, Level> levels = new ConcurrentHashMap<>();
     private Level mainLevel;
 
-    public LevelManager(Server server) {
+    public LevelManager(Server server){
         this.server = server;
     }
 
@@ -42,22 +47,64 @@ public class LevelManager {
      * INTERNAL METHOD!
      * Used in Server to initialize the LevelManager class.
      */
-    public void init() {
+    public void init(){
+        try{
+            registerProvider("leveldb", LevelDBProvider.class);
+        }catch(NoSuchMethodException e){
+            e.printStackTrace();
+        }
         String name = server.getConfig().getString("level-name");
         File levelDir = new File("worlds" + File.separator + name);
-        if(!levelDir.isDirectory()) {
+        if(!levelDir.isDirectory()){
             levelDir.mkdirs();
         }
-        mainLevel = new Level(this, levelDir, "levelDB"); //TODO: correct provider
+        Level.LevelParameters params = new Level.LevelParameters();
+        params.name = name;
+        params.levelDir = levelDir;
+        String format = autoDetectFormat(levelDir, server.getConfig().getString("level-default-format"));
+        mainLevel = new Level(this, format, params); //TODO: correct provider
         levels.put(mainLevel.getName(), mainLevel);
     }
+    public String autoDetectFormat(File levelDir, String defaultFormat){
+        for(Map.Entry<String, Constructor<? extends LevelProvider>> entry : providers.entrySet()){
+            Class<? extends LevelProvider> clazz = entry.getValue().getDeclaringClass();
+            try{
+                Method method = clazz.getMethod("isValid", File.class);
+                int mod = method.getModifiers();
+                if(!Modifier.isStatic(mod) || !Modifier.isPublic(mod) || !method.getReturnType().equals(boolean.class)){
+                    continue;
+                }
+                try{
+                    boolean result = (boolean) method.invoke(null, levelDir);
+                    if(result){
+                        return entry.getKey();
+                    }
+                }catch(IllegalAccessException | InvocationTargetException e){
+                    e.printStackTrace();
+                }
+            }catch(NoSuchMethodException e){
+            }
+        }
+        return defaultFormat;
+    }
 
-    public Server getServer() {
+    public boolean registerProvider(String name, Class<? extends LevelProvider> clazz) throws NoSuchMethodException{
+        if(providers.containsKey(name)){
+            return false;
+        }
+        Constructor<? extends LevelProvider> constructor = clazz.getConstructor(Level.class, Level.LevelParameters.class);
+        providers.put(name, constructor);
+        return true;
+    }
+    public Constructor<? extends LevelProvider> getProvider(String providerName){
+        return providers.get(providerName);
+    }
+
+    public Server getServer(){
         return server;
     }
 
-    public Level getMainLevel() {
+    public Level getMainLevel(){
         return mainLevel;
     }
-
 }

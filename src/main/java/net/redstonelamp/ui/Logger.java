@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -24,11 +24,12 @@ import java.io.StringWriter;
  *
  * @author RedstoneLamp Team
  */
-public class Logger {
+public class Logger{
     private final ConsoleOut out;
 
     /**
      * Create a new <code>Logger</code> that writes to the specified <code>ConsoleOut</code>
+     *
      * @param out The <code>ConsoleOut</code> that this logger will write to.
      */
     public Logger(ConsoleOut out){
@@ -37,7 +38,8 @@ public class Logger {
 
     /**
      * Log a TRACE level message to the underlying <code>ConsoleOut</code>
-     * @param msg The Message to be logged.
+     *
+     * @param msg  The Message to be logged.
      * @param args Any arguments used for formatting (If your <code>msg</code> contains formatting characters)
      */
     public void trace(String msg, Object... args){
@@ -48,7 +50,8 @@ public class Logger {
 
     /**
      * Log a DEBUG level message to the underlying <code>ConsoleOut</code>
-     * @param msg The Message to be logged.
+     *
+     * @param msg  The Message to be logged.
      * @param args Any arguments used for formatting (If your <code>msg</code> contains formatting characters)
      */
     public void debug(String msg, Object... args){
@@ -59,7 +62,8 @@ public class Logger {
 
     /**
      * Log an INFO level message to the underlying <code>ConsoleOut</code>
-     * @param msg The Message to be logged.
+     *
+     * @param msg  The Message to be logged.
      * @param args Any arguments used for formatting (If your <code>msg</code> contains formatting characters)
      */
     public void info(String msg, Object... args){
@@ -70,7 +74,8 @@ public class Logger {
 
     /**
      * Log a WARNING level message to the underlying <code>ConsoleOut</code>
-     * @param msg The Message to be logged.
+     *
+     * @param msg  The Message to be logged.
      * @param args Any arguments used for formatting (If your <code>msg</code> contains formatting characters)
      */
     public void warning(String msg, Object... args){
@@ -81,7 +86,8 @@ public class Logger {
 
     /**
      * Log an ERROR level message to the underlying <code>ConsoleOut</code>
-     * @param msg The Message to be logged.
+     *
+     * @param msg  The Message to be logged.
      * @param args Any arguments used for formatting (If your <code>msg</code> contains formatting characters)
      */
     public void error(String msg, Object... args){
@@ -92,7 +98,8 @@ public class Logger {
 
     /**
      * Log a FATAL level message to the underlying <code>ConsoleOut</code>
-     * @param msg The Message to be logged.
+     *
+     * @param msg  The Message to be logged.
      * @param args Any arguments used for formatting (If your <code>msg</code> contains formatting characters)
      */
     public void fatal(String msg, Object... args){
@@ -103,13 +110,14 @@ public class Logger {
 
     /**
      * Log a <code>byte[]</code> buffer (in hex) as a DEBUG level message to the underlying <code>ConsoleOut</code>
+     *
      * @param prefix The Prefix string before the Buffer.
      * @param buffer The <code>byte[]</code> to be logged (when logged, the buffer will be printed in hex)
      * @param suffix The Suffix string after the buffer.
      */
     public void buffer(String prefix, byte[] buffer, String suffix){
         StringBuilder out = new StringBuilder(buffer.length * 3);
-        for(byte bite: buffer){
+        for(byte bite : buffer){
             String string = Integer.toHexString(bite & 0xFF);
             while(string.length() < 2){
                 string = "0" + string;
@@ -122,17 +130,18 @@ public class Logger {
 
     /**
      * Log a Throwable as a TRACE level message to the underlying <code>ConsoleOut</code>
+     *
      * @param t The Throwable to be logged.
      */
     public void trace(Throwable t){
         StringWriter writer = new StringWriter();
         t.printStackTrace(new PrintWriter(writer));
-        for(String str: writer.toString().split("[\r\n]+")){
+        for(String str : writer.toString().split("[\r\n]+")){
             trace(str);
         }
     }
 
-    public Class<? extends ConsoleOut> getConsoleOutClass() {
+    public Class<? extends ConsoleOut> getConsoleOutClass(){
         return out.getClass();
     }
 }

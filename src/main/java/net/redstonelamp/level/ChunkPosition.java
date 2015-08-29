@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -21,66 +21,68 @@ package net.redstonelamp.level;
  *
  * @author RedstoneLamp Team
  */
-public class ChunkPosition {
+public class ChunkPosition{
     private int x;
     private int z;
 
     /**
      * Create a new ChunkPosition with the specified coordinates x and z
+     *
      * @param x The X coordinate of the chunk
      * @param z The Z coordinate of the chunk
      */
-    public ChunkPosition(int x, int z) {
+    public ChunkPosition(int x, int z){
         this.x = x;
         this.z = z;
     }
 
     /**
      * Get the X coordinate of this ChunkPosition
+     *
      * @return The X coordinate of the ChunkPosition
      */
-    public int getX() {
+    public int getX(){
         return x;
     }
 
     /**
      * Set the X coordinate of this ChunkPosition
+     *
      * @param x The X coordinate of the ChunkPosition
      */
-    public void setX(int x) {
+    public void setX(int x){
         this.x = x;
     }
 
     /**
      * Get the Z coordinate of this ChunkPosition
+     *
      * @return The Z coordinate of the ChunkPosition
      */
-    public int getZ() {
+    public int getZ(){
         return z;
     }
 
     /**
      * Set the Z coordinate of this ChunkPosition
+     *
      * @param z The Z coordinate of the ChunkPosition
      */
-    public void setZ(int z) {
+    public void setZ(int z){
         this.z = z;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if(obj instanceof ChunkPosition) {
+    public boolean equals(Object obj){
+        if(obj instanceof ChunkPosition){
             ChunkPosition pos = (ChunkPosition) obj;
-            if(pos.getX() == getX() && pos.getZ() == getZ()) {
-                return true;
-            }
-            return false;
+            return pos.getX() == getX() && pos.getZ() == getZ();
         }
         return obj.equals(this);
     }
 
     @Override
-    public String toString() {
-        return "ChunkPosition: {x: "+x+", z:"+z+"}";
+    public String toString(){
+        return "ChunkPosition: {x: " + x + ", z:" + z + "}";
     }
 }

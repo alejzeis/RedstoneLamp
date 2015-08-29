@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -26,12 +26,12 @@ import net.redstonelamp.level.ChunkPosition;
 public class ChunkRequest extends Request{
     public ChunkPosition position;
 
-    public ChunkRequest(ChunkPosition position) {
+    public ChunkRequest(ChunkPosition position){
         this.position = position;
     }
 
     @Override
-    public void execute() {
+    public void execute(){
         //TODO: ?
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 import net.redstonelamp.nio.BinaryBuffer;
 
 import java.nio.ByteOrder;
@@ -23,9 +24,9 @@ import java.nio.ByteOrder;
  *
  * @author RedstoneLamp Team
  */
-public class BinaryBufferTest {
+public class BinaryBufferTest{
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
         bb.putByte((byte) 1);
         System.out.println(bb.singleLineHexDump());

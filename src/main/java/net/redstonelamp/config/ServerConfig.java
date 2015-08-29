@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -26,43 +26,47 @@ import java.util.Properties;
  *
  * @author RedstoneLamp Team
  */
-public class ServerConfig {
+public class ServerConfig{
     private Properties properties;
 
     /**
      * Create a new <code>ServerConfig</code> instance and load the config from the specified <code>configLocation</code>
+     *
      * @param configLocation
-     * @throws java.io.IOException If the configuration can not be loaded.
+     * @throws IOException If the configuration can not be loaded.
      */
-    public ServerConfig(File configLocation) throws IOException {
+    public ServerConfig(File configLocation) throws IOException{
         properties = new Properties();
         properties.load(new FileInputStream(configLocation));
     }
 
     /**
      * Gets a <code>String</code> from the configuration belonging to the <code>property</code>
+     *
      * @param property The Property to get the value from
      * @return The property's value, as a <code>String</code>
      */
-    public String getString(String property) {
+    public String getString(String property){
         return properties.getProperty(property);
     }
 
     /**
      * Gets a <code>Boolean</code> from the configuration belonging to the <code>property</code>
+     *
      * @param property The Property to get the value from
      * @return The property's value, as a <code>Boolean</code>
      */
-    public boolean getBoolean(String property) {
+    public boolean getBoolean(String property){
         return Boolean.parseBoolean(properties.getProperty(property));
     }
 
     /**
      * Gets an <code>Integer</code> from the configuration belonging to the <code>property</code>
+     *
      * @param property The Property to get the value from
      * @return The property's value, as an <code>Integer</code>
      */
-    public int getInt(String property) {
+    public int getInt(String property){
         return Integer.parseInt(properties.getProperty(property));
     }
 }

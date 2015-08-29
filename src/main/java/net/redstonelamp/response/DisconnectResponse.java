@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ public class DisconnectResponse extends Response{
     public String reason;
     public boolean notifyClient = DEFAULT_notifyClient;
 
-    public DisconnectResponse(String reason) {
+    public DisconnectResponse(String reason){
         this.reason = reason;
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -24,9 +24,10 @@ import net.redstonelamp.level.ChunkPosition;
  *
  * @author RedstoneLamp Team
  */
-public interface Generator {
+public interface Generator{
     /**
      * Generate a new 16 * 16 * 128 Chunk at the specified <code>Position</code>
+     *
      * @param position The Chunk's position.
      * @return The newly generated Chunk.
      */

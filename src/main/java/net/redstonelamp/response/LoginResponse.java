@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -40,7 +40,7 @@ public class LoginResponse extends Response{
     public float y;
     public float z;
 
-    public LoginResponse(boolean loginAllowed, int gamemode, float x, float y, float z) {
+    public LoginResponse(boolean loginAllowed, int gamemode, float x, float y, float z){
         this.loginAllowed = loginAllowed;
         this.gamemode = gamemode;
         this.x = x;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -25,7 +25,6 @@ import net.redstonelamp.request.Request;
 import net.redstonelamp.response.Response;
 import net.redstonelamp.utils.CompressionUtils;
 
-import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,41 +37,41 @@ import java.util.zip.DataFormatException;
  */
 public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
 
-    public SubprotocolV34(PESubprotocolManager manager) {
+    public SubprotocolV34(PESubprotocolManager manager){
         super(manager);
     }
 
     @Override
-    public Request[] handlePacket(UniversalPacket up) {
+    public Request[] handlePacket(UniversalPacket up){
         byte id = up.bb().getByte();
-        if(id == BATCH_PACKET) {
+        if(id == BATCH_PACKET){
             return processBatch(up);
         }
 
-        switch (id) {
+        switch(id){
             case LOGIN_PACKET:
                 getProtocol().getServer().getLogger().debug("Got Login packet!");
                 break;
         }
-        return new Request[] {null};
+        return new Request[]{null};
     }
 
     @Override
-    public UniversalPacket[] translateResponse(Response response, Player player) {
+    public UniversalPacket[] translateResponse(Response response, Player player){
         return new UniversalPacket[0];
     }
 
 
-    private Request[] processBatch(UniversalPacket up) {
+    private Request[] processBatch(UniversalPacket up){
         List<Request> requests = new ArrayList<>();
         int len = up.bb().getInt();
         byte[] compressed = up.bb().get(len);
-        try {
+        try{
             byte[] uncompressed = CompressionUtils.zlibInflate(compressed);
             BinaryBuffer bb = BinaryBuffer.wrapBytes(uncompressed, up.bb().getOrder());
-            while(bb.getPosition() < uncompressed.length) {
+            while(bb.getPosition() < uncompressed.length){
                 int pkLen = bb.getInt();
-                if(pkLen > bb.remaining()) {
+                if(pkLen > bb.remaining()){
                     break;
                 }
 
@@ -80,30 +79,30 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
                 BinaryBuffer pk = BinaryBuffer.wrapBytes(data, up.bb().getOrder());
 
                 byte id = pk.getByte();
-                if(id == BATCH_PACKET) {
+                if(id == BATCH_PACKET){
                     throw new IllegalStateException("BatchPacket found inside BatchPacket!");
                 }
                 UniversalPacket packet = new UniversalPacket(data, up.bb().getOrder(), up.getAddress());
                 requests.addAll(Arrays.asList(handlePacket(packet)));
             }
-        } catch (DataFormatException e) {
-            getProtocol().getManager().getServer().getLogger().warning(e.getClass().getName()+" while handling BatchPacket: "+e.getMessage());
+        }catch(DataFormatException e){
+            getProtocol().getManager().getServer().getLogger().warning(e.getClass().getName() + " while handling BatchPacket: " + e.getMessage());
             getProtocol().getManager().getServer().getLogger().trace(e);
-        } finally {
-            if(!requests.isEmpty()) {
+        }finally{
+            if(!requests.isEmpty()){
                 return (Request[]) requests.stream().toArray();
             }
-            return new Request[] {null};
+            return new Request[]{null};
         }
     }
 
     @Override
-    public String getMCPEVersion() {
+    public String getMCPEVersion(){
         return MCPE_VERSION;
     }
 
     @Override
-    public int getProtocolVersion() {
+    public int getProtocolVersion(){
         return MCPE_PROTOCOL;
     }
 }

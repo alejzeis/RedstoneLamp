@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -16,16 +16,12 @@
  */
 package net.redstonelamp;
 
-import java.net.SocketAddress;
-import java.nio.ByteOrder;
-
 import net.redstonelamp.entity.PlayerEntity;
 import net.redstonelamp.network.Protocol;
-import net.redstonelamp.network.UniversalPacket;
-import net.redstonelamp.network.pe.sub.v27.ProtocolConst27;
-import net.redstonelamp.nio.BinaryBuffer;
 import net.redstonelamp.request.*;
 import net.redstonelamp.response.*;
+
+import java.net.SocketAddress;
 
 /**
  * Protocol-independent Player class. Represents a Player on the server
@@ -50,25 +46,28 @@ public class Player extends PlayerEntity{
 
     /**
      * Construct a new Player instance belonging to the specified <code>Protocol</code> with the <code>identifier</code>
-     * @param protocol The protocol this player belongs to
+     *
+     * @param protocol   The protocol this player belongs to
      * @param identifier The client's identifier. This is the address the player is connecting from, in the format:
      *                   [ip]:[port]
      */
     @Deprecated
-    public Player(Protocol protocol, String identifier) {
+    public Player(Protocol protocol, String identifier){
         this.protocol = protocol;
         this.identifier = identifier;
         address = null;
 
         server = protocol.getManager().getServer();
     }
+
     /**
      * Construct a new Player instance belonging to the specified <code>Protocol</code> connecting from
      * <code>address</code>
+     *
      * @param protocol The protocol this player belongs to
-     * @param address The SocketAddress this player is connecting from
+     * @param address  The SocketAddress this player is connecting from
      */
-    public Player(Protocol protocol, SocketAddress address) {
+    public Player(Protocol protocol, SocketAddress address){
         this.protocol = protocol;
         this.address = address;
 
@@ -78,40 +77,42 @@ public class Player extends PlayerEntity{
         loadPlayerData();
     }
 
-    private void loadPlayerData() {
+    private void loadPlayerData(){
         //TODO: Load real data
         setPosition(server.getLevelManager().getMainLevel().getSpawnPosition());
         gamemode = 1;
     }
 
     @Override
-    protected void initEntity() {
+    protected void initEntity(){
         setEntityID(server.getNextEntityID());
         super.initEntity();
     }
 
     /**
      * Sends a <code>Response</code> to the client. If they are available please use API methods.
+     *
      * @param r The Response to be sent.
      */
-    public void sendResponse(Response r) {
+    public void sendResponse(Response r){
         protocol.sendResponse(r, this);
     }
-    
-    public void sendMessage(String s) {
-    	protocol.sendImmediateResponse(new ChatResponse(s), this);
+
+    public void sendMessage(String s){
+        protocol.sendImmediateResponse(new ChatResponse(s), this);
     }
-    
-    public void sendPopup(String s) {
-    	protocol.sendImmediateResponse(new PopupResponse(s), this);
+
+    public void sendPopup(String s){
+        protocol.sendImmediateResponse(new PopupResponse(s), this);
     }
 
     /**
      * Handles a Request from the client.
+     *
      * @param request The request from the client
      */
-    public void handleRequest(Request request) {
-        if(request instanceof LoginRequest) {
+    public void handleRequest(Request request){
+        if(request instanceof LoginRequest){
             LoginRequest lr = (LoginRequest) request;
             startLogin = System.currentTimeMillis();
             username = lr.username;
@@ -122,7 +123,7 @@ public class Player extends PlayerEntity{
             setNametag(username);
 
             LoginResponse response = new LoginResponse(true, gamemode, (float) getPosition().getX(), (float) getPosition().getY(), (float) getPosition().getZ());
-            if(server.getPlayers().size() > server.getMaxPlayers()) {
+            if(server.getPlayers().size() > server.getMaxPlayers()){
                 response.loginAllowed = false;
                 response.loginNotAllowedReason = "redstonelamp.loginFailed.serverFull";
                 protocol.sendImmediateResponse(response, this);
@@ -131,14 +132,14 @@ public class Player extends PlayerEntity{
             }
             sendResponse(response);
             initEntity();
-            server.getLogger().info(username+"["+address+"] logged in with entity ID "+getEntityID()+" in level \""+getPosition().getLevel().getName()+"\""
-                    +" at position [x: "+getPosition().getX()+", y: "+getPosition().getY()+", z: "+getPosition().getZ()+"]"
+            server.getLogger().info(username + "[" + address + "] logged in with entity ID " + getEntityID() + " in level \"" + getPosition().getLevel().getName() + "\""
+                            + " at position [x: " + getPosition().getX() + ", y: " + getPosition().getY() + ", z: " + getPosition().getZ() + "]"
             );
-        } else if(request instanceof ChunkRequest) {
+        }else if(request instanceof ChunkRequest){
             ChunkRequest r = (ChunkRequest) request;
             ChunkResponse response = new ChunkResponse(getPosition().getLevel().getChunkAt(r.position));
             sendResponse(response);
-        } else if(request instanceof SpawnRequest) {
+        }else if(request instanceof SpawnRequest){
             SpawnResponse sr = new SpawnResponse(getPosition());
             sendResponse(sr);
             TeleportResponse tr = new TeleportResponse(getPosition(), true);
@@ -149,24 +150,22 @@ public class Player extends PlayerEntity{
                 player.spawnTo(this);
             });
 
-            server.getLogger().debug("Player "+username+" spawned (took "+(System.currentTimeMillis() - startLogin)+" ms)");
+            server.getLogger().debug("Player " + username + " spawned (took " + (System.currentTimeMillis() - startLogin) + " ms)");
             //server.broadcastMessage(username+" joined the game.");
-        } else if(request instanceof ChatRequest) {
+        }else if(request instanceof ChatRequest){
             ChatRequest cr = (ChatRequest) request;
-            server.broadcastMessage("<"+username+"> "+cr.message);
-        } else if(request instanceof PlayerMoveRequest) {
+            server.broadcastMessage("<" + username + "> " + cr.message);
+        }else if(request instanceof PlayerMoveRequest){
             PlayerMoveRequest pmr = (PlayerMoveRequest) request;
-            if(gamemode == 1) {
+            if(gamemode == 1){
                 PlayerMoveResponse response = new PlayerMoveResponse(getEntityID(), pmr.position, pmr.onGround);
                 setPosition(pmr.position);
-                server.getPlayers().stream().filter(player -> player != this).forEach(player -> {
-                    player.sendResponse(response);
-                });
+                server.getPlayers().stream().filter(player -> player != this).forEach(player -> player.sendResponse(response));
             } //TODO: Check movement if in survival
         }
     }
 
-    public void close(String leaveMessage, String reason, boolean notifyClient) {
+    public void close(String leaveMessage, String reason, boolean notifyClient){
         DisconnectResponse dr = new DisconnectResponse(reason);
         dr.notifyClient = notifyClient;
 
@@ -175,7 +174,7 @@ public class Player extends PlayerEntity{
         server.getPlayers().stream().filter(player -> player != this && player.getPosition().getLevel() == getPosition().getLevel()).forEach(this::despawnFrom);
 
         server.closeSession(this);
-        server.getLogger().info(username+"["+identifier+"] logged out with reason: "+reason);
+        server.getLogger().info(username + "[" + identifier + "] logged out with reason: " + reason);
         protocol.close(this);
         /*
         if(leaveMessage != "") {
@@ -184,32 +183,32 @@ public class Player extends PlayerEntity{
         */
     }
 
-    public Protocol getProtocol() {
+    public Protocol getProtocol(){
         return protocol;
     }
 
     @Deprecated
-    public String getIdentifier() {
+    public String getIdentifier(){
         return identifier;
     }
 
-    public SocketAddress getAddress() {
+    public SocketAddress getAddress(){
         return address;
     }
 
-    public boolean isSpawned() {
+    public boolean isSpawned(){
         return spawned;
     }
 
-    public int getGamemode() {
+    public int getGamemode(){
         return gamemode;
     }
 
-    public byte[] getSkin() {
+    public byte[] getSkin(){
         return skin;
     }
 
-    public boolean isSlim() {
+    public boolean isSlim(){
         return slim;
     }
 }

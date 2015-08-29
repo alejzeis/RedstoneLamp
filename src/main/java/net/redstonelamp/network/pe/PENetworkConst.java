@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -18,6 +18,6 @@ package net.redstonelamp.network.pe;
 
 import net.redstonelamp.network.pe.sub.v34.ProtocolConst34;
 
-public interface PENetworkConst extends ProtocolConst34 {
+public interface PENetworkConst extends ProtocolConst34{
 
 }

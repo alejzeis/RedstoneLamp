@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -16,69 +16,73 @@
  */
 package net.redstonelamp.config;
 
+import com.esotericsoftware.yamlbeans.YamlException;
+import com.esotericsoftware.yamlbeans.YamlReader;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Map;
 
-import com.esotericsoftware.yamlbeans.YamlException;
-import com.esotericsoftware.yamlbeans.YamlReader;
-
 /**
  * Class to get configuration options in YAML Files
- * 
+ *
  * @author Philip
  */
-public class YamlConfig {
-	private YamlReader reader;
-	private Object obj;
-	private Map map;
-	
-	/**
-	 * Reads the Yaml file from path for use of the class
-	 * @param yaml
-	 * @throws FileNotFoundException
-	 * @throws YamlException
-	 */
-	public YamlConfig(String yaml) throws FileNotFoundException, YamlException {
-		reader = new YamlReader(new FileReader(yaml));
-		obj = reader.read();
-		map = (Map) obj;
-	}
-	
-	/**
-	 * Returns the YamlReader class instance
-	 * @return
-	 */
-	public YamlReader getReader() {
-		return this.reader;
-	}
-	
-	/**
-	 * Returns an object from YamlReader.read();
-	 * @return
-	 */
-	public Object getObject() {
-		return this.obj;
-	}
-	
-	/**
-	 * Returns a Map of the YAML file
-	 * @return
-	 */
-	public Map getMap() {
-		return this.map;
-	}
-	
-	/**
-	 * Returns a Map of a Map in the YAML file
-	 * @param map
-	 * @return
-	 */
-	public Map getInMap(String map) {
-		if(this.map.get(map) instanceof Map) {
-			Map newMap = (Map) this.map.get(map);
-			return newMap;
-		}
-		return this.map;
-	}
+public class YamlConfig{
+    private YamlReader reader;
+    private Object obj;
+    private Map map;
+
+    /**
+     * Reads the Yaml file from path for use of the class
+     *
+     * @param yaml
+     * @throws FileNotFoundException
+     * @throws YamlException
+     */
+    public YamlConfig(String yaml) throws FileNotFoundException, YamlException{
+        reader = new YamlReader(new FileReader(yaml));
+        obj = reader.read();
+        map = (Map) obj;
+    }
+
+    /**
+     * Returns the YamlReader class instance
+     *
+     * @return
+     */
+    public YamlReader getReader(){
+        return reader;
+    }
+
+    /**
+     * Returns an object from YamlReader.read();
+     *
+     * @return
+     */
+    public Object getObject(){
+        return obj;
+    }
+
+    /**
+     * Returns a Map of the YAML file
+     *
+     * @return
+     */
+    public Map getMap(){
+        return map;
+    }
+
+    /**
+     * Returns a Map of a Map in the YAML file
+     *
+     * @param mapName
+     * @return
+     */
+    public Map getInMap(String mapName){
+        if(map.get(mapName) instanceof Map){
+            return (Map) map.get(mapName);
+        }
+        return map;
+    }
 }
