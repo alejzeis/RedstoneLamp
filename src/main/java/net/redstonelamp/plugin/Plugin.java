@@ -17,6 +17,8 @@
 package net.redstonelamp.plugin;
 
 import lombok.Getter;
+import net.redstonelamp.Server;
+import net.redstonelamp.ui.Logger;
 
 public abstract class Plugin {
 	/**
@@ -35,8 +37,20 @@ public abstract class Plugin {
 	 * The plugins website
 	 */
 	@Getter private String website;
+
+	/**
+	 * The plugin's server
+	 */
+	@Getter private Server server;
+
+	/**
+	 * The plugin's logger
+	 */
+	@Getter private Logger logger;
 	
-	public Plugin(String name, String version, String[] authors, String website){
+	public Plugin(Server server, Logger logger, String name, String version, String[] authors, String website){
+		this.server = server;
+		this.logger = logger;
 		this.name = name;
 		this.version = version;
 		this.authors = authors;

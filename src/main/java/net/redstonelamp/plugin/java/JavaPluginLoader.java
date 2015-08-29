@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.logging.Level;
@@ -30,11 +31,13 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import lombok.Getter;
+import net.redstonelamp.Server;
 import net.redstonelamp.plugin.PluginLoader;
 import net.redstonelamp.plugin.PluginManager;
 import net.redstonelamp.plugin.PluginSystem;
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
+import net.redstonelamp.ui.Logger;
 
 public class JavaPluginLoader extends PluginLoader{
 	/**
@@ -84,14 +87,25 @@ public class JavaPluginLoader extends PluginLoader{
 				setState(PluginState.UNLOADED);
 				return;
 			}
-			Constructor<?> constructor = mainClass.getConstructor(String.class, String.class, String[].class, String.class);
-			this.plugin = (JavaPlugin) constructor.newInstance(name, version, getProperties().getAuthors(), getProperties().getUrl());
+			Constructor<?> constructor = mainClass.getConstructor(Server.class, Logger.class, String.class, String.class, String[].class, String.class);
+			Logger l = createPluginLogger(getProperties().getName());
+			this.plugin = (JavaPlugin) constructor.newInstance(PluginSystem.getServer(), l, name, version, getProperties().getAuthors(), getProperties().getUrl());
 		}catch(Exception e){
 			e.printStackTrace();
 			setState(PluginState.UNLOADED);
 			return;
 		}
 		setState(PluginState.INITIALIZED);
+	}
+
+	private Logger createPluginLogger(String name) {
+		try {
+			Constructor c = PluginSystem.getServer().getLogger().getConsoleOutClass().getConstructor(String.class);
+			return (Logger) c.newInstance(name);
+		} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+			PluginSystem.getServer().getLogger().error("Exception while creating plugin logger for: "+name+", "+e.getClass().getName()+": "+e.getMessage());
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override

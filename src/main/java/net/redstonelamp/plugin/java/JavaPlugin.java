@@ -16,13 +16,15 @@
  */
 package net.redstonelamp.plugin.java;
 
+import net.redstonelamp.Server;
 import net.redstonelamp.plugin.Plugin;
+import net.redstonelamp.ui.Logger;
 
 public abstract class JavaPlugin extends Plugin{
 
-	public JavaPlugin(String name, String version, String[] authors,
+	public JavaPlugin(Server server, Logger logger, String name, String version, String[] authors,
 			String website) {
-		super(name, version, authors, website);
+		super(server, logger, name, version, authors, website);
 	}
 	
 }
