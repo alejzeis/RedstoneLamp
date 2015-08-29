@@ -31,6 +31,9 @@ public class JavaPluginManager extends PluginManager{
 	@Override
 	public void loadPlugins() {
 		PluginSystem.getLogger().info("Loading java plugins...");
+		if(!PLUGINS_DIR.exists()) {
+			PLUGINS_DIR.mkdirs();
+		}
 		for(File x : PLUGINS_DIR.listFiles()){
 			if(x.getName().toLowerCase().endsWith(".jar")&&x.isFile()){
 				JavaPluginLoader load = new JavaPluginLoader(this, x);

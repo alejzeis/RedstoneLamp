@@ -87,7 +87,7 @@ public class PluginSystem {
 		for(String depend : loader.getDependencies()){
 			PluginLoader dependency = getPluginLoader(depend);
 			if(dependency==null||dependency.getState()==PluginState.UNLOADED){
-				logger.warning( loader.getName()+" v"+loader.getVersion()+" is missing dependency "+depend+"! Disabling!");
+				logger.warning(loader.getName() + " v" + loader.getVersion() + " is missing dependency " + depend + "! Disabling!");
 				loader.setState(PluginState.LOADED);
 				return;
 			}
@@ -121,17 +121,17 @@ public class PluginSystem {
 		for(String depend : loader.getDependencies()){
 			PluginLoader dependency = getPluginLoader(depend);
 			if(dependency==null||dependency.getState()==PluginState.UNLOADED||dependency.getState()==PluginState.LOADED){
-				logger.warning( loader.getName()+" v"+loader.getVersion()+" is missing dependency "+depend+"! Disabling!");
+				logger.warning(loader.getName() + " v" + loader.getVersion() + " is missing dependency " + depend + "! Disabling!");
 				loader.setState(PluginState.DISABLED);
 				return;
 			}
 			if(dependency.getName().equalsIgnoreCase(loader.getName())){
-				logger.warning( loader.getName()+" v"+loader.getVersion()+" is depending on itself! Disabling!");
+				logger.warning(loader.getName() + " v" + loader.getVersion() + " is depending on itself! Disabling!");
 				loader.setState(PluginState.DISABLED);
 				return;
 			}
 			if(dependency.dependsOn(loader.getName())||dependency.softDependsOn(loader.getName())){
-				logger.warning( loader.getName()+" v"+loader.getVersion()+" could not be loaded, because its dependency \""+dependency.getName()+"\" is depending on the plugin itself! (Both plugins depend on each other)");
+				logger.warning(loader.getName() + " v" + loader.getVersion() + " could not be loaded, because its dependency \"" + dependency.getName() + "\" is depending on the plugin itself! (Both plugins depend on each other)");
 				loader.setState(PluginState.DISABLED);
 				return;
 			}
@@ -147,12 +147,12 @@ public class PluginSystem {
 				continue;
 			}
 			if(dependency.getName().equalsIgnoreCase(loader.getName())){
-				logger.warning( loader.getName()+" v"+loader.getVersion()+" is soft depending on itself! Disabling!");
+				logger.warning(loader.getName() + " v" + loader.getVersion() + " is soft depending on itself! Disabling!");
 				loader.setState(PluginState.DISABLED);
 				return;
 			}
 			if(dependency.dependsOn(loader.getName())||dependency.softDependsOn(loader.getName())){
-				logger.warning( loader.getName()+" v"+loader.getVersion()+" could not be loaded, because its soft dependency \""+dependency.getName()+"\" is depending on the plugin itself! (Both plugins depend on each other)");
+				logger.warning(loader.getName() + " v" + loader.getVersion() + " could not be loaded, because its soft dependency \"" + dependency.getName() + "\" is depending on the plugin itself! (Both plugins depend on each other)");
 				loader.setState(PluginState.DISABLED);
 				return;
 			}

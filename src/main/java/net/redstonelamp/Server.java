@@ -63,8 +63,6 @@ public class Server implements Runnable{
         this.logger = logger;
         this.config = config;
         network = new NetworkManager(this);
-        levelManager = new LevelManager(this);
-        levelManager.init();
         loadProperties(config);
         logger.info(RedstoneLamp.getSoftwareVersionString() + " is licensed under the Lesser GNU General Public License version 3");
 
@@ -73,6 +71,15 @@ public class Server implements Runnable{
 
         pluginSystem = new PluginSystem();
         pluginSystem.init(this, new Logger(new Log4j2ConsoleOut("PluginSystem")));
+        pluginSystem.loadPlugins();
+        pluginSystem.enablePlugins();
+
+        levelManager = new LevelManager(this);
+        levelManager.init();
+
+        addShutdownTask(pluginSystem::disablePlugins);
+
+        Runtime.getRuntime().addShutdownHook(new ShutdownTaskExecuter(this));
     }
 
     private void loadProperties(ServerConfig config){
@@ -189,7 +196,24 @@ public class Server implements Runnable{
         return levelManager;
     }
 
+    public PluginSystem getPluginSystem() {
+        return pluginSystem;
+    }
+
     protected int getNextEntityID(){
         return nextEntityID++;
+    }
+
+    private static class ShutdownTaskExecuter extends Thread {
+        private final Server server;
+
+        public ShutdownTaskExecuter(Server server) {
+            this.server = server;
+        }
+
+        @Override
+        public void run() {
+            server.shutdownTasks.forEach(Runnable::run);
+        }
     }
 }

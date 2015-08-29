@@ -17,6 +17,8 @@
 package net.redstonelamp.level;
 
 import net.redstonelamp.Server;
+import net.redstonelamp.level.generator.FlatGenerator;
+import net.redstonelamp.level.generator.Generator;
 import net.redstonelamp.level.provider.LevelProvider;
 import net.redstonelamp.level.provider.leveldb.LevelDBProvider;
 
@@ -36,6 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LevelManager{
     private final Server server;
     private final Map<String, Constructor<? extends LevelProvider>> providers = new ConcurrentHashMap<>();
+    private final Map<String, Constructor<? extends Generator>> generators = new ConcurrentHashMap<>();
     private final Map<String, Level> levels = new ConcurrentHashMap<>();
     private Level mainLevel;
 
@@ -50,6 +53,7 @@ public class LevelManager{
     public void init(){
         try{
             registerProvider("leveldb", LevelDBProvider.class);
+            registerGenerator("flat", FlatGenerator.class);
         }catch(NoSuchMethodException e){
             e.printStackTrace();
         }
@@ -62,9 +66,34 @@ public class LevelManager{
         params.name = name;
         params.levelDir = levelDir;
         String format = autoDetectFormat(levelDir, server.getConfig().getString("level-default-format"));
-        mainLevel = new Level(this, format, params); //TODO: correct provider
+        String gen = autoDetectGenerator(levelDir, server.getConfig().getString("level-default-generator"));
+        mainLevel = new Level(this, format, gen, params); //TODO: correct provider
         levels.put(mainLevel.getName(), mainLevel);
     }
+
+    public String autoDetectGenerator(File levelDir, String defaultGenerator) {
+        for(Map.Entry<String, Constructor<? extends Generator>> entry : generators.entrySet()){
+            Class<? extends Generator> clazz = entry.getValue().getDeclaringClass();
+            try{
+                Method method = clazz.getMethod("isValid", File.class);
+                int mod = method.getModifiers();
+                if(!Modifier.isStatic(mod) || !Modifier.isPublic(mod) || !method.getReturnType().equals(boolean.class)){
+                    continue;
+                }
+                try{
+                    boolean result = (boolean) method.invoke(null, levelDir);
+                    if(result){
+                        return entry.getKey();
+                    }
+                }catch(IllegalAccessException | InvocationTargetException e){
+                    e.printStackTrace();
+                }
+            }catch(NoSuchMethodException e){
+            }
+        }
+        return defaultGenerator;
+    }
+
     public String autoDetectFormat(File levelDir, String defaultFormat){
         for(Map.Entry<String, Constructor<? extends LevelProvider>> entry : providers.entrySet()){
             Class<? extends LevelProvider> clazz = entry.getValue().getDeclaringClass();
@@ -96,8 +125,21 @@ public class LevelManager{
         providers.put(name, constructor);
         return true;
     }
+
+    public boolean registerGenerator(String name, Class<? extends Generator> clazz) throws NoSuchMethodException{
+        if(providers.containsKey(name)) {
+            return false;
+        }
+        Constructor<? extends Generator> constructor = clazz.getConstructor(Level.class, Level.LevelParameters.class);
+        generators.put(name, constructor);
+        return true;
+    }
     public Constructor<? extends LevelProvider> getProvider(String providerName){
         return providers.get(providerName);
+    }
+
+    public Constructor<? extends Generator> getGenerator(String generatorName) {
+        return generators.get(generatorName);
     }
 
     public Server getServer(){

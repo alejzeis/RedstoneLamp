@@ -44,12 +44,12 @@ public class Level{
     private int time;
     private Generator generator;
 
-    public Level(LevelManager manager, String providerName, LevelParameters params){
+    public Level(LevelManager manager, String providerName, String generatorName, LevelParameters params){
         this.manager = manager;
-        generator = new FlatGenerator(); //TODO: correct generator
 
         try{
             provider = manager.getProvider(providerName).newInstance(this, params);
+            generator = manager.getGenerator(generatorName).newInstance(this, params);
         }catch(NullPointerException e){
             throw new LevelLoadException("Unknown level provider " + providerName);
         }catch(InvocationTargetException e){
