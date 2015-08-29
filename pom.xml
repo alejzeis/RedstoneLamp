@@ -26,6 +26,13 @@
     <artifactId>RedstoneLamp</artifactId>
     <version>1.2.0-DEV</version>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>snapshot-repo</id>
+            <url>https://raw.githubusercontent.com/RedstoneLamp/MavenRepository/master/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <repositories>
         <repository>
             <id>snapshot-repo</id>
