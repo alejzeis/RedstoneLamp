@@ -22,6 +22,7 @@ import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.netInterface.AdvancedNetworkInterface;
 import net.redstonelamp.network.pc.codec.MinecraftPacketHeaderDecoder;
 import net.redstonelamp.network.pc.codec.MinecraftPacketHeaderEncoder;
+import net.redstonelamp.nio.BinaryBuffer;
 import net.redstonelamp.ui.ConsoleOut;
 import net.redstonelamp.ui.Logger;
 import org.apache.mina.core.service.IoAcceptor;
@@ -31,11 +32,14 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.nio.ByteOrder;
 import java.util.Deque;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,6 +57,7 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
     private final IoAcceptor acceptor;
 
     private Logger logger;
+    private String name;
     private Map<String, IoSession> sessions = new ConcurrentHashMap<>();
     private Map<String, ProtocolState> states = new ConcurrentHashMap<>();
     private Deque<UniversalPacket> packetQueue = new ConcurrentLinkedDeque<>();
@@ -93,6 +98,17 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
     }
 
     @Override
+    public void sessionOpened(IoSession session) throws Exception {
+        sessions.put(session.getRemoteAddress().toString(), session);
+    }
+
+    @Override
+    public void sessionClosed(IoSession session) throws Exception {
+        sessions.remove(session.getRemoteAddress().toString());
+        states.remove(session.getRemoteAddress().toString());
+    }
+
+    @Override
     public void exceptionCaught(IoSession session, Throwable cause) throws Exception{
         logger.warning("Apache MINA caught an exception! " + cause.getClass().getName() + ": " + cause.getMessage());
         logger.trace(cause);
@@ -104,25 +120,75 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
             throw new LowLevelNetworkException("Message must be instanceof UniversalPacket!");
         }
         UniversalPacket up = (UniversalPacket) message;
+        int id = up.bb().getVarInt();
         if(!states.containsKey(session.getRemoteAddress().toString())){
-            byte id = up.getBuffer()[0];
             switch(id){
                 case PCNetworkConst.HANDSHAKE_HANDSHAKE:
-                    //TODO: Decode handshake and add the sessions remote address to the states map depending if Status or LOGIN
+                    up.bb().getVarInt();
+                    up.bb().getVarString();
+                    up.bb().getUnsignedShort();
+                    int nextState = up.bb().getVarInt();
+                    if(nextState == 2) {
+                        packetQueue.addLast(up); //Let PCProtocol handle the login
+                        states.put(session.getRemoteAddress().toString(), ProtocolState.STATE_LOGIN);
+                    } else if(nextState == 1) {
+                        //Wait for a Status Request until sending the MOTD
+                        states.put(session.getRemoteAddress().toString(), ProtocolState.STATE_STATUS);
+                    }
                     break;
             }
         }
 
         if(states.get(session.getRemoteAddress().toString()) == ProtocolState.STATE_STATUS){
-            //TODO: Reply with Status Response, but MAKE SURE TO CHECK THAT IT'S A STATUS REQUEST
-        }else{
+            switch (id) {
+                case PCNetworkConst.STATUS_REQUEST:
+                    sendStatusResponse(session.getRemoteAddress());
+                    break;
+
+                case PCNetworkConst.STATUS_PING:
+                    long payload = up.bb().getLong();
+                    BinaryBuffer bb = BinaryBuffer.newInstance(9, ByteOrder.BIG_ENDIAN);
+                    bb.putVarInt(PCNetworkConst.STATUS_PONG);
+                    bb.putLong(payload);
+                    sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, session.getRemoteAddress()), false);
+                    break;
+            }
+        }else {
+            up.bb().setPosition(0);
             packetQueue.add(up);
         }
     }
 
+    private void sendStatusResponse(SocketAddress address) throws LowLevelNetworkException {
+        JSONObject root = new JSONObject();
+
+        JSONObject version = new JSONObject();
+        version.put("name", PCNetworkConst.MC_VERSION);
+        version.put("protocol", PCNetworkConst.MC_PROTOCOL);
+
+        JSONObject players = new JSONObject();
+        players.put("max", server.getMaxPlayers());
+        players.put("online", server.getPlayers().size());
+        //TODO: put sample
+
+        JSONObject description = new JSONObject();
+        description.put("text", name);
+
+        root.put("version", version);
+        root.put("players", players);
+        root.put("description", description);
+        //TODO: favicon
+
+        BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+        bb.putVarInt(PCNetworkConst.STATUS_RESPONSE);
+        bb.putVarString(root.toJSONString());
+
+        sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address), false);
+    }
+
     @Override
     public void setName(String name){
-
+        this.name = name;
     }
 
     @Override

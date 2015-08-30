@@ -225,6 +225,11 @@ public class BinaryBuffer{
         put(s.getBytes());
     }
 
+    public void putVarString(String s) {
+        putVarInt(s.getBytes().length);
+        put(s.getBytes());
+    }
+
     /**
      * Puts a Google Protocol Buffers VarInt into the buffer
      * Code is from: https://gist.github.com/thinkofdeath/e975ddee04e9c87faf22
