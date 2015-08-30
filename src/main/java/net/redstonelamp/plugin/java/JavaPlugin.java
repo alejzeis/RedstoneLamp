@@ -22,9 +22,9 @@ import net.redstonelamp.ui.Logger;
 
 public abstract class JavaPlugin extends Plugin{
 
-	public JavaPlugin(Server server, Logger logger, String name, String version, String[] authors,
-			String website) {
-		super(server, logger, name, version, authors, website);
-	}
-	
+    public JavaPlugin(Server server, Logger logger, String name, String version, String[] authors,
+                      String website){
+        super(server, logger, name, version, authors, website);
+    }
+
 }

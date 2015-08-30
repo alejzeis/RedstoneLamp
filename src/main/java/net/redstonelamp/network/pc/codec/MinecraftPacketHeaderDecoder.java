@@ -35,43 +35,43 @@ import java.nio.ByteOrder;
 public class MinecraftPacketHeaderDecoder extends DemuxingProtocolDecoder{
     private final MinaInterface mina;
 
-    public MinecraftPacketHeaderDecoder(MinaInterface mina) {
+    public MinecraftPacketHeaderDecoder(MinaInterface mina){
         super();
         this.mina = mina;
     }
 
     @Override
-    public boolean doDecode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
+    public boolean doDecode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception{
         int len = readVarInt(in);
-        if(len == -1) {
+        if(len == -1){
             return false; //Wait for more data to be read before trying again
         }
 
-        if(in.remaining() >= len) {
+        if(in.remaining() >= len){
             byte[] data = new byte[len];
             in.get(data);
             out.write(new UniversalPacket(data, ByteOrder.BIG_ENDIAN, session.getRemoteAddress()));
             return true;
-        } else {
+        }else{
             return false;
         }
     }
 
-    private int readVarInt(IoBuffer in) throws IOException {
+    private int readVarInt(IoBuffer in) throws IOException{
         byte b = in.get();
         BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
         boolean readCorrect = false;
-        while(in.hasRemaining()) {
-            if (((b & 0xff) >> 7) > 0) { //Check if there is more
+        while(in.hasRemaining()){
+            if(((b & 0xff) >> 7) > 0){ //Check if there is more
                 bb.putByte(b);
                 b = in.get();
-            } else { //no more
+            }else{ //no more
                 bb.putByte(b);
                 readCorrect = true;
                 break;
             }
         }
-        if(!readCorrect) {
+        if(!readCorrect){
             return -1;
         }
         return BinaryBuffer.wrapBytes(bb.toArray(), ByteOrder.BIG_ENDIAN).getVarInt();

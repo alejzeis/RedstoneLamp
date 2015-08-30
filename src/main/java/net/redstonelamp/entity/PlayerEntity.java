@@ -21,8 +21,6 @@ import net.redstonelamp.metadata.*;
 import net.redstonelamp.response.pe.v27.AddPlayerResponse;
 import net.redstonelamp.response.pe.v27.RemovePlayerResponse;
 
-import java.util.Arrays;
-
 /**
  * An entity implementation of a Player. This is the Player's
  * parent class.

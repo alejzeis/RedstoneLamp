@@ -44,13 +44,13 @@ public class MetadataLong extends MetadataElement{
         bb.putByte(getKey((byte) index));
         bb.putLong(l);
     }
-    
-    public byte getIdentifier() {
+
+    public byte getIdentifier(){
         return 8;
     }
 
     @Override
-    public int getLength() {
+    public int getLength(){
         return 8;
     }
 }

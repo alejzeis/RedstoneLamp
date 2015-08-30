@@ -51,7 +51,7 @@ public class MetadataString extends MetadataElement{
     }
 
     @Override
-    public int getLength() {
+    public int getLength(){
         return s.getBytes().length + 2;
     }
 }

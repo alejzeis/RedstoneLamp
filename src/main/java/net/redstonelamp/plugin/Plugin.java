@@ -20,52 +20,58 @@ import lombok.Getter;
 import net.redstonelamp.Server;
 import net.redstonelamp.ui.Logger;
 
-public abstract class Plugin {
-	/**
-	 * The plugins name
-	 */
-	@Getter private String name;
-	/**
-	 * The plugins version
-	 */
-	@Getter private String version;
-	/**
-	 * The plugins authors
-	 */
-	@Getter private String[] authors;
-	/**
-	 * The plugins website
-	 */
-	@Getter private String website;
+public abstract class Plugin{
+    /**
+     * The plugins name
+     */
+    @Getter
+    private String name;
+    /**
+     * The plugins version
+     */
+    @Getter
+    private String version;
+    /**
+     * The plugins authors
+     */
+    @Getter
+    private String[] authors;
+    /**
+     * The plugins website
+     */
+    @Getter
+    private String website;
 
-	/**
-	 * The plugin's server
-	 */
-	@Getter private Server server;
+    /**
+     * The plugin's server
+     */
+    @Getter
+    private Server server;
 
-	/**
-	 * The plugin's logger
-	 */
-	@Getter private Logger logger;
-	
-	public Plugin(Server server, Logger logger, String name, String version, String[] authors, String website){
-		this.server = server;
-		this.logger = logger;
-		this.name = name;
-		this.version = version;
-		this.authors = authors;
-		this.website = website;
-	}
-	/**
-	 * In this function every plugin should handle the stuff it has to do on server start.
-	 * When this method gets called, the basic structure of the server already got loaded,
-	 * and events and commands can already be registered in the event/command system.
-	 * WARNING: This method will also be called when the server is being reloaded
-	 */
-	public abstract void onEnable();
-	/**
-	 * In this function every plugin should stop itself.
-	 * This includes removing events, commands, schedule tasks etc.
-	 */
-	public abstract void onDisable();
+    /**
+     * The plugin's logger
+     */
+    @Getter
+    private Logger logger;
+
+    public Plugin(Server server, Logger logger, String name, String version, String[] authors, String website){
+        this.server = server;
+        this.logger = logger;
+        this.name = name;
+        this.version = version;
+        this.authors = authors;
+        this.website = website;
+    }
+    /**
+     * In this function every plugin should handle the stuff it has to do on server start.
+     * When this method gets called, the basic structure of the server already got loaded,
+     * and events and commands can already be registered in the event/command system.
+     * WARNING: This method will also be called when the server is being reloaded
+     */
+    public abstract void onEnable();
+    /**
+     * In this function every plugin should stop itself.
+     * This includes removing events, commands, schedule tasks etc.
+     */
+    public abstract void onDisable();
 }

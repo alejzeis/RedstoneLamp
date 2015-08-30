@@ -18,7 +18,6 @@ package net.redstonelamp.network.pe.sub.v27;
 
 import net.redstonelamp.Player;
 import net.redstonelamp.level.position.Position;
-import net.redstonelamp.metadata.EntityMetadata;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
@@ -27,17 +26,8 @@ import net.redstonelamp.request.Request;
 import net.redstonelamp.request.pe.v27.ChatRequest;
 import net.redstonelamp.request.pe.v27.LoginRequest;
 import net.redstonelamp.request.pe.v27.PlayerMoveRequest;
-import net.redstonelamp.response.*;
-import net.redstonelamp.response.pe.v27.AddPlayerResponse;
-import net.redstonelamp.response.pe.v27.ChatResponse;
-import net.redstonelamp.response.pe.v27.ChunkResponse;
-import net.redstonelamp.response.pe.v27.DisconnectResponse;
-import net.redstonelamp.response.pe.v27.LoginResponse;
-import net.redstonelamp.response.pe.v27.PlayerMoveResponse;
-import net.redstonelamp.response.pe.v27.PopupResponse;
-import net.redstonelamp.response.pe.v27.RemovePlayerResponse;
-import net.redstonelamp.response.pe.v27.SpawnResponse;
-import net.redstonelamp.response.pe.v27.TeleportResponse;
+import net.redstonelamp.response.Response;
+import net.redstonelamp.response.pe.v27.*;
 import net.redstonelamp.utils.CompressionUtils;
 
 import java.net.SocketAddress;

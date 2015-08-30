@@ -59,7 +59,7 @@ public class LevelDBProvider implements LevelProvider{
     /**
      * Create a new LevelDBProvider and load the database.
      *
-     * @param level       The Level class that this provider provides to.
+     * @param level The Level class that this provider provides to.
      */
     public LevelDBProvider(Level level, Level.LevelParameters params){
         this.level = level;

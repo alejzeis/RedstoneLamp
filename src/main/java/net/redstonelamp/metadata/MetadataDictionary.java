@@ -123,7 +123,7 @@ public class MetadataDictionary extends Dictionary<Byte, MetadataElement>{
         return bb.toArray();
     }
 
-    public int getLength() {
+    public int getLength(){
         final int[] len = {entries.keySet().size()};
         entries.values().forEach(e -> {
             len[0] = len[0] + e.getLength();

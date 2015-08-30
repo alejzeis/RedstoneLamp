@@ -16,11 +16,6 @@
  */
 package net.redstonelamp;
 
-import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import net.redstonelamp.config.ServerConfig;
 import net.redstonelamp.level.LevelManager;
 import net.redstonelamp.network.NetworkManager;
@@ -32,6 +27,11 @@ import net.redstonelamp.request.pe.v27.LoginRequest;
 import net.redstonelamp.response.Response;
 import net.redstonelamp.ticker.RedstoneTicker;
 import net.redstonelamp.ui.Logger;
+
+import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The base RedstoneLamp server, which handles the ticker.
@@ -197,7 +197,7 @@ public class Server implements Runnable{
         return levelManager;
     }
 
-    public PluginSystem getPluginSystem() {
+    public PluginSystem getPluginSystem(){
         return pluginSystem;
     }
 
@@ -205,15 +205,15 @@ public class Server implements Runnable{
         return nextEntityID++;
     }
 
-    private static class ShutdownTaskExecuter extends Thread {
+    private static class ShutdownTaskExecuter extends Thread{
         private final Server server;
 
-        public ShutdownTaskExecuter(Server server) {
+        public ShutdownTaskExecuter(Server server){
             this.server = server;
         }
 
         @Override
-        public void run() {
+        public void run(){
             server.shutdownTasks.forEach(Runnable::run);
         }
     }

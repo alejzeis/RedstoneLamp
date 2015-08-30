@@ -51,7 +51,7 @@ public class MetadataShort extends MetadataElement{
     }
 
     @Override
-    public int getLength() {
+    public int getLength(){
         return 2;
     }
 }

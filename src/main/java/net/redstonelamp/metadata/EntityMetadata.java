@@ -29,7 +29,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author RedstoneLamp Team
  */
-public class EntityMetadata {
+public class EntityMetadata{
     private Map<Byte, List<Object>> array = new ConcurrentHashMap<>();
 
     public List<Object> get(Byte key){
@@ -53,14 +53,14 @@ public class EntityMetadata {
         return this;
     }
 
-    public static byte[] write(EntityMetadata metadata) {
+    public static byte[] write(EntityMetadata metadata){
         BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.LITTLE_ENDIAN);
         Map<Byte, List<Object>> array = metadata.getArray();
         for(Byte bottom : array.keySet()){
             List<Object> d = array.get(bottom);
             EntityMetadata.DataType type = (EntityMetadata.DataType) d.get(0);
             bb.putByte((byte) ((type.getAsByte() << 5) | (bottom & 0x1F)));
-            switch (type){
+            switch(type){
                 case DATA_TYPE_BYTE:
                     bb.putByte((byte) d.get(1));
                     break;
@@ -104,15 +104,15 @@ public class EntityMetadata {
         return bb.toArray();
     }
 
-    public Map<Byte, List<Object>> getArray() {
+    public Map<Byte, List<Object>> getArray(){
         return array;
     }
 
-    public void setArray(Map<Byte, List<Object>> array) {
+    public void setArray(Map<Byte, List<Object>> array){
         this.array = array;
     }
 
-    public boolean containsKey(int id) {
+    public boolean containsKey(int id){
         return array.containsKey(id);
     }
 

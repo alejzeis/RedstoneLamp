@@ -18,7 +18,6 @@ package net.redstonelamp.entity;
 
 import net.redstonelamp.Player;
 import net.redstonelamp.level.position.Position;
-import net.redstonelamp.metadata.EntityMetadata;
 import net.redstonelamp.metadata.MetadataDictionary;
 
 /**

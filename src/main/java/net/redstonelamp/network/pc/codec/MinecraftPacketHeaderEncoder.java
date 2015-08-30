@@ -35,21 +35,21 @@ import java.nio.ByteOrder;
 public class MinecraftPacketHeaderEncoder extends DemuxingProtocolEncoder{
     private final MinaInterface mina;
 
-    public MinecraftPacketHeaderEncoder(MinaInterface mina) {
+    public MinecraftPacketHeaderEncoder(MinaInterface mina){
         super();
         this.mina = mina;
     }
 
     @Override
-    public void encode(IoSession session, Object message, ProtocolEncoderOutput out) throws Exception {
-        if(message instanceof UniversalPacket) {
+    public void encode(IoSession session, Object message, ProtocolEncoderOutput out) throws Exception{
+        if(message instanceof UniversalPacket){
             UniversalPacket up = (UniversalPacket) message;
             BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
             bb.putVarInt(up.getBuffer().length);
             bb.put(up.getBuffer());
             IoBuffer buf = IoBuffer.wrap(bb.toArray());
             out.write(buf);
-        } else {
+        }else{
             throw new LowLevelNetworkException("Message must be instanceof UniversalPacket!");
         }
     }

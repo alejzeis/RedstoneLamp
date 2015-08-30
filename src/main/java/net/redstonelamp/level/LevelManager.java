@@ -71,7 +71,7 @@ public class LevelManager{
         levels.put(mainLevel.getName(), mainLevel);
     }
 
-    public String autoDetectGenerator(File levelDir, String defaultGenerator) {
+    public String autoDetectGenerator(File levelDir, String defaultGenerator){
         for(Map.Entry<String, Constructor<? extends Generator>> entry : generators.entrySet()){
             Class<? extends Generator> clazz = entry.getValue().getDeclaringClass();
             try{
@@ -127,7 +127,7 @@ public class LevelManager{
     }
 
     public boolean registerGenerator(String name, Class<? extends Generator> clazz) throws NoSuchMethodException{
-        if(providers.containsKey(name)) {
+        if(providers.containsKey(name)){
             return false;
         }
         Constructor<? extends Generator> constructor = clazz.getConstructor(Level.class, Level.LevelParameters.class);
@@ -138,7 +138,7 @@ public class LevelManager{
         return providers.get(providerName);
     }
 
-    public Constructor<? extends Generator> getGenerator(String generatorName) {
+    public Constructor<? extends Generator> getGenerator(String generatorName){
         return generators.get(generatorName);
     }
 

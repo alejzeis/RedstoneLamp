@@ -52,7 +52,7 @@ public class MetadataInt extends MetadataElement{
     }
 
     @Override
-    public int getLength() {
+    public int getLength(){
         return 4;
     }
 }

@@ -16,9 +16,6 @@
  */
 package net.redstonelamp.network.pc;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.redstonelamp.Player;
 import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
@@ -28,6 +25,9 @@ import net.redstonelamp.request.Request;
 import net.redstonelamp.request.pc.StatusRequest;
 import net.redstonelamp.response.Response;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A Protocol implementation of the Minecraft: PC protocol.
  *
@@ -35,46 +35,46 @@ import net.redstonelamp.response.Response;
  */
 public class PCProtocol extends Protocol implements PCNetworkConst{
 
-    public PCProtocol(NetworkManager manager) {
+    public PCProtocol(NetworkManager manager){
         super(manager);
         _interface = new MinaInterface(manager.getServer(), this);
     }
 
     @Override
-    public String getName() {
+    public String getName(){
         return "MCPC";
     }
 
     @Override
-    public String getDescription() {
-        return "Minecraft: PC edition protocol, version "+MC_VERSION+" (protocol "+MC_PROTOCOL+")";
+    public String getDescription(){
+        return "Minecraft: PC edition protocol, version " + MC_VERSION + " (protocol " + MC_PROTOCOL + ")";
     }
 
     @Override
-    public Request[] handlePacket(UniversalPacket packet) {
-    	List<Request> requests = new ArrayList<Request>();
-    	int id = packet.bb().getVarInt();
-    	
-    	switch(id) {
-    		case HANDSHAKE_HANDSHAKE:
-    			HandshakePacket handshake = new HandshakePacket(packet);
-    			if(handshake.nextState == handshake.STATUS) {
-    				StatusRequest status = new StatusRequest();
-    				status.protocol = handshake.protocol;
-    				status.address = handshake.address;
-    				status.port = handshake.port;
-    				System.out.println("Decoded status for " + handshake.address);
-    			} else if(handshake.nextState == handshake.LOGIN) {
-    				
-    			}
-    			break;
-    	}
-    	
+    public Request[] handlePacket(UniversalPacket packet){
+        List<Request> requests = new ArrayList<Request>();
+        int id = packet.bb().getVarInt();
+
+        switch(id){
+            case HANDSHAKE_HANDSHAKE:
+                HandshakePacket handshake = new HandshakePacket(packet);
+                if(handshake.nextState == handshake.STATUS){
+                    StatusRequest status = new StatusRequest();
+                    status.protocol = handshake.protocol;
+                    status.address = handshake.address;
+                    status.port = handshake.port;
+                    System.out.println("Decoded status for " + handshake.address);
+                }else if(handshake.nextState == handshake.LOGIN){
+
+                }
+                break;
+        }
+
         return requests.toArray(new Request[requests.size()]);
     }
 
     @Override
-    protected UniversalPacket[] _sendResponse(Response response, Player player) {
+    protected UniversalPacket[] _sendResponse(Response response, Player player){
         return new UniversalPacket[0];
     }
 }

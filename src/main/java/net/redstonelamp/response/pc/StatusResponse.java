@@ -1,5 +1,5 @@
 package net.redstonelamp.response.pc;
 
-public class StatusResponse {
+public class StatusResponse{
 
 }
