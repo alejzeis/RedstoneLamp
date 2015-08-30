@@ -27,6 +27,7 @@ import net.redstonelamp.plugin.PluginSystem;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.response.Response;
 import net.redstonelamp.ticker.RedstoneTicker;
+import net.redstonelamp.ui.Log4j2ConsoleOut;
 import net.redstonelamp.ui.Logger;
 
 import java.net.SocketAddress;
