@@ -14,14 +14,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.response;
+package net.redstonelamp.response.pe.v27;
 
-public class PopupResponse extends Response{
+import net.redstonelamp.Player;
+import net.redstonelamp.response.Response;
 
-    public String message;
+/**
+ * Removes a Player from another Player (de-spawns)
+ *
+ * @author RedstoneLamp Team
+ */
+public class RemovePlayerResponse extends Response{
+    public Player player;
 
-    public PopupResponse(String message){
-        this.message = message;
+    public RemovePlayerResponse(Player player){
+        this.player = player;
     }
-
 }

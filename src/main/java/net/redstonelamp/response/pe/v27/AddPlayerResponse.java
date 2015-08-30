@@ -14,23 +14,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.response;
+package net.redstonelamp.response.pe.v27;
 
-import net.redstonelamp.level.position.Position;
+import net.redstonelamp.Player;
+import net.redstonelamp.response.Response;
 
 /**
- * A Response that teleports the player to the given position.
+ * Adds a Player to another player (spawns them)
  *
  * @author RedstoneLamp Team
  */
-public class TeleportResponse extends Response{
-    public Position pos;
-    public float bodyYaw;
-    public boolean onGround;
+public class AddPlayerResponse extends Response{
+    public Player player;
 
-    public TeleportResponse(Position pos, boolean onGround){
-        this.pos = pos;
-        this.onGround = onGround;
-        bodyYaw = pos.getYaw();
+    public AddPlayerResponse(Player player){
+        this.player = player;
     }
 }

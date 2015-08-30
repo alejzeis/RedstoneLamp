@@ -14,21 +14,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.request;
+package net.redstonelamp.response.pe.v27;
+
+import net.redstonelamp.level.Chunk;
+import net.redstonelamp.response.Response;
 
 /**
- * A Request to spawn.
+ * A Response to a Chunk Request.
  *
  * @author RedstoneLamp Team
  */
-public class SpawnRequest extends Request{
+public class ChunkResponse extends Response{
+    public Chunk chunk;
 
-    public SpawnRequest(){
-
+    public ChunkResponse(Chunk chunk){
+        this.chunk = chunk;
     }
 
-    @Override
-    public void execute(){
-        //TODO: ?
-    }
 }

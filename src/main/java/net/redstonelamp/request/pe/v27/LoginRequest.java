@@ -14,20 +14,28 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.response;
+package net.redstonelamp.request.pe.v27;
+
+import net.redstonelamp.request.Request;
 
 /**
- * Represents a protocol-independent DisconnectionResponse
+ * Represents a Login Request
  *
  * @author RedstoneLamp Team
  */
-public class DisconnectResponse extends Response{
-    public static final boolean DEFAULT_notifyClient = true;
+public class LoginRequest extends Request{
+    public String username;
+    public long clientId;
+    public long authid;
+    public byte[] skin;
+    public boolean slim;
 
-    public String reason;
-    public boolean notifyClient = DEFAULT_notifyClient;
+    public LoginRequest(String username){
+        this.username = username;
+    }
 
-    public DisconnectResponse(String reason){
-        this.reason = reason;
+    @Override
+    public void execute(){
+        //TODO?
     }
 }

@@ -185,6 +185,15 @@ public class BinaryBuffer{
     public String getString(){
         return new String(get(getUnsignedShort()));
     }
+    
+    /**
+     * Get a single varint prefixed string from the buffer (varint bytes + str bytes)
+     * 
+     * @return A single varint prefixed string
+     */
+    public String getVarString(){
+    	return new String(get(getVarInt()));
+    }
 
     public void putByte(byte b){
         put(new byte[]{b});

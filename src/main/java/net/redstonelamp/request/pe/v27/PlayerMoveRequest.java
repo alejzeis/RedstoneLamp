@@ -14,23 +14,27 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.request;
+package net.redstonelamp.request.pe.v27;
 
+import net.redstonelamp.level.position.Position;
+import net.redstonelamp.request.Request;
 
-public class ChatRequest extends Request{
+/**
+ * A Request from the player to move.
+ *
+ * @author RedstoneLamp Team
+ */
+public class PlayerMoveRequest extends Request{
+    public Position position;
+    public boolean onGround;
 
-    public byte type;
-    public String source;
-    public String message;
-    public String[] parameters;
-
-    public ChatRequest(byte type){
-        this.type = type;
+    public PlayerMoveRequest(Position position, boolean onGround){
+        this.position = position;
+        this.onGround = onGround;
     }
 
     @Override
     public void execute(){
-        // TODO?
+        //TODO?
     }
-
 }

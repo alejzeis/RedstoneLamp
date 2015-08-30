@@ -14,25 +14,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.response;
+package net.redstonelamp.response.pe.v27;
 
 import net.redstonelamp.level.position.Position;
+import net.redstonelamp.response.Response;
 
 /**
- * A Response to a Player Move Request.
+ * A Response to a SpawnRequest
  *
  * @author RedstoneLamp Team
  */
-public class PlayerMoveResponse extends Response{
-    public Position pos;
-    public float bodyYaw;
-    public boolean onGround;
-    public long entityID;
+public class SpawnResponse extends Response{
+    public Position spawnPosition;
 
-    public PlayerMoveResponse(long eid, Position pos, boolean onGround){
-        this.pos = pos;
-        this.onGround = onGround;
-        bodyYaw = pos.getYaw();
-        entityID = eid;
+    public SpawnResponse(Position spawnPosition){
+        this.spawnPosition = spawnPosition;
     }
 }

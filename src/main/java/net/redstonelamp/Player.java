@@ -19,7 +19,20 @@ package net.redstonelamp;
 import net.redstonelamp.entity.PlayerEntity;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.request.*;
+import net.redstonelamp.request.pe.v27.ChatRequest;
+import net.redstonelamp.request.pe.v27.ChunkRequest;
+import net.redstonelamp.request.pe.v27.LoginRequest;
+import net.redstonelamp.request.pe.v27.PlayerMoveRequest;
+import net.redstonelamp.request.pe.v27.SpawnRequest;
 import net.redstonelamp.response.*;
+import net.redstonelamp.response.pe.v27.ChatResponse;
+import net.redstonelamp.response.pe.v27.ChunkResponse;
+import net.redstonelamp.response.pe.v27.DisconnectResponse;
+import net.redstonelamp.response.pe.v27.LoginResponse;
+import net.redstonelamp.response.pe.v27.PlayerMoveResponse;
+import net.redstonelamp.response.pe.v27.PopupResponse;
+import net.redstonelamp.response.pe.v27.SpawnResponse;
+import net.redstonelamp.response.pe.v27.TeleportResponse;
 
 import java.net.SocketAddress;
 

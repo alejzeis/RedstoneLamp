@@ -16,11 +16,16 @@
  */
 package net.redstonelamp.network.pc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.redstonelamp.Player;
 import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.network.UniversalPacket;
+import net.redstonelamp.network.pc.codec.HandshakePacket;
 import net.redstonelamp.request.Request;
+import net.redstonelamp.request.pc.StatusRequest;
 import net.redstonelamp.response.Response;
 
 /**
@@ -47,7 +52,25 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
 
     @Override
     public Request[] handlePacket(UniversalPacket packet) {
-        return new Request[0];
+    	List<Request> requests = new ArrayList<Request>();
+    	int id = packet.bb().getVarInt();
+    	
+    	switch(id) {
+    		case HANDSHAKE_HANDSHAKE:
+    			HandshakePacket handshake = new HandshakePacket(packet);
+    			if(handshake.nextState == handshake.STATUS) {
+    				StatusRequest status = new StatusRequest();
+    				status.protocol = handshake.protocol;
+    				status.address = handshake.address;
+    				status.port = handshake.port;
+    				System.out.println("Decoded status for " + handshake.address);
+    			} else if(handshake.nextState == handshake.LOGIN) {
+    				
+    			}
+    			break;
+    	}
+    	
+        return requests.toArray(new Request[requests.size()]);
     }
 
     @Override

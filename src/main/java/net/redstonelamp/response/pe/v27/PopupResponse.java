@@ -14,26 +14,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.request;
+package net.redstonelamp.response.pe.v27;
 
-import net.redstonelamp.level.position.Position;
+import net.redstonelamp.response.Response;
 
-/**
- * A Request from the player to move.
- *
- * @author RedstoneLamp Team
- */
-public class PlayerMoveRequest extends Request{
-    public Position position;
-    public boolean onGround;
+public class PopupResponse extends Response{
 
-    public PlayerMoveRequest(Position position, boolean onGround){
-        this.position = position;
-        this.onGround = onGround;
+    public String message;
+
+    public PopupResponse(String message){
+        this.message = message;
     }
 
-    @Override
-    public void execute(){
-        //TODO?
-    }
 }

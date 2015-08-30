@@ -14,19 +14,23 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.response;
+package net.redstonelamp.request.pe.v27;
 
-import net.redstonelamp.Player;
+import net.redstonelamp.request.Request;
 
 /**
- * Adds a Player to another player (spawns them)
+ * A Request to spawn.
  *
  * @author RedstoneLamp Team
  */
-public class AddPlayerResponse extends Response{
-    public Player player;
+public class SpawnRequest extends Request{
 
-    public AddPlayerResponse(Player player){
-        this.player = player;
+    public SpawnRequest(){
+
+    }
+
+    @Override
+    public void execute(){
+        //TODO: ?
     }
 }

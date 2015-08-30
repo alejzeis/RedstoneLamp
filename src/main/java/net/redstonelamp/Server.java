@@ -16,22 +16,22 @@
  */
 package net.redstonelamp;
 
-import net.redstonelamp.config.ServerConfig;
-import net.redstonelamp.level.LevelManager;
-import net.redstonelamp.network.NetworkManager;
-import net.redstonelamp.network.Protocol;
-import net.redstonelamp.network.pe.PEProtocol;
-import net.redstonelamp.plugin.PluginSystem;
-import net.redstonelamp.request.LoginRequest;
-import net.redstonelamp.response.Response;
-import net.redstonelamp.ticker.RedstoneTicker;
-import net.redstonelamp.ui.Log4j2ConsoleOut;
-import net.redstonelamp.ui.Logger;
-
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import net.redstonelamp.config.ServerConfig;
+import net.redstonelamp.level.LevelManager;
+import net.redstonelamp.network.NetworkManager;
+import net.redstonelamp.network.Protocol;
+import net.redstonelamp.network.pc.PCProtocol;
+import net.redstonelamp.network.pe.PEProtocol;
+import net.redstonelamp.plugin.PluginSystem;
+import net.redstonelamp.request.pe.v27.LoginRequest;
+import net.redstonelamp.response.Response;
+import net.redstonelamp.ticker.RedstoneTicker;
+import net.redstonelamp.ui.Logger;
 
 /**
  * The base RedstoneLamp server, which handles the ticker.
@@ -67,17 +67,18 @@ public class Server implements Runnable{
         logger.info(RedstoneLamp.getSoftwareVersionString() + " is licensed under the Lesser GNU General Public License version 3");
 
         network.registerProtocol(new PEProtocol(network));
+        network.registerProtocol(new PCProtocol(network));
         network.setName(motd);
 
         pluginSystem = new PluginSystem();
-        pluginSystem.init(this, new Logger(new Log4j2ConsoleOut("PluginSystem")));
+        /*pluginSystem.init(this, new Logger(new Log4j2ConsoleOut("PluginSystem")));
         pluginSystem.loadPlugins();
-        pluginSystem.enablePlugins();
+        pluginSystem.enablePlugins();*/
 
         levelManager = new LevelManager(this);
-        levelManager.init();
+        //levelManager.init();
 
-        addShutdownTask(pluginSystem::disablePlugins);
+        //addShutdownTask(pluginSystem::disablePlugins);
 
         Runtime.getRuntime().addShutdownHook(new ShutdownTaskExecuter(this));
     }

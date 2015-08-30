@@ -14,26 +14,24 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.request;
+package net.redstonelamp.response.pe.v27;
+
+import net.redstonelamp.level.position.Position;
+import net.redstonelamp.response.Response;
 
 /**
- * Represents a Login Request
+ * A Response that teleports the player to the given position.
  *
  * @author RedstoneLamp Team
  */
-public class LoginRequest extends Request{
-    public String username;
-    public long clientId;
-    public long authid;
-    public byte[] skin;
-    public boolean slim;
+public class TeleportResponse extends Response{
+    public Position pos;
+    public float bodyYaw;
+    public boolean onGround;
 
-    public LoginRequest(String username){
-        this.username = username;
-    }
-
-    @Override
-    public void execute(){
-        //TODO?
+    public TeleportResponse(Position pos, boolean onGround){
+        this.pos = pos;
+        this.onGround = onGround;
+        bodyYaw = pos.getYaw();
     }
 }

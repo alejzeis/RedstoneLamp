@@ -23,11 +23,21 @@ import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
 import net.redstonelamp.nio.BinaryBuffer;
-import net.redstonelamp.request.ChatRequest;
-import net.redstonelamp.request.LoginRequest;
-import net.redstonelamp.request.PlayerMoveRequest;
 import net.redstonelamp.request.Request;
+import net.redstonelamp.request.pe.v27.ChatRequest;
+import net.redstonelamp.request.pe.v27.LoginRequest;
+import net.redstonelamp.request.pe.v27.PlayerMoveRequest;
 import net.redstonelamp.response.*;
+import net.redstonelamp.response.pe.v27.AddPlayerResponse;
+import net.redstonelamp.response.pe.v27.ChatResponse;
+import net.redstonelamp.response.pe.v27.ChunkResponse;
+import net.redstonelamp.response.pe.v27.DisconnectResponse;
+import net.redstonelamp.response.pe.v27.LoginResponse;
+import net.redstonelamp.response.pe.v27.PlayerMoveResponse;
+import net.redstonelamp.response.pe.v27.PopupResponse;
+import net.redstonelamp.response.pe.v27.RemovePlayerResponse;
+import net.redstonelamp.response.pe.v27.SpawnResponse;
+import net.redstonelamp.response.pe.v27.TeleportResponse;
 import net.redstonelamp.utils.CompressionUtils;
 
 import java.net.SocketAddress;
@@ -87,7 +97,6 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                         break;
                 }
                 // TODO: Throw PlayerChatEvent
-                getProtocol().getServer().getPlayer(up.getAddress()).sendPopup("You sent a message!");
                 requests.add(cr);
                 break;
             case MOVE_PLAYER_PACKET:

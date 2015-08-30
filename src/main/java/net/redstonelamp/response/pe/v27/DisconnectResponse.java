@@ -14,24 +14,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.request;
+package net.redstonelamp.response.pe.v27;
 
-import net.redstonelamp.level.ChunkPosition;
+import net.redstonelamp.response.Response;
 
 /**
- * A Request for a Chunk to be sent.
+ * Represents a protocol-independent DisconnectionResponse
  *
  * @author RedstoneLamp Team
  */
-public class ChunkRequest extends Request{
-    public ChunkPosition position;
+public class DisconnectResponse extends Response{
+    public static final boolean DEFAULT_notifyClient = true;
 
-    public ChunkRequest(ChunkPosition position){
-        this.position = position;
-    }
+    public String reason;
+    public boolean notifyClient = DEFAULT_notifyClient;
 
-    @Override
-    public void execute(){
-        //TODO: ?
+    public DisconnectResponse(String reason){
+        this.reason = reason;
     }
 }

@@ -18,8 +18,8 @@ package net.redstonelamp.entity;
 
 import net.redstonelamp.Player;
 import net.redstonelamp.metadata.*;
-import net.redstonelamp.response.AddPlayerResponse;
-import net.redstonelamp.response.RemovePlayerResponse;
+import net.redstonelamp.response.pe.v27.AddPlayerResponse;
+import net.redstonelamp.response.pe.v27.RemovePlayerResponse;
 
 import java.util.Arrays;
 

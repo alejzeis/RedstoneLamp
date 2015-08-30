@@ -14,20 +14,25 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.response;
+package net.redstonelamp.request.pe.v27;
 
-import net.redstonelamp.level.Chunk;
+import net.redstonelamp.request.Request;
 
-/**
- * A Response to a Chunk Request.
- *
- * @author RedstoneLamp Team
- */
-public class ChunkResponse extends Response{
-    public Chunk chunk;
 
-    public ChunkResponse(Chunk chunk){
-        this.chunk = chunk;
+public class ChatRequest extends Request{
+
+    public byte type;
+    public String source;
+    public String message;
+    public String[] parameters;
+
+    public ChatRequest(byte type){
+        this.type = type;
+    }
+
+    @Override
+    public void execute(){
+        // TODO?
     }
 
 }
