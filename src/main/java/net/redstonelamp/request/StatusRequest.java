@@ -1,6 +1,4 @@
-package net.redstonelamp.request.pc;
-
-import net.redstonelamp.request.Request;
+package net.redstonelamp.request;
 
 public class StatusRequest extends Request{
 

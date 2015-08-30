@@ -14,26 +14,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.response.pe.v27;
+package net.redstonelamp.response;
 
-import net.redstonelamp.level.position.Position;
-import net.redstonelamp.response.Response;
+import net.redstonelamp.Player;
 
 /**
- * A Response to a Player Move Request.
+ * Removes a Player from another Player (de-spawns)
  *
  * @author RedstoneLamp Team
  */
-public class PlayerMoveResponse extends Response{
-    public Position pos;
-    public float bodyYaw;
-    public boolean onGround;
-    public long entityID;
+public class RemovePlayerResponse extends Response{
+    public Player player;
 
-    public PlayerMoveResponse(long eid, Position pos, boolean onGround){
-        this.pos = pos;
-        this.onGround = onGround;
-        bodyYaw = pos.getYaw();
-        entityID = eid;
+    public RemovePlayerResponse(Player player){
+        this.player = player;
     }
 }

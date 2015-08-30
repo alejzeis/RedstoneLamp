@@ -14,23 +14,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.request.pe.v27;
-
-import net.redstonelamp.level.position.Position;
-import net.redstonelamp.request.Request;
+package net.redstonelamp.request;
 
 /**
- * A Request from the player to move.
+ * Represents a Login Request
  *
  * @author RedstoneLamp Team
  */
-public class PlayerMoveRequest extends Request{
-    public Position position;
-    public boolean onGround;
+public class LoginRequest extends Request{
+    public String username;
+    public long clientId;
+    public long authid;
+    public byte[] skin;
+    public boolean slim;
 
-    public PlayerMoveRequest(Position position, boolean onGround){
-        this.position = position;
-        this.onGround = onGround;
+    public LoginRequest(String username){
+        this.username = username;
     }
 
     @Override

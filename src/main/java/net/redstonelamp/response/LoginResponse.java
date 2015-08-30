@@ -14,10 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.response.pe.v27;
-
-import net.redstonelamp.response.Response;
-
+package net.redstonelamp.response;
 
 /**
  * Represents a Response to a LoginRequest

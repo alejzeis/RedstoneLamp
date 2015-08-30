@@ -19,8 +19,8 @@ package net.redstonelamp.network;
 import net.redstonelamp.Player;
 import net.redstonelamp.Server;
 import net.redstonelamp.network.netInterface.NetworkInterface;
+import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.request.Request;
-import net.redstonelamp.request.pe.v27.LoginRequest;
 import net.redstonelamp.response.Response;
 
 import java.util.Map;

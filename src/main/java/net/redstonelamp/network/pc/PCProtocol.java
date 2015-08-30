@@ -22,7 +22,7 @@ import net.redstonelamp.network.Protocol;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pc.codec.HandshakePacket;
 import net.redstonelamp.request.Request;
-import net.redstonelamp.request.pc.StatusRequest;
+import net.redstonelamp.request.StatusRequest;
 import net.redstonelamp.response.Response;
 
 import java.util.ArrayList;

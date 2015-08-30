@@ -18,15 +18,13 @@ package net.redstonelamp;
 
 import net.redstonelamp.entity.PlayerEntity;
 import net.redstonelamp.network.Protocol;
-import net.redstonelamp.request.Request;
-import net.redstonelamp.request.pe.v27.*;
-import net.redstonelamp.response.Response;
-import net.redstonelamp.response.pe.v27.*;
+import net.redstonelamp.request.*;
+import net.redstonelamp.response.*;
 
 import java.net.SocketAddress;
 
 /**
- * Protocol-independent Player class. Represents a Player on the server
+ * <strong>Protocol-independent</strong> Player class. Represents a Player on the server
  *
  * @author RedstoneLamp Team
  */

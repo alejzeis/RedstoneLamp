@@ -14,22 +14,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.response.pe.v27;
+package net.redstonelamp.request;
 
-import net.redstonelamp.response.Response;
+public class ChatRequest extends Request{
 
-/**
- * Represents a protocol-independent DisconnectionResponse
- *
- * @author RedstoneLamp Team
- */
-public class DisconnectResponse extends Response{
-    public static final boolean DEFAULT_notifyClient = true;
+    public byte type;
+    public String source;
+    public String message;
+    public String[] parameters;
 
-    public String reason;
-    public boolean notifyClient = DEFAULT_notifyClient;
-
-    public DisconnectResponse(String reason){
-        this.reason = reason;
+    public ChatRequest(byte type){
+        this.type = type;
     }
+
+    @Override
+    public void execute(){
+        // TODO?
+    }
+
 }

@@ -22,12 +22,11 @@ import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
 import net.redstonelamp.nio.BinaryBuffer;
+import net.redstonelamp.request.ChatRequest;
+import net.redstonelamp.request.LoginRequest;
+import net.redstonelamp.request.PlayerMoveRequest;
 import net.redstonelamp.request.Request;
-import net.redstonelamp.request.pe.v27.ChatRequest;
-import net.redstonelamp.request.pe.v27.LoginRequest;
-import net.redstonelamp.request.pe.v27.PlayerMoveRequest;
-import net.redstonelamp.response.Response;
-import net.redstonelamp.response.pe.v27.*;
+import net.redstonelamp.response.*;
 import net.redstonelamp.utils.CompressionUtils;
 
 import java.net.SocketAddress;
@@ -354,7 +353,6 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
         });
         return packets.toArray(new UniversalPacket[packets.size()]);
     }
-
 
     private Request[] processBatch(UniversalPacket up){
         List<Request> requests = new ArrayList<>();

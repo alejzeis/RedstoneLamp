@@ -14,19 +14,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.request.pe.v27;
+package net.redstonelamp.request;
 
-import net.redstonelamp.request.Request;
+import net.redstonelamp.level.ChunkPosition;
 
 /**
- * A Request to spawn.
+ * A Request for a Chunk to be sent.
  *
  * @author RedstoneLamp Team
  */
-public class SpawnRequest extends Request{
+public class ChunkRequest extends Request{
+    public ChunkPosition position;
 
-    public SpawnRequest(){
-
+    public ChunkRequest(ChunkPosition position){
+        this.position = position;
     }
 
     @Override

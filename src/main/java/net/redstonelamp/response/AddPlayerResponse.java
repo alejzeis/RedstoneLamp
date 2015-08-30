@@ -14,28 +14,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.request.pe.v27;
+package net.redstonelamp.response;
 
-import net.redstonelamp.request.Request;
+import net.redstonelamp.Player;
 
 /**
- * Represents a Login Request
+ * Adds a Player to another player (spawns them)
  *
  * @author RedstoneLamp Team
  */
-public class LoginRequest extends Request{
-    public String username;
-    public long clientId;
-    public long authid;
-    public byte[] skin;
-    public boolean slim;
+public class AddPlayerResponse extends Response{
+    public Player player;
 
-    public LoginRequest(String username){
-        this.username = username;
-    }
-
-    @Override
-    public void execute(){
-        //TODO?
+    public AddPlayerResponse(Player player){
+        this.player = player;
     }
 }

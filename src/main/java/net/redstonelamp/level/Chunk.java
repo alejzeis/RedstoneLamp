@@ -81,7 +81,6 @@ public class Chunk{
     public void setSkylight(byte[] skylight){
         this.skylight = skylight;
     }
-
     public void setBlocklight(byte[] blocklight){
         this.blocklight = blocklight;
     }
