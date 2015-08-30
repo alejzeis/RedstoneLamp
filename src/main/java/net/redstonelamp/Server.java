@@ -17,6 +17,7 @@
 package net.redstonelamp;
 
 import net.redstonelamp.config.ServerConfig;
+import net.redstonelamp.config.YamlConfig;
 import net.redstonelamp.level.LevelManager;
 import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
@@ -42,6 +43,7 @@ public class Server implements Runnable{
     private final List<Runnable> shutdownTasks = new ArrayList<>(); //List of tasks to be run on shutdown
     private final Logger logger;
     private final ServerConfig config;
+    private final YamlConfig yamlConfig;
     private final RedstoneTicker ticker;
     private final NetworkManager network;
     private final List<Player> players = new CopyOnWriteArrayList<>();
@@ -57,11 +59,13 @@ public class Server implements Runnable{
      *
      * @param logger The server's logger
      * @param config The server's configuration
+     * @param serverYamlConfig The server's YAML configuration
      */
-    Server(Logger logger, ServerConfig config){
+    Server(Logger logger, ServerConfig config, YamlConfig serverYamlConfig){
         ticker = new RedstoneTicker(this, 50);
         this.logger = logger;
         this.config = config;
+        yamlConfig = serverYamlConfig;
         network = new NetworkManager(this);
         loadProperties(config);
         logger.info(RedstoneLamp.getSoftwareVersionString() + " is licensed under the Lesser GNU General Public License version 3");
@@ -202,6 +206,10 @@ public class Server implements Runnable{
 
     protected int getNextEntityID(){
         return nextEntityID++;
+    }
+
+    public YamlConfig getYamlConfig() {
+        return yamlConfig;
     }
 
     private static class ShutdownTaskExecuter extends Thread {

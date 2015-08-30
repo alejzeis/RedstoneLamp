@@ -17,6 +17,7 @@
 package net.redstonelamp;
 
 import net.redstonelamp.config.ServerConfig;
+import net.redstonelamp.config.YamlConfig;
 import net.redstonelamp.ui.Log4j2ConsoleOut;
 import net.redstonelamp.ui.Logger;
 import org.apache.commons.io.FileUtils;
@@ -43,7 +44,8 @@ public class RedstoneLamp{
 
         try{
             ServerConfig config = new ServerConfig(new File("server.properties"));
-            Server server = new Server(new Logger(new Log4j2ConsoleOut("RedstoneLamp")), config); //TODO: Correct logger
+            YamlConfig conf = new YamlConfig("redstonelamp.yml");
+            Server server = new Server(new Logger(new Log4j2ConsoleOut("RedstoneLamp")), config, conf); //TODO: Correct logger
             server.run();
         }catch(IOException e){
             LogManager.getRootLogger().fatal("Could not init server! " + e.getClass().getName() + ": " + e.getMessage());

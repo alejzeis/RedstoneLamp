@@ -22,6 +22,7 @@ import com.esotericsoftware.yamlbeans.YamlReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Class to get configuration options in YAML Files
@@ -31,7 +32,7 @@ import java.util.Map;
 public class YamlConfig{
     private YamlReader reader;
     private Object obj;
-    private Map map;
+    private Map<String, Object> map;
 
     /**
      * Reads the Yaml file from path for use of the class
@@ -43,7 +44,7 @@ public class YamlConfig{
     public YamlConfig(String yaml) throws FileNotFoundException, YamlException{
         reader = new YamlReader(new FileReader(yaml));
         obj = reader.read();
-        map = (Map) obj;
+        map = (Map<String, Object>) obj;
     }
 
     /**
@@ -53,6 +54,42 @@ public class YamlConfig{
      */
     public YamlReader getReader(){
         return reader;
+    }
+
+    private Map<String, Object> getMapInMap(String key, Map<String, Object> map) {
+        return (Map<String, Object>) map.get(key);
+    }
+
+    /**
+     * Gets an Object from the configuration with the specified <code>path</code>.
+     * The Path is separated by (.). For example, if I want to get the value of myValue inside of
+     * myConfig, the path would be "myConfig.myValue"
+     * @param path The Path of the value
+     * @return The value as an Object if found, null if not.
+     */
+    public Object get(String path) {
+        if(!(path.indexOf('.') != -1)) { //Check if its a root element
+            return map.get(path);
+        }
+        String[] splitPath = path.split(Pattern.quote("."));
+        Map<String, Object> map = this.map;
+        for(int i = 0; i < splitPath.length - 1; i++) {
+            String element = splitPath[i];
+            map = getMapInMap(element, map);
+        }
+        return map.get(splitPath[splitPath.length - 1]);
+    }
+
+    public String getString(String path) {
+        return (String) get(path);
+    }
+
+    public boolean getBoolean(String path) {
+        return Boolean.parseBoolean(getString(path));
+    }
+
+    public int getInt(String path) {
+        return Integer.parseInt(getString(path));
     }
 
     /**
