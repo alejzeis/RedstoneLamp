@@ -18,7 +18,6 @@ package net.redstonelamp.network.pe.sub.v27;
 
 import net.redstonelamp.Player;
 import net.redstonelamp.level.position.Position;
-import net.redstonelamp.metadata.EntityMetadata;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
@@ -87,7 +86,6 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                         break;
                 }
                 // TODO: Throw PlayerChatEvent
-                getProtocol().getServer().getPlayer(up.getAddress()).sendPopup("You sent a message!");
                 requests.add(cr);
                 break;
             case MOVE_PLAYER_PACKET:
@@ -355,7 +353,6 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
         });
         return packets.toArray(new UniversalPacket[packets.size()]);
     }
-
 
     private Request[] processBatch(UniversalPacket up){
         List<Request> requests = new ArrayList<>();

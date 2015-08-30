@@ -16,7 +16,6 @@
  */
 package net.redstonelamp.request;
 
-
 public class ChatRequest extends Request{
 
     public byte type;

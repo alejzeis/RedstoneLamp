@@ -21,12 +21,12 @@ import net.redstonelamp.config.YamlConfig;
 import net.redstonelamp.level.LevelManager;
 import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
+import net.redstonelamp.network.pc.PCProtocol;
 import net.redstonelamp.network.pe.PEProtocol;
 import net.redstonelamp.plugin.PluginSystem;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.response.Response;
 import net.redstonelamp.ticker.RedstoneTicker;
-import net.redstonelamp.ui.Log4j2ConsoleOut;
 import net.redstonelamp.ui.Logger;
 
 import java.net.SocketAddress;
@@ -71,6 +71,7 @@ public class Server implements Runnable{
         logger.info(RedstoneLamp.getSoftwareVersionString() + " is licensed under the Lesser GNU General Public License version 3");
 
         network.registerProtocol(new PEProtocol(network));
+        network.registerProtocol(new PCProtocol(network));
         network.setName(motd);
 
         pluginSystem = new PluginSystem();
@@ -200,7 +201,7 @@ public class Server implements Runnable{
         return levelManager;
     }
 
-    public PluginSystem getPluginSystem() {
+    public PluginSystem getPluginSystem(){
         return pluginSystem;
     }
 
@@ -212,15 +213,15 @@ public class Server implements Runnable{
         return yamlConfig;
     }
 
-    private static class ShutdownTaskExecuter extends Thread {
+    private static class ShutdownTaskExecuter extends Thread{
         private final Server server;
 
-        public ShutdownTaskExecuter(Server server) {
+        public ShutdownTaskExecuter(Server server){
             this.server = server;
         }
 
         @Override
-        public void run() {
+        public void run(){
             server.shutdownTasks.forEach(Runnable::run);
         }
     }

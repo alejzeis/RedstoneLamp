@@ -29,5 +29,4 @@ public class ChunkResponse extends Response{
     public ChunkResponse(Chunk chunk){
         this.chunk = chunk;
     }
-
 }

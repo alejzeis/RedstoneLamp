@@ -21,7 +21,7 @@ package net.redstonelamp.network.pc;
  *
  * @author RedstoneLamp Team
  */
-public enum ProtocolState {
+public enum ProtocolState{
     /**
      * The Handshake state is the first state when a client connects.
      * Currently there is only one packet sent in this state.

@@ -51,7 +51,7 @@ public class MetadataByte extends MetadataElement{
     }
 
     @Override
-    public int getLength() {
+    public int getLength(){
         return 1;
     }
 }

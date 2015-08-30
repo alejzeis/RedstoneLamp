@@ -30,7 +30,7 @@ import java.nio.ByteBuffer;
 public class FlatGenerator implements Generator{
     private final Level level;
 
-    public FlatGenerator(Level level, Level.LevelParameters params) {
+    public FlatGenerator(Level level, Level.LevelParameters params){
         this.level = level;
     }
 

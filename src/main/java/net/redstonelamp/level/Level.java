@@ -16,7 +16,6 @@
  */
 package net.redstonelamp.level;
 
-import net.redstonelamp.level.generator.FlatGenerator;
 import net.redstonelamp.level.generator.Generator;
 import net.redstonelamp.level.position.Position;
 import net.redstonelamp.level.provider.LevelLoadException;

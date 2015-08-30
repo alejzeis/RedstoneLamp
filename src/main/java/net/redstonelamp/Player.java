@@ -24,7 +24,7 @@ import net.redstonelamp.response.*;
 import java.net.SocketAddress;
 
 /**
- * Protocol-independent Player class. Represents a Player on the server
+ * <strong>Protocol-independent</strong> Player class. Represents a Player on the server
  *
  * @author RedstoneLamp Team
  */

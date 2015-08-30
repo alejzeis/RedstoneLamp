@@ -16,7 +16,6 @@
  */
 package net.redstonelamp.response;
 
-
 /**
  * Represents a Response to a LoginRequest
  *
