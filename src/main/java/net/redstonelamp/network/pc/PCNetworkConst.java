@@ -25,31 +25,32 @@ public interface PCNetworkConst{
     /**
      * The Minecraft version this software implements.
      */
-    public static final String MC_VERSION = "v1.8.8";
+    public static final String MC_VERSION = "15w35e";
 
     /**
      * The Minecraft network protocol version this software implements.
      */
-    public static final int MC_PROTOCOL = 47;
+    public static final int MC_PROTOCOL = 66;
 
     //Handshake packets
-    public final static int HANDSHAKE_HANDSHAKE = 0x00;
+    public static final int HANDSHAKE_HANDSHAKE = 0x00;
 
     //Status packets
-    public final static int STATUS_REQUEST = 0x00;
-    public final static int STATUS_RESPONSE = 0x00;
-    public final static int STATUS_PING = 0x01;
-    public final static int STATUS_PONG = 0x01;
+    public static final int STATUS_REQUEST = 0x00;
+    public static final int STATUS_RESPONSE = 0x00;
+    public static final int STATUS_PING = 0x01;
+    public static final int STATUS_PONG = 0x01;
 
     //Login packets
-    public final static int LOGIN_LOGIN_START = 0x00;
-    public final static int LOGIN_ENCRYPTION_REQUEST = 0x01;
-    public final static int LOGIN_ENCRYPTION_RESPONSE = 0x01;
-    public final static int LOGIN_DISCONNECT = 0x00;
-    public final static int LOGIN_LOGIN_SUCCESS = 0x02;
-    public final static int LOGIN_SET_COMPRESSION = 0x03;
+    public static final int LOGIN_LOGIN_START = 0x00;
+    public static final int LOGIN_ENCRYPTION_REQUEST = 0x01;
+    public static final int LOGIN_ENCRYPTION_RESPONSE = 0x01;
+    public static final int LOGIN_DISCONNECT = 0x00;
+    public static final int LOGIN_LOGIN_SUCCESS = 0x02;
+    public static final int LOGIN_SET_COMPRESSION = 0x03;
 
     //Play packets
-    public final static int PLAY_JOIN_GAME = 0x01;
+    public static final int PLAY_KEEP_ALIVE = 0x00;
+    public static final int PLAY_JOIN_GAME = 0x01;
 
 }

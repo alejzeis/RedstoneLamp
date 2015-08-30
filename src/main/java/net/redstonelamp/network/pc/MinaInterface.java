@@ -16,6 +16,7 @@
  */
 package net.redstonelamp.network.pc;
 
+import net.redstonelamp.Player;
 import net.redstonelamp.Server;
 import net.redstonelamp.network.LowLevelNetworkException;
 import net.redstonelamp.network.UniversalPacket;
@@ -75,7 +76,7 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
         acceptor.setHandler(this);
 
         acceptor.getSessionConfig().setReadBufferSize(4096);
-        acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
+        acceptor.getSessionConfig().setIdleTime(IdleStatus.READER_IDLE, 30);
 
         try{
             acceptor.bind(new InetSocketAddress(server.getConfig().getInt("mcpc-port")));
@@ -97,15 +98,60 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
         }
     }
 
+    public ProtocolState getProtocolStateOfAddress(SocketAddress address) {
+        if(states.containsKey(address.toString())) {
+            return states.get(address.toString());
+        }
+        return null;
+    }
+
+    protected void updateProtocolState(ProtocolState state, SocketAddress address) {
+        states.put(address.toString(), state);
+    }
+
+    public void close(SocketAddress address) {
+        IoSession session = sessions.get(address.toString());
+        if(session != null) {
+            session.close(false); //Close after all write requests are complete
+        }
+    }
+
     @Override
     public void sessionOpened(IoSession session) throws Exception {
         sessions.put(session.getRemoteAddress().toString(), session);
     }
 
     @Override
+    public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
+        if(status == IdleStatus.READER_IDLE) { //The client hasn't sent any packets
+            Player player = server.getPlayer(session.getRemoteAddress());
+            if(player != null) {
+                ProtocolState state = getProtocolStateOfAddress(session.getRemoteAddress());
+                if(state != null && state == ProtocolState.STATE_LOGIN) {
+                    player.close("", "connection timed out", true);
+                } else if(state != null && state == ProtocolState.STATE_PLAY) {
+                    player.close(" left the game", "connection timed out", true);
+                }
+            }
+        }
+    }
+
+    @Override
     public void sessionClosed(IoSession session) throws Exception {
         sessions.remove(session.getRemoteAddress().toString());
+        ProtocolState oldState = states.get(session.getRemoteAddress().toString());
         states.remove(session.getRemoteAddress().toString());
+        Player player = server.getPlayer(session.getRemoteAddress());
+        if(player != null) {
+            if(!player.isConnected()) {
+                return;
+            }
+            if(oldState != null && oldState == ProtocolState.STATE_PLAY) {
+                player.close(" left the game", "connection closed", false);
+            } else if(oldState != null && oldState == ProtocolState.STATE_LOGIN) {
+                player.close("", "connection closed", false);
+            }
+        }
     }
 
     @Override

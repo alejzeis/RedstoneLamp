@@ -22,6 +22,7 @@ import net.redstonelamp.request.*;
 import net.redstonelamp.response.*;
 
 import java.net.SocketAddress;
+import java.util.UUID;
 
 /**
  * <strong>Protocol-independent</strong> Player class. Represents a Player on the server
@@ -37,10 +38,12 @@ public class Player extends PlayerEntity{
     private long startLogin;
 
     private String username;
+    private UUID uuid;
     private int clientID;
     private byte[] skin;
     private boolean slim;
 
+    private boolean connected = true;
     private boolean spawned = false;
     private int gamemode;
 
@@ -116,6 +119,7 @@ public class Player extends PlayerEntity{
             LoginRequest lr = (LoginRequest) request;
             startLogin = System.currentTimeMillis();
             username = lr.username;
+            uuid = lr.uuid;
             clientID = (int) lr.clientId;
             skin = lr.skin;
             slim = lr.slim;
@@ -175,6 +179,7 @@ public class Player extends PlayerEntity{
 
         server.closeSession(this);
         server.getLogger().info(username + "[" + identifier + "] logged out with reason: " + reason);
+        connected = false;
         protocol.close(this);
         /*
         if(leaveMessage != "") {
@@ -210,5 +215,13 @@ public class Player extends PlayerEntity{
 
     public boolean isSlim(){
         return slim;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public boolean isConnected() {
+        return connected;
     }
 }

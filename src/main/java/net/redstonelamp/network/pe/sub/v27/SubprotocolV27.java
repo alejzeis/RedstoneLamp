@@ -34,6 +34,7 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.DataFormatException;
 
@@ -59,7 +60,8 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
         switch(id){
             case LOGIN_PACKET:
                 getProtocol().getServer().getLogger().debug("Got Login packet!");
-                LoginRequest lr = new LoginRequest(up.bb().getString());
+                String username = up.bb().getString();
+                LoginRequest lr = new LoginRequest(username, UUID.nameUUIDFromBytes(username.getBytes()));
                 up.bb().skip(8); //Skip protocol1, protocol 2 (int, int)
                 lr.clientId = up.bb().getInt();
                 lr.slim = up.bb().getByte() > 0;
