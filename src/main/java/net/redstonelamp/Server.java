@@ -76,13 +76,13 @@ public class Server implements Runnable{
         network.setName(motd);
 
         pluginSystem = new PluginSystem();
-        pluginSystem.init(this, new Logger(new Log4j2ConsoleOut("PluginSystem")));
-        pluginSystem.loadPlugins();
-        pluginSystem.enablePlugins();
+        //pluginSystem.init(this, new Logger(new Log4j2ConsoleOut("PluginSystem")));
+        //pluginSystem.loadPlugins();
+        //pluginSystem.enablePlugins();
 
         levelManager = new LevelManager(this);
-        levelManager.init();
-
+        //levelManager.init();
+        
         addShutdownTask(pluginSystem::disablePlugins);
 
         Runtime.getRuntime().addShutdownHook(new ShutdownTaskExecuter(this));

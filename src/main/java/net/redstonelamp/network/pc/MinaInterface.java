@@ -16,26 +16,6 @@
  */
 package net.redstonelamp.network.pc;
 
-import net.redstonelamp.Player;
-import net.redstonelamp.Server;
-import net.redstonelamp.network.LowLevelNetworkException;
-import net.redstonelamp.network.UniversalPacket;
-import net.redstonelamp.network.netInterface.AdvancedNetworkInterface;
-import net.redstonelamp.network.pc.codec.MinecraftPacketHeaderDecoder;
-import net.redstonelamp.network.pc.codec.MinecraftPacketHeaderEncoder;
-import net.redstonelamp.nio.BinaryBuffer;
-import net.redstonelamp.ticker.Task;
-import net.redstonelamp.ui.ConsoleOut;
-import net.redstonelamp.ui.Logger;
-import org.apache.mina.core.service.IoAcceptor;
-import org.apache.mina.core.service.IoHandlerAdapter;
-import org.apache.mina.core.session.IdleStatus;
-import org.apache.mina.core.session.IoSession;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.filter.logging.LoggingFilter;
-import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
-import org.json.simple.JSONObject;
-
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -48,6 +28,27 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import net.redstonelamp.Player;
+import net.redstonelamp.Server;
+import net.redstonelamp.network.LowLevelNetworkException;
+import net.redstonelamp.network.UniversalPacket;
+import net.redstonelamp.network.netInterface.AdvancedNetworkInterface;
+import net.redstonelamp.network.pc.codec.MinecraftPacketHeaderDecoder;
+import net.redstonelamp.network.pc.codec.MinecraftPacketHeaderEncoder;
+import net.redstonelamp.network.pc.serializer.ChatSerializer;
+import net.redstonelamp.nio.BinaryBuffer;
+import net.redstonelamp.ui.ConsoleOut;
+import net.redstonelamp.ui.Logger;
+
+import org.apache.mina.core.service.IoAcceptor;
+import org.apache.mina.core.service.IoHandlerAdapter;
+import org.apache.mina.core.session.IdleStatus;
+import org.apache.mina.core.session.IoSession;
+import org.apache.mina.filter.codec.ProtocolCodecFilter;
+import org.apache.mina.filter.logging.LoggingFilter;
+import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import org.json.simple.JSONObject;
 
 /**
  * An AdvancedNetworkInterface implementation of an Apache MINA handler for
@@ -187,7 +188,7 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
                             BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
                             bb.putVarInt(PCNetworkConst.LOGIN_DISCONNECT);
                             System.out.println("Sent!");
-                            bb.putVarString("{\"text\":\"Outdated Client! I'm on: " + PCNetworkConst.MC_VERSION + " " + PCNetworkConst.MC_PROTOCOL + "\"}");
+                            bb.putVarString(ChatSerializer.toChat("Outdated Client! I'm on: " + PCNetworkConst.MC_VERSION + " " + PCNetworkConst.MC_PROTOCOL));
                             sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, session.getRemoteAddress()), true);
                             block.add(session.getRemoteAddress().toString());
                             final String a = session.getRemoteAddress().toString();
