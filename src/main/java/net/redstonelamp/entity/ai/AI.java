@@ -17,7 +17,9 @@
 package net.redstonelamp.entity.ai;
 
 /**
- * Represents an AI
+ * Represents an AI.
+ *
+ * @author RedstoneLamp Team
  */
 public interface AI {
     /**

@@ -21,6 +21,11 @@ import net.redstonelamp.RedstoneLamp;
 import net.redstonelamp.entity.Entity;
 import net.redstonelamp.level.position.Position;
 
+/**
+ * A Simple implementation of AI for mobs.
+ *
+ * @author RedstoneLamp Team
+ */
 public class SimpleMobAI implements AI {
     public static Entity MOB;
     public static int RANGE;
