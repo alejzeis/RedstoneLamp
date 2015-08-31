@@ -20,6 +20,7 @@ package net.redstonelamp.nio;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.UUID;
 
 /**
  * An NIO buffer class to wrap around a java.nio.ByteBuffer.
@@ -205,6 +206,10 @@ public class BinaryBuffer{
         return new String(get(getVarInt()));
     }
 
+    public UUID getUUID() {
+        return new UUID(bb.getLong(), bb.getLong());
+    }
+
     public void putByte(byte b){
         put(new byte[]{b});
     }
@@ -241,6 +246,11 @@ public class BinaryBuffer{
     public void putVarString(String s){
         putVarInt(s.getBytes().length);
         put(s.getBytes());
+    }
+
+    public void putUUID(UUID uuid) {
+        putLong(uuid.getMostSignificantBits());
+        putLong(uuid.getLeastSignificantBits());
     }
 
     /**

@@ -21,6 +21,7 @@ import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
 import net.redstonelamp.nio.BinaryBuffer;
+import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.request.Request;
 import net.redstonelamp.response.Response;
 import net.redstonelamp.utils.CompressionUtils;
@@ -28,6 +29,7 @@ import net.redstonelamp.utils.CompressionUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.zip.DataFormatException;
 
 /**
@@ -43,6 +45,7 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
 
     @Override
     public Request[] handlePacket(UniversalPacket up){
+        List<Request> requests = new ArrayList<>();
         byte id = up.bb().getByte();
         if(id == BATCH_PACKET){
             return processBatch(up);
@@ -51,9 +54,23 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
         switch(id){
             case LOGIN_PACKET:
                 getProtocol().getServer().getLogger().debug("Got Login packet!");
+                String username = up.bb().getString();
+                up.bb().skip(8); //Skip protocols
+                long clientId = up.bb().getLong();
+                UUID clientUUid = up.bb().getUUID();
+                up.bb().getString(); //server addresss
+                String clientSecret = up.bb().getString();
+                boolean slim = up.bb().getBoolean();
+                byte[] skin = up.bb().get(up.bb().getUnsignedShort());
+
+                LoginRequest lr = new LoginRequest(username, clientUUid);
+                lr.clientId = clientId;
+                lr.slim = slim;
+                lr.skin = skin;
+                requests.add(lr);
                 break;
         }
-        return new Request[]{null};
+        return requests.toArray(new Request[requests.size()]);
     }
 
     @Override

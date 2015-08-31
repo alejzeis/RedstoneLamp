@@ -50,6 +50,7 @@ public class PESubprotocolManager{
      */
     public Subprotocol findSubprotocol(UniversalPacket up){
         byte id = up.bb().getByte();
+        int protocol1, protocol2;
         switch(id){
             case (byte) 0xb1: //Batch Packet ID BEFORE protocol 34
                 byte[] compressedData = up.bb().get(up.bb().getInt());
@@ -77,8 +78,22 @@ public class PESubprotocolManager{
 
             case (byte) 0x82: //Login Packet ID BEFORE protocol 34
                 up.bb().getString(); //Username
-                int protocol1 = up.bb().getInt();
-                int protocol2 = up.bb().getInt();
+                protocol1 = up.bb().getInt();
+                protocol2 = up.bb().getInt();
+                if(!(subprotocols.containsKey(protocol1) || subprotocols.containsKey(protocol2))){
+                    return null;
+                }else{
+                    if(subprotocols.containsKey(protocol1)){
+                        return subprotocols.get(protocol1);
+                    }else{
+                        return subprotocols.get(protocol2);
+                    }
+                }
+
+            case (byte) 0x8f: //Login Packet ID AFTER protocol 34
+                up.bb().getString(); //Username
+                protocol1 = up.bb().getInt();
+                protocol2 = up.bb().getInt();
                 if(!(subprotocols.containsKey(protocol1) || subprotocols.containsKey(protocol2))){
                     return null;
                 }else{
