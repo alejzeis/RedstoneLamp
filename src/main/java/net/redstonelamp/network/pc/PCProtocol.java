@@ -210,7 +210,7 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
         List<Integer> ids = new ArrayList<>();
         for(int x = 0; x < 16; x++){
             for(int z = 0; z < 16; z++){
-                for(int y = 0; z < 128; y++){
+                for(int y = 0; y < 128; y++){
                     byte id = chunk.getBlockId(x, y, z);
                     byte data = chunk.getBlockData(x, y, z);
                     ids.add(id >> 4 | data & 15);

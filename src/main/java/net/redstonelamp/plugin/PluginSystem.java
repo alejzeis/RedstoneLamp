@@ -41,7 +41,7 @@ public class PluginSystem{
      */
     public void init(Server server, Logger log){
         logger = log;
-        this.server = server;
+        PluginSystem.server = server;
         logger.info("Initializing plugin system...");
         PluginManager.init();
     }
