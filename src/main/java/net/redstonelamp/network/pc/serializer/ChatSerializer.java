@@ -24,8 +24,8 @@ public class ChatSerializer {
 	
 	@SuppressWarnings("unchecked")
 	public ChatSerializer() {
-		this.chat = new JSONObject();
-		this.chat.put("text", "");
+		chat = new JSONObject();
+		chat.put("text", "");
 	}
 	
 	public static String toChat(String text) {
@@ -36,15 +36,15 @@ public class ChatSerializer {
 	
 	@SuppressWarnings("unchecked")
 	public void append(String text) {
-		String old = this.chat.get("text").toString();
-		this.chat.remove("text");
-		this.chat.put("text", old + text);
+		String old = chat.get("text").toString();
+		chat.remove("text");
+		chat.put("text", old + text);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void setText(String text) {
-		this.chat.remove("text");
-		this.chat.put("text", text);
+		chat.remove("text");
+		chat.put("text", text);
 	}
 	
 	@Override

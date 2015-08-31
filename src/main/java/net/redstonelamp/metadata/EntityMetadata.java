@@ -59,7 +59,7 @@ public class EntityMetadata{
         for(Byte bottom : array.keySet()){
             List<Object> d = array.get(bottom);
             EntityMetadata.DataType type = (EntityMetadata.DataType) d.get(0);
-            bb.putByte((byte) ((type.getAsByte() << 5) | (bottom & 0x1F)));
+            bb.putByte((byte) (type.getAsByte() << 5 | bottom & 0x1F));
             switch(type){
                 case DATA_TYPE_BYTE:
                     bb.putByte((byte) d.get(1));
@@ -113,7 +113,7 @@ public class EntityMetadata{
     }
 
     public boolean containsKey(int id){
-        return array.containsKey(id);
+        return array.containsKey((byte) id);
     }
 
 
@@ -130,7 +130,7 @@ public class EntityMetadata{
 
         private byte type;
 
-        private DataType(byte type){
+        DataType(byte type){
             this.type = type;
         }
 

@@ -16,7 +16,6 @@
  */
 package net.redstonelamp.network.pc.codec;
 
-import javafx.scene.control.TablePositionBase;
 import net.redstonelamp.level.position.Position;
 import net.redstonelamp.nio.BinaryBuffer;
 
@@ -28,14 +27,14 @@ import net.redstonelamp.nio.BinaryBuffer;
 public class MinecraftBinaryUtils {
 
     public static void writePosition(Position pos, BinaryBuffer bb) {
-        bb.putLong((((long) pos.getX() & 0x3FFFFFF) << 38) | (((long) pos.getY() & 0xFFF) << 26) | ((long) pos.getZ() & 0x3FFFFFF));
+        bb.putLong(((long) pos.getX() & 0x3FFFFFF) << 38 | ((long) pos.getY() & 0xFFF) << 26 | (long) pos.getZ() & 0x3FFFFFF);
     }
 
     public static Position readPosition(BinaryBuffer bb) {
         long val = bb.getLong();
         Position pos = new Position(null);
         pos.setX(val >> 38);
-        pos.setY((val >> 26) & 0xFFF);
+        pos.setY(val >> 26 & 0xFFF);
         pos.setZ(val << 38 >> 38);
         return pos;
     }

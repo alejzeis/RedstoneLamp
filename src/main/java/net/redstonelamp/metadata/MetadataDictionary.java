@@ -125,9 +125,7 @@ public class MetadataDictionary extends Dictionary<Byte, MetadataElement>{
 
     public int getLength(){
         final int[] len = {entries.keySet().size()};
-        entries.values().forEach(e -> {
-            len[0] = len[0] + e.getLength();
-        });
+        entries.values().forEach(e -> len[0] = len[0] + e.getLength());
         return len[0];
     }
 

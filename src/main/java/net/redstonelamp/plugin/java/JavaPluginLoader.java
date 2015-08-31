@@ -61,11 +61,11 @@ public class JavaPluginLoader extends PluginLoader{
             if(prop.getMain() == null) throw new YamlException("plugin.yml does not contain main class");
             if(prop.getName() == null) throw new YamlException("plugin.yml does not contain plugin name");
             if(prop.getVersion() == null) throw new YamlException("plugin.yml does not contain plugin version");
-            for(String sd : prop.getSoftdepend()) this.getSoftDependencies().add(sd);
-            for(String d : prop.getDepend()) this.getDependencies().add(d);
-            this.name = prop.getName();
-            this.version = prop.getVersion();
-            this.properties = prop;
+            for(String sd : prop.getSoftdepend()) getSoftDependencies().add(sd);
+            for(String d : prop.getDepend()) getDependencies().add(d);
+            name = prop.getName();
+            version = prop.getVersion();
+            properties = prop;
         }catch(Exception e){
             e.printStackTrace();
             return;
@@ -76,17 +76,17 @@ public class JavaPluginLoader extends PluginLoader{
     @Override
     public void initPlugin(){
         if(getState() != PluginState.LOADED) return;
-        Class<?> mainClass = null;
+        Class<?> mainClass;
         try{
             mainClass = Class.forName(getProperties().getMain());
-            if(!(mainClass.isAssignableFrom(JavaPlugin.class))){
+            if(!mainClass.isAssignableFrom(JavaPlugin.class)){
                 PluginSystem.getLogger().error(name + " is in folder java-plugins, but does not extend JavaPlugin. Disabling!");
                 setState(PluginState.UNLOADED);
                 return;
             }
             Constructor<?> constructor = mainClass.getConstructor(Server.class, Logger.class, String.class, String.class, String[].class, String.class);
             Logger l = createPluginLogger(getProperties().getName());
-            this.plugin = (JavaPlugin) constructor.newInstance(PluginSystem.getServer(), l, name, version, getProperties().getAuthors(), getProperties().getUrl());
+            plugin = (JavaPlugin) constructor.newInstance(PluginSystem.getServer(), l, name, version, getProperties().getAuthors(), getProperties().getUrl());
         }catch(Exception e){
             e.printStackTrace();
             setState(PluginState.UNLOADED);
@@ -109,7 +109,7 @@ public class JavaPluginLoader extends PluginLoader{
     public void enablePlugin(){
         if(getState() != PluginState.INITIALIZED) return;
         PluginSystem.getLogger().info("Enabling " + name + " v." + version + "...");
-        this.plugin.onEnable();
+        plugin.onEnable();
         setState(PluginState.ENABLED);
     }
 
@@ -117,7 +117,7 @@ public class JavaPluginLoader extends PluginLoader{
     public void disablePlugin(){
         if(getState() != PluginState.ENABLED) return;
         PluginSystem.getLogger().info("Disabling " + name + " v." + version + "...");
-        this.plugin.onDisable();
+        plugin.onDisable();
         setState(PluginState.DISABLED);
     }
 
@@ -132,7 +132,7 @@ public class JavaPluginLoader extends PluginLoader{
             if(entry.getName().equals(path)){
                 final InputStream in = zipFile.getInputStream(entry);
                 //Limit resource to 6 mb
-                byte[] read = new byte[1024 * 1024 * 1024 * 6];
+                byte[] read = new byte[Math.min(in.available(), 6 << 20)];
                 int length = in.read(read);
                 zipFile.close();
                 return new ByteArrayInputStream(Arrays.copyOfRange(read, 0, length - 1));

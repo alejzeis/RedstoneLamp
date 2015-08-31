@@ -62,7 +62,7 @@ public class MinecraftPacketHeaderDecoder extends DemuxingProtocolDecoder{
         BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
         boolean readCorrect = false;
         while(in.hasRemaining()){
-            if(((b & 0xff) >> 7) > 0){ //Check if there is more
+            if((b & 0xff) >> 7 > 0){ //Check if there is more
                 bb.putByte(b);
                 b = in.get();
             }else{ //no more

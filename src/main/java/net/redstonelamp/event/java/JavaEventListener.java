@@ -27,7 +27,7 @@ public class JavaEventListener implements EventListener{
 
     @Override
     public void receiveEvent(JavaEvent e, EventPriority priority){
-        for(Method method : this.getClass().getMethods()){
+        for(Method method : getClass().getMethods()){
             if(method.isAnnotationPresent(EventSystem.class)){
                 //Check if event matches
                 if(method.getParameterCount() != 1) continue;

@@ -185,7 +185,7 @@ public class Player extends PlayerEntity{
         connected = false;
         protocol.close(this);
 
-        if(leaveMessage != "") {
+        if(!leaveMessage.isEmpty()){
             server.broadcastMessage(username + leaveMessage);
         }
 

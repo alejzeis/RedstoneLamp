@@ -33,10 +33,11 @@ public class JavaPluginManager extends PluginManager{
         if(!PLUGINS_DIR.exists()){
             PLUGINS_DIR.mkdirs();
         }
+        //noinspection ConstantConditions
         for(File x : PLUGINS_DIR.listFiles()){
             if(x.getName().toLowerCase().endsWith(".jar") && x.isFile()){
                 JavaPluginLoader load = new JavaPluginLoader(this, x);
-                this.getPluginLoaders().add(load);
+                getPluginLoaders().add(load);
                 load.loadPlugin();
             }
         }

@@ -69,7 +69,7 @@ public abstract class PluginLoader{
     private ArrayList<String> softDependencies = new ArrayList<>();
 
     public PluginLoader(PluginManager mgr){
-        this.pluginManager = mgr;
+        pluginManager = mgr;
     }
 
     /**
@@ -117,7 +117,7 @@ public abstract class PluginLoader{
     /**
      * Gets a resource as input stream
      *
-     * @param String path: Path to the resource requested
+     * @param path: Path to the resource requested
      * @throws Exception
      * @returns InputStream
      */

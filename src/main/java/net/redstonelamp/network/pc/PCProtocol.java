@@ -19,13 +19,11 @@ package net.redstonelamp.network.pc;
 import net.redstonelamp.Player;
 import net.redstonelamp.level.Chunk;
 import net.redstonelamp.level.generator.FlatGenerator;
-import net.redstonelamp.level.position.Position;
 import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pc.codec.MinecraftBinaryUtils;
 import net.redstonelamp.nio.BinaryBuffer;
-import net.redstonelamp.request.ChatRequest;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.request.Request;
 import net.redstonelamp.request.SpawnRequest;
@@ -33,10 +31,6 @@ import net.redstonelamp.response.ChatResponse;
 import net.redstonelamp.response.ChunkResponse;
 import net.redstonelamp.response.LoginResponse;
 import net.redstonelamp.response.Response;
-import net.redstonelamp.ticker.Task;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -219,7 +213,7 @@ public class PCProtocol extends Protocol implements PCNetworkConst {
                 for(int y = 0; z < 128; y++) {
                     byte id = chunk.getBlockId(x, y, z);
                     byte data = chunk.getBlockData(x, y, z);
-                    ids.add((id >> 4) | (data & 15));
+                    ids.add(id >> 4 | data & 15);
                 }
             }
         }
@@ -254,7 +248,7 @@ public class PCProtocol extends Protocol implements PCNetworkConst {
 
         bb = BinaryBuffer.newInstance(10, ByteOrder.BIG_ENDIAN);
         bb.putVarInt(PLAY_CLIENTBOUND_PLAYER_ABILITIES);
-        int flags = (player.getGamemode() == 1 ? 8 : 0) | (player.getGamemode() == 1 ? 4 : 0) | (0) | (player.getGamemode() == 1 ? 1 : 0);
+        int flags = (player.getGamemode() == 1 ? 8 : 0) | (player.getGamemode() == 1 ? 4 : 0) | 0 | (player.getGamemode() == 1 ? 1 : 0);
         bb.putByte((byte) flags);
         bb.putFloat(1.0f);
         bb.putFloat(1.0f);

@@ -99,11 +99,11 @@ public class Chunk{
     }
 
     public byte getBlockId(int x, int y, int z) {
-        return blockIds[(x << 11) | (z << 7) | y];
+        return blockIds[x << 11 | z << 7 | y];
     }
 
     public byte getBlockData(int x, int y, int z) {
-        byte m = blockMeta[(x << 10) | (z << 6) | (y >> 1)];
+        byte m = blockMeta[x << 10 | z << 6 | y >> 1];
         if((y & 1) == 0){
             return (byte) (m & 0x0F);
         }else{
