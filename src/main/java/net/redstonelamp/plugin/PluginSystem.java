@@ -52,9 +52,7 @@ public class PluginSystem{
         logger.info("Loading & initializing plugins...");
         for(PluginManager mgr : pluginManagers) mgr.loadPlugins();
         for(PluginManager mgr : pluginManagers){
-            for(PluginLoader l : mgr.getPluginLoaders()){
-                initPlugin(l);
-            }
+            mgr.getPluginLoaders().forEach(this::initPlugin);
         }
     }
     /**
@@ -63,9 +61,7 @@ public class PluginSystem{
     public void enablePlugins(){
         logger.info("Enabling plugins...");
         for(PluginManager mgr : pluginManagers){
-            for(PluginLoader l : mgr.getPluginLoaders()){
-                enablePlugin(l);
-            }
+            mgr.getPluginLoaders().forEach(this::enablePlugin);
         }
     }
     /**
@@ -74,9 +70,7 @@ public class PluginSystem{
     public void disablePlugins(){
         logger.info("Disabling plugins...");
         for(PluginManager mgr : pluginManagers){
-            for(PluginLoader l : mgr.getPluginLoaders()){
-                disablePlugin(l);
-            }
+            mgr.getPluginLoaders().forEach(this::disablePlugin);
         }
     }
     /**
@@ -179,11 +173,9 @@ public class PluginSystem{
         if(loader.getState() != PluginState.ENABLED) return;
         //Disable plugins depending on this plugin first
         for(PluginManager mgr : pluginManagers){
-            for(PluginLoader l : mgr.getPluginLoaders()){
-                if(l.dependsOn(loader.getName())){
-                    disablePlugin(l);
-                }
-            }
+            mgr.getPluginLoaders().stream()
+                    .filter(l -> l.dependsOn(loader.getName()))
+                    .forEach(this::disablePlugin);
         }
         //Dependent plugins are disabled, disable the plugin itself
         loader.disablePlugin();
