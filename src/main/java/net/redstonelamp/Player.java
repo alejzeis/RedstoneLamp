@@ -134,6 +134,9 @@ public class Player extends PlayerEntity{
                 close("", "redstonelamp.loginFailed.serverFull", false);
                 return;
             }
+            server.getPlayers().stream().filter(player -> player != this && player.getNametag().equals(getNametag())).forEach(player -> {
+                player.close(" left the game", "logged in from another location", true);
+            });
             sendResponse(response);
             initEntity();
             server.getLogger().info(username + "[" + address + "] logged in with entity ID " + getEntityID() + " in level \"" + getPosition().getLevel().getName() + "\""
@@ -155,7 +158,7 @@ public class Player extends PlayerEntity{
             });
 
             server.getLogger().debug("Player " + username + " spawned (took " + (System.currentTimeMillis() - startLogin) + " ms)");
-            //server.broadcastMessage(username+" joined the game.");
+            server.broadcastMessage(username+" joined the game.");
         }else if(request instanceof ChatRequest){
             ChatRequest cr = (ChatRequest) request;
             server.broadcastMessage("<" + username + "> " + cr.message);
@@ -181,11 +184,11 @@ public class Player extends PlayerEntity{
         server.getLogger().info(username + "[" + identifier + "] logged out with reason: " + reason);
         connected = false;
         protocol.close(this);
-        /*
+
         if(leaveMessage != "") {
             server.broadcastMessage(username + leaveMessage);
         }
-        */
+
     }
 
     public Protocol getProtocol(){

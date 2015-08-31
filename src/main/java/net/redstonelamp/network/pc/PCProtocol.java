@@ -28,6 +28,7 @@ import net.redstonelamp.nio.BinaryBuffer;
 import net.redstonelamp.request.ChatRequest;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.request.Request;
+import net.redstonelamp.request.SpawnRequest;
 import net.redstonelamp.response.ChatResponse;
 import net.redstonelamp.response.ChunkResponse;
 import net.redstonelamp.response.LoginResponse;
@@ -271,9 +272,10 @@ public class PCProtocol extends Protocol implements PCNetworkConst {
 
         //sender.registerChunkRequests(player, 49);
         getServer().getTicker().addDelayedTask(tick -> {
+            player.handleRequest(new SpawnRequest());
             player.sendMessage("\u00A74Sorry, Chunk Data got changed in the snapshots.");
             player.sendMessage("\u00A74And we have not implemented it yet.");
-        }, 60);
+        }, 15);
 
         return packets.toArray(new UniversalPacket[packets.size()]);
     }
