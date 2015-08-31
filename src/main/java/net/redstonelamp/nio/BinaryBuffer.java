@@ -105,6 +105,14 @@ public class BinaryBuffer{
     }
 
     /**
+     * Get a single signed boolean from the buffer (one byte)
+     * @return A single boolean
+     */
+    public boolean getBoolean() {
+        return bb.get() > 0;
+    }
+
+    /**
      * Get a single unsigned byte from the buffer
      *
      * @return A single unsigned byte
@@ -198,6 +206,10 @@ public class BinaryBuffer{
 
     public void putByte(byte b){
         put(new byte[]{b});
+    }
+
+    public void putBoolean(boolean b) {
+        put(new byte[] {(byte) (b ? 1 : 0)});
     }
 
     public void putShort(short s){

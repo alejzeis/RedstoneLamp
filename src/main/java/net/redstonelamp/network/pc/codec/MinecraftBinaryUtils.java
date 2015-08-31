@@ -16,23 +16,27 @@
  */
 package net.redstonelamp.network.pc.codec;
 
-import net.redstonelamp.network.UniversalPacket;
+import javafx.scene.control.TablePositionBase;
+import net.redstonelamp.level.position.Position;
+import net.redstonelamp.nio.BinaryBuffer;
 
-public class HandshakePacket{
+/**
+ * Binary utility class for the MCPC protocol.
+ *
+ * @author RedstoneLamp Team
+ */
+public class MinecraftBinaryUtils {
 
-    public int protocol;
-    public String address;
-    public int port;
-    public int nextState;
-
-    public final int STATUS = 1;
-    public final int LOGIN = 2;
-
-    public HandshakePacket(UniversalPacket packet){
-        this.protocol = packet.bb().getVarInt();
-        this.address = packet.bb().getVarString();
-        this.port = packet.bb().getUnsignedShort();
-        this.nextState = packet.bb().getVarInt();
+    public static void writePosition(Position pos, BinaryBuffer bb) {
+        bb.putLong((((long) pos.getX() & 0x3FFFFFF) << 38) | (((long) pos.getY() & 0xFFF) << 26) | ((long) pos.getZ() & 0x3FFFFFF));
     }
 
+    public static Position readPosition(BinaryBuffer bb) {
+        long val = bb.getLong();
+        Position pos = new Position(null);
+        pos.setX(val >> 38);
+        pos.setY((val >> 26) & 0xFFF);
+        pos.setZ(val << 38 >> 38);
+        return pos;
+    }
 }

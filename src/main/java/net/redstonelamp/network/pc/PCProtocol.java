@@ -17,9 +17,12 @@
 package net.redstonelamp.network.pc;
 
 import net.redstonelamp.Player;
+import net.redstonelamp.level.generator.FlatGenerator;
+import net.redstonelamp.level.position.Position;
 import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.network.UniversalPacket;
+import net.redstonelamp.network.pc.codec.MinecraftBinaryUtils;
 import net.redstonelamp.nio.BinaryBuffer;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.request.Request;
@@ -173,7 +176,29 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
         return packets.toArray(new UniversalPacket[packets.size()]);
     }
 
-    private void sendInitalLoginPackets(LoginResponse lr, Player player) {
+    private UniversalPacket[] sendInitalLoginPackets(LoginResponse lr, Player player) {
+        List<UniversalPacket> packets = new ArrayList<>();
 
+        BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+        bb.putVarInt(PLAY_JOIN_GAME);
+        bb.putInt((int) lr.entityID);
+        bb.putByte((byte) lr.gamemode);
+        bb.putByte((byte) 0); //Dimension, TODO: Correct one
+        bb.putByte((byte) 1); //Difficulty, TODO: correct one
+        bb.putByte((byte) getServer().getMaxPlayers()); //Max Players, TODO: Limit if maxplayers over certain amount
+        if(player.getPosition().getLevel().getGenerator() instanceof FlatGenerator) {
+            bb.putVarString("flat");
+        } else {
+            bb.putVarString("default");
+        }
+        bb.putBoolean(false); //Reduced debug info
+        packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, player.getAddress()));
+
+        bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+        bb.putVarInt(PLAY_SPAWN_POSITION);
+        MinecraftBinaryUtils.writePosition(player.getPosition().getLevel().getSpawnPosition(), bb);
+        packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, player.getAddress()));
+
+        return packets.toArray(new UniversalPacket[packets.size()]);
     }
 }
