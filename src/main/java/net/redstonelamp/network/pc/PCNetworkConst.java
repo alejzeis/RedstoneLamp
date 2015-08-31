@@ -52,10 +52,19 @@ public interface PCNetworkConst{
     //Play packets
     public static final int PLAY_KEEP_ALIVE = 0x00;
     public static final int PLAY_JOIN_GAME = 0x01;
-    public static final int PLAY_CHAT_MESSAGE = 0x02;
+    public static final int PLAY_SERVERBOUND_CHAT_MESSAGE = 0x01;
+    public static final int PLAY_CLIENTBOUND_CHAT_MESSAGE = 0x02;
     public static final int PLAY_TIME_UPDATE = 0x03;
     public static final int PLAY_ENTITY_EQUIPMENT = 0x04;
     public static final int PLAY_SPAWN_POSITION = 0x05;
     public static final int PLAY_UPDATE_HEALTH = 0x06;
+    public static final int PLAY_SERVERBOUND_PLAYER_POSITION_LOOK = 0x06;
     public static final int PLAY_RESPAWN = 0x07;
+    public static final int PLAY_CLIENTBOUND_PLAYER_POSITION_LOOK = 0x08;
+
+    public static final int PLAY_SERVERBOUND_PLAYER_ABILITIES = 0x14;
+
+    public static final int PLAY_CHUNK_DATA = 0x21;
+
+    public static final int PLAY_CLIENTBOUND_PLAYER_ABILITIES = 0x39;
 }

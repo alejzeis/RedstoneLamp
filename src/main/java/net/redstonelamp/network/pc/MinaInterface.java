@@ -24,6 +24,7 @@ import net.redstonelamp.network.netInterface.AdvancedNetworkInterface;
 import net.redstonelamp.network.pc.codec.MinecraftPacketHeaderDecoder;
 import net.redstonelamp.network.pc.codec.MinecraftPacketHeaderEncoder;
 import net.redstonelamp.nio.BinaryBuffer;
+import net.redstonelamp.ticker.Task;
 import net.redstonelamp.ui.ConsoleOut;
 import net.redstonelamp.ui.Logger;
 import org.apache.mina.core.service.IoAcceptor;
@@ -42,9 +43,11 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteOrder;
 import java.util.Deque;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * An AdvancedNetworkInterface implementation of an Apache MINA handler for
@@ -62,6 +65,7 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
     private Map<String, IoSession> sessions = new ConcurrentHashMap<>();
     private Map<String, ProtocolState> states = new ConcurrentHashMap<>();
     private Deque<UniversalPacket> packetQueue = new ConcurrentLinkedDeque<>();
+    private List<String> block = new CopyOnWriteArrayList<>();
 
     public MinaInterface(Server server, PCProtocol protocol){
         this.server = server;
@@ -165,17 +169,32 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
         if(!(message instanceof UniversalPacket)){
             throw new LowLevelNetworkException("Message must be instanceof UniversalPacket!");
         }
+        if(block.contains(session.getRemoteAddress().toString())) {
+            return;
+        }
         UniversalPacket up = (UniversalPacket) message;
         int id = up.bb().getVarInt();
         if(!states.containsKey(session.getRemoteAddress().toString())){
             switch(id){
                 case PCNetworkConst.HANDSHAKE_HANDSHAKE:
-                    up.bb().getVarInt();
+                    int protocol = up.bb().getVarInt();
                     up.bb().getVarString();
                     up.bb().getUnsignedShort();
                     int nextState = up.bb().getVarInt();
                     if(nextState == 2) {
                         packetQueue.addLast(up); //Let PCProtocol handle the login
+                        if(protocol != PCNetworkConst.MC_PROTOCOL) {
+                            BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+                            bb.putVarInt(PCNetworkConst.LOGIN_DISCONNECT);
+                            System.out.println("Sent!");
+                            bb.putVarString("{\"text\":\"Outdated Client! I'm on: " + PCNetworkConst.MC_VERSION + " " + PCNetworkConst.MC_PROTOCOL + "\"}");
+                            sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, session.getRemoteAddress()), true);
+                            block.add(session.getRemoteAddress().toString());
+                            final String a = session.getRemoteAddress().toString();
+                            server.getTicker().addDelayedTask(tick -> block.remove(a), 40);
+                            session.close(false);
+                            return;
+                        }
                         states.put(session.getRemoteAddress().toString(), ProtocolState.STATE_LOGIN);
                     } else if(nextState == 1) {
                         //Wait for a Status Request until sending the MOTD

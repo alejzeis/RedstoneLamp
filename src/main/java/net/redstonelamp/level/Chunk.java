@@ -81,6 +81,7 @@ public class Chunk{
     public void setSkylight(byte[] skylight){
         this.skylight = skylight;
     }
+
     public void setBlocklight(byte[] blocklight){
         this.blocklight = blocklight;
     }
@@ -95,5 +96,18 @@ public class Chunk{
 
     public ChunkPosition getPosition(){
         return position;
+    }
+
+    public byte getBlockId(int x, int y, int z) {
+        return blockIds[(x << 11) | (z << 7) | y];
+    }
+
+    public byte getBlockData(int x, int y, int z) {
+        byte m = blockMeta[(x << 10) | (z << 6) | (y >> 1)];
+        if((y & 1) == 0){
+            return (byte) (m & 0x0F);
+        }else{
+            return (byte) (m >> 4);
+        }
     }
 }

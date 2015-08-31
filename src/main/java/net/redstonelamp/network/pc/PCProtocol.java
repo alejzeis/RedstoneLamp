@@ -17,6 +17,7 @@
 package net.redstonelamp.network.pc;
 
 import net.redstonelamp.Player;
+import net.redstonelamp.level.Chunk;
 import net.redstonelamp.level.generator.FlatGenerator;
 import net.redstonelamp.level.position.Position;
 import net.redstonelamp.network.NetworkManager;
@@ -24,11 +25,17 @@ import net.redstonelamp.network.Protocol;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pc.codec.MinecraftBinaryUtils;
 import net.redstonelamp.nio.BinaryBuffer;
+import net.redstonelamp.request.ChatRequest;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.request.Request;
+import net.redstonelamp.response.ChatResponse;
+import net.redstonelamp.response.ChunkResponse;
 import net.redstonelamp.response.LoginResponse;
 import net.redstonelamp.response.Response;
+import net.redstonelamp.ticker.Task;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -41,7 +48,9 @@ import java.util.UUID;
  *
  * @author RedstoneLamp Team
  */
-public class PCProtocol extends Protocol implements PCNetworkConst{
+public class PCProtocol extends Protocol implements PCNetworkConst {
+
+    private PcChunkSender sender;
 
     public PCProtocol(NetworkManager manager){
         super(manager);
@@ -90,6 +99,7 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
                 //TODO: Implementing encryption: move login request to EncryptionResponse handle
                 String name = packet.bb().getVarString();
                 LoginRequest lr = new LoginRequest(name, UUID.nameUUIDFromBytes(name.getBytes()));
+                lr.skin = new byte[64 * 64 * 4];
                 requests.add(lr);
                 break;
         }
@@ -108,6 +118,11 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
                 bb.putVarInt(PLAY_KEEP_ALIVE);
                 bb.putVarInt(keepAliveId);
                 sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, packet.getAddress()));
+                break;
+
+            case PLAY_SERVERBOUND_CHAT_MESSAGE:
+                String message = packet.bb().getVarString();
+                getServer().broadcastMessage("<"+getServer().getPlayer(packet.getAddress()).getNametag()+"> "+message);
                 break;
         }
         return requests.toArray(new Request[requests.size()]);
@@ -164,7 +179,7 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, player.getAddress()));
                 ((MinaInterface) _interface).updateProtocolState(ProtocolState.STATE_PLAY, player.getAddress());
 
-                sendInitalLoginPackets(lr, player);
+                packets.addAll(Arrays.asList(sendInitalLoginPackets(lr, player)));
             }
         }
         return packets.toArray(new UniversalPacket[packets.size()]);
@@ -172,8 +187,45 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
 
     private UniversalPacket[] translatePlayResponse(Response response, Player player) {
         List<UniversalPacket> packets = new ArrayList<>();
-
+        BinaryBuffer bb;
+        if(response instanceof ChunkResponse) {
+            ChunkResponse cr = (ChunkResponse) response;
+            bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+            bb.putVarInt(PLAY_CHUNK_DATA);
+            bb.putInt(cr.chunk.getPosition().getX());
+            bb.putInt(cr.chunk.getPosition().getZ());
+            bb.putBoolean(true);
+            bb.putShort((short) 0xFFFF);
+            byte[] data = orderChunkData(cr.chunk);
+            bb.putVarInt(data.length);
+            bb.put(data);
+        } else if(response instanceof ChatResponse) {
+            ChatResponse cr = (ChatResponse) response;
+            bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+            bb.putVarInt(PLAY_CLIENTBOUND_CHAT_MESSAGE);
+            bb.putVarString("{\"text\":\"" + cr.message + "\"}");
+            bb.putByte((byte) 0);
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, player.getAddress()));
+        }
         return packets.toArray(new UniversalPacket[packets.size()]);
+    }
+
+    private byte[] orderChunkData(Chunk chunk) {
+        BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+        List<Integer> ids = new ArrayList<>();
+        for(int x = 0; x < 16; x++) {
+            for(int z = 0; z < 16; z++) {
+                for(int y = 0; z < 128; y++) {
+                    byte id = chunk.getBlockId(x, y, z);
+                    byte data = chunk.getBlockData(x, y, z);
+                    ids.add((id >> 4) | (data & 15));
+                }
+            }
+        }
+        bb.putVarInt(ids.size());
+        ids.forEach(bb::putVarInt);
+        //TODO: Finish chunk data
+        return bb.toArray();
     }
 
     private UniversalPacket[] sendInitalLoginPackets(LoginResponse lr, Player player) {
@@ -198,6 +250,30 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
         bb.putVarInt(PLAY_SPAWN_POSITION);
         MinecraftBinaryUtils.writePosition(player.getPosition().getLevel().getSpawnPosition(), bb);
         packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, player.getAddress()));
+
+        bb = BinaryBuffer.newInstance(10, ByteOrder.BIG_ENDIAN);
+        bb.putVarInt(PLAY_CLIENTBOUND_PLAYER_ABILITIES);
+        int flags = (player.getGamemode() == 1 ? 8 : 0) | (player.getGamemode() == 1 ? 4 : 0) | (0) | (player.getGamemode() == 1 ? 1 : 0);
+        bb.putByte((byte) flags);
+        bb.putFloat(1.0f);
+        bb.putFloat(1.0f);
+        packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, player.getAddress()));
+
+        bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+        bb.putVarInt(PLAY_CLIENTBOUND_PLAYER_POSITION_LOOK);
+        bb.putDouble(player.getPosition().getX());
+        bb.putDouble(player.getPosition().getY());
+        bb.putDouble(player.getPosition().getZ());
+        bb.putFloat(player.getPosition().getYaw());
+        bb.putFloat(player.getPosition().getPitch());
+        bb.putBoolean(true); //TODO: onground
+        packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, player.getAddress()));
+
+        //sender.registerChunkRequests(player, 49);
+        getServer().getTicker().addDelayedTask(tick -> {
+            player.sendMessage("\u00A74Sorry, Chunk Data got changed in the snapshots.");
+            player.sendMessage("\u00A74And we have not implemented it yet.");
+        }, 60);
 
         return packets.toArray(new UniversalPacket[packets.size()]);
     }
