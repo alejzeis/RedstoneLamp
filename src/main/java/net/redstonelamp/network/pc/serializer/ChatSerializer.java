@@ -18,38 +18,38 @@ package net.redstonelamp.network.pc.serializer;
 
 import org.json.simple.JSONObject;
 
-public class ChatSerializer {
-	
-	private JSONObject chat;
-	
-	@SuppressWarnings("unchecked")
-	public ChatSerializer() {
-		chat = new JSONObject();
-		chat.put("text", "");
-	}
-	
-	public static String toChat(String text) {
-		ChatSerializer chat = new ChatSerializer();
-		chat.setText(text);
-		return chat.toString();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void append(String text) {
-		String old = chat.get("text").toString();
-		chat.remove("text");
-		chat.put("text", old + text);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void setText(String text) {
-		chat.remove("text");
-		chat.put("text", text);
-	}
-	
-	@Override
-	public String toString() {
-		return chat.toJSONString();
-	}
-	
+public class ChatSerializer{
+
+    private JSONObject chat;
+
+    @SuppressWarnings("unchecked")
+    public ChatSerializer(){
+        chat = new JSONObject();
+        chat.put("text", "");
+    }
+
+    public static String toChat(String text){
+        ChatSerializer chat = new ChatSerializer();
+        chat.setText(text);
+        return chat.toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    public void append(String text){
+        String old = chat.get("text").toString();
+        chat.remove("text");
+        chat.put("text", old + text);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void setText(String text){
+        chat.remove("text");
+        chat.put("text", text);
+    }
+
+    @Override
+    public String toString(){
+        return chat.toJSONString();
+    }
+
 }

@@ -43,7 +43,7 @@ import java.util.UUID;
  *
  * @author RedstoneLamp Team
  */
-public class PCProtocol extends Protocol implements PCNetworkConst {
+public class PCProtocol extends Protocol implements PCNetworkConst{
 
     private PcChunkSender sender;
 
@@ -63,7 +63,7 @@ public class PCProtocol extends Protocol implements PCNetworkConst {
     }
 
     @Override
-    protected void onClose(Player player) {
+    protected void onClose(Player player){
         ((MinaInterface) _interface).close(player.getAddress());
     }
 
@@ -71,10 +71,10 @@ public class PCProtocol extends Protocol implements PCNetworkConst {
     public Request[] handlePacket(UniversalPacket packet){
         List<Request> requests = new ArrayList<>();
         ProtocolState state = ((MinaInterface) _interface).getProtocolStateOfAddress(packet.getAddress());
-        if(state == null) {
+        if(state == null){
             return new Request[0];
         }
-        switch (state) {
+        switch(state){
             case STATE_LOGIN:
                 requests.addAll(Arrays.asList(handleLoginPacket(packet)));
                 break;
@@ -86,10 +86,10 @@ public class PCProtocol extends Protocol implements PCNetworkConst {
         return requests.toArray(new Request[requests.size()]);
     }
 
-    private Request[] handleLoginPacket(UniversalPacket packet) {
+    private Request[] handleLoginPacket(UniversalPacket packet){
         List<Request> requests = new ArrayList<>();
         int id = packet.bb().getVarInt();
-        switch (id) {
+        switch(id){
             case LOGIN_LOGIN_START:
                 //TODO: Implementing encryption: move login request to EncryptionResponse handle
                 String name = packet.bb().getVarString();
@@ -102,11 +102,11 @@ public class PCProtocol extends Protocol implements PCNetworkConst {
         return requests.toArray(new Request[requests.size()]);
     }
 
-    private Request[] handlePlayPacket(UniversalPacket packet) {
+    private Request[] handlePlayPacket(UniversalPacket packet){
         List<Request> requests = new ArrayList<>();
         int id = packet.bb().getVarInt();
         BinaryBuffer bb;
-        switch (id) {
+        switch(id){
             case PLAY_KEEP_ALIVE:
                 int keepAliveId = packet.bb().getVarInt();
                 bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
@@ -117,7 +117,7 @@ public class PCProtocol extends Protocol implements PCNetworkConst {
 
             case PLAY_SERVERBOUND_CHAT_MESSAGE:
                 String message = packet.bb().getVarString();
-                getServer().broadcastMessage("<"+getServer().getPlayer(packet.getAddress()).getNametag()+"> "+message);
+                getServer().broadcastMessage("<" + getServer().getPlayer(packet.getAddress()).getNametag() + "> " + message);
                 break;
         }
         return requests.toArray(new Request[requests.size()]);
@@ -127,10 +127,10 @@ public class PCProtocol extends Protocol implements PCNetworkConst {
     protected UniversalPacket[] _sendResponse(Response response, Player player){
         List<UniversalPacket> packets = new ArrayList<>();
         ProtocolState state = ((MinaInterface) _interface).getProtocolStateOfAddress(player.getAddress());
-        if(state == null) {
+        if(state == null){
             return new UniversalPacket[0];
         }
-        switch (state) {
+        switch(state){
             case STATE_LOGIN:
                 packets.addAll(Arrays.asList(translateLoginResponse(response, player)));
                 break;
@@ -143,25 +143,25 @@ public class PCProtocol extends Protocol implements PCNetworkConst {
         return packets.toArray(new UniversalPacket[packets.size()]);
     }
 
-    private UniversalPacket[] translateLoginResponse(Response response, Player player) {
+    private UniversalPacket[] translateLoginResponse(Response response, Player player){
         List<UniversalPacket> packets = new ArrayList<>();
-        if(response instanceof LoginResponse) {
+        if(response instanceof LoginResponse){
             LoginResponse lr = (LoginResponse) response;
             BinaryBuffer bb;
-            if(!lr.loginAllowed) {
+            if(!lr.loginAllowed){
                 bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
                 bb.putVarInt(LOGIN_DISCONNECT);
                 String message;
-                switch (lr.loginNotAllowedReason) {
+                switch(lr.loginNotAllowedReason){
                     case "redstonelamp.loginFailed.serverFull":
                         message = "Server Full!";
                         break;
                     default:
                         message = lr.loginNotAllowedReason;
                 }
-                bb.putVarString("{\"text\":\""+message+"\"}");
+                bb.putVarString("{\"text\":\"" + message + "\"}");
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, player.getAddress()));
-            } else {
+            }else{
                 bb = BinaryBuffer.newInstance(1, ByteOrder.BIG_ENDIAN);
                 bb.putVarInt(LOGIN_SET_COMPRESSION);
                 bb.putVarInt(-1); //Disable compression, TODO: implement compression
@@ -180,10 +180,10 @@ public class PCProtocol extends Protocol implements PCNetworkConst {
         return packets.toArray(new UniversalPacket[packets.size()]);
     }
 
-    private UniversalPacket[] translatePlayResponse(Response response, Player player) {
+    private UniversalPacket[] translatePlayResponse(Response response, Player player){
         List<UniversalPacket> packets = new ArrayList<>();
         BinaryBuffer bb;
-        if(response instanceof ChunkResponse) {
+        if(response instanceof ChunkResponse){
             ChunkResponse cr = (ChunkResponse) response;
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
             bb.putVarInt(PLAY_CHUNK_DATA);
@@ -194,7 +194,7 @@ public class PCProtocol extends Protocol implements PCNetworkConst {
             byte[] data = orderChunkData(cr.chunk);
             bb.putVarInt(data.length);
             bb.put(data);
-        } else if(response instanceof ChatResponse) {
+        }else if(response instanceof ChatResponse){
             ChatResponse cr = (ChatResponse) response;
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
             bb.putVarInt(PLAY_CLIENTBOUND_CHAT_MESSAGE);
@@ -205,12 +205,12 @@ public class PCProtocol extends Protocol implements PCNetworkConst {
         return packets.toArray(new UniversalPacket[packets.size()]);
     }
 
-    private byte[] orderChunkData(Chunk chunk) {
+    private byte[] orderChunkData(Chunk chunk){
         BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
         List<Integer> ids = new ArrayList<>();
-        for(int x = 0; x < 16; x++) {
-            for(int z = 0; z < 16; z++) {
-                for(int y = 0; z < 128; y++) {
+        for(int x = 0; x < 16; x++){
+            for(int z = 0; z < 16; z++){
+                for(int y = 0; z < 128; y++){
                     byte id = chunk.getBlockId(x, y, z);
                     byte data = chunk.getBlockData(x, y, z);
                     ids.add(id >> 4 | data & 15);
@@ -223,7 +223,7 @@ public class PCProtocol extends Protocol implements PCNetworkConst {
         return bb.toArray();
     }
 
-    private UniversalPacket[] sendInitalLoginPackets(LoginResponse lr, Player player) {
+    private UniversalPacket[] sendInitalLoginPackets(LoginResponse lr, Player player){
         List<UniversalPacket> packets = new ArrayList<>();
 
         BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
@@ -233,9 +233,9 @@ public class PCProtocol extends Protocol implements PCNetworkConst {
         bb.putByte((byte) 0); //Dimension, TODO: Correct one
         bb.putByte((byte) 1); //Difficulty, TODO: correct one
         bb.putByte((byte) getServer().getMaxPlayers()); //Max Players, TODO: Limit if maxplayers over certain amount
-        if(player.getPosition().getLevel().getGenerator() instanceof FlatGenerator) {
+        if(player.getPosition().getLevel().getGenerator() instanceof FlatGenerator){
             bb.putVarString("flat");
-        } else {
+        }else{
             bb.putVarString("default");
         }
         bb.putBoolean(false); //Reduced debug info

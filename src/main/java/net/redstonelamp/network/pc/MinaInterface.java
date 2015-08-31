@@ -16,6 +16,26 @@
  */
 package net.redstonelamp.network.pc;
 
+import net.redstonelamp.Player;
+import net.redstonelamp.Server;
+import net.redstonelamp.network.LowLevelNetworkException;
+import net.redstonelamp.network.UniversalPacket;
+import net.redstonelamp.network.netInterface.AdvancedNetworkInterface;
+import net.redstonelamp.network.pc.codec.MinecraftPacketHeaderDecoder;
+import net.redstonelamp.network.pc.codec.MinecraftPacketHeaderEncoder;
+import net.redstonelamp.network.pc.serializer.ChatSerializer;
+import net.redstonelamp.nio.BinaryBuffer;
+import net.redstonelamp.ui.ConsoleOut;
+import net.redstonelamp.ui.Logger;
+import org.apache.mina.core.service.IoAcceptor;
+import org.apache.mina.core.service.IoHandlerAdapter;
+import org.apache.mina.core.session.IdleStatus;
+import org.apache.mina.core.session.IoSession;
+import org.apache.mina.filter.codec.ProtocolCodecFilter;
+import org.apache.mina.filter.logging.LoggingFilter;
+import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import org.json.simple.JSONObject;
+
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -28,27 +48,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import net.redstonelamp.Player;
-import net.redstonelamp.Server;
-import net.redstonelamp.network.LowLevelNetworkException;
-import net.redstonelamp.network.UniversalPacket;
-import net.redstonelamp.network.netInterface.AdvancedNetworkInterface;
-import net.redstonelamp.network.pc.codec.MinecraftPacketHeaderDecoder;
-import net.redstonelamp.network.pc.codec.MinecraftPacketHeaderEncoder;
-import net.redstonelamp.network.pc.serializer.ChatSerializer;
-import net.redstonelamp.nio.BinaryBuffer;
-import net.redstonelamp.ui.ConsoleOut;
-import net.redstonelamp.ui.Logger;
-
-import org.apache.mina.core.service.IoAcceptor;
-import org.apache.mina.core.service.IoHandlerAdapter;
-import org.apache.mina.core.session.IdleStatus;
-import org.apache.mina.core.session.IoSession;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.filter.logging.LoggingFilter;
-import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
-import org.json.simple.JSONObject;
 
 /**
  * An AdvancedNetworkInterface implementation of an Apache MINA handler for
@@ -103,38 +102,38 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
         }
     }
 
-    public ProtocolState getProtocolStateOfAddress(SocketAddress address) {
-        if(states.containsKey(address.toString())) {
+    public ProtocolState getProtocolStateOfAddress(SocketAddress address){
+        if(states.containsKey(address.toString())){
             return states.get(address.toString());
         }
         return null;
     }
 
-    protected void updateProtocolState(ProtocolState state, SocketAddress address) {
+    protected void updateProtocolState(ProtocolState state, SocketAddress address){
         states.put(address.toString(), state);
     }
 
-    public void close(SocketAddress address) {
+    public void close(SocketAddress address){
         IoSession session = sessions.get(address.toString());
-        if(session != null) {
+        if(session != null){
             session.close(false); //Close after all write requests are complete
         }
     }
 
     @Override
-    public void sessionOpened(IoSession session) throws Exception {
+    public void sessionOpened(IoSession session) throws Exception{
         sessions.put(session.getRemoteAddress().toString(), session);
     }
 
     @Override
-    public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
-        if(status == IdleStatus.READER_IDLE) { //The client hasn't sent any packets
+    public void sessionIdle(IoSession session, IdleStatus status) throws Exception{
+        if(status == IdleStatus.READER_IDLE){ //The client hasn't sent any packets
             Player player = server.getPlayer(session.getRemoteAddress());
-            if(player != null) {
+            if(player != null){
                 ProtocolState state = getProtocolStateOfAddress(session.getRemoteAddress());
-                if(state != null && state == ProtocolState.STATE_LOGIN) {
+                if(state != null && state == ProtocolState.STATE_LOGIN){
                     player.close("", "connection timed out", true);
-                } else if(state != null && state == ProtocolState.STATE_PLAY) {
+                }else if(state != null && state == ProtocolState.STATE_PLAY){
                     player.close(" left the game", "connection timed out", true);
                 }
             }
@@ -142,18 +141,18 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
     }
 
     @Override
-    public void sessionClosed(IoSession session) throws Exception {
+    public void sessionClosed(IoSession session) throws Exception{
         sessions.remove(session.getRemoteAddress().toString());
         ProtocolState oldState = states.get(session.getRemoteAddress().toString());
         states.remove(session.getRemoteAddress().toString());
         Player player = server.getPlayer(session.getRemoteAddress());
-        if(player != null) {
-            if(!player.isConnected()) {
+        if(player != null){
+            if(!player.isConnected()){
                 return;
             }
-            if(oldState != null && oldState == ProtocolState.STATE_PLAY) {
+            if(oldState != null && oldState == ProtocolState.STATE_PLAY){
                 player.close(" left the game", "connection closed", false);
-            } else if(oldState != null && oldState == ProtocolState.STATE_LOGIN) {
+            }else if(oldState != null && oldState == ProtocolState.STATE_LOGIN){
                 player.close("", "connection closed", false);
             }
         }
@@ -170,7 +169,7 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
         if(!(message instanceof UniversalPacket)){
             throw new LowLevelNetworkException("Message must be instanceof UniversalPacket!");
         }
-        if(block.contains(session.getRemoteAddress().toString())) {
+        if(block.contains(session.getRemoteAddress().toString())){
             return;
         }
         UniversalPacket up = (UniversalPacket) message;
@@ -182,9 +181,9 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
                     up.bb().getVarString();
                     up.bb().getUnsignedShort();
                     int nextState = up.bb().getVarInt();
-                    if(nextState == 2) {
+                    if(nextState == 2){
                         packetQueue.addLast(up); //Let PCProtocol handle the login
-                        if(protocol != PCNetworkConst.MC_PROTOCOL) {
+                        if(protocol != PCNetworkConst.MC_PROTOCOL){
                             BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
                             bb.putVarInt(PCNetworkConst.LOGIN_DISCONNECT);
                             System.out.println("Sent!");
@@ -197,7 +196,7 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
                             return;
                         }
                         states.put(session.getRemoteAddress().toString(), ProtocolState.STATE_LOGIN);
-                    } else if(nextState == 1) {
+                    }else if(nextState == 1){
                         //Wait for a Status Request until sending the MOTD
                         states.put(session.getRemoteAddress().toString(), ProtocolState.STATE_STATUS);
                     }
@@ -206,7 +205,7 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
         }
 
         if(states.get(session.getRemoteAddress().toString()) == ProtocolState.STATE_STATUS){
-            switch (id) {
+            switch(id){
                 case PCNetworkConst.STATUS_REQUEST:
                     sendStatusResponse(session.getRemoteAddress());
                     break;
@@ -219,13 +218,13 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
                     sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, session.getRemoteAddress()), false);
                     break;
             }
-        }else {
+        }else{
             up.bb().setPosition(0);
             packetQueue.add(up);
         }
     }
 
-    private void sendStatusResponse(SocketAddress address) throws LowLevelNetworkException {
+    private void sendStatusResponse(SocketAddress address) throws LowLevelNetworkException{
         JSONObject root = new JSONObject();
 
         JSONObject version = new JSONObject();

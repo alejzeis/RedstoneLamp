@@ -32,7 +32,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author RedstoneLamp Team
  */
-public class PcChunkSender {
+public class PcChunkSender{
     public static final int REQUESTS_PER_TICK = 4; //TODO: correct this
 
     private PCProtocol protocol;

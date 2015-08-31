@@ -158,7 +158,7 @@ public class Player extends PlayerEntity{
             });
 
             server.getLogger().debug("Player " + username + " spawned (took " + (System.currentTimeMillis() - startLogin) + " ms)");
-            server.broadcastMessage(username+" joined the game.");
+            server.broadcastMessage(username + " joined the game.");
         }else if(request instanceof ChatRequest){
             ChatRequest cr = (ChatRequest) request;
             server.broadcastMessage("<" + username + "> " + cr.message);
@@ -220,11 +220,11 @@ public class Player extends PlayerEntity{
         return slim;
     }
 
-    public UUID getUuid() {
+    public UUID getUuid(){
         return uuid;
     }
 
-    public boolean isConnected() {
+    public boolean isConnected(){
         return connected;
     }
 }

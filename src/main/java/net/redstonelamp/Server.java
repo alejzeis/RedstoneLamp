@@ -58,8 +58,8 @@ public class Server implements Runnable{
     /**
      * Package-private constructor used by the RedstoneLamp run class
      *
-     * @param logger The server's logger
-     * @param config The server's configuration
+     * @param logger           The server's logger
+     * @param config           The server's configuration
      * @param serverYamlConfig The server's YAML configuration
      */
     Server(Logger logger, ServerConfig config, YamlConfig serverYamlConfig){
@@ -82,7 +82,7 @@ public class Server implements Runnable{
 
         levelManager = new LevelManager(this);
         levelManager.init();
-        
+
         addShutdownTask(pluginSystem::disablePlugins);
 
         Runtime.getRuntime().addShutdownHook(new ShutdownTaskExecuter(this));
@@ -210,7 +210,7 @@ public class Server implements Runnable{
         return nextEntityID++;
     }
 
-    public YamlConfig getYamlConfig() {
+    public YamlConfig getYamlConfig(){
         return yamlConfig;
     }
 

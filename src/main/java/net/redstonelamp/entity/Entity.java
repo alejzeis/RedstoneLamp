@@ -32,6 +32,7 @@ public abstract class Entity{
     private MetadataDictionary metadata;
     //private EntityMetadata metadata;
     private boolean initialized = false;
+    private EntityMotion motion;
 
     protected void initEntity(){
         initialized = true;

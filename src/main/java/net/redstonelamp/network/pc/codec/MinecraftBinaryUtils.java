@@ -24,13 +24,13 @@ import net.redstonelamp.nio.BinaryBuffer;
  *
  * @author RedstoneLamp Team
  */
-public class MinecraftBinaryUtils {
+public class MinecraftBinaryUtils{
 
-    public static void writePosition(Position pos, BinaryBuffer bb) {
+    public static void writePosition(Position pos, BinaryBuffer bb){
         bb.putLong(((long) pos.getX() & 0x3FFFFFF) << 38 | ((long) pos.getY() & 0xFFF) << 26 | (long) pos.getZ() & 0x3FFFFFF);
     }
 
-    public static Position readPosition(BinaryBuffer bb) {
+    public static Position readPosition(BinaryBuffer bb){
         long val = bb.getLong();
         Position pos = new Position(null);
         pos.setX(val >> 38);
