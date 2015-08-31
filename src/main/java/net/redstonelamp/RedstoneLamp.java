@@ -37,6 +37,7 @@ public class RedstoneLamp{
     public static final String SOFTWARE_VERSION = "1.2.0";
     public static final String SOFTWARE_STATE = "DEV";
     public static final double API_VERSION = 1.5;
+    public static Server SERVER;
 
     public static void main(String[] args){
         RedstoneLamp main = new RedstoneLamp();
@@ -45,8 +46,8 @@ public class RedstoneLamp{
         try{
             ServerConfig config = new ServerConfig(new File("server.properties"));
             YamlConfig conf = new YamlConfig("redstonelamp.yml");
-            Server server = new Server(new Logger(new Log4j2ConsoleOut("RedstoneLamp")), config, conf); //TODO: Correct logger
-            server.run();
+            SERVER = new Server(new Logger(new Log4j2ConsoleOut("RedstoneLamp")), config, conf); //TODO: Correct logger
+            SERVER.run();
         }catch(IOException e){
             LogManager.getRootLogger().fatal("Could not init server! " + e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace();
