@@ -224,6 +224,7 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void sendStatusResponse(SocketAddress address) throws LowLevelNetworkException{
         JSONObject root = new JSONObject();
 

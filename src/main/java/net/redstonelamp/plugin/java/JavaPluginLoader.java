@@ -31,7 +31,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 public class JavaPluginLoader extends PluginLoader{
@@ -122,7 +121,7 @@ public class JavaPluginLoader extends PluginLoader{
     }
 
     @Override
-    public InputStream getResourceAsStream(String path) throws ZipException, IOException{
+    public InputStream getResourceAsStream(String path) throws IOException{
         ZipFile zipFile = new ZipFile(getPluginFile());
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();

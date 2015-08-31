@@ -248,7 +248,7 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
 
         bb = BinaryBuffer.newInstance(10, ByteOrder.BIG_ENDIAN);
         bb.putVarInt(PLAY_CLIENTBOUND_PLAYER_ABILITIES);
-        int flags = (player.getGamemode() == 1 ? 8 : 0) | (player.getGamemode() == 1 ? 4 : 0) | 0 | (player.getGamemode() == 1 ? 1 : 0);
+        int flags = (player.getGamemode() == 1 ? 8 : 0) | (player.getGamemode() == 1 ? 4 : 0) | (player.getGamemode() == 1 ? 1 : 0);
         bb.putByte((byte) flags);
         bb.putFloat(1.0f);
         bb.putFloat(1.0f);

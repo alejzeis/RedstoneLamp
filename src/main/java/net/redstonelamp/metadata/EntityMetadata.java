@@ -53,12 +53,13 @@ public class EntityMetadata{
         return this;
     }
 
+    @SuppressWarnings("unchecked")
     public static byte[] write(EntityMetadata metadata){
         BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.LITTLE_ENDIAN);
         Map<Byte, List<Object>> array = metadata.getArray();
         for(Byte bottom : array.keySet()){
             List<Object> d = array.get(bottom);
-            EntityMetadata.DataType type = (EntityMetadata.DataType) d.get(0);
+            DataType type = (DataType) d.get(0);
             bb.putByte((byte) (type.getAsByte() << 5 | bottom & 0x1F));
             switch(type){
                 case DATA_TYPE_BYTE:
@@ -116,8 +117,7 @@ public class EntityMetadata{
         return array.containsKey((byte) id);
     }
 
-
-    public static enum DataType{
+    public enum DataType{
         DATA_TYPE_BYTE((byte) 0),
         DATA_TYPE_SHORT((byte) 1),
         DATA_TYPE_INT((byte) 2),

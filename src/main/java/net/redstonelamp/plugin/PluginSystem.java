@@ -27,11 +27,11 @@ public class PluginSystem{
      * Contains all plugin managers
      */
     @Getter
-    private static final PluginManager[] pluginManagers = new PluginManager[]{new JavaPluginManager()};
+    private final PluginManager[] pluginManagers = new PluginManager[]{new JavaPluginManager()};
     @Getter
-    private static Logger logger = null;
+    private Logger logger = null;
     @Getter
-    private static Server server = null;
+    private Server server = null;
 
     /**
      * Initializes the plugin system. Has to be called from the main server loop!

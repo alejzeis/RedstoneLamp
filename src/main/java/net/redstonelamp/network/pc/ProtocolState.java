@@ -39,5 +39,5 @@ public enum ProtocolState{
     /**
      * The Play state is the final state in which all game packets are sent.
      */
-    STATE_PLAY;
+    STATE_PLAY
 }

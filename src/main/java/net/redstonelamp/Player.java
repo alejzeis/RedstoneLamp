@@ -134,9 +134,9 @@ public class Player extends PlayerEntity{
                 close("", "redstonelamp.loginFailed.serverFull", false);
                 return;
             }
-            server.getPlayers().stream().filter(player -> player != this && player.getNametag().equals(getNametag())).forEach(player -> {
-                player.close(" left the game", "logged in from another location", true);
-            });
+            server.getPlayers().stream()
+                    .filter(player -> player != this && player.getNametag().equals(getNametag()))
+                    .forEach(player -> player.close(" left the game", "logged in from another location", true));
             sendResponse(response);
             initEntity();
             server.getLogger().info(username + "[" + address + "] logged in with entity ID " + getEntityID() + " in level \"" + getPosition().getLevel().getName() + "\""
