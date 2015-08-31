@@ -41,6 +41,7 @@ public class YamlConfig{
      * @throws FileNotFoundException
      * @throws YamlException
      */
+    @SuppressWarnings("unchecked")
     public YamlConfig(String yaml) throws FileNotFoundException, YamlException{
         reader = new YamlReader(new FileReader(yaml));
         obj = reader.read();
@@ -56,8 +57,13 @@ public class YamlConfig{
         return reader;
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, Object> getMapInMap(String key, Map<String, Object> map){
-        return (Map<String, Object>) map.get(key);
+        Object value = map.get(key);
+        if(!(value instanceof Map)){
+            throw new RuntimeException("Value is not a map!");
+        }
+        return (Map<String, Object>) value;
     }
 
     /**
@@ -81,6 +87,7 @@ public class YamlConfig{
         return map.get(splitPath[splitPath.length - 1]);
     }
 
+    @SuppressWarnings("unchecked")
     public void putString(String path, String s){ //TODO: TEST THIS
         if(path.indexOf('.') == -1){ //Check if its a root element
             map.put(path, s);
@@ -112,20 +119,11 @@ public class YamlConfig{
     }
 
     /**
-     * Returns an object from YamlReader.read();
-     *
-     * @return
-     */
-    public Object getObject(){
-        return obj;
-    }
-
-    /**
      * Returns a Map of the YAML file
      *
      * @return
      */
-    public Map getMap(){
+    public Map<String, Object> getMap(){
         return map;
     }
 
@@ -135,9 +133,11 @@ public class YamlConfig{
      * @param mapName
      * @return
      */
-    public Map getInMap(String mapName){
-        if(map.get(mapName) instanceof Map){
-            return (Map) map.get(mapName);
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getInMap(String mapName){
+        Object value = map.get(mapName);
+        if(value instanceof Map){
+            return (Map<String, Object>) value;
         }
         return map;
     }
