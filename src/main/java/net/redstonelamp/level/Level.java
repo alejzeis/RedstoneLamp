@@ -16,10 +16,12 @@
  */
 package net.redstonelamp.level;
 
+import net.redstonelamp.entity.EntityManager;
 import net.redstonelamp.level.generator.Generator;
 import net.redstonelamp.level.position.Position;
 import net.redstonelamp.level.provider.LevelLoadException;
 import net.redstonelamp.level.provider.LevelProvider;
+import net.redstonelamp.metadata.EntityMetadata;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +36,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class Level{
     private final LevelManager manager;
+    private final EntityManager entityManager;
     private List<Chunk> loadedChunks = new CopyOnWriteArrayList<>();
     private LevelProvider provider;
 
@@ -70,6 +73,7 @@ public class Level{
             manager.getServer().getLogger().error("Failed to load Level: " + name);
             throw new LevelLoadException(e);
         }
+        entityManager = new EntityManager(this);
         name = provider.getName();
     }
 
@@ -132,6 +136,10 @@ public class Level{
 
     public Position getSpawnPosition(){
         return spawnPosition;
+    }
+
+    public EntityManager getEntityManager() {
+        return entityManager;
     }
 
     public static class LevelParameters{

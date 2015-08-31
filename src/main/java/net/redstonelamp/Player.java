@@ -180,6 +180,8 @@ public class Player extends PlayerEntity{
 
         server.getPlayers().stream().filter(player -> player != this && player.getPosition().getLevel() == getPosition().getLevel()).forEach(this::despawnFrom);
 
+        destroyEntity();
+
         server.closeSession(this);
         server.getLogger().info(username + "[" + identifier + "] logged out with reason: " + reason);
         connected = false;

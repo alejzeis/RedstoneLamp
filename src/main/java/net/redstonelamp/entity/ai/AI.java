@@ -16,6 +16,9 @@
  */
 package net.redstonelamp.entity.ai;
 
+/**
+ * Represents an AI
+ */
 public interface AI {
     /**
      * Changes the range that a mob can see

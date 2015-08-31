@@ -36,6 +36,16 @@ public abstract class Entity{
 
     protected void initEntity(){
         initialized = true;
+        if(position != null && position.getLevel() != null) {
+            position.getLevel().getEntityManager().addEntity(this);
+        }
+    }
+
+    protected void destroyEntity() {
+        initialized = false;
+        if(position != null && position.getLevel() != null) {
+            position.getLevel().getEntityManager().removeEntity(this);
+        }
     }
 
     /**
