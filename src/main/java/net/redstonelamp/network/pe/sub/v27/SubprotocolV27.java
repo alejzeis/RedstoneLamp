@@ -143,7 +143,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
 
                 bb = BinaryBuffer.newInstance(6, ByteOrder.BIG_ENDIAN);
                 bb.putByte(SET_TIME_PACKET);
-                bb.putInt(0); //TODO: Correct time
+                bb.putInt(player.getPosition().getLevel().getTime());
                 bb.putByte((byte) 1);
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
 

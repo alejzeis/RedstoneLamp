@@ -28,7 +28,7 @@ public interface ProtocolConst34{
     /**
      * The Minecraft: Pocket Edition version this software implements.
      */
-    public static final String MCPE_VERSION = "v0.12.1";
+    public static final String MCPE_VERSION = "0.12.1";
 
     /**
      * The Minecraft: Pocket Edition network protocol version this software implements.

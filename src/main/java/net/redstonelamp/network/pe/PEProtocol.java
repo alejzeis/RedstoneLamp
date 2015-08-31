@@ -17,6 +17,7 @@
 package net.redstonelamp.network.pe;
 
 import net.redstonelamp.Player;
+import net.redstonelamp.network.LowLevelNetworkException;
 import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.network.UniversalPacket;
@@ -81,13 +82,13 @@ public class PEProtocol extends Protocol{
         BinaryBuffer bb = BinaryBuffer.newInstance(5, ByteOrder.BIG_ENDIAN);
         bb.putByte(PENetworkConst.PLAY_STATUS_PACKET);
         bb.putInt(1); //LOGIN_FAILED_CLIENT
-        sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, sendTo));
+        sendImmediatePacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, sendTo));
 
         String message = "disconnectionScreen.outdatedClient";
         bb = BinaryBuffer.newInstance(3 + message.getBytes().length, ByteOrder.BIG_ENDIAN);
         bb.putByte(PENetworkConst.DISCONNECT_PACKET);
         bb.putString(message);
-        sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, sendTo));
+        sendImmediatePacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, sendTo));
     }
 
     @Override
@@ -129,6 +130,15 @@ public class PEProtocol extends Protocol{
     protected void openSession(String session){
         if(!hasBeenOpened.contains(session)){
             hasBeenOpened.add(session);
+        }
+    }
+
+    protected void sendImmediatePacket(UniversalPacket packet) {
+        try {
+            _interface.sendPacket(packet, true);
+        } catch (LowLevelNetworkException e) {
+            getServer().getLogger().error(e.getClass().getName()+" while sending packet immediately: "+e.getMessage());
+            getServer().getLogger().trace(e);
         }
     }
 
