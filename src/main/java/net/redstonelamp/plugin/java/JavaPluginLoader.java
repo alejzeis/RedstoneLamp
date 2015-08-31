@@ -60,8 +60,10 @@ public class JavaPluginLoader extends PluginLoader{
             if(prop.getMain() == null) throw new YamlException("plugin.yml does not contain main class");
             if(prop.getName() == null) throw new YamlException("plugin.yml does not contain plugin name");
             if(prop.getVersion() == null) throw new YamlException("plugin.yml does not contain plugin version");
-            for(String sd : prop.getSoftdepend()) getSoftDependencies().add(sd);
-            for(String d : prop.getDepend()) getDependencies().add(d);
+            if(prop.getSoftdepend() != null)
+                for(String sd : prop.getSoftdepend()) getSoftDependencies().add(sd);
+            if(prop.getDepend() != null)
+                for(String d : prop.getDepend()) getDependencies().add(d);
             name = prop.getName();
             version = prop.getVersion();
             properties = prop;
