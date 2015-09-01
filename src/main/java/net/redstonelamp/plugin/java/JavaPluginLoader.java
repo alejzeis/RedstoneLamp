@@ -23,15 +23,13 @@ import net.redstonelamp.Server;
 import net.redstonelamp.plugin.PluginLoader;
 import net.redstonelamp.plugin.PluginManager;
 import net.redstonelamp.plugin.PluginSystem;
+import net.redstonelamp.ui.ConsoleOut;
 import net.redstonelamp.ui.Logger;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.jar.JarFile;
 
 public class JavaPluginLoader extends PluginLoader{
     /**
@@ -80,11 +78,12 @@ public class JavaPluginLoader extends PluginLoader{
         Class<?> mainClass;
         try{
             mainClass = Class.forName(getProperties().getMain());
-            if(!mainClass.isAssignableFrom(JavaPlugin.class)){
+            if(!JavaPlugin.class.isAssignableFrom(mainClass)){
                 PluginSystem.getLogger().error(name + " is in folder java-plugins, but does not extend JavaPlugin. Disabling!");
                 setState(PluginState.UNLOADED);
                 return;
             }
+
             Constructor<?> constructor = mainClass.getConstructor(Server.class, Logger.class, String.class, String.class, String[].class, String.class);
             Logger l = createPluginLogger(getProperties().getName());
             plugin = (JavaPlugin) constructor.newInstance(PluginSystem.getServer(), l, name, version, getProperties().getAuthors(), getProperties().getUrl());
@@ -99,7 +98,7 @@ public class JavaPluginLoader extends PluginLoader{
     private Logger createPluginLogger(String name){
         try{
             Constructor c = PluginSystem.getServer().getLogger().getConsoleOutClass().getConstructor(String.class);
-            return (Logger) c.newInstance(name);
+            return new Logger((ConsoleOut) c.newInstance(name));
         }catch(NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e){
             PluginSystem.getServer().getLogger().error("Exception while creating plugin logger for: " + name + ", " + e.getClass().getName() + ": " + e.getMessage());
             throw new RuntimeException(e);
@@ -124,23 +123,8 @@ public class JavaPluginLoader extends PluginLoader{
 
     @Override
     public InputStream getResourceAsStream(String path) throws IOException{
-        ZipFile zipFile = new ZipFile(getPluginFile());
-
-        Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-        while(entries.hasMoreElements()){
-            ZipEntry entry = entries.nextElement();
-            if(entry.getName().equals(path)){
-                final InputStream in = zipFile.getInputStream(entry);
-                //Limit resource to 6 mb
-                byte[] read = new byte[Math.min(in.available(), 6 << 20)];
-                int length = in.read(read);
-                zipFile.close();
-                return new ByteArrayInputStream(Arrays.copyOfRange(read, 0, length - 1));
-            }
-        }
-        zipFile.close();
-        return null;
+        JarFile jar = new JarFile(getPluginFile());
+        return jar.getInputStream(jar.getJarEntry(path));
     }
 
 }
