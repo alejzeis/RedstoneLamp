@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -27,13 +27,13 @@ public class PlayerMoveRequest extends Request{
     public Position position;
     public boolean onGround;
 
-    public PlayerMoveRequest(Position position, boolean onGround) {
+    public PlayerMoveRequest(Position position, boolean onGround){
         this.position = position;
         this.onGround = onGround;
     }
 
     @Override
-    public void execute() {
+    public void execute(){
         //TODO?
     }
 }

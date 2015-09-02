@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ import net.redstonelamp.Player;
 public class AddPlayerResponse extends Response{
     public Player player;
 
-    public AddPlayerResponse(Player player) {
+    public AddPlayerResponse(Player player){
         this.player = player;
     }
 }

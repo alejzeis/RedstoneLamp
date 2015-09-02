@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -15,7 +15,6 @@
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.redstonelamp.response;
-
 
 /**
  * Represents a Response to a LoginRequest
@@ -40,7 +39,7 @@ public class LoginResponse extends Response{
     public float y;
     public float z;
 
-    public LoginResponse(boolean loginAllowed, int gamemode, float x, float y, float z) {
+    public LoginResponse(boolean loginAllowed, int gamemode, float x, float y, float z){
         this.loginAllowed = loginAllowed;
         this.gamemode = gamemode;
         this.x = x;

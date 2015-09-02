@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -26,8 +26,7 @@ import net.redstonelamp.level.Chunk;
 public class ChunkResponse extends Response{
     public Chunk chunk;
 
-    public ChunkResponse(Chunk chunk) {
+    public ChunkResponse(Chunk chunk){
         this.chunk = chunk;
     }
-
 }

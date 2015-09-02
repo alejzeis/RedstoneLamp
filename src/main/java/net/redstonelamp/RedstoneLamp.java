@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -16,67 +16,70 @@
  */
 package net.redstonelamp;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
 import net.redstonelamp.config.ServerConfig;
+import net.redstonelamp.config.YamlConfig;
 import net.redstonelamp.ui.Log4j2ConsoleOut;
 import net.redstonelamp.ui.Logger;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * Main Startup file for RedstoneLamp.
  *
  * @author RedstoneLamp Team
  */
-public class RedstoneLamp {
+public class RedstoneLamp{
     public static final String SOFTWARE = "RedstoneLamp";
     public static final String SOFTWARE_VERSION = "1.2.0";
     public static final String SOFTWARE_STATE = "DEV";
     public static final double API_VERSION = 1.5;
+    public static Server SERVER;
 
     public static void main(String[] args){
         RedstoneLamp main = new RedstoneLamp();
         main.getDefaultResources();
 
-        try {
+        try{
             ServerConfig config = new ServerConfig(new File("server.properties"));
-            Server server = new Server(new Logger(new Log4j2ConsoleOut("RedstoneLamp")), config); //TODO: Correct logger
-            server.run();
-        } catch (IOException e) {
-            LogManager.getRootLogger().fatal("Could not init server! "+e.getClass().getName()+": "+e.getMessage());
+            YamlConfig conf = new YamlConfig("redstonelamp.yml");
+            SERVER = new Server(new Logger(new Log4j2ConsoleOut("RedstoneLamp")), config, conf); //TODO: Correct logger
+            SERVER.run();
+        }catch(IOException e){
+            LogManager.getRootLogger().fatal("Could not init server! " + e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
     }
-    
-    private void getDefaultResources() {
-        if(!new File("server.properties").isFile()) {
-            URL url = this.getClass().getResource("/conf/server.properties");
+
+    private void getDefaultResources(){
+        if(!new File("server.properties").isFile()){
+            URL url = getClass().getResource("/conf/server.properties");
             File dest = new File("./server.properties");
-            try {
+            try{
                 FileUtils.copyURLToFile(url, dest);
-            } catch (IOException e) {
+            }catch(IOException e){
                 e.printStackTrace();
             }
         }
-        if(!new File("redstonelamp.yml").isFile()) {
-            URL url = this.getClass().getResource("/conf/redstonelamp.yml");
+        if(!new File("redstonelamp.yml").isFile()){
+            URL url = getClass().getResource("/conf/redstonelamp.yml");
             File dest = new File("./redstonelamp.yml");
-            try {
+            try{
                 FileUtils.copyURLToFile(url, dest);
-            } catch (IOException e) {
+            }catch(IOException e){
                 e.printStackTrace();
             }
         }
         File log4j2 = new File("log4j2.xml");
-        if(!log4j2.isFile()) {
-            URL url = this.getClass().getResource("/log4j2-default.xml");
-            try {
+        if(!log4j2.isFile()){
+            URL url = getClass().getResource("/log4j2-default.xml");
+            try{
                 FileUtils.copyURLToFile(url, log4j2);
-            } catch (IOException e) {
+            }catch(IOException e){
                 e.printStackTrace();
             }
         }
@@ -85,6 +88,7 @@ public class RedstoneLamp {
 
     /**
      * Get the software's version string.
+     *
      * @return The version string (example: RedstoneLamp v1.0.0-development)
      */
     public static String getSoftwareVersionString(){

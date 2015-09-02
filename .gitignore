@@ -15,3 +15,6 @@
 /banned-players.txt
 /banned-ips.txt
 /players.dat
+/runtime/
+dependency-reduced-pom.xml
+

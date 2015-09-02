@@ -26,4 +26,7 @@ spawn-limit:
     ambient: 15
 
 worlds:
-    - world
+    world:
+      isMain: true
+      format: leveldb
+      generator: flat

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -18,6 +18,7 @@ package net.redstonelamp.level.generator;
 
 import net.redstonelamp.level.Chunk;
 import net.redstonelamp.level.ChunkPosition;
+import net.redstonelamp.level.Level;
 
 import java.nio.ByteBuffer;
 
@@ -27,9 +28,14 @@ import java.nio.ByteBuffer;
  * @author RedstoneLamp Team
  */
 public class FlatGenerator implements Generator{
+    private final Level level;
+
+    public FlatGenerator(Level level, Level.LevelParameters params){
+        this.level = level;
+    }
 
     @Override
-    public Chunk generateChunk(ChunkPosition position) {
+    public Chunk generateChunk(ChunkPosition position){
         Chunk c = new Chunk(position);
 
         ByteBuffer bb = ByteBuffer.allocate(16 * 16 * 128);

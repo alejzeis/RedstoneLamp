@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -17,14 +17,17 @@
 package net.redstonelamp;
 
 import net.redstonelamp.config.ServerConfig;
+import net.redstonelamp.config.YamlConfig;
 import net.redstonelamp.level.LevelManager;
-import net.redstonelamp.level.position.Position;
 import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
+import net.redstonelamp.network.pc.PCProtocol;
 import net.redstonelamp.network.pe.PEProtocol;
+import net.redstonelamp.plugin.PluginSystem;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.response.Response;
 import net.redstonelamp.ticker.RedstoneTicker;
+import net.redstonelamp.ui.Log4j2ConsoleOut;
 import net.redstonelamp.ui.Logger;
 
 import java.net.SocketAddress;
@@ -41,9 +44,11 @@ public class Server implements Runnable{
     private final List<Runnable> shutdownTasks = new ArrayList<>(); //List of tasks to be run on shutdown
     private final Logger logger;
     private final ServerConfig config;
+    private final YamlConfig yamlConfig;
     private final RedstoneTicker ticker;
     private final NetworkManager network;
     private final List<Player> players = new CopyOnWriteArrayList<>();
+    private final PluginSystem pluginSystem;
 
     private String motd;
     private int maxPlayers;
@@ -52,53 +57,69 @@ public class Server implements Runnable{
 
     /**
      * Package-private constructor used by the RedstoneLamp run class
-     * @param logger The server's logger
-     * @param config The server's configuration
+     *
+     * @param logger           The server's logger
+     * @param config           The server's configuration
+     * @param serverYamlConfig The server's YAML configuration
      */
-    Server(Logger logger, ServerConfig config) {
+    Server(Logger logger, ServerConfig config, YamlConfig serverYamlConfig){
         ticker = new RedstoneTicker(this, 50);
         this.logger = logger;
         this.config = config;
-        this.network = new NetworkManager(this);
-        this.levelManager = new LevelManager(this);
-        levelManager.init();
+        yamlConfig = serverYamlConfig;
+        network = new NetworkManager(this);
         loadProperties(config);
-        logger.info(RedstoneLamp.getSoftwareVersionString() +" is licensed under the Lesser GNU General Public License version 3");
+        logger.info(RedstoneLamp.getSoftwareVersionString() + " is licensed under the Lesser GNU General Public License version 3");
 
         network.registerProtocol(new PEProtocol(network));
+        network.registerProtocol(new PCProtocol(network));
         network.setName(motd);
+
+        pluginSystem = new PluginSystem();
+        pluginSystem.init(this, new Logger(new Log4j2ConsoleOut("PluginSystem")));
+        pluginSystem.loadPlugins();
+        pluginSystem.enablePlugins();
+
+        levelManager = new LevelManager(this);
+        levelManager.init();
+
+        addShutdownTask(pluginSystem::disablePlugins);
+
+        Runtime.getRuntime().addShutdownHook(new ShutdownTaskExecuter(this));
     }
 
-    private void loadProperties(ServerConfig config) {
+    private void loadProperties(ServerConfig config){
         maxPlayers = config.getInt("max-players");
         motd = config.getString("motd");
     }
 
     @Override
-    public void run() {
-        logger.info(RedstoneLamp.SOFTWARE+" is now running.");
+    public void run(){
+        logger.info(RedstoneLamp.SOFTWARE + " is now running.");
         ticker.start();
     }
 
     /**
      * Add a <code>Runnable</code> to be ran when the server begins to shutdown. This method is thread-safe.
+     *
      * @param r The <code>Runnable</code> to be ran when the server stops.
      */
-    public synchronized void addShutdownTask(Runnable r) {
-        synchronized (shutdownTasks) {
+    public synchronized void addShutdownTask(Runnable r){
+        synchronized(shutdownTasks){
             shutdownTasks.add(r);
         }
     }
 
     /**
      * INTERNAL METHOD
+     *
      * @param address
      * @param protocol
      * @param loginRequest
      * @return
      */
-    public Player openSession(SocketAddress address, Protocol protocol, LoginRequest loginRequest) {
-        logger.debug("Opened Session: "+address.toString());
+    public Player openSession(SocketAddress address, Protocol protocol, LoginRequest loginRequest){
+        logger.debug("Opened Session: " + address.toString());
         Player player = new Player(protocol, address);
         players.add(player);
         network.setName(motd); //Update the amount of players online
@@ -107,10 +128,11 @@ public class Server implements Runnable{
 
     /**
      * INTERNAL METHOD!
+     *
      * @param player
      */
-    public void closeSession(Player player) {
-        logger.debug("Closed Session: "+player.getAddress().toString());
+    public void closeSession(Player player){
+        logger.debug("Closed Session: " + player.getAddress().toString());
         players.remove(player);
         network.setName(motd); //Update the amount of players online
     }
@@ -118,16 +140,17 @@ public class Server implements Runnable{
     /**
      * Broadcasts a response to ALL players on the server. Please use API methods if
      * available.
+     *
      * @param r The Request to be broadcasted
      */
-    public void broadcastResponse(Response r) {
-        for(Player player : players) {
+    public void broadcastResponse(Response r){
+        for(Player player : players){
             player.sendResponse(r);
         }
     }
 
-    public void broadcastMessage(String message) {
-        for(Player player : players) {
+    public void broadcastMessage(String message){
+        for(Player player : players){
             player.sendMessage(message);
         }
     }
@@ -137,12 +160,13 @@ public class Server implements Runnable{
     /**
      * Get a Player by their address. Be warned as with different protocols there could be
      * two players playing from the same address.
+     *
      * @param address The SocketAddress where the player is connecting from
      * @return The Player, if found, null if not
      */
-    public Player getPlayer(SocketAddress address) {
-        for(Player player : players) {
-            if(player.getAddress().toString().equals(address.toString())) {
+    public Player getPlayer(SocketAddress address){
+        for(Player player : players){
+            if(player.getAddress().toString().equals(address.toString())){
                 return player;
             }
         }
@@ -151,33 +175,55 @@ public class Server implements Runnable{
 
     /**
      * Retrieve the server's logger.
+     *
      * @return The <code>Logger</code> instance the server uses.
      */
-    public Logger getLogger() {
+    public Logger getLogger(){
         return logger;
     }
 
-    public RedstoneTicker getTicker() {
+    public RedstoneTicker getTicker(){
         return ticker;
     }
 
-    public List<Player> getPlayers() {
+    public List<Player> getPlayers(){
         return players;
     }
 
-    public int getMaxPlayers() {
+    public int getMaxPlayers(){
         return maxPlayers;
     }
 
-    public ServerConfig getConfig() {
+    public ServerConfig getConfig(){
         return config;
     }
 
-    public LevelManager getLevelManager() {
+    public LevelManager getLevelManager(){
         return levelManager;
     }
 
-    protected int getNextEntityID() {
+    public PluginSystem getPluginSystem(){
+        return pluginSystem;
+    }
+
+    protected int getNextEntityID(){
         return nextEntityID++;
+    }
+
+    public YamlConfig getYamlConfig(){
+        return yamlConfig;
+    }
+
+    private static class ShutdownTaskExecuter extends Thread{
+        private final Server server;
+
+        public ShutdownTaskExecuter(Server server){
+            this.server = server;
+        }
+
+        @Override
+        public void run(){
+            server.shutdownTasks.forEach(Runnable::run);
+        }
     }
 }

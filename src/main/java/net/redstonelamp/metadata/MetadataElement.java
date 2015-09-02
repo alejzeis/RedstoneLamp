@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -24,23 +24,24 @@ import net.redstonelamp.nio.BinaryBuffer;
  *
  * @author RedstoneLamp Team
  */
-public abstract class MetadataElement {
+public abstract class MetadataElement{
     private byte index;
 
     public abstract void fromBytes(BinaryBuffer bb);
+
     public abstract void toBytes(BinaryBuffer bb, int index);
 
     public abstract byte getIdentifier();
 
     public byte getKey(byte index){
-        return (byte) ((getIdentifier() << 5) | (index & 0x1F));
+        return (byte) (getIdentifier() << 5 | index & 0x1F);
     }
 
-    public byte getIndex() {
+    public byte getIndex(){
         return index;
     }
 
-    public void setIndex(byte index) {
+    public void setIndex(byte index){
         this.index = index;
     }
 

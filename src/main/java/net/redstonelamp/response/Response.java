@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -21,6 +21,6 @@ package net.redstonelamp.response;
  *
  * @author RedstoneLamp Team
  */
-public abstract class Response {
+public abstract class Response{
 
 }

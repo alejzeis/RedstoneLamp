@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -25,9 +25,10 @@ import net.beaconpe.jraklib.server.ServerInstance;
 import net.redstonelamp.Player;
 import net.redstonelamp.Server;
 import net.redstonelamp.network.LowLevelNetworkException;
-import net.redstonelamp.network.netInterface.AdvancedNetworkInterface;
 import net.redstonelamp.network.UniversalPacket;
+import net.redstonelamp.network.netInterface.AdvancedNetworkInterface;
 import net.redstonelamp.ticker.CallableTask;
+import net.redstonelamp.ticker.Task;
 import net.redstonelamp.ui.ConsoleOut;
 import net.redstonelamp.ui.Log4j2ConsoleOut;
 
@@ -45,138 +46,143 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  */
 public class JRakLibInterface implements ServerInstance, AdvancedNetworkInterface{
     private final Server server;
-    private final JRakLibServer rakLibServer;
-    private final ServerHandler handler;
     private final PEProtocol protocol;
+    private JRakLibServer rakLibServer;
+    private ServerHandler handler;
     private net.redstonelamp.ui.Logger logger;
 
     private Deque<UniversalPacket> packetQueue = new ConcurrentLinkedDeque<>();
 
     private CallableTask tickTask = new CallableTask("tick", this);
 
-    public JRakLibInterface(Server server, PEProtocol protocol) {
+    public JRakLibInterface(Server server, PEProtocol protocol){
         //TODO: Correct port and interface
         this.server = server;
         this.protocol = protocol;
 
         setupLogger();
-        rakLibServer = new JRakLibServer(new JRakLibLogger(new net.redstonelamp.ui.Logger(new Log4j2ConsoleOut("JRakLib"))), 19132, "0.0.0.0");
-        handler = new ServerHandler(rakLibServer, this);
-
-        handler.sendOption("name", "MCPE;RedstoneLamp test server;"+PENetworkConst.MCPE_PROTOCOL+";0.12.1;0;1");
-
-        server.getTicker().addRepeatingTask(tickTask, 1);
+        startupInterface();
 
         logger.info("Started JRakLib Interface on 0.0.0.0:19132");
     }
 
-    private void setupLogger() {
-        try {
+    private void startupInterface() {
+        rakLibServer = new JRakLibServer(new JRakLibLogger(new net.redstonelamp.ui.Logger(new Log4j2ConsoleOut("JRakLib"))), 19132, "0.0.0.0");
+        handler = new ServerHandler(rakLibServer, this);
+
+        handler.sendOption("name", "MCPE;RedstoneLamp test server;" + PENetworkConst.MCPE_PROTOCOL + ";0.12.1;0;1");
+
+        server.getTicker().addRepeatingTask(tickTask, 1);
+    }
+
+    private void setupLogger(){
+        try{
             Constructor c = server.getLogger().getConsoleOutClass().getConstructor(String.class);
             logger = new net.redstonelamp.ui.Logger((ConsoleOut) c.newInstance("JRakLibInterface"));
             logger.debug("Logger created.");
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        }catch(NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e){
             e.printStackTrace();
         }
     }
 
-    public void tick(long tick) {
-        while(handler.handlePacket()) {}
+    public void tick(long tick){
+        while(handler.handlePacket()){
+        }
 
-        if(rakLibServer.getState() == Thread.State.TERMINATED) {
+        if(rakLibServer.getState() == Thread.State.TERMINATED){
             server.getTicker().cancelTask(tickTask);
             server.getLogger().error("[JRakLibInterface]: JRakLib Server crashed!");
+            server.getTicker().addDelayedTask(tick1 -> {
+                server.getLogger().info("Restarting JRakLib Server (crashed!)...");
+                startupInterface();
+                server.getLogger().info("JRakLib Server restarted.");
+            }, 20);
         }
     }
 
     @Override
-    public UniversalPacket readPacket() throws LowLevelNetworkException {
-        if(!packetQueue.isEmpty()) {
+    public UniversalPacket readPacket() throws LowLevelNetworkException{
+        if(!packetQueue.isEmpty()){
             return packetQueue.removeLast();
         }
         return null;
     }
 
     @Override
-    public void sendPacket(UniversalPacket packet, boolean immediate) throws LowLevelNetworkException {
+    public void sendPacket(UniversalPacket packet, boolean immediate) throws LowLevelNetworkException{
         //Assume packet is to be encapsulated
         EncapsulatedPacket pk = new EncapsulatedPacket();
         pk.messageIndex = 0;
         pk.reliability = 2;
         pk.buffer = packet.getBuffer();
-        logger.buffer("("+packet.getAddress().toString()+") PACKET OUT: ", pk.buffer, "");
-        handler.sendEncapsulated(packet.getAddress().toString(), pk, (byte) ((byte) 0 | (immediate ? JRakLib.PRIORITY_IMMEDIATE : JRakLib.PRIORITY_NORMAL)));
+        logger.buffer("(" + packet.getAddress().toString() + ") PACKET OUT: ", pk.buffer, "");
+        handler.sendEncapsulated(packet.getAddress().toString(), pk, immediate ? JRakLib.PRIORITY_IMMEDIATE : JRakLib.PRIORITY_NORMAL);
     }
 
     @Override
-    public void openSession(String identifier, String address, int port, long clientID) {
-        logger.debug("("+identifier+") openSession: {clientID: "+clientID+"}");
+    public void openSession(String identifier, String address, int port, long clientID){
+        logger.debug("(" + identifier + ") openSession: {clientID: " + clientID + "}");
         protocol.openSession(identifier);
     }
 
     @Override
-    public void closeSession(String identifier, String reason) {
-        logger.debug("("+identifier+") closeSession: {reason: "+reason+"}");
+    public void closeSession(String identifier, String reason){
+        logger.debug("(" + identifier + ") closeSession: {reason: " + reason + "}");
         Player player = server.getPlayer(new JRakLibIdentifierAddress(identifier));
-        if(player != null) {
-            if(player.isSpawned()) {
+        if(player != null){
+            if(player.isSpawned()){
                 player.close(" left the game", reason, false);
-            } else {
+            }else{
                 player.close("", reason, false);
             }
         }
     }
 
     @Override
-    public void handleEncapsulated(String identifier, EncapsulatedPacket encapsulatedPacket, int flags) {
+    public void handleEncapsulated(String identifier, EncapsulatedPacket encapsulatedPacket, int flags){
         UniversalPacket packet = new UniversalPacket(encapsulatedPacket.buffer, new JRakLibIdentifierAddress(identifier));
-        logger.buffer("("+identifier+") PACKET IN: ", packet.getBuffer(), "");
+        logger.buffer("(" + identifier + ") PACKET IN: ", packet.getBuffer(), "");
         packetQueue.addLast(packet);
     }
 
     @Override
-    public void handleRaw(String address, int port, byte[] payload) {
+    public void handleRaw(String address, int port, byte[] payload){
         UniversalPacket packet = new UniversalPacket(payload, new InetSocketAddress(address, port));
         packetQueue.addLast(packet);
     }
 
     @Override
-    public void notifyACK(String identifier, int identifierACK) {
+    public void notifyACK(String identifier, int identifierACK){
 
     }
 
     @Override
-    public void handleOption(String option, String value) {
+    public void handleOption(String option, String value){
 
     }
 
     /**
      * INTERNAL METHOD!
      * Close a session for no reason
+     *
      * @param identifier
      * @param reason
      */
-    public void _internalClose(String identifier, String reason) {
+    public void _internalClose(String identifier, String reason){
         handler.closeSession(identifier, reason);
     }
 
     @Override
-    public void setName(String name) {
-        handler.sendOption("name", "MCPE;"+name+";"+PENetworkConst.MCPE_PROTOCOL+";"+PENetworkConst.MCPE_VERSION+";"+server.getPlayers().size()+";"+server.getMaxPlayers());
+    public void setName(String name){
+        handler.sendOption("name", "MCPE;" + name + ";" + PENetworkConst.MCPE_PROTOCOL + ";" + PENetworkConst.MCPE_VERSION + ";" + server.getPlayers().size() + ";" + server.getMaxPlayers());
     }
 
     /**
      * Wrapper JRakLib logger that wraps around a UI logger.
      *
-     * @author jython234
+     * @author RedstoneLamp Team
      */
-    public static class JRakLibLogger implements Logger {
+    public static class JRakLibLogger implements Logger{
         private final net.redstonelamp.ui.Logger logger;
 
         public JRakLibLogger(net.redstonelamp.ui.Logger logger){
@@ -184,17 +190,17 @@ public class JRakLibInterface implements ServerInstance, AdvancedNetworkInterfac
         }
 
         @Override
-        public void notice(String s) {
+        public void notice(String s){
             logger.info(s);
         }
 
         @Override
-        public void critical(String s) {
+        public void critical(String s){
             logger.error(s);
         }
 
         @Override
-        public void emergency(String s) {
+        public void emergency(String s){
             logger.fatal(s);
         }
     }
@@ -202,21 +208,21 @@ public class JRakLibInterface implements ServerInstance, AdvancedNetworkInterfac
     /**
      * A SocketAddress implementation of a JRakLib Identifier String.
      *
-     * @author jython234
+     * @author RedstoneLamp Team
      */
-    public static class JRakLibIdentifierAddress extends SocketAddress {
+    public static class JRakLibIdentifierAddress extends SocketAddress{
         private final String identifier;
 
-        public JRakLibIdentifierAddress(String identifier) {
+        public JRakLibIdentifierAddress(String identifier){
             this.identifier = identifier;
         }
 
         @Override
-        public String toString() {
+        public String toString(){
             return getIdentifier();
         }
 
-        public String getIdentifier() {
+        public String getIdentifier(){
             return identifier;
         }
     }

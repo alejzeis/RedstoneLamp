@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -16,12 +16,12 @@
  */
 package net.redstonelamp.response;
 
-public class PopupResponse extends Response {
-	
-	public String message;
-	
-	public PopupResponse(String message) {
-		this.message = message;
-	}
-	
+public class PopupResponse extends Response{
+
+    public String message;
+
+    public PopupResponse(String message){
+        this.message = message;
+    }
+
 }

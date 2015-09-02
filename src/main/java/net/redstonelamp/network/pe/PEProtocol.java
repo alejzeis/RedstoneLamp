@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -17,6 +17,7 @@
 package net.redstonelamp.network.pe;
 
 import net.redstonelamp.Player;
+import net.redstonelamp.network.LowLevelNetworkException;
 import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.network.UniversalPacket;
@@ -52,7 +53,7 @@ public class PEProtocol extends Protocol{
      *
      * @param manager
      */
-    public PEProtocol(NetworkManager manager) {
+    public PEProtocol(NetworkManager manager){
         super(manager);
         subprotocols = new PESubprotocolManager(this);
         sender = new PeChunkSender(this);
@@ -63,75 +64,85 @@ public class PEProtocol extends Protocol{
     }
 
     @Override
-    public String getName() {
+    public String getName(){
         return "MCPE";
     }
 
     @Override
-    public String getDescription() {
-        return "Minecraft: Pocket Edition protocol, version "+PENetworkConst.MCPE_VERSION+" (protocol: "+PENetworkConst.MCPE_PROTOCOL+")";
+    public String getDescription(){
+        return "Minecraft: Pocket Edition protocol, version " + PENetworkConst.MCPE_VERSION + " (protocol: " + PENetworkConst.MCPE_PROTOCOL + ")";
     }
 
     /**
      * default method that sends the correct packets in event of a subprotocol not found
+     *
      * @param sendTo
      */
-    private void defaultNoSubprotocolFoundDisconnect(SocketAddress sendTo) {
+    private void defaultNoSubprotocolFoundDisconnect(SocketAddress sendTo){
         BinaryBuffer bb = BinaryBuffer.newInstance(5, ByteOrder.BIG_ENDIAN);
         bb.putByte(PENetworkConst.PLAY_STATUS_PACKET);
         bb.putInt(1); //LOGIN_FAILED_CLIENT
-        sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, sendTo));
+        sendImmediatePacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, sendTo));
 
         String message = "disconnectionScreen.outdatedClient";
         bb = BinaryBuffer.newInstance(3 + message.getBytes().length, ByteOrder.BIG_ENDIAN);
         bb.putByte(PENetworkConst.DISCONNECT_PACKET);
         bb.putString(message);
-        sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, sendTo));
+        sendImmediatePacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, sendTo));
     }
 
     @Override
-    public Request[] handlePacket(UniversalPacket packet) {
-        if(addressToSubprotocols.containsKey(packet.getAddress().toString())) {
+    public Request[] handlePacket(UniversalPacket packet){
+        if(addressToSubprotocols.containsKey(packet.getAddress().toString())){
             return addressToSubprotocols.get(packet.getAddress().toString()).handlePacket(packet);
-        } else {
-            getManager().getServer().getLogger().debug("Searching for subprotocol for "+packet.getAddress().toString());
+        }else{
+            getManager().getServer().getLogger().debug("Searching for subprotocol for " + packet.getAddress().toString());
             Subprotocol s = subprotocols.findSubprotocol(packet);
-            if(s != null) {
+            if(s != null){
                 addressToSubprotocols.put(packet.getAddress().toString(), s);
-                getManager().getServer().getLogger().debug("Found subprotocol for "+s.getMCPEVersion()+" ("+s.getProtocolVersion()+")");
+                getManager().getServer().getLogger().debug("Found subprotocol for " + s.getMCPEVersion() + " (" + s.getProtocolVersion() + ")");
                 packet.bb().setPosition(0); //Reset the position to zero
                 return s.handlePacket(packet); //TODO: Since finding the protocol already processes the packet, we are doing the same thing twice
-            } else {
-                getManager().getServer().getLogger().info("Could not find protocol for "+packet.getAddress().toString()+", disconnecting.");
+            }else{
+                getManager().getServer().getLogger().info("Could not find protocol for " + packet.getAddress().toString() + ", disconnecting.");
                 defaultNoSubprotocolFoundDisconnect(packet.getAddress());
                 ((JRakLibInterface) _interface)._internalClose(packet.getAddress().toString(), "no subprotocol found");
-                return new Request[] {null};
+                return new Request[]{null};
             }
         }
     }
 
     @Override
-    protected UniversalPacket[] _sendResponse(Response response, Player player) {
-        if(addressToSubprotocols.containsKey(player.getAddress().toString())) {
+    protected UniversalPacket[] _sendResponse(Response response, Player player){
+        if(addressToSubprotocols.containsKey(player.getAddress().toString())){
             return addressToSubprotocols.get(player.getAddress().toString()).translateResponse(response, player);
-        } else {
-            throw new IllegalArgumentException("Player "+player.getAddress().toString()+" not found in subprotocol map!");
+        }else{
+            throw new IllegalArgumentException("Player " + player.getAddress().toString() + " not found in subprotocol map!");
         }
     }
 
     @Override
-    protected void onClose(Player player) {
+    protected void onClose(Player player){
         addressToSubprotocols.remove(player.getAddress().toString());
         ((JRakLibInterface) _interface)._internalClose(player.getAddress().toString(), "server disconnect");
     }
 
-    protected void openSession(String session) {
-        if(!hasBeenOpened.contains(session)) {
+    protected void openSession(String session){
+        if(!hasBeenOpened.contains(session)){
             hasBeenOpened.add(session);
         }
     }
 
-    public PeChunkSender getChunkSender() {
+    protected void sendImmediatePacket(UniversalPacket packet) {
+        try {
+            _interface.sendPacket(packet, true);
+        } catch (LowLevelNetworkException e) {
+            getServer().getLogger().error(e.getClass().getName()+" while sending packet immediately: "+e.getMessage());
+            getServer().getLogger().trace(e);
+        }
+    }
+
+    public PeChunkSender getChunkSender(){
         return sender;
     }
 }

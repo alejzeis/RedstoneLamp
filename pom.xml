@@ -26,6 +26,13 @@
     <artifactId>RedstoneLamp</artifactId>
     <version>1.2.0-DEV</version>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>snapshot-repo</id>
+            <url>https://raw.githubusercontent.com/RedstoneLamp/MavenRepository/master/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <repositories>
         <repository>
             <id>snapshot-repo</id>
@@ -40,6 +47,7 @@
             <artifactId>JRakLib</artifactId>
             <version>1.1-SNAPSHOT</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -50,6 +58,19 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>2.0-rc1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.12</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.6</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -70,22 +91,30 @@
             <version>3.3.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.mina</groupId>
+            <artifactId>mina-core</artifactId>
+            <version>2.0.9</version>
+        </dependency>
 
-		<dependency>
-			<groupId>com.googlecode.json-simple</groupId>
-			<artifactId>json-simple</artifactId>
-			<version>1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.esotericsoftware.yamlbeans</groupId>
-			<artifactId>yamlbeans</artifactId>
-			<version>1.09</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-		</dependency>
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.esotericsoftware.yamlbeans</groupId>
+            <artifactId>yamlbeans</artifactId>
+            <version>1.09</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -111,11 +140,11 @@
                 <version>2.11</version>
                 <configuration>
                     <header>com/mycila/maven/plugin/license/templates/LGPL-3.txt</header>
-                    <!--
+
                     <headerDefinitions>
                         <headerDefinition>license-definitions.xml</headerDefinition>
                     </headerDefinitions>
-                    -->
+
                     <excludes>
                         <exclude>**/README</exclude>
                         <exclude>**/**.log</exclude>
@@ -149,7 +178,8 @@
                         <configuration>
                             <transformers>
                                 <!-- add Main-Class to manifest file -->
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>net.redstonelamp.RedstoneLamp</mainClass>
                                 </transformer>
                             </transformers>

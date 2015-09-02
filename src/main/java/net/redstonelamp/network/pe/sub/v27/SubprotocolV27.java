@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -16,15 +16,16 @@
  */
 package net.redstonelamp.network.pe.sub.v27;
 
-import net.beaconpe.jraklib.Binary;
 import net.redstonelamp.Player;
 import net.redstonelamp.level.position.Position;
-import net.redstonelamp.metadata.EntityMetadata;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
 import net.redstonelamp.nio.BinaryBuffer;
-import net.redstonelamp.request.*;
+import net.redstonelamp.request.ChatRequest;
+import net.redstonelamp.request.LoginRequest;
+import net.redstonelamp.request.PlayerMoveRequest;
+import net.redstonelamp.request.Request;
 import net.redstonelamp.response.*;
 import net.redstonelamp.utils.CompressionUtils;
 
@@ -33,6 +34,7 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.DataFormatException;
 
@@ -42,23 +44,24 @@ import java.util.zip.DataFormatException;
  * @author RedstoneLamp Team
  */
 public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
-	
-    public SubprotocolV27(PESubprotocolManager manager) {
+
+    public SubprotocolV27(PESubprotocolManager manager){
         super(manager);
     }
 
     @Override
-    public Request[] handlePacket(UniversalPacket up) {
+    public Request[] handlePacket(UniversalPacket up){
         List<Request> requests = new ArrayList<>();
         byte id = up.bb().getByte();
-        if(id == BATCH_PACKET) {
+        if(id == BATCH_PACKET){
             return processBatch(up);
         }
-        
-        switch (id) {
+
+        switch(id){
             case LOGIN_PACKET:
                 getProtocol().getServer().getLogger().debug("Got Login packet!");
-                LoginRequest lr = new LoginRequest(up.bb().getString());
+                String username = up.bb().getString();
+                LoginRequest lr = new LoginRequest(username, UUID.nameUUIDFromBytes(username.getBytes()));
                 up.bb().skip(8); //Skip protocol1, protocol 2 (int, int)
                 lr.clientId = up.bb().getInt();
                 lr.slim = up.bb().getByte() > 0;
@@ -69,25 +72,24 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                 requests.add(lr);
                 break;
             case TEXT_PACKET:
-            	ChatRequest cr = new ChatRequest(up.bb().getByte());
-            	switch(cr.type) {
-            		case TEXT_CHAT:
-            			cr.source = up.bb().getString();
-            		case TEXT_RAW:
-            		case TEXT_POPUP:
-            		case TEXT_TIP:
-            			cr.message = up.bb().getString();
-            			break;
-            		case TEXT_TRANSLATION:
-            			cr.message = up.bb().getString();
-            			for(int i = 0; i < up.bb().getByte(); i++)
-            				cr.parameters[i] = up.bb().getString();
-            			break;
-            	}
-            	// TODO: Throw PlayerChatEvent
-            	getProtocol().getServer().getPlayer(up.getAddress()).sendPopup("You sent a message!");
-            	requests.add(cr);
-            	break;
+                ChatRequest cr = new ChatRequest(up.bb().getByte());
+                switch(cr.type){
+                    case TEXT_CHAT:
+                        cr.source = up.bb().getString();
+                    case TEXT_RAW:
+                    case TEXT_POPUP:
+                    case TEXT_TIP:
+                        cr.message = up.bb().getString();
+                        break;
+                    case TEXT_TRANSLATION:
+                        cr.message = up.bb().getString();
+                        for(int i = 0; i < up.bb().getByte(); i++)
+                            cr.parameters[i] = up.bb().getString();
+                        break;
+                }
+                // TODO: Throw PlayerChatEvent
+                requests.add(cr);
+                break;
             case MOVE_PLAYER_PACKET:
                 Position position = new Position(getProtocol().getServer().getPlayer(up.getAddress()).getPosition().getLevel());
                 up.bb().skip(8); //Skip entity ID
@@ -113,13 +115,13 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
     }
 
     @Override
-    public UniversalPacket[] translateResponse(Response response, Player player) {
+    public UniversalPacket[] translateResponse(Response response, Player player){
         SocketAddress address = player.getAddress();
         List<UniversalPacket> packets = new CopyOnWriteArrayList<>();
         BinaryBuffer bb;
-        if(response instanceof LoginResponse) {
+        if(response instanceof LoginResponse){
             LoginResponse lr = (LoginResponse) response;
-            if(lr.loginAllowed) {
+            if(lr.loginAllowed){
                 bb = BinaryBuffer.newInstance(5, ByteOrder.BIG_ENDIAN);
                 bb.putByte(PLAY_STATUS_PACKET);
                 bb.putInt(0); //LOGIN_SUCCESS
@@ -141,7 +143,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
 
                 bb = BinaryBuffer.newInstance(6, ByteOrder.BIG_ENDIAN);
                 bb.putByte(SET_TIME_PACKET);
-                bb.putInt(0); //TODO: Correct time
+                bb.putInt(player.getPosition().getLevel().getTime());
                 bb.putByte((byte) 1);
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
 
@@ -165,9 +167,9 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                 //TODO: If creative, send items
 
                 getProtocol().getChunkSender().registerChunkRequests(getProtocol().getServer().getPlayer(address), 96);
-            } else {
+            }else{
                 String message;
-                switch (lr.loginNotAllowedReason) {
+                switch(lr.loginNotAllowedReason){
                     case LoginResponse.DEFAULT_loginNotAllowedReason:
                         message = "disconnectionScreen.noReason";
                         break;
@@ -186,16 +188,16 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
 
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
             }
-        } else if(response instanceof DisconnectResponse) {
+        }else if(response instanceof DisconnectResponse){
             DisconnectResponse dr = (DisconnectResponse) response;
-            if(dr.notifyClient) {
+            if(dr.notifyClient){
                 bb = BinaryBuffer.newInstance(3 + dr.reason.getBytes().length, ByteOrder.BIG_ENDIAN);
                 bb.putByte(DISCONNECT_PACKET);
                 bb.putString(dr.reason);
 
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
             }
-        } else if(response instanceof ChunkResponse) {
+        }else if(response instanceof ChunkResponse){
             ChunkResponse cr = (ChunkResponse) response;
 
             BinaryBuffer ordered = BinaryBuffer.newInstance(83200, ByteOrder.BIG_ENDIAN);
@@ -207,7 +209,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             ordered.put(cr.chunk.getBiomeColors());
 
             byte[] orderedData = ordered.toArray();
-            ordered = null;
+//            ordered = null;
 
             bb = BinaryBuffer.newInstance(83213, ByteOrder.BIG_ENDIAN);
             bb.putByte(FULL_CHUNK_DATA_PACKET);
@@ -217,12 +219,12 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             bb.put(orderedData);
 
             packets.add(new UniversalPacket(Arrays.copyOf(bb.toArray(), bb.getPosition()), ByteOrder.BIG_ENDIAN, address));
-        } else if(response instanceof SpawnResponse) {
+        }else if(response instanceof SpawnResponse){
             SpawnResponse sr = (SpawnResponse) response;
 
             int flags = 0;
             flags |= 0x20;
-            if(player.getGamemode() == 1) {
+            if(player.getGamemode() == 1){
                 flags |= 0x80; //allow flight
             }
             bb = BinaryBuffer.newInstance(5, ByteOrder.BIG_ENDIAN);
@@ -231,7 +233,8 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
 
 
-            byte[] metadata = EntityMetadata.write(player.getMetadata());
+            //byte[] metadata = EntityMetadata.write(player.getMetadata());
+            byte[] metadata = player.getMetadata().toBytes();
             bb = BinaryBuffer.newInstance(9 + metadata.length, ByteOrder.BIG_ENDIAN);
             bb.putByte(SET_ENTITY_DATA_PACKET);
             bb.putLong(0); //Player Entity ID is always zero to themselves
@@ -247,16 +250,16 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
 
             bb = BinaryBuffer.newInstance(13, ByteOrder.BIG_ENDIAN);
             bb.putByte(RESPAWN_PACKET);
-            bb.putFloat((float) player.getPosition().getX());
-            bb.putFloat((float) player.getPosition().getY());
-            bb.putFloat((float) player.getPosition().getZ());
+            bb.putFloat((float) sr.spawnPosition.getX());
+            bb.putFloat((float) sr.spawnPosition.getY());
+            bb.putFloat((float) sr.spawnPosition.getZ());
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
 
             bb = BinaryBuffer.newInstance(5, ByteOrder.BIG_ENDIAN);
             bb.putByte(PLAY_STATUS_PACKET);
             bb.putInt(3); //PLAY_SPAWN
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
-        } else if(response instanceof TeleportResponse) {
+        }else if(response instanceof TeleportResponse){
             TeleportResponse tr = (TeleportResponse) response;
             bb = BinaryBuffer.newInstance(35, ByteOrder.BIG_ENDIAN);
             bb.putByte(MOVE_PLAYER_PACKET);
@@ -270,22 +273,23 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             bb.putByte((byte) 0); //MODE_NORMAL
             bb.putByte((byte) (tr.onGround ? 1 : 0));
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
-        } else if(response instanceof ChatResponse) {
+        }else if(response instanceof ChatResponse){
             ChatResponse cr = (ChatResponse) response;
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN); //Self-expand
             bb.putByte(TEXT_PACKET);
-            if(cr.source != "") {
+            if(!cr.source.isEmpty()){
                 bb.putByte(TEXT_CHAT); //TYPE_CHAT
                 bb.putString(cr.source);
                 bb.putString(cr.message);
-            } else {
+            }else{
                 bb.putByte(TEXT_RAW); //TYPE_RAW
                 bb.putString(cr.message);
             }
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
-        } else if(response instanceof AddPlayerResponse) {
+        }else if(response instanceof AddPlayerResponse){
             Player p = ((AddPlayerResponse) response).player;
-            byte[] meta = EntityMetadata.write(p.getMetadata());
+            //byte[] meta = EntityMetadata.write(p.getMetadata());
+            byte[] meta = p.getMetadata().toBytes();
             //bb = BinaryBuffer.newInstance(56 + p.getSkin().length + p.getNametag().getBytes().length + meta.length, ByteOrder.BIG_ENDIAN);
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
             bb.putByte(ADD_PLAYER_PACKET);
@@ -308,25 +312,25 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             bb.put(p.getSkin());
             bb.put(meta);
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
-        } else if(response instanceof PopupResponse) {
-        	PopupResponse pr = (PopupResponse) response;
-        	bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
-        	bb.putByte(TEXT_PACKET);
-        	bb.putByte(TEXT_POPUP); // TYPE_POPUP
-        	bb.putString(pr.message);
-        	packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
-        } else if(response instanceof RemovePlayerResponse) {
+        }else if(response instanceof PopupResponse){
+            PopupResponse pr = (PopupResponse) response;
+            bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+            bb.putByte(TEXT_PACKET);
+            bb.putByte(TEXT_POPUP); // TYPE_POPUP
+            bb.putString(pr.message);
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        }else if(response instanceof RemovePlayerResponse){
             RemovePlayerResponse rpp = (RemovePlayerResponse) response;
             bb = BinaryBuffer.newInstance(9, ByteOrder.BIG_ENDIAN);
             bb.putByte(REMOVE_PLAYER_PACKET);
             bb.putLong(rpp.player.getEntityID());
             bb.putLong(rpp.player.getEntityID());
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
-        } else if(response instanceof PlayerMoveResponse) {
+        }else if(response instanceof PlayerMoveResponse){
             PlayerMoveResponse pmr = (PlayerMoveResponse) response;
             bb = BinaryBuffer.newInstance(35, ByteOrder.BIG_ENDIAN);
             bb.putByte(MOVE_PLAYER_PACKET);
-            bb.putLong(player.getEntityID());
+            bb.putLong(pmr.entityID);
             bb.putFloat((float) pmr.pos.getX());
             bb.putFloat((float) pmr.pos.getY());
             bb.putFloat((float) pmr.pos.getZ());
@@ -352,17 +356,16 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
         return packets.toArray(new UniversalPacket[packets.size()]);
     }
 
-
-    private Request[] processBatch(UniversalPacket up) {
+    private Request[] processBatch(UniversalPacket up){
         List<Request> requests = new ArrayList<>();
         int len = up.bb().getInt();
         byte[] compressed = up.bb().get(len);
-        try {
+        try{
             byte[] uncompressed = CompressionUtils.zlibInflate(compressed);
             BinaryBuffer bb = BinaryBuffer.wrapBytes(uncompressed, up.bb().getOrder());
-            while(bb.getPosition() < uncompressed.length) {
+            while(bb.getPosition() < uncompressed.length){
                 byte id = bb.getByte();
-                if(id == BATCH_PACKET) {
+                if(id == BATCH_PACKET){
                     throw new IllegalStateException("BatchPacket found inside BatchPacket!");
                 }
                 int start = bb.getPosition();
@@ -371,24 +374,24 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                 requests.add(handlePacket(pk)[0]);
                 bb.setPosition(pk.bb().getPosition());
             }
-        } catch (DataFormatException e) {
-            getProtocol().getManager().getServer().getLogger().warning(e.getClass().getName()+" while handling BatchPacket: "+e.getMessage());
+        }catch(DataFormatException e){
+            getProtocol().getManager().getServer().getLogger().warning(e.getClass().getName() + " while handling BatchPacket: " + e.getMessage());
             getProtocol().getManager().getServer().getLogger().trace(e);
-        } finally {
-            if(!requests.isEmpty()) {
+        }finally{
+            if(!requests.isEmpty()){
                 return requests.toArray(new Request[requests.size()]);
             }
-            return new Request[] {null};
+            return new Request[]{null};
         }
     }
 
     @Override
-    public String getMCPEVersion() {
+    public String getMCPEVersion(){
         return MCPE_VERSION;
     }
 
     @Override
-    public int getProtocolVersion() {
+    public int getProtocolVersion(){
         return MCPE_PROTOCOL;
     }
 }

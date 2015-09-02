@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -27,30 +27,31 @@ import net.redstonelamp.nio.BinaryBuffer;
 public class MetadataByte extends MetadataElement{
     private byte b;
 
-    public MetadataByte() {}
+    public MetadataByte(){
+    }
 
     public MetadataByte(byte b){
         this.b = b;
     }
 
     @Override
-    public void fromBytes(BinaryBuffer bb) {
+    public void fromBytes(BinaryBuffer bb){
         b = bb.getByte();
     }
 
     @Override
-    public void toBytes(BinaryBuffer bb, int index) {
+    public void toBytes(BinaryBuffer bb, int index){
         bb.putByte(getKey((byte) index));
         bb.putByte(b);
     }
 
     @Override
-    public byte getIdentifier() {
+    public byte getIdentifier(){
         return 0;
     }
 
     @Override
-    public int getLength() {
+    public int getLength(){
         return 1;
     }
 }

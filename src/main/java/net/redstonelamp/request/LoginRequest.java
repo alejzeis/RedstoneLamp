@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of RedstoneLamp.
  *
  * RedstoneLamp is free software: you can redistribute it and/or modify
@@ -16,6 +16,8 @@
  */
 package net.redstonelamp.request;
 
+import java.util.UUID;
+
 /**
  * Represents a Login Request
  *
@@ -23,17 +25,19 @@ package net.redstonelamp.request;
  */
 public class LoginRequest extends Request{
     public String username;
+    public UUID uuid;
     public long clientId;
     public long authid;
     public byte[] skin;
     public boolean slim;
 
-    public LoginRequest(String username){
+    public LoginRequest(String username, UUID uuid){
         this.username = username;
+        this.uuid = uuid;
     }
 
     @Override
-    public void execute() {
+    public void execute(){
         //TODO?
     }
 }
