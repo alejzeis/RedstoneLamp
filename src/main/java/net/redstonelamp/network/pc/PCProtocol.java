@@ -206,21 +206,50 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
     }
 
     private byte[] orderChunkData(Chunk chunk){
-        BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
-        List<Integer> ids = new ArrayList<>();
-        for(int x = 0; x < 16; x++){
-            for(int z = 0; z < 16; z++){
-                for(int y = 0; y < 128; y++){
-                    byte id = chunk.getBlockId(x, y, z);
-                    byte data = chunk.getBlockData(x, y, z);
-                    ids.add(id >> 4 | data & 15);
-                }
-            }
+        //Calculate length of result array: ids & meta, skylight, biomes
+        int length = 8*(8192+2048+2048)+256;
+        //Lets create the byte array we want to return
+        byte[] ret = new byte[length];
+        int i = 0;
+        //Set ids and metadata
+        //Fill sections from the bottom up
+        for(int section = 0; section < 8; section++){
+        	for(int x = 0; x<16; x++){
+        		for(int z = 0; z<16; z++){
+        			for(int y = 0; y<16; y++){
+        				ret[i++] = chunk.getBlockId(x, y+section*16, z);
+        				ret[i++] = chunk.getBlockData(x, y+section*16, z);
+        			}
+        		}
+        	}
         }
-        bb.putVarInt(ids.size());
-        ids.forEach(bb::putVarInt);
-        //TODO: Finish chunk data
-        return bb.toArray();
+        //Set blocklight. Lower nibble - lower block, higher nibble - higher block
+        for(int section = 0; section < 8; section++){
+        	for(int x = 0; x<16; x++){
+        		for(int z = 0; z<16; z++){
+        			for(int y = 0; y<16; y+=2){
+        				ret[i++] = (byte) (chunk.getBlocklight(x, y, z)<<4|chunk.getBlocklight(x, y+1, z));
+        			}
+        		}
+        	}
+        }
+        //Set skylight. Lower nibble - lower block, higher nibble - higher block
+        for(int section = 0; section < 8; section++){
+        	for(int x = 0; x<16; x++){
+        		for(int z = 0; z<16; z++){
+        			for(int y = 0; y<16; y+=2){
+        				ret[i++] = (byte) (chunk.getSkylight(x, y, z)<<4|chunk.getSkylight(x, y+1, z));
+        			}
+        		}
+        	}
+        }
+        //Set biome ids
+        for(int x = 0; x<15; x++){
+        	 for(int z = 0; x<15; z++){
+        		 ret[i++] = chunk.getBiomeId(x, z);
+        	 }
+        }
+        return ret;
     }
 
     private UniversalPacket[] sendInitalLoginPackets(LoginResponse lr, Player player){
