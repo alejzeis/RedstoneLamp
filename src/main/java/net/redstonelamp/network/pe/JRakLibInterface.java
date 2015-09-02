@@ -28,6 +28,7 @@ import net.redstonelamp.network.LowLevelNetworkException;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.netInterface.AdvancedNetworkInterface;
 import net.redstonelamp.ticker.CallableTask;
+import net.redstonelamp.ticker.Task;
 import net.redstonelamp.ui.ConsoleOut;
 import net.redstonelamp.ui.Log4j2ConsoleOut;
 
@@ -45,9 +46,9 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  */
 public class JRakLibInterface implements ServerInstance, AdvancedNetworkInterface{
     private final Server server;
-    private final JRakLibServer rakLibServer;
-    private final ServerHandler handler;
     private final PEProtocol protocol;
+    private JRakLibServer rakLibServer;
+    private ServerHandler handler;
     private net.redstonelamp.ui.Logger logger;
 
     private Deque<UniversalPacket> packetQueue = new ConcurrentLinkedDeque<>();
@@ -60,14 +61,18 @@ public class JRakLibInterface implements ServerInstance, AdvancedNetworkInterfac
         this.protocol = protocol;
 
         setupLogger();
+        startupInterface();
+
+        logger.info("Started JRakLib Interface on 0.0.0.0:19132");
+    }
+
+    private void startupInterface() {
         rakLibServer = new JRakLibServer(new JRakLibLogger(new net.redstonelamp.ui.Logger(new Log4j2ConsoleOut("JRakLib"))), 19132, "0.0.0.0");
         handler = new ServerHandler(rakLibServer, this);
 
         handler.sendOption("name", "MCPE;RedstoneLamp test server;" + PENetworkConst.MCPE_PROTOCOL + ";0.12.1;0;1");
 
         server.getTicker().addRepeatingTask(tickTask, 1);
-
-        logger.info("Started JRakLib Interface on 0.0.0.0:19132");
     }
 
     private void setupLogger(){
@@ -87,6 +92,11 @@ public class JRakLibInterface implements ServerInstance, AdvancedNetworkInterfac
         if(rakLibServer.getState() == Thread.State.TERMINATED){
             server.getTicker().cancelTask(tickTask);
             server.getLogger().error("[JRakLibInterface]: JRakLib Server crashed!");
+            server.getTicker().addDelayedTask(tick1 -> {
+                server.getLogger().info("Restarting JRakLib Server (crashed!)...");
+                startupInterface();
+                server.getLogger().info("JRakLib Server restarted.");
+            }, 20);
         }
     }
 
