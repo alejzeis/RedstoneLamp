@@ -24,7 +24,7 @@ import net.redstonelamp.item.Item;
  *
  * @author RedstoneLamp Team
  */
-public interface PlayerInventory extends Inventory{
+public interface PlayerInventory extends Inventory, SavableInventory{
     /**
      * Gets the Item in the Player's hand.
      * @return The Item in the hand.
