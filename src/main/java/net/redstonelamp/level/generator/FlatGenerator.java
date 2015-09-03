@@ -43,7 +43,7 @@ public class FlatGenerator implements Generator{
             for(int blockZ = 0; blockZ < 16; blockZ++){
                 //bb.put((byte) ItemValues.GRASS);
                 bb.put((byte) 0x02); //GRASS Block
-                for(int blockY = 0; blockY < 127; blockY++){
+                for(int blockY = 0; blockY < 128; blockY++){
                     //bb.put((byte) ItemValues.AIR);
                     bb.put((byte) 0x00); //AIR
                 }
@@ -83,6 +83,13 @@ public class FlatGenerator implements Generator{
             colors.put((byte) 0x4A);
         }
         c.setBiomeColors(colors.array());
+        
+        byte[] biomeIds = new byte[256];
+        for(int i = 0; i < 256; i++){
+            biomeIds[i] = (byte) 1;
+        }
+        c.setBiomeIds(biomeIds);
+        
         return c;
     }
 }
