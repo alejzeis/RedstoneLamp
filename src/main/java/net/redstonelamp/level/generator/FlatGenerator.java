@@ -84,12 +84,6 @@ public class FlatGenerator implements Generator{
         }
         c.setBiomeColors(colors.array());
         
-        byte[] biomeIds = new byte[256];
-        for(int i = 0; i < 256; i++){
-            biomeIds[i] = (byte) 1;
-        }
-        c.setBiomeIds(biomeIds);
-        
         return c;
     }
 }

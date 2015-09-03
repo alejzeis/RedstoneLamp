@@ -50,6 +50,7 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
     public PCProtocol(NetworkManager manager){
         super(manager);
         _interface = new MinaInterface(manager.getServer(), this);
+        sender = new PcChunkSender(this);
     }
 
     @Override
@@ -118,6 +119,10 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
             case PLAY_SERVERBOUND_CHAT_MESSAGE:
                 String message = packet.bb().getVarString();
                 getServer().broadcastMessage("<" + getServer().getPlayer(packet.getAddress()).getNametag() + "> " + message);
+                break;
+
+            default:
+                getServer().getLogger().debug("Unknown packet: "+packet.bb().singleLineHexDump());
                 break;
         }
         return requests.toArray(new Request[requests.size()]);
@@ -190,10 +195,11 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
             bb.putInt(cr.chunk.getPosition().getX());
             bb.putInt(cr.chunk.getPosition().getZ());
             bb.putBoolean(true);
-            bb.putShort((short) 0xFFFF);
+            bb.putInt(0xFFFFFF);
             byte[] data = orderChunkData(cr.chunk);
             bb.putVarInt(data.length);
             bb.put(data);
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, player.getAddress()));
         }else if(response instanceof ChatResponse){
             ChatResponse cr = (ChatResponse) response;
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
@@ -244,8 +250,8 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
         	}
         }
         //Set biome ids
-        for(int x = 0; x<15; x++){
-        	 for(int z = 0; x<15; z++){
+        for(int x = 0; x < 15; x++){
+        	 for(int z = 0; z < 15; z++){
         		 ret[i++] = chunk.getBiomeId(x, z);
         	 }
         }
@@ -293,7 +299,7 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
         bb.putBoolean(true); //TODO: onground
         packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, player.getAddress()));
 
-        //sender.registerChunkRequests(player, 49);
+        sender.registerChunkRequests(player, 49);
         getServer().getTicker().addDelayedTask(tick -> {
             player.handleRequest(new SpawnRequest());
             player.sendMessage("\u00A74Sorry, Chunk Data got changed in the snapshots.");

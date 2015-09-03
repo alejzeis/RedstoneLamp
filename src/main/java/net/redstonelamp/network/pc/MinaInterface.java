@@ -187,7 +187,7 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
                             BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
                             bb.putVarInt(PCNetworkConst.LOGIN_DISCONNECT);
                             System.out.println("Sent!");
-                            bb.putVarString(ChatSerializer.toChat("Outdated Client! I'm on: " + PCNetworkConst.MC_VERSION + " " + PCNetworkConst.MC_PROTOCOL));
+                            bb.putVarString(ChatSerializer.toChat("Outdated Client! I'm on: " + PCNetworkConst.MC_VERSION + " " + PCNetworkConst.MC_PROTOCOL + ". You are on: "+protocol));
                             sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, session.getRemoteAddress()), true);
                             block.add(session.getRemoteAddress().toString());
                             final String a = session.getRemoteAddress().toString();

@@ -31,13 +31,12 @@ public class Chunk{
     private byte[] blocklight;
     private byte[] heightmap;
     private byte[] biomeColors;
-    private byte[] biomeIds;
 
     public Chunk(ChunkPosition position){
         this.position = position;
     }
 
-    public Chunk(ChunkPosition position, byte[] blockIds, byte[] blockMeta, byte[] skylight, byte[] blocklight, byte[] heightmap, byte[] biomeColors, byte[] biomeIds){
+    public Chunk(ChunkPosition position, byte[] blockIds, byte[] blockMeta, byte[] skylight, byte[] blocklight, byte[] heightmap, byte[] biomeColors){
         this.position = position;
         this.blockIds = blockIds;
         this.blockMeta = blockMeta;
@@ -45,7 +44,6 @@ public class Chunk{
         this.blocklight = blocklight;
         this.heightmap = heightmap;
         this.biomeColors = biomeColors;
-        this.biomeIds = biomeIds;
     }
 
     public byte[] getBiomeColors(){
@@ -128,11 +126,8 @@ public class Chunk{
             return (byte) (m >> 4);
         }
     }
-    public byte getBiomeId(int x, int z){
-        return biomeIds[x<<4|z];
-    }
 
-	public void setBiomeIds(byte[] biomeIds) {
-		this.blockIds = biomeIds;
-	}
+    public byte getBiomeId(int x, int z){
+        return heightmap[(z << 4) + x];
+    }
 }

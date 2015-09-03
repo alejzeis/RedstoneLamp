@@ -42,7 +42,8 @@ public class CallableTask implements Task{
         try{
             method.invoke(instance, tick);
         }catch(IllegalAccessException | InvocationTargetException e){
-            e.printStackTrace();
+            System.err.println("Error while executing CallableTask!");
+            e.getCause().printStackTrace();
         }
     }
 }
