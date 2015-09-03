@@ -285,8 +285,8 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
         bb.putVarInt(PLAY_CLIENTBOUND_PLAYER_ABILITIES);
         int flags = (player.getGamemode() == 1 ? 8 : 0) | (player.getGamemode() == 1 ? 4 : 0) | (player.getGamemode() == 1 ? 1 : 0);
         bb.putByte((byte) flags);
-        bb.putFloat(1.0f);
-        bb.putFloat(1.0f);
+        bb.putFloat(0.1f);
+        bb.putFloat(0.1f);
         packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, player.getAddress()));
 
         bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);

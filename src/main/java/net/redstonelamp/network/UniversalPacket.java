@@ -85,4 +85,9 @@ public class UniversalPacket{
     public byte[] getBuffer(){
         return buffer;
     }
+
+    @Override
+    public String toString() {
+        return "UniversalPacket ("+address.toString()+"): "+bb.singleLineHexDump();
+    }
 }

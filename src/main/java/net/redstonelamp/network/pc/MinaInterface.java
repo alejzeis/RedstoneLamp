@@ -41,6 +41,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteOrder;
 import java.util.Deque;
 import java.util.List;
@@ -173,7 +174,16 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
             return;
         }
         UniversalPacket up = (UniversalPacket) message;
-        int id = up.bb().getVarInt();
+        int id;
+        if(up.getBuffer().length < 1) { //Ignore "empty" packets
+            return;
+        }
+        try {
+            id = up.bb().getVarInt();
+        } catch (BufferUnderflowException e) {
+            logger.warning(e.getClass().getName()+" while reading ID, Dump: "+up.bb().singleLineHexDump());
+            throw new LowLevelNetworkException("BufferUnderflowException while reading ID");
+        }
         if(!states.containsKey(session.getRemoteAddress().toString())){
             switch(id){
                 case PCNetworkConst.HANDSHAKE_HANDSHAKE:
