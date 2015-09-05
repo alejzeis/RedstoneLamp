@@ -27,6 +27,7 @@ import net.redstonelamp.metadata.MetadataDictionary;
  */
 public abstract class Entity{
     private int entityID;
+    private int health;
     private Position position;
     private String nametag;
     private MetadataDictionary metadata;
@@ -105,5 +106,19 @@ public abstract class Entity{
 
     public void setNametag(String nametag){
         this.nametag = nametag;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    /**
+     * Sets the health of this entity.
+     * <br>
+     * NOTE: This sets the health to an absolute value, it does not increase the health.
+     * @param health The amount of health points to set this entity to.
+     */
+    public void setHealth(int health) {
+        this.health = health;
     }
 }

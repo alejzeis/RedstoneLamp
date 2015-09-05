@@ -322,6 +322,16 @@ public class BinaryBuffer{
     }
 
     /**
+     * Get the remaining bytes in the buffer.
+     * <br>
+     * NOTE: This DOES increase the position in the buffer.
+     * @return The reamaining bytes in the buffer.
+     */
+    public byte[] remainingBytes() {
+        return get(remaining());
+    }
+
+    /**
      * Get a byte array of the buffer
      *
      * @return A byte array containing all the bytes in the buffer

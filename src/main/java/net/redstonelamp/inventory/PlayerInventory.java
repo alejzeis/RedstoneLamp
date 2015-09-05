@@ -20,7 +20,7 @@ import net.redstonelamp.Player;
 import net.redstonelamp.item.Item;
 
 /**
- * Created by jython234 on 8/31/2015.
+ * Represents an Inventory used by a Player that can be saved.
  *
  * @author RedstoneLamp Team
  */

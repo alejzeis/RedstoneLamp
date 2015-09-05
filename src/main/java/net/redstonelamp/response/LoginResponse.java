@@ -31,6 +31,7 @@ public class LoginResponse extends Response{
 
     public int generator = DEFAULT_generator;
     public int gamemode;
+    public int health;
     public long entityID = DEFAULT_entityID;
     public int spawnX;
     public int spawnY;
@@ -39,9 +40,10 @@ public class LoginResponse extends Response{
     public float y;
     public float z;
 
-    public LoginResponse(boolean loginAllowed, int gamemode, float x, float y, float z){
+    public LoginResponse(boolean loginAllowed, int gamemode, int health, float x, float y, float z){
         this.loginAllowed = loginAllowed;
         this.gamemode = gamemode;
+        this.health = health;
         this.x = x;
         this.y = y;
         this.z = z;

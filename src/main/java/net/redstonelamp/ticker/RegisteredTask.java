@@ -17,7 +17,8 @@
 package net.redstonelamp.ticker;
 
 /**
- * Created by jython234 on 8/20/2015.
+ * An internal class used by the ticker. This represents a RegisteredTask that will
+ * be ran from the ticker.
  *
  * @author RedstoneLamp Team
  */

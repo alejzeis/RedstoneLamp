@@ -27,9 +27,13 @@ import net.redstonelamp.plugin.PluginSystem;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.response.Response;
 import net.redstonelamp.ticker.RedstoneTicker;
+import net.redstonelamp.ticker.Task;
 import net.redstonelamp.ui.Log4j2ConsoleOut;
 import net.redstonelamp.ui.Logger;
+import org.apache.logging.log4j.core.async.AsyncLogger;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,11 +53,14 @@ public class Server implements Runnable{
     private final NetworkManager network;
     private final List<Player> players = new CopyOnWriteArrayList<>();
     private final PluginSystem pluginSystem;
+    private final PlayerDatabase playerDatabase;
 
     private String motd;
     private int maxPlayers;
     private LevelManager levelManager;
     private int nextEntityID = 1;
+
+    private boolean stopped = false;
 
     /**
      * Package-private constructor used by the RedstoneLamp run class
@@ -83,7 +90,31 @@ public class Server implements Runnable{
         levelManager = new LevelManager(this);
         levelManager.init();
 
+        logger.info("Loading player data...");
+        playerDatabase = new SimplePlayerDatabase(this); //TODO: Correct database
+        try {
+            playerDatabase.loadFrom(new File("players.dat"));
+            ticker.addDelayedRepeatingTask(tick -> {
+                try {
+                    playerDatabase.saveTo(new File("players.dat"));
+                } catch (IOException e) {
+                    logger.warning("Exception while auto-saving PlayerDatabase: "+e.getClass().getName()+": "+e.getMessage());
+                }
+            }, 40, serverYamlConfig.getInt("players.playerdata-save-interval") * 20);
+        } catch (IOException e) {
+            logger.fatal("FAILED TO LOAD PLAYER DATABASE! " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+        logger.debug("Load complete.");
+
         addShutdownTask(pluginSystem::disablePlugins);
+        addShutdownTask(() -> {
+            try {
+                playerDatabase.saveTo(new File("players.dat"));
+            } catch (IOException e) {
+                logger.fatal("FAILED TO SAVE PLAYER DATABASE! "+e.getClass().getName()+": "+e.getMessage());
+            }
+        });
 
         Runtime.getRuntime().addShutdownHook(new ShutdownTaskExecuter(this));
     }
@@ -155,6 +186,14 @@ public class Server implements Runnable{
         }
     }
 
+    public void savePlayerData() {
+        try {
+            playerDatabase.saveTo(new File("players.dat"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     //All Setter/Getter methods BELOW here.
 
     /**
@@ -214,6 +253,14 @@ public class Server implements Runnable{
         return yamlConfig;
     }
 
+    public boolean isStopped() {
+        return stopped;
+    }
+
+    public PlayerDatabase getPlayerDatabase() {
+        return playerDatabase;
+    }
+
     private static class ShutdownTaskExecuter extends Thread{
         private final Server server;
 
@@ -223,7 +270,12 @@ public class Server implements Runnable{
 
         @Override
         public void run(){
+            if(!server.isStopped()) {
+                server.getLogger().warning("Server is not shut-down, did the server crash!?");
+            }
+            server.getLogger().info("Running shutdown tasks!");
             server.shutdownTasks.forEach(Runnable::run);
+            server.getLogger().info("Shutdown tasks complete! Halting...");
         }
     }
 }

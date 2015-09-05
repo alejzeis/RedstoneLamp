@@ -60,6 +60,17 @@ public class Position{
         pitch = 0;
     }
 
+    public Position(double x, double y, double z, float yaw, float pitch, Level level) {
+        this.level = level;
+
+        this.x = x;
+        this.y = y;
+        this.z = z;
+
+        this.yaw = yaw;
+        this.pitch = pitch;
+    }
+
 
     public double getX(){
         return x;

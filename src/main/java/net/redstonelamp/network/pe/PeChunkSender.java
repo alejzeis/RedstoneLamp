@@ -99,7 +99,7 @@ public class PeChunkSender{
         int chunkNum = 0;
         try{
             while(chunkNum < 96){
-                System.out.println("ChunkSender chunk " + x + ", " + z);
+                //System.out.println("ChunkSender chunk " + x + ", " + z);
 
                 chunks.add(new ChunkPosition(x / 16, z / 16));
 

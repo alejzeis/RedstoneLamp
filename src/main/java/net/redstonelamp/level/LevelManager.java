@@ -40,7 +40,6 @@ public class LevelManager{
     private final Map<String, Constructor<? extends LevelProvider>> providers = new ConcurrentHashMap<>();
     private final Map<String, Constructor<? extends Generator>> generators = new ConcurrentHashMap<>();
     private final Map<String, Level> levels = new ConcurrentHashMap<>();
-    private Level mainLevel;
 
     public LevelManager(Server server){
         this.server = server;
@@ -67,8 +66,10 @@ public class LevelManager{
         params.levelDir = levelDir;
         String format = autoDetectFormat(levelDir, server.getConfig().getString("level-default-format"));
         String gen = autoDetectGenerator(levelDir, server.getConfig().getString("level-default-generator"));
-        mainLevel = new Level(this, format, gen, params); //TODO: correct provider
-        levels.put(mainLevel.getName(), mainLevel);
+        synchronized (levels) {
+            levels.clear();
+            levels.put(name, new Level(this, format, gen, params)); //TODO: correct provider
+        }
     }
 
     public String autoDetectGenerator(File levelDir, String defaultGenerator){
@@ -147,6 +148,13 @@ public class LevelManager{
     }
 
     public Level getMainLevel(){
-        return mainLevel;
+        return levels.get(server.getConfig().getString("level-name"));
+    }
+
+    public Level getLevelByName(String name) {
+        if(levels.containsKey(name)) {
+            return levels.get(name);
+        }
+        return null;
     }
 }

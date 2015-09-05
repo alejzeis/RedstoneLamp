@@ -6,6 +6,11 @@ settings:
     send-usage: true
     async-workers: 4
 
+players:
+  #The amount in seconds between saving player data.
+  #900 is the default, which is 15 minutes
+  playerdata-save-interval: 900
+
 enable-servers:
     mcpe: true
     mcpc: true

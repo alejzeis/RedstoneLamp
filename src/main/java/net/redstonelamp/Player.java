@@ -17,6 +17,7 @@
 package net.redstonelamp;
 
 import net.redstonelamp.entity.PlayerEntity;
+import net.redstonelamp.inventory.NBTPlayerInventory;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.request.*;
 import net.redstonelamp.response.*;
@@ -76,14 +77,26 @@ public class Player extends PlayerEntity{
 
         identifier = address.toString();
         server = protocol.getManager().getServer();
-
-        loadPlayerData();
     }
 
     private void loadPlayerData(){
-        //TODO: Load real data
-        setPosition(server.getLevelManager().getMainLevel().getSpawnPosition());
-        gamemode = 1;
+        PlayerDatabase.PlayerData data = server.getPlayerDatabase().getData(uuid);
+        if(data == null) {
+            server.getLogger().info("Couldn't find PlayerData for player "+getNametag()+" ("+uuid+")");
+            data = new PlayerDatabase.PlayerData();
+            data.setUuid(uuid);
+            data.setPosition(server.getLevelManager().getMainLevel().getSpawnPosition());
+            data.setHealth(20);
+            data.setGamemode(server.getConfig().getInt("gamemode"));
+            data.setInventory(new NBTPlayerInventory());
+            server.getPlayerDatabase().updateData(data);
+        }
+        if(!data.getUuid().toString().equals(uuid.toString()))
+            server.getLogger().warning("[Loading data] UUID does not match: "+data.getUuid()+", "+uuid);
+        setPosition(data.getPosition());
+        setHealth(data.getHealth());
+        gamemode = data.getGamemode();
+
     }
 
     @Override
@@ -126,7 +139,9 @@ public class Player extends PlayerEntity{
 
             setNametag(username);
 
-            LoginResponse response = new LoginResponse(true, gamemode, (float) getPosition().getX(), (float) getPosition().getY(), (float) getPosition().getZ());
+            loadPlayerData();
+
+            LoginResponse response = new LoginResponse(true, gamemode, getHealth(), (float) getPosition().getX(), (float) getPosition().getY(), (float) getPosition().getZ());
             if(server.getPlayers().size() > server.getMaxPlayers()){
                 response.loginAllowed = false;
                 response.loginNotAllowedReason = "redstonelamp.loginFailed.serverFull";
@@ -186,6 +201,15 @@ public class Player extends PlayerEntity{
         server.getLogger().info(username + "[" + identifier + "] logged out with reason: " + reason);
         connected = false;
         protocol.close(this);
+
+        PlayerDatabase.PlayerData data = new PlayerDatabase.PlayerData();
+        data.setUuid(uuid);
+        data.setPosition(getPosition());
+        data.setHealth(getHealth());
+        data.setGamemode(getGamemode());
+        data.setInventory(new NBTPlayerInventory());
+        server.getPlayerDatabase().updateData(data);
+        server.savePlayerData();
 
         if(!leaveMessage.isEmpty()){
             server.broadcastMessage(username + leaveMessage);

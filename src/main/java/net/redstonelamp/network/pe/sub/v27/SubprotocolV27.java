@@ -156,7 +156,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
 
                 bb = BinaryBuffer.newInstance(5, ByteOrder.BIG_ENDIAN);
                 bb.putByte(SET_HEALTH_PACKET);
-                bb.putInt(20); //TODO: Correct health
+                bb.putInt(lr.health);
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
 
                 bb = BinaryBuffer.newInstance(5, ByteOrder.BIG_ENDIAN);

@@ -41,6 +41,12 @@ public class NBTPlayerInventory implements PlayerInventory{
     private Player player;
     private int maxStackSize = MAX_STACK;
 
+    public static PlayerInventory createFromBytes(byte[] bytes) {
+        NBTPlayerInventory inv = new NBTPlayerInventory();
+        inv.loadFromBytes(bytes);
+        return inv;
+    }
+
     @Override
     public Item getItemInHand() {
         return inHand;
@@ -172,5 +178,9 @@ public class NBTPlayerInventory implements PlayerInventory{
             tags.add(new CompoundTag("stack-"+i, stackTags));
         }
         return tags;
+    }
+
+    protected void setPlayer(Player player) {
+        this.player = player;
     }
 }
