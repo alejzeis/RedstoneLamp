@@ -115,6 +115,27 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                 byte selectedSlot = up.bb().getByte();
                 requests.add(new PlayerEquipmentRequest(item, meta));
                 break;
+            case ANIMATE_PACKET:
+                byte actionId = up.bb().getByte();
+                up.bb().skip(8); //Skip entity ID
+                requests.add(new AnimateRequest(actionId));
+                break;
+            case USE_ITEM_PACKET:
+                int ax = up.bb().getInt();
+                int ay = up.bb().getInt();
+                int az = up.bb().getInt();
+                byte face = up.bb().getByte();
+                short item2 = up.bb().getShort();
+                short meta2 = up.bb().getShort();
+                up.bb().skip(8); //Skip entity ID
+                float fx = up.bb().getFloat();
+                float fy = up.bb().getFloat();
+                float fz = up.bb().getFloat();
+                float px = up.bb().getFloat();
+                float py = up.bb().getFloat();
+                float pz = up.bb().getFloat();
+                System.out.println(new UseItemRequest(ax, ay, az, face, item2, meta2, fx, fy, fz, px, py, pz).toString());
+                break;
             default:
                 System.out.println(String.format("Unknown: 0x%02x", id));
         }
@@ -356,6 +377,13 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             bb.putShort(er.getMeta());
             bb.putByte((byte) 0); //slot
             bb.putByte((byte) 0); //selectedSlot
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof AnimateResponse) {
+            AnimateResponse ar = (AnimateResponse) response;
+            bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+            bb.putByte(ANIMATE_PACKET);
+            bb.putByte(ar.getActionID());
+            bb.putLong(ar.getEntityID());
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }
 

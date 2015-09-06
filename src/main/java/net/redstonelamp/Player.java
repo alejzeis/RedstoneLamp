@@ -188,6 +188,10 @@ public class Player extends PlayerEntity{
             PlayerEquipmentRequest er = (PlayerEquipmentRequest) request;
             PlayerEquipmentResponse response = new PlayerEquipmentResponse(this.getEntityID(), er.getItem(), er.getMeta());
             server.getPlayers().stream().filter(player -> player != this).forEach(player -> player.sendResponse(response));
+        } else if (request instanceof AnimateRequest) {
+            AnimateRequest ar = (AnimateRequest) request;
+            AnimateResponse response = new AnimateResponse(this.getEntityID(), ar.getActionID());
+            server.getPlayers().stream().filter(player -> player != this).forEach(player -> player.sendResponse(response));
         }
     }
 
