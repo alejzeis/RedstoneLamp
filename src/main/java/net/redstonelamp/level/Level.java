@@ -16,18 +16,26 @@
  */
 package net.redstonelamp.level;
 
+import net.redstonelamp.block.Block;
 import net.redstonelamp.entity.EntityManager;
 import net.redstonelamp.level.generator.Generator;
+import net.redstonelamp.level.position.BlockPosition;
 import net.redstonelamp.level.position.Position;
 import net.redstonelamp.level.provider.LevelLoadException;
 import net.redstonelamp.level.provider.LevelProvider;
+import net.redstonelamp.math.Vector3;
 import net.redstonelamp.metadata.EntityMetadata;
+import net.redstonelamp.response.BlockPlaceResponse;
+import net.redstonelamp.response.RemoveBlockResponse;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 /**
  * Represents a Level in a World
@@ -38,6 +46,8 @@ public class Level{
     private final LevelManager manager;
     private final EntityManager entityManager;
     private List<Chunk> loadedChunks = new CopyOnWriteArrayList<>();
+    private Queue<BlockPlaceResponse> blockPlaceQueue = new ArrayBlockingQueue<>(16); //Able to process 16 block place requests per tick
+    private Queue<RemoveBlockResponse> removeBlockQueue = new ArrayBlockingQueue<>(16); //Able to process 16 block remove requests per tick
     private LevelProvider provider;
 
     private String name;
@@ -77,6 +87,21 @@ public class Level{
         name = provider.getName();
     }
 
+    public void tick() {
+        sendBlockQueues();
+    }
+
+    private void sendBlockQueues() {
+        if(!blockPlaceQueue.isEmpty()) {
+            manager.getServer().broadcastResponses(blockPlaceQueue.toArray(new BlockPlaceResponse[blockPlaceQueue.size()]));
+            blockPlaceQueue.clear();
+        }
+        if(!removeBlockQueue.isEmpty()) {
+            manager.getServer().broadcastResponses(removeBlockQueue.toArray(new RemoveBlockResponse[removeBlockQueue.size()]));
+            removeBlockQueue.clear();
+        }
+    }
+
     public Chunk getChunkAt(ChunkPosition position){
         for(Chunk c : loadedChunks){
             if(c.getPosition().equals(position)){
@@ -99,7 +124,54 @@ public class Level{
     }
 
     public void unloadChunk(ChunkPosition position){
-        loadedChunks.stream().filter(c -> c.getPosition().equals(position)).forEach(loadedChunks::remove);
+        loadedChunks.stream().filter(c -> c.getPosition().equals(position)).forEach(chunk -> {
+            provider.putChunk(position, chunk);
+            loadedChunks.remove(chunk);
+        });
+    }
+
+    public void save() {
+        for(Chunk c : loadedChunks) {
+            provider.putChunk(c.getPosition(), c);
+        }
+    }
+
+    public boolean isChunkLoaded(ChunkPosition position) {
+        for(Chunk c : loadedChunks) {
+            if(c.getPosition().equals(position)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setBlock(BlockPosition position, Block block) {
+        Chunk c = getChunkAt(new ChunkPosition(position.getX() / 16, position.getZ() / 16));
+        c.setBlockId((byte) block.getId(), position.getX() & 0xf, position.getY() & 0x7f, position.getZ() & 0xf);
+        c.setBlockMeta((byte) block.getMeta(), position.getX() & 0xf, position.getY() & 0x7f, position.getZ() & 0xf);
+        if(!blockPlaceQueue.offer(new BlockPlaceResponse(block, position))) {
+            //Queue is full, send immediately then
+            sendBlockQueues();
+            blockPlaceQueue.add(new BlockPlaceResponse(block, position));
+        }
+    }
+
+    public void removeBlock(BlockPosition position) {
+        Chunk c = getChunkAt(new ChunkPosition(position.getX() / 16, position.getZ() / 16));
+        c.setBlockId((byte) 0, position.getX() & 0xf, position.getY() & 0x7f, position.getZ() & 0xf); //Set block to AIR
+        c.setBlockMeta((byte) 0, position.getX() & 0xf, position.getY() & 0x7f, position.getZ() & 0xf);
+        if(!removeBlockQueue.offer(new RemoveBlockResponse(position))) {
+            //Queue is full, send immediately then
+            sendBlockQueues();
+            removeBlockQueue.add(new RemoveBlockResponse(position));
+        }
+    }
+
+    public Block getBlock(BlockPosition position) {
+        Chunk c = getChunkAt(new ChunkPosition(position.getX() / 16, position.getZ() / 16));
+        byte id = c.getBlockId(position.getX() & 0xf, position.getY() & 0x7f, position.getZ() & 0xf);
+        byte meta = c.getBlockMeta(position.getX() & 0xf, position.getY() & 0x7f, position.getZ() & 0xf);
+        return new Block(id, meta, 1);
     }
 
     public LevelManager getManager(){

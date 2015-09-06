@@ -23,10 +23,7 @@ import net.redstonelamp.network.pe.sub.Subprotocol;
 import net.redstonelamp.nio.BinaryBuffer;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.request.Request;
-import net.redstonelamp.response.ChunkResponse;
-import net.redstonelamp.response.LoginResponse;
-import net.redstonelamp.response.Response;
-import net.redstonelamp.response.SpawnResponse;
+import net.redstonelamp.response.*;
 import net.redstonelamp.utils.CompressionUtils;
 
 import java.net.SocketAddress;
@@ -213,6 +210,19 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb.putByte(PLAY_STATUS_PACKET);
             bb.putInt(3); //PLAY_SPAWN
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof AnimateResponse) {
+            AnimateResponse ar = (AnimateResponse) response;
+            bb = BinaryBuffer.newInstance(10, ByteOrder.LITTLE_ENDIAN);
+            bb.putByte(ANIMATE_PACKET);
+            switch (ar.actionType) {
+                case SWING_ARM:
+                    bb.putByte((byte) 1);
+                    break;
+                case WAKE_UP:
+                    bb.putByte((byte) 3);
+                    break;
+            }
+            bb.putLong(player.getEntityID());
         }
 
         //Compress packets
@@ -230,6 +240,11 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             packets.add(new UniversalPacket(batch.toArray(), ByteOrder.BIG_ENDIAN, address));
         });
         return packets.toArray(new UniversalPacket[packets.size()]);
+    }
+
+    @Override
+    public UniversalPacket[] translateQueuedResponse(Response[] responses, Player player) {
+        return null;
     }
 
 

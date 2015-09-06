@@ -107,6 +107,20 @@ public class LevelDBProvider implements LevelProvider{
         return c;
     }
 
+    @Override
+    public void putChunk(ChunkPosition position, Chunk c) {
+        byte[] key = Key.TYPE_TERRAIN_DATA.assembleKey(position);
+        ByteBuffer bb = ByteBuffer.allocate(83200);
+        bb.put(c.getBlockIds());
+        bb.put(c.getBlockMeta());
+        bb.put(c.getSkylight());
+        bb.put(c.getBlocklight());
+        bb.put(c.getHeightmap());
+        bb.put(c.getBiomeColors());
+        byte[] data = bb.array();
+        database.put(key, data);
+    }
+
     private void genNewLevelData(File file) throws IOException{
         IntTag x = new IntTag("SpawnX", 128);
         IntTag y = new IntTag("SpawnY", 3); //TODO: Correct positions

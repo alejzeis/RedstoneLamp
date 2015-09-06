@@ -5,6 +5,9 @@ settings:
     deprication-warnings: true
     send-usage: true
     async-workers: 4
+    #The amount in seconds between saving each level/world.
+    #900 is the default, which is 15 minutes
+    world-save-interval: 900
 
 players:
   #The amount in seconds between saving player data.

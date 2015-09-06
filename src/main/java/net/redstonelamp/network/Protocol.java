@@ -23,6 +23,8 @@ import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.request.Request;
 import net.redstonelamp.response.Response;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -112,6 +114,43 @@ public abstract class Protocol{
     }
 
     /**
+     * Sends a queue of responses to a player, combining them into one or more packets if possible.
+     * @param responses The queue of responses.
+     * @param player The player they are to be sent to.
+     */
+    public void sendQueuedResponses(Response[] responses, Player player) {
+        List<Response> typeResponses = new ArrayList<>();
+        List<Response> rest = new ArrayList<>();
+        typeResponses.add(responses[0]);
+        for(Response r : responses) {
+            if(r.getClass().getName().equals(typeResponses.get(0).getClass().getName()) && r != typeResponses.get(0)) {
+                typeResponses.add(r);
+            } else if(r != typeResponses.get(0)){
+                rest.add(r);
+            }
+        }
+        UniversalPacket[] packets = _sendQueuedResponses(typeResponses.toArray(new Response[typeResponses.size()]), player);
+        if(packets == null) { //Check if protocol supports
+            //protocol doesn't support
+            for(Response r : responses) {
+                sendResponse(r, player);
+            }
+            return;
+        }
+        for(UniversalPacket packet : packets) {
+            try{
+                _interface.sendPacket(packet, false);
+            }catch(LowLevelNetworkException e){
+                manager.getServer().getLogger().error(e.getClass().getName() + " while sending queued responses of type " + responses[0].getClass().getName() + ": " + e.getMessage());
+                manager.getServer().getLogger().trace(e);
+            }
+        }
+        if(!rest.isEmpty()) {
+            sendQueuedResponses(rest.toArray(new Response[rest.size()]), player);
+        }
+    }
+
+    /**
      * Send a <code>Response</code> by translating it into a native packet.
      * The packet will be sent IMMEDIATLY and should skip any queues the underlying NetworkInterface
      * has.
@@ -150,6 +189,17 @@ public abstract class Protocol{
      * @return
      */
     protected abstract UniversalPacket[] _sendResponse(Response response, Player player);
+
+    /**
+     * This method translates a queue of <code>Responses</code> to a UniversalPacket array. Some protocols
+     * have packets than can have multiple "records", combining multiple Responses into one or more packets. If your
+     * protocol does not support this, then return "null" and the superclass will call _sendResponse one by one. The Response array
+     * will always have Responses of all the same type.
+     * @param responses The Queued responses to be sent.
+     * @param player The Player these responses will be sent to
+     * @return A UniversalPacket array of the translated queued responses, or "null" if the protocol does not support it.
+     */
+    protected abstract UniversalPacket[] _sendQueuedResponses(Response[] responses, Player player);
 
     /**
      * This method is called whenever a Player is closed. You can override this method if you have to

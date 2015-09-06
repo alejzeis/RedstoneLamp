@@ -18,6 +18,7 @@ package net.redstonelamp;
 
 import net.redstonelamp.config.ServerConfig;
 import net.redstonelamp.config.YamlConfig;
+import net.redstonelamp.level.Level;
 import net.redstonelamp.level.LevelManager;
 import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
@@ -38,6 +39,7 @@ import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 /**
  * The base RedstoneLamp server, which handles the ticker.
@@ -89,6 +91,13 @@ public class Server implements Runnable{
 
         levelManager = new LevelManager(this);
         levelManager.init();
+
+        ticker.addDelayedRepeatingTask(tick -> levelManager.getLevels().stream().forEach(Level::save), 40, serverYamlConfig.getInt("settings.world-save-interval") * 20);
+        addShutdownTask(() -> {
+            logger.info("Saving levels...");
+            levelManager.getLevels().stream().forEach(Level::save);
+            logger.info("All levels saved.");
+        });
 
         logger.info("Loading player data...");
         playerDatabase = new SimplePlayerDatabase(this); //TODO: Correct database
@@ -178,6 +187,26 @@ public class Server implements Runnable{
         for(Player player : players){
             player.sendResponse(r);
         }
+    }
+
+    /**
+     * Broadcasts a response to a <code>Stream</code> of players.
+     * @param players A <code>Stream</code> of players for which the response will be
+     *                broadcasted to.
+     * @param r The Response to be broadcasted.
+     */
+    public void broadcastResponse(Stream<Player> players, Response r) {
+        players.forEach(player -> player.sendResponse(r));
+    }
+
+    /**
+     * Broadcasts an array of responses to all players on the server. This method
+     * attempts to combine the responses into one or more packets, depending on each
+     * player's protocol.
+     * @param responses The responses to be broadcasted.
+     */
+    public void broadcastResponses(Response[] responses) {
+        players.forEach(player -> player.getProtocol().sendQueuedResponses(responses, player));
     }
 
     public void broadcastMessage(String message){

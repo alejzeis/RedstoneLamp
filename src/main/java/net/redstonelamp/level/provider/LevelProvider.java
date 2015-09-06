@@ -35,6 +35,13 @@ public interface LevelProvider{
     Chunk getChunk(ChunkPosition position);
 
     /**
+     * Puts a chunk into the database.
+     * @param position The position of the chunk to be put.
+     * @param chunk The chunk to be put.
+     */
+    void putChunk(ChunkPosition position, Chunk chunk);
+
+    /**
      * Called whenever the parent Level class is shutting down. Save the world here.
      */
     void shutdown();

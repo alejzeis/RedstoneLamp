@@ -21,12 +21,15 @@ import net.redstonelamp.level.generator.FlatGenerator;
 import net.redstonelamp.level.generator.Generator;
 import net.redstonelamp.level.provider.LevelProvider;
 import net.redstonelamp.level.provider.leveldb.LevelDBProvider;
+import net.redstonelamp.ticker.CallableTask;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -50,6 +53,7 @@ public class LevelManager{
      * Used in Server to initialize the LevelManager class.
      */
     public void init(){
+        server.getTicker().addRepeatingTask(new CallableTask("tick", this), 1);
         try{
             registerProvider("leveldb", LevelDBProvider.class);
             registerGenerator("flat", FlatGenerator.class);
@@ -70,6 +74,10 @@ public class LevelManager{
             levels.clear();
             levels.put(name, new Level(this, format, gen, params)); //TODO: correct provider
         }
+    }
+
+    public void tick(long tick) {
+        levels.values().stream().forEach(Level::tick);
     }
 
     public String autoDetectGenerator(File levelDir, String defaultGenerator){
@@ -156,5 +164,9 @@ public class LevelManager{
             return levels.get(name);
         }
         return null;
+    }
+
+    public Collection<Level> getLevels() {
+        return levels.values();
     }
 }

@@ -70,6 +70,20 @@ public class Chunk{
         return blockIds;
     }
 
+    public void setBlockId(byte id, int x, int y, int z) {
+        blockIds[(x << 11) | (z << 7) | y] = id;
+    }
+
+    public void setBlockMeta(byte meta, int x, int y, int z) {
+        int location = (x << 10) | (z << 6) | (y >> 1);
+        byte oldMeta = blockMeta[location];
+        if((y & 1) == 0){
+            blockMeta[location] = (byte) ((oldMeta & 0xf0) | (meta & 0x0f));
+        }else{
+            blockMeta[location] = (byte) (((meta & 0x0f) << 4) | (oldMeta & 0x0f));
+        }
+    }
+
     public void setBlockIds(byte[] blockIds){
         this.blockIds = blockIds;
     }
@@ -102,7 +116,7 @@ public class Chunk{
         return blockIds[x << 11 | z << 7 | y];
     }
 
-    public byte getBlockData(int x, int y, int z){
+    public byte getBlockMeta(int x, int y, int z){
         byte m = blockMeta[x << 10 | z << 6 | y >> 1];
         if((y & 1) == 0){
             return (byte) (m & 0x0F);

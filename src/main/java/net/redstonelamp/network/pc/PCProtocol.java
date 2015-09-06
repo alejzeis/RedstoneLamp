@@ -148,6 +148,11 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
         return packets.toArray(new UniversalPacket[packets.size()]);
     }
 
+    @Override
+    protected UniversalPacket[] _sendQueuedResponses(Response[] responses, Player player) {
+        return null;
+    }
+
     private UniversalPacket[] translateLoginResponse(Response response, Player player){
         List<UniversalPacket> packets = new ArrayList<>();
         if(response instanceof LoginResponse){
@@ -224,7 +229,7 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
         		for(int z = 0; z<16; z++){
         			for(int y = 0; y<16; y++){
         				ret[i++] = chunk.getBlockId(x, y+section*16, z);
-        				ret[i++] = chunk.getBlockData(x, y+section*16, z);
+        				ret[i++] = chunk.getBlockMeta(x, y + section * 16, z);
         			}
         		}
         	}

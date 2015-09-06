@@ -31,9 +31,7 @@ import net.redstonelamp.response.Response;
 
 import java.net.SocketAddress;
 import java.nio.ByteOrder;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -116,6 +114,23 @@ public class PEProtocol extends Protocol{
     protected UniversalPacket[] _sendResponse(Response response, Player player){
         if(addressToSubprotocols.containsKey(player.getAddress().toString())){
             return addressToSubprotocols.get(player.getAddress().toString()).translateResponse(response, player);
+        }else{
+            throw new IllegalArgumentException("Player " + player.getAddress().toString() + " not found in subprotocol map!");
+        }
+    }
+
+    @Override
+    protected UniversalPacket[] _sendQueuedResponses(Response[] responses, Player player) {
+        if(addressToSubprotocols.containsKey(player.getAddress().toString())){
+            UniversalPacket[] packets = addressToSubprotocols.get(player.getAddress().toString()).translateQueuedResponse(responses, player);
+            if(packets == null) {
+                List<UniversalPacket> combinedPackets = new ArrayList<>();
+                for(Response r : responses) {
+                    combinedPackets.addAll(Arrays.asList(_sendResponse(r, player)));
+                }
+                return combinedPackets.toArray(new UniversalPacket[combinedPackets.size()]);
+            }
+            return packets;
         }else{
             throw new IllegalArgumentException("Player " + player.getAddress().toString() + " not found in subprotocol map!");
         }

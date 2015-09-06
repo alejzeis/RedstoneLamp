@@ -55,6 +55,17 @@ public abstract class Subprotocol{
     public abstract UniversalPacket[] translateResponse(Response response, Player player);
 
     /**
+     * Some Responses are queued in order to combine them into one or more packets. Some protocols support this, some do not.
+     * If the subprotocol does not support this, return "null" and the parent PEProtocol will handle it for you. The responses
+     * will all be of the same type.
+     * @param responses The Responses to be combined into one or more packets.
+     * @param player The Player these responses are sent to
+     * @return A UniversalPacket array containing all the packets the queued responses need, or "null" if the
+     *         subprotocol does not support it.
+     */
+    public abstract UniversalPacket[] translateQueuedResponse(Response[] responses, Player player);
+
+    /**
      * Get the version of MCPE that this subprotocol implements as a String
      *
      * @return The version of MCPE that this subprotocol implements

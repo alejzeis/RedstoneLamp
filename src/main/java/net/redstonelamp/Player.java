@@ -16,8 +16,14 @@
  */
 package net.redstonelamp;
 
+import net.redstonelamp.block.Block;
 import net.redstonelamp.entity.PlayerEntity;
 import net.redstonelamp.inventory.NBTPlayerInventory;
+import net.redstonelamp.inventory.PlayerInventory;
+import net.redstonelamp.item.Item;
+import net.redstonelamp.level.ChunkPosition;
+import net.redstonelamp.level.position.BlockPosition;
+import net.redstonelamp.level.position.Position;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.request.*;
 import net.redstonelamp.response.*;
@@ -48,6 +54,7 @@ public class Player extends PlayerEntity{
     private boolean connected = true;
     private boolean spawned = false;
     private int gamemode;
+    private PlayerInventory inventory;
 
     /**
      * Construct a new Player instance belonging to the specified <code>Protocol</code> with the <code>identifier</code>
@@ -89,7 +96,9 @@ public class Player extends PlayerEntity{
             data.setPosition(server.getLevelManager().getMainLevel().getSpawnPosition());
             data.setHealth(20);
             data.setGamemode(server.getConfig().getInt("gamemode"));
-            data.setInventory(new NBTPlayerInventory());
+            PlayerInventory inv = new NBTPlayerInventory();
+            inv.setItemInHand(new Item(0, (short) 0, 1));
+            data.setInventory(inv);
             server.getPlayerDatabase().updateData(data);
         }
         if(!data.getUuid().toString().equals(uuid.toString()))
@@ -97,7 +106,7 @@ public class Player extends PlayerEntity{
         setPosition(data.getPosition());
         setHealth(data.getHealth());
         gamemode = data.getGamemode();
-
+        inventory = data.getInventory();
     }
 
     @Override
@@ -183,16 +192,30 @@ public class Player extends PlayerEntity{
             if(gamemode == 1){
                 PlayerMoveResponse response = new PlayerMoveResponse(getEntityID(), pmr.position, pmr.onGround);
                 setPosition(pmr.position);
-                server.getPlayers().stream().filter(player -> player != this).forEach(player -> player.sendResponse(response));
+                server.broadcastResponse(server.getPlayers().stream().filter(player -> player != this), response);
             } //TODO: Check movement if in survival
         } else if (request instanceof PlayerEquipmentRequest) {
             PlayerEquipmentRequest er = (PlayerEquipmentRequest) request;
             PlayerEquipmentResponse response = new PlayerEquipmentResponse(er.item);
-            server.getPlayers().stream().filter(player -> player != this).forEach(player -> player.sendResponse(response));
+            server.broadcastResponse(server.getPlayers().stream().filter(player -> player != this), response);
         } else if (request instanceof AnimateRequest) {
             AnimateRequest ar = (AnimateRequest) request;
             AnimateResponse response = new AnimateResponse(ar.actionType);
-            server.getPlayers().stream().filter(player -> player != this).forEach(player -> player.sendResponse(response));
+            server.broadcastResponse(server.getPlayers().stream().filter(player -> player != this), response);
+        } else if(request instanceof BlockPlaceRequest) {
+            BlockPlaceRequest bpr = (BlockPlaceRequest) request;
+            System.out.println("Request to place at: "+bpr.blockPosition);
+            BlockPlaceResponse response = new BlockPlaceResponse(bpr.block, BlockPosition.fromVector3(bpr.blockPosition, getPosition().getLevel()));
+            if (!getPosition().getLevel().isChunkLoaded(new ChunkPosition(bpr.blockPosition.getX() / 16, bpr.blockPosition.getZ() / 16))) {
+                server.getLogger().warning(username + " attempted to place block in an unloaded chunk");
+                sendMessage("Attempted to place block in unloaded chunk, hacking?");
+                response.block = new Block(0, (short) 0, 1); //AIR
+                response.placeAllowed = false;
+                sendResponse(response);
+                return;
+            }
+            //TODO: Check last place time as to prevent speed placing
+            getPosition().getLevel().setBlock(BlockPosition.fromVector3(bpr.blockPosition, getPosition().getLevel()), bpr.block);
         }
     }
 
