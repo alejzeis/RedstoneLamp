@@ -384,9 +384,9 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             PlayerEquipmentResponse er = (PlayerEquipmentResponse) response;
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
             bb.putByte(PLAYER_EQUIPMENT_PACKET);
-            bb.putLong(er.getEntityID());
-            bb.putShort(er.getItem());
-            bb.putShort(er.getMeta());
+            bb.putLong(player.getEntityID());
+            bb.putShort((short) er.item.getId());
+            bb.putShort(er.item.getMeta());
             bb.putByte((byte) 0); //slot
             bb.putByte((byte) 0); //selectedSlot
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
@@ -394,8 +394,15 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             AnimateResponse ar = (AnimateResponse) response;
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
             bb.putByte(ANIMATE_PACKET);
-            bb.putByte(ar.getActionID());
-            bb.putLong(ar.getEntityID());
+            switch (ar.actionType) {
+                case SWING_ARM:
+                    bb.putByte((byte) 1);
+                    break;
+                case WAKE_UP:
+                    bb.putByte((byte) 3);
+                    break;
+            }
+            bb.putLong(player.getEntityID());
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }
 
