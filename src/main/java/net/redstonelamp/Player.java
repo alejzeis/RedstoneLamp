@@ -184,6 +184,14 @@ public class Player extends PlayerEntity{
                 setPosition(pmr.position);
                 server.getPlayers().stream().filter(player -> player != this).forEach(player -> player.sendResponse(response));
             } //TODO: Check movement if in survival
+        } else if (request instanceof PlayerEquipmentRequest) {
+            PlayerEquipmentRequest er = (PlayerEquipmentRequest) request;
+            PlayerEquipmentResponse response = new PlayerEquipmentResponse(this.getEntityID(), er.getItem(), er.getMeta());
+            server.getPlayers().stream().filter(player -> player != this).forEach(player -> player.sendResponse(response));
+        } else if (request instanceof AnimateRequest) {
+            AnimateRequest ar = (AnimateRequest) request;
+            AnimateResponse response = new AnimateResponse(this.getEntityID(), ar.getActionID());
+            server.getPlayers().stream().filter(player -> player != this).forEach(player -> player.sendResponse(response));
         }
     }
 

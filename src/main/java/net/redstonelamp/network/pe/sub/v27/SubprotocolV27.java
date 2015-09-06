@@ -22,10 +22,7 @@ import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
 import net.redstonelamp.nio.BinaryBuffer;
-import net.redstonelamp.request.ChatRequest;
-import net.redstonelamp.request.LoginRequest;
-import net.redstonelamp.request.PlayerMoveRequest;
-import net.redstonelamp.request.Request;
+import net.redstonelamp.request.*;
 import net.redstonelamp.response.*;
 import net.redstonelamp.utils.CompressionUtils;
 
@@ -110,6 +107,37 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                 PlayerMoveRequest pmr = new PlayerMoveRequest(position, onGround);
                 requests.add(pmr);
                 break;
+            case PLAYER_EQUIPMENT_PACKET:
+                up.bb().skip(8); //Skip entity ID
+                short item = up.bb().getShort();
+                short meta = up.bb().getShort();
+                byte slot = up.bb().getByte();
+                byte selectedSlot = up.bb().getByte();
+                requests.add(new PlayerEquipmentRequest(item, meta));
+                break;
+            case ANIMATE_PACKET:
+                byte actionId = up.bb().getByte();
+                up.bb().skip(8); //Skip entity ID
+                requests.add(new AnimateRequest(actionId));
+                break;
+            case USE_ITEM_PACKET:
+                int ax = up.bb().getInt();
+                int ay = up.bb().getInt();
+                int az = up.bb().getInt();
+                byte face = up.bb().getByte();
+                short item2 = up.bb().getShort();
+                short meta2 = up.bb().getShort();
+                up.bb().skip(8); //Skip entity ID
+                float fx = up.bb().getFloat();
+                float fy = up.bb().getFloat();
+                float fz = up.bb().getFloat();
+                float px = up.bb().getFloat();
+                float py = up.bb().getFloat();
+                float pz = up.bb().getFloat();
+                System.out.println(new UseItemRequest(ax, ay, az, face, item2, meta2, fx, fy, fz, px, py, pz).toString());
+                break;
+            default:
+                System.out.println(String.format("Unknown: 0x%02x", id));
         }
         return requests.toArray(new Request[requests.size()]);
     }
@@ -305,8 +333,8 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             bb.putFloat(p.getPosition().getYaw());
             bb.putFloat(p.getPosition().getYaw()); //TODO: head yaw
             bb.putFloat(p.getPosition().getPitch());
-            bb.putShort((short) 0);
-            bb.putShort((short) 0);
+            bb.putShort((short) 1); // item
+            bb.putShort((short) 0); // meta item
             bb.putByte((byte) (p.isSlim() ? 1 : 0));
             bb.putShort((short) p.getSkin().length);
             bb.put(p.getSkin());
@@ -339,6 +367,23 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             bb.putFloat(pmr.pos.getPitch());
             bb.putByte((byte) 0); //MODE_NORMAL
             bb.putByte((byte) (pmr.onGround ? 1 : 0));
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        }else if(response instanceof PlayerEquipmentResponse) {
+            PlayerEquipmentResponse er = (PlayerEquipmentResponse) response;
+            bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+            bb.putByte(PLAYER_EQUIPMENT_PACKET);
+            bb.putLong(er.getEntityID());
+            bb.putShort(er.getItem());
+            bb.putShort(er.getMeta());
+            bb.putByte((byte) 0); //slot
+            bb.putByte((byte) 0); //selectedSlot
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof AnimateResponse) {
+            AnimateResponse ar = (AnimateResponse) response;
+            bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+            bb.putByte(ANIMATE_PACKET);
+            bb.putByte(ar.getActionID());
+            bb.putLong(ar.getEntityID());
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }
 
