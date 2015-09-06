@@ -1,21 +1,39 @@
 package net.redstonelamp.request;
 
 /**
- * Created by gunnar on 06.09.15.
+ * A request to animate from the Player. There are many types of animations, which
+ * can be found in the class <code>ActionType</code>
+ *
+ * @author RedstoneLamp Team
  */
 public class AnimateRequest extends Request {
-    private final byte actionID;
+    public ActionType actionType;
 
-    public AnimateRequest(byte actionID) {
-        this.actionID = actionID;
-    }
-
-    public byte getActionID() {
-        return actionID;
+    public AnimateRequest(ActionType actionType) {
+        this.actionType = actionType;
     }
 
     @Override
     public void execute() {
 
+    }
+
+    /**
+     * This enum contains all the different types of actions an
+     * AnimateRequest/Response supports.
+     *
+     * @author RedstoneLamp Team
+     */
+    public static enum ActionType {
+        /**
+         * This action is when the player's arm swings towards a
+         * block or entity.
+         */
+        SWING_ARM,
+        /**
+         * This action is when the player is ordered to wake
+         * up.
+         */
+        WAKE_UP;
     }
 }

@@ -115,4 +115,9 @@ public class Position{
     public Level getLevel(){
         return level;
     }
+
+    @Override
+    public String toString() {
+        return "Position{x: "+getX()+", y: "+getY()+", z: "+getZ()+", yaw: "+getYaw()+", pitch: "+pitch+"}";
+    }
 }

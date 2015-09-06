@@ -1,23 +1,15 @@
 package net.redstonelamp.request;
 
+import net.redstonelamp.item.Item;
+
 /**
  * Created by gunnar on 03.09.15.
  */
 public class PlayerEquipmentRequest extends Request {
-    private final short item;
-    private final short meta;
+    public Item item;
 
-    public PlayerEquipmentRequest(short item, short meta) {
+    public PlayerEquipmentRequest(Item item) {
         this.item = item;
-        this.meta = meta;
-    }
-
-    public short getItem() {
-        return item;
-    }
-
-    public short getMeta() {
-        return meta;
     }
 
     @Override

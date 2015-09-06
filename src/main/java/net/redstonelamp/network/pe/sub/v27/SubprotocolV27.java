@@ -17,7 +17,10 @@
 package net.redstonelamp.network.pe.sub.v27;
 
 import net.redstonelamp.Player;
+import net.redstonelamp.block.Block;
+import net.redstonelamp.item.Item;
 import net.redstonelamp.level.position.Position;
+import net.redstonelamp.math.Vector3;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
@@ -113,12 +116,16 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                 short meta = up.bb().getShort();
                 byte slot = up.bb().getByte();
                 byte selectedSlot = up.bb().getByte();
-                requests.add(new PlayerEquipmentRequest(item, meta));
+                requests.add(new PlayerEquipmentRequest(new Item(item, meta, 1)));
                 break;
             case ANIMATE_PACKET:
                 byte actionId = up.bb().getByte();
                 up.bb().skip(8); //Skip entity ID
-                requests.add(new AnimateRequest(actionId));
+                switch (actionId) {
+                    case 1:
+                        requests.add(new AnimateRequest(AnimateRequest.ActionType.SWING_ARM));
+                        break;
+                }
                 break;
             case USE_ITEM_PACKET:
                 int ax = up.bb().getInt();
@@ -134,7 +141,12 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                 float px = up.bb().getFloat();
                 float py = up.bb().getFloat();
                 float pz = up.bb().getFloat();
-                System.out.println(new UseItemRequest(ax, ay, az, face, item2, meta2, fx, fy, fz, px, py, pz).toString());
+
+                if (face >= 0 && face <= 5) { //Use item on, Block Place
+                    //TODO: Implement Item use, (pickaxe, sword, etc)
+                    Block block = new Block(item2, meta2, 1);
+                    requests.add(new BlockPlaceRequest(block, new Vector3(ax, ay, az)));
+                }
                 break;
             default:
                 System.out.println(String.format("Unknown: 0x%02x", id));

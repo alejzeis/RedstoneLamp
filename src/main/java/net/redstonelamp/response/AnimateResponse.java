@@ -1,22 +1,16 @@
 package net.redstonelamp.response;
 
+import net.redstonelamp.request.AnimateRequest;
+
 /**
- * Created by gunnar on 06.09.15.
+ * A Response to an AnimateRequest
+ *
+ * @author RedstoneLamp Team
  */
 public class AnimateResponse extends Response {
-    private final long entityID;
-    private final byte actionID;
+    public AnimateRequest.ActionType actionType;
 
-    public AnimateResponse(long entityID, byte actionID) {
-        this.entityID = entityID;
-        this.actionID = actionID;
-    }
-
-    public long getEntityID() {
-        return entityID;
-    }
-
-    public byte getActionID() {
-        return actionID;
+    public AnimateResponse(AnimateRequest.ActionType actionType) {
+        this.actionType = actionType;
     }
 }
