@@ -16,6 +16,8 @@
  */
 package net.redstonelamp.inventory;
 
+import net.redstonelamp.nio.BinaryBuffer;
+
 /**
  * An Inventory that can be saved and loaded from byte arrays.
  *
@@ -30,8 +32,8 @@ public interface SavableInventory extends Inventory{
 
     /**
      * Loads this inventory from a ByteArray.
-     * @param bytes The ByteArray representation of this Inventory
-     *              to be loaded from.
+     * @param bytes The ByteArray representation of this Inventory that will be loaded
+     *              from.
      */
     void loadFromBytes(byte[] bytes);
 }

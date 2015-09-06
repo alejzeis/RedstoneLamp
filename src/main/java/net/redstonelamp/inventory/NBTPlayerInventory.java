@@ -17,6 +17,7 @@
 package net.redstonelamp.inventory;
 
 import net.redstonelamp.Player;
+import net.redstonelamp.io.BinaryBufferInputStream;
 import net.redstonelamp.item.Item;
 import net.redstonelamp.nio.BinaryBuffer;
 import org.spout.nbt.*;
