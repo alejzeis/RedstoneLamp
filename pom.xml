@@ -152,6 +152,7 @@
                         <exclude>worlds/**</exclude>
                         <exclude>server.properties</exclude>
                         <exclude>redstonelamp.yml</exclude>
+                        <exclude>players.dat</exclude>
                         <exclude>src/test/resources/**</exclude>
                         <exclude>src/main/resources/**</exclude>
                     </excludes>
