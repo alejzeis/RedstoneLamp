@@ -41,10 +41,13 @@ public class FlatGenerator implements Generator{
         ByteBuffer bb = ByteBuffer.allocate(16 * 16 * 128);
         for(int blockX = 0; blockX < 16; blockX++){
             for(int blockZ = 0; blockZ < 16; blockZ++){
-                //Put a grass block on the lowest block in the column, and then loop through the rest of the
-                //127 blocks and put air
-                bb.put((byte) 0x02); //GRASS Block
-                for(int blockY = 0; blockY < 127; blockY++){
+                //Put a bedrock block on the lowest block in the column, and then loop through the rest of the
+                //127 blocks and put grass and finally air
+                bb.put((byte) 0x07); //BEDROCK Block
+                bb.put((byte) 0x03); //DIRT Block
+                bb.put((byte) 0x03); //DIRT Block
+                bb.put((byte) 0x02); //DIRT Block
+                for(int blockY = 0; blockY < 124; blockY++){
                     bb.put((byte) 0x00); //AIR
                 }
             }
