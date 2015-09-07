@@ -68,7 +68,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                 lr.clientId = up.bb().getInt();
                 lr.slim = up.bb().getByte() > 0;
                 //lr.skin = up.bb().get(up.bb().getUnsignedShort()); //Skin written as a String, but the String class seems to corrupt the Skin
-                up.bb().skip(2);
+                up.bb().skip(2); //Skip skin "string" length
                 lr.skin = up.bb().get(up.bb().remaining());
 
                 requests.add(lr);
@@ -259,7 +259,6 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             ordered.put(cr.chunk.getBiomeColors());
 
             byte[] orderedData = ordered.toArray();
-//            ordered = null;
 
             bb = BinaryBuffer.newInstance(83213, ByteOrder.BIG_ENDIAN);
             bb.putByte(FULL_CHUNK_DATA_PACKET);
@@ -283,7 +282,6 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
 
 
-            //byte[] metadata = EntityMetadata.write(player.getMetadata());
             byte[] metadata = player.getMetadata().toBytes();
             bb = BinaryBuffer.newInstance(9 + metadata.length, ByteOrder.BIG_ENDIAN);
             bb.putByte(SET_ENTITY_DATA_PACKET);
@@ -327,7 +325,14 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             ChatResponse cr = (ChatResponse) response;
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN); //Self-expand
             bb.putByte(TEXT_PACKET);
-            if(!cr.source.isEmpty()){
+            if(cr.translation != ChatResponse.DEFAULT_translation) {
+                bb.putByte(TEXT_TRANSLATION); //TYPE_TRANSLATION
+                bb.putString(cr.translation.message);
+                bb.putByte((byte) cr.translation.params.length);
+                for(String param : cr.translation.params) {
+                    bb.putString(param);
+                }
+            } else if(!cr.source.isEmpty()){
                 bb.putByte(TEXT_CHAT); //TYPE_CHAT
                 bb.putString(cr.source);
                 bb.putString(cr.message);
@@ -338,7 +343,6 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }else if(response instanceof AddPlayerResponse){
             Player p = ((AddPlayerResponse) response).player;
-            //byte[] meta = EntityMetadata.write(p.getMetadata());
             byte[] meta = p.getMetadata().toBytes();
             //bb = BinaryBuffer.newInstance(56 + p.getSkin().length + p.getNametag().getBytes().length + meta.length, ByteOrder.BIG_ENDIAN);
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);

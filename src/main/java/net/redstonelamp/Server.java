@@ -26,6 +26,7 @@ import net.redstonelamp.network.pc.PCProtocol;
 import net.redstonelamp.network.pe.PEProtocol;
 import net.redstonelamp.plugin.PluginSystem;
 import net.redstonelamp.request.LoginRequest;
+import net.redstonelamp.response.ChatResponse;
 import net.redstonelamp.response.Response;
 import net.redstonelamp.ticker.RedstoneTicker;
 import net.redstonelamp.ticker.Task;
@@ -37,6 +38,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
@@ -83,12 +85,13 @@ public class Server implements Runnable{
 
         network.registerProtocol(new PEProtocol(network));
         network.registerProtocol(new PCProtocol(network));
-        network.setName(motd);
 
         pluginSystem = new PluginSystem();
         pluginSystem.init(this, new Logger(new Log4j2ConsoleOut("PluginSystem")));
         pluginSystem.loadPlugins();
         pluginSystem.enablePlugins();
+
+        network.setName(motd); //Set the name after plugins, as some plugins may add protocols
 
         levelManager = new LevelManager(this);
         levelManager.init();
@@ -159,7 +162,7 @@ public class Server implements Runnable{
      * @param loginRequest
      * @return
      */
-    public Player openSession(SocketAddress address, Protocol protocol, LoginRequest loginRequest){
+    public Player openSession(SocketAddress address, Protocol protocol, LoginRequest loginRequest) {
         logger.debug("Opened Session: " + address.toString());
         Player player = new Player(protocol, address);
         players.add(player);
@@ -211,8 +214,18 @@ public class Server implements Runnable{
     }
 
     public void broadcastMessage(String message){
+        logger.info("[Chat]: " + message);
         for(Player player : players){
             player.sendMessage(message);
+        }
+    }
+
+    public void broadcastMessage(ChatResponse.ChatTranslation translation) {
+        logger.info("[Chat]: " + translation.message.replaceAll("%", "") + " " + Arrays.toString(translation.params));
+        ChatResponse cr = new ChatResponse(translation.message);
+        cr.translation = translation;
+        for(Player player : players){
+            player.sendResponse(cr);
         }
     }
 

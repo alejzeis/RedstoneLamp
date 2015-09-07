@@ -25,17 +25,6 @@ import net.redstonelamp.item.Item;
  * @author RedstoneLamp Team
  */
 public interface PlayerInventory extends Inventory, SavableInventory{
-    /**
-     * Gets the Item in the Player's hand.
-     * @return The Item in the hand.
-     */
-    Item getItemInHand();
-
-    /**
-     * Sets the Item in the player's hand.
-     * @param item The Item to be set in the player's hand.
-     */
-    void setItemInHand(Item item);
 
     /**
      * Returns the Player this inventory belongs to.

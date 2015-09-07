@@ -183,7 +183,7 @@ public class Player extends PlayerEntity{
             });
 
             server.getLogger().debug("Player " + username + " spawned (took " + (System.currentTimeMillis() - startLogin) + " ms)");
-            server.broadcastMessage(username + " joined the game.");
+            server.broadcastMessage(new ChatResponse.ChatTranslation("%multiplayer.player.joined", new String[] {username}));
         }else if(request instanceof ChatRequest){
             ChatRequest cr = (ChatRequest) request;
             server.broadcastMessage("<" + username + "> " + cr.message);
@@ -216,7 +216,25 @@ public class Player extends PlayerEntity{
             }
             //TODO: Check last place time as to prevent speed placing
             getPosition().getLevel().setBlock(BlockPosition.fromVector3(bpr.blockPosition, getPosition().getLevel()), bpr.block);
+        } else if(request instanceof RemoveBlockRequest) {
+            RemoveBlockRequest rbr = (RemoveBlockRequest) request;
+            System.out.println("Request to remove at: "+rbr.position);
+            RemoveBlockResponse response = new RemoveBlockResponse(rbr.position);
+            if(!getPosition().getLevel().isChunkLoaded(new ChunkPosition(rbr.position.getX() / 16, rbr.position.getZ() / 16))) {
+                server.getLogger().warning(username + " attempted to remove block in an unloaded chunk");
+                sendMessage("Attempted to remove block in unloaded chunk, hacking?");
+                sendBlockChange(getPosition().getLevel().getBlock(rbr.position), rbr.position);
+                return;
+            }
+            //TODO: Check last place time as to prevent speed breaking
+            //getPosition().getLevel().removeBlock(rbr.position);
+            getPosition().getLevel().setBlock(rbr.position, new Block(0, (short) 0, 1));
         }
+    }
+
+    public void sendBlockChange(Block block, BlockPosition position) {
+        BlockPlaceResponse bpr = new BlockPlaceResponse(block, position);
+        sendResponse(bpr);
     }
 
     public void close(String leaveMessage, String reason, boolean notifyClient){

@@ -85,4 +85,16 @@ public interface Inventory {
      * @param index The index where the stack will be set.
      */
     void setStackAt(Stack<Item> stack, int index);
+
+    /**
+     * Gets the Item in the Entity's hand.
+     * @return The Item in the hand.
+     */
+    Item getItemInHand();
+
+    /**
+     * Sets the Item in the Entity's hand.
+     * @param item The Item to be set in the entity's hand.
+     */
+    void setItemInHand(Item item);
 }

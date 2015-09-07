@@ -17,12 +17,24 @@
 package net.redstonelamp.response;
 
 public class ChatResponse extends Response{
+    public static final String DEFAULT_source = "";
+    public static final ChatTranslation DEFAULT_translation = null;
 
-    public String source = "";
+    public String source = DEFAULT_source;
     public String message;
+    public ChatTranslation translation = DEFAULT_translation;
 
     public ChatResponse(String message){
         this.message = message;
     }
 
+    public static class ChatTranslation {
+        public final String message;
+        public final String[] params;
+
+        public ChatTranslation(String message, String[] params) {
+            this.message = message;
+            this.params = params;
+        }
+    }
 }

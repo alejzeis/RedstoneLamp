@@ -29,6 +29,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author RedstoneLamp Team
  */
+@Deprecated
 public class EntityMetadata{
     private Map<Byte, List<Object>> array = new ConcurrentHashMap<>();
 
@@ -54,6 +55,7 @@ public class EntityMetadata{
     }
 
     @SuppressWarnings("unchecked")
+    @Deprecated
     public static byte[] write(EntityMetadata metadata){
         BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.LITTLE_ENDIAN);
         Map<Byte, List<Object>> array = metadata.getArray();
