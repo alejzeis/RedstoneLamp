@@ -84,8 +84,8 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
         acceptor.getSessionConfig().setIdleTime(IdleStatus.READER_IDLE, 30);
 
         try{
-            acceptor.bind(new InetSocketAddress(server.getConfig().getInt("mcpc-port")));
-            logger.info("Started Apache MINA Interface on port " + server.getConfig().getInt("mcpc-port"));
+            acceptor.bind(new InetSocketAddress(server.getConfig().getString("server-ip"), server.getConfig().getInt("mcpc-port")));
+            logger.info("Started Apache MINA Interface on " + server.getConfig().getString("server-ip") + ":" + server.getConfig().getInt("mcpc-port"));
         }catch(IOException e){
             logger.error("*** FAILED TO BIND TO PORT! " + e.getClass().getName() + ": " + e.getMessage());
             logger.error("Perhaps there is another server running on that port?");

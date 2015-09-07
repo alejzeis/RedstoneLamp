@@ -21,7 +21,7 @@ package net.redstonelamp.network.pe.sub.v27;
  * <br>
  * From https://github.com/PocketMine/PocketMine-MP/blob/master/src/pocketmine/network/protocol/UpdateBlockPacket.php
  *
- * @author RedstoneLamp Team & PocketMine Team
+ * @author RedstoneLamp Team and PocketMine Team
  */
 public final class UpdateBlockPacketFlagsV27 {
     public static final byte FLAG_NONE      = 0b0000;

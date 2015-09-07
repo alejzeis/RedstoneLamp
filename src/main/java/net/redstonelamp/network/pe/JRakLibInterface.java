@@ -63,11 +63,14 @@ public class JRakLibInterface implements ServerInstance, AdvancedNetworkInterfac
         setupLogger();
         startupInterface();
 
-        logger.info("Started JRakLib Interface on 0.0.0.0:19132");
+        logger.info("Started JRakLib Interface on "+server.getConfig().getString("server-ip") + ":" + server.getConfig().getInt("mcpe-port"));
     }
 
     private void startupInterface() {
-        rakLibServer = new JRakLibServer(new JRakLibLogger(new net.redstonelamp.ui.Logger(new Log4j2ConsoleOut("JRakLib"))), 19132, "0.0.0.0");
+        String ip = server.getConfig().getString("server-ip");
+        int port = server.getConfig().getInt("mcpe-port");
+
+        rakLibServer = new JRakLibServer(new JRakLibLogger(new net.redstonelamp.ui.Logger(new Log4j2ConsoleOut("JRakLib"))), port, ip);
         handler = new ServerHandler(rakLibServer, this);
 
         handler.sendOption("name", "MCPE;RedstoneLamp test server;" + PENetworkConst.MCPE_PROTOCOL + ";0.12.1;0;1");

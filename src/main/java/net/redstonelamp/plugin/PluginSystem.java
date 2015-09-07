@@ -184,7 +184,7 @@ public class PluginSystem{
      * Gets the correct plugin manager by a given plugin name
      *
      * @param name Name of plugin
-     * @returns PluginManager or null if not found
+     * @return PluginManager or null if not found
      */
     public PluginManager getPluginManager(String name){
         PluginLoader l = getPluginLoader(name);
@@ -195,7 +195,7 @@ public class PluginSystem{
      * Gets the correct plugin loader by a given plugin name
      *
      * @param name Name of plugin
-     * @returns PluginLoader or null if not found
+     * @return PluginLoader or null if not found
      */
     public PluginLoader getPluginLoader(String name){
         for(PluginManager mgr : pluginManagers){
@@ -211,7 +211,7 @@ public class PluginSystem{
      * Gets the correct plugin by a given plugin name
      *
      * @param name Name of plugin
-     * @returns Plugin or null if not found
+     * @return Plugin or null if not found
      */
     public Plugin getPlugin(String name){
         for(PluginManager mgr : pluginManagers){
@@ -227,7 +227,7 @@ public class PluginSystem{
     /**
      * Gets the current instance of the JavaPluginManager
      *
-     * @returns JavaPluginManager
+     * @return JavaPluginManager
      */
     public JavaPluginManager getJavaPluginManager(){
         return (JavaPluginManager) pluginManagers[0];

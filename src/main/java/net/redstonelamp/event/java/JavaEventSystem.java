@@ -23,7 +23,7 @@ import net.redstonelamp.event.EventPriority;
 import java.util.ArrayList;
 
 /**
- * This event system contains & calls every listener, using any language, with JavaEvents.
+ * This event system contains and calls every listener, using any language, with JavaEvents.
  * If the listeners type is not Java, the listener will translate the event.
  */
 public class JavaEventSystem{
