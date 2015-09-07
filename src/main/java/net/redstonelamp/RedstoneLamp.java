@@ -25,7 +25,9 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Properties;
 
 /**
  * Main Startup file for RedstoneLamp.
@@ -36,6 +38,9 @@ public class RedstoneLamp{
     public static final String SOFTWARE = "RedstoneLamp";
     public static final String SOFTWARE_VERSION = "1.2.0";
     public static final String SOFTWARE_STATE = "DEV";
+    private static int SOFTWARE_BUILD;
+    private static String SOFTWARE_COMMIT;
+    private static String SOFTWARE_BUILD_DATE;
     public static final double API_VERSION = 1.5;
     public static Server SERVER;
 
@@ -53,6 +58,10 @@ public class RedstoneLamp{
             e.printStackTrace();
             System.exit(1);
         }
+    }
+
+    public static String getBuildInformation() {
+        return SOFTWARE + " build #" + SOFTWARE_BUILD + ", commit: " + SOFTWARE_COMMIT + ", built on: "+SOFTWARE_BUILD_DATE;
     }
 
     private void getDefaultResources(){
@@ -82,6 +91,23 @@ public class RedstoneLamp{
             }catch(IOException e){
                 e.printStackTrace();
             }
+        }
+        InputStream is = getClass().getResourceAsStream("/buildInformation.properties");
+        if(is != null) {
+            Properties prop = new Properties();
+            try {
+                prop.load(is);
+                SOFTWARE_BUILD = Integer.parseInt(prop.getProperty("buildNum"));
+                SOFTWARE_COMMIT = prop.getProperty("buildCommit");
+                SOFTWARE_BUILD_DATE = prop.getProperty("buildDate");
+            } catch (Exception e) {
+                System.err.println(e.getClass().getName()+" while attempting to get build info: "+e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            SOFTWARE_BUILD = -1;
+            SOFTWARE_COMMIT = "not available";
+            SOFTWARE_BUILD_DATE = "not available";
         }
         System.setProperty("log4j.configurationFile", "log4j2.xml");
     }

@@ -5,6 +5,10 @@ sudo: false
 before_install:
  #- wget -q -O - http://get.redstonelamp.net/travis/before_install.sh | bash
   - sed -i.bak -e 's|https://nexus.codehaus.org/snapshots/|https://oss.sonatype.org/content/repositories/codehaus-snapshots/|g' ~/.m2/settings.xml
+  - cd $TRAVIS_BUILD_DIR
+  - echo "buildNum=$TRAVIS_BUILD_NUMBER" > src/main/resources/buildInformation.properties
+  - echo "buildCommit=$TRAVIS_COMMIT" >> src/main/resources/buildInformation.properties
+  - echo "buildDate=$DATE" >> src/main/resources/buildInformation.properties
 
 install: echo "Dummy thing to prevent travis from doing strange maven thing."
 
@@ -34,3 +38,4 @@ xSPJRrf5R6OmTJMeMLEYzScaiAuGHgvDGMVs+ZPngCvnwSDIgQ6hwqBnnDEd5vTSyHQQIjUtw+1LTxwp
     - mcpeVersion="0.12.1"
     - mcpcVersion="15w35e"
     - stability="DEV"
+    - DATE='date +%Y-%m-%d:%H:%M:%S'

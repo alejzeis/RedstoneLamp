@@ -77,6 +77,7 @@ public class Server implements Runnable{
         network = new NetworkManager(this);
         loadProperties(config);
         logger.info(RedstoneLamp.getSoftwareVersionString() + " is licensed under the Lesser GNU General Public License version 3");
+        logger.info("Build Information: " + RedstoneLamp.getBuildInformation());
 
         network.registerProtocol(new PEProtocol(network));
         network.registerProtocol(new PCProtocol(network));
