@@ -43,7 +43,7 @@ public class SimplePlayerDatabase implements PlayerDatabase {
      * Storage Version of SimplePlayerDatabase. It is used to prevent strange things while
      * processing outdated databases. The version is always the first byte of the file.
      */
-    public static final byte STORAGE_VERSION = 3;
+    public static final byte STORAGE_VERSION = 4;
     private final Server server;
     private final Map<String, PlayerData> entries = new ConcurrentHashMap<>();
 
@@ -81,9 +81,9 @@ public class SimplePlayerDatabase implements PlayerDatabase {
         PlayerData data = new PlayerData();
         data.setUuid(bb.getUUID());
 
-        double x = bb.getDouble();
-        double y = bb.getDouble();
-        double z = bb.getDouble();
+        float x = bb.getFloat();
+        float y = bb.getFloat();
+        float z = bb.getFloat();
         float yaw = bb.getFloat();
         float pitch = bb.getFloat();
         String name = bb.getVarString();
@@ -148,9 +148,9 @@ public class SimplePlayerDatabase implements PlayerDatabase {
         id.putUUID(entry.getUuid());
         bb.put(id.toArray());
 
-        bb.putDouble(entry.getPosition().getX());
-        bb.putDouble(entry.getPosition().getY());
-        bb.putDouble(entry.getPosition().getZ());
+        bb.putFloat(entry.getPosition().getX());
+        bb.putFloat(entry.getPosition().getY());
+        bb.putFloat(entry.getPosition().getZ());
         bb.putFloat(entry.getPosition().getYaw());
         bb.putFloat(entry.getPosition().getPitch());
         bb.putVarString(entry.getPosition().getLevel().getName());

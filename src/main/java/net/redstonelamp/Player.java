@@ -151,7 +151,7 @@ public class Player extends PlayerEntity{
 
             loadPlayerData();
 
-            LoginResponse response = new LoginResponse(true, gamemode, getHealth(), (float) getPosition().getX(), (float) getPosition().getY(), (float) getPosition().getZ());
+            LoginResponse response = new LoginResponse(true, gamemode, getHealth(), getPosition().getX(), getPosition().getY(), getPosition().getZ());
             if(server.getPlayers().size() > server.getMaxPlayers()){
                 response.loginAllowed = false;
                 response.loginNotAllowedReason = "redstonelamp.loginFailed.serverFull";

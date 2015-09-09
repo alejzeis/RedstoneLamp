@@ -165,12 +165,14 @@ public class LevelDBProvider implements LevelProvider{
         in.close();
 
         levelData = (CompoundTag) tag;
+
         /*
         for(int i = 0; i < levelData.getValue().size(); i++){
             Tag t = levelData.getValue().get(i);
             System.out.println(i+" "+t.getName()+", "+t.getValue());
         }
         */
+
 
         int x = (int) getTag("SpawnX").getValue();
         int y = (int) getTag("SpawnY").getValue();

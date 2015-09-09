@@ -18,6 +18,7 @@ package net.redstonelamp.level;
 
 import net.redstonelamp.block.Block;
 import net.redstonelamp.entity.EntityManager;
+import net.redstonelamp.level.generator.FlatGenerator;
 import net.redstonelamp.level.generator.Generator;
 import net.redstonelamp.level.position.BlockPosition;
 import net.redstonelamp.level.position.Position;
@@ -27,15 +28,19 @@ import net.redstonelamp.math.Vector3;
 import net.redstonelamp.metadata.EntityMetadata;
 import net.redstonelamp.response.BlockPlaceResponse;
 import net.redstonelamp.response.RemoveBlockResponse;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.Queue;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.*;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * Represents a Level in a World
@@ -58,6 +63,21 @@ public class Level{
 
     public Level(LevelManager manager, String providerName, String generatorName, LevelParameters params){
         this.manager = manager;
+        name = params.name;
+
+        if(generatorName.equalsIgnoreCase("default") && !(new File(params.levelDir + "/" + "db").isDirectory())) {
+            manager.getServer().getLogger().info("Default worlds have no generator yet, using packaged world.");
+            int num = new Random().nextInt(2);
+            if(num == 0) num = num + 1;
+            manager.getServer().getLogger().debug("Using world "+num);
+            try {
+                setupDefaultWorld(num);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
 
         try{
             provider = manager.getProvider(providerName).newInstance(this, params);
@@ -69,9 +89,12 @@ public class Level{
             throw new LevelLoadException(e);
         }
         try{
-            generator = manager.getGenerator(generatorName).newInstance(this, params);
+            if(!generatorName.equalsIgnoreCase("default")) {
+                generator = manager.getGenerator(generatorName).newInstance(this, params);
+            } else
+                generator = new FlatGenerator(this, params);
         }catch(NullPointerException e){
-            throw new LevelLoadException("Unknown level generator " + providerName);
+            throw new LevelLoadException("Unknown level generator " + generatorName);
         }catch(InvocationTargetException e){
             throw new LevelLoadException(e.getTargetException());
         }catch(IllegalAccessException | InstantiationException e){
@@ -84,7 +107,29 @@ public class Level{
             throw new LevelLoadException(e);
         }
         entityManager = new EntityManager(this);
-        name = provider.getName();
+    }
+
+    private void setupDefaultWorld(int num) throws IOException, URISyntaxException { //TODO: Support providers other than LevelDB
+        String path = "/worlds/world-"+num;
+        String dbDir = path+"/db";
+        String lvlData = path+"/level.dat";
+
+        URI uri = Level.class.getResource(path+"/db").toURI();
+        Path myPath;
+        if (uri.getScheme().equals("jar")) {
+            FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+            myPath = fileSystem.getPath(path+"/db");
+        } else {
+            myPath = Paths.get(uri);
+        }
+        Stream<Path> walk = Files.walk(myPath, 1);
+        for (Iterator<Path> it = walk.iterator(); it.hasNext();){
+            Path p = it.next();
+            if(p.toFile().isDirectory()) continue;
+            FileUtils.copyFileToDirectory(p.toFile(), new File("worlds/"+name+"/db"));
+        }
+        FileUtils.copyInputStreamToFile(getClass().getResourceAsStream(lvlData), new File("worlds/"+name+"/level.dat"));
+
     }
 
     public void tick() {

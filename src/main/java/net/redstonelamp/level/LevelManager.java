@@ -69,7 +69,8 @@ public class LevelManager{
         params.name = name;
         params.levelDir = levelDir;
         String format = autoDetectFormat(levelDir, server.getConfig().getString("level-default-format"));
-        String gen = autoDetectGenerator(levelDir, server.getConfig().getString("level-default-generator"));
+        //String gen = autoDetectGenerator(levelDir, server.getConfig().getString("level-default-generator"));
+        String gen = autoDetectGenerator(levelDir, server.getConfig().getString("level-type").toLowerCase());
         synchronized (levels) {
             levels.clear();
             levels.put(name, new Level(this, format, gen, params)); //TODO: correct provider

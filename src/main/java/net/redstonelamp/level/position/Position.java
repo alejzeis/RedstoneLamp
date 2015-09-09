@@ -19,14 +19,14 @@ package net.redstonelamp.level.position;
 import net.redstonelamp.level.Level;
 
 /**
- * A Position that stores it's x, y, and z coordinates in doubles and the yaw and pitch in floats.
+ * A Position that stores it's x, y, and z coordinates in floats and the yaw and pitch in floats.
  *
  * @author RedstoneLamp Team
  */
 public class Position{
-    private double x;
-    private double y;
-    private double z;
+    private float x;
+    private float y;
+    private float z;
 
     private float yaw;
     private float pitch;
@@ -49,7 +49,7 @@ public class Position{
         pitch = 0;
     }
 
-    public Position(double x, double y, double z, Level level){
+    public Position(float x, float y, float z, Level level){
         this.level = level;
 
         this.x = x;
@@ -60,7 +60,7 @@ public class Position{
         pitch = 0;
     }
 
-    public Position(double x, double y, double z, float yaw, float pitch, Level level) {
+    public Position(float x, float y, float z, float yaw, float pitch, Level level) {
         this.level = level;
 
         this.x = x;
@@ -72,27 +72,27 @@ public class Position{
     }
 
 
-    public double getX(){
+    public float getX(){
         return x;
     }
 
-    public void setX(double x){
+    public void setX(float x){
         this.x = x;
     }
 
-    public double getY(){
+    public float getY(){
         return y;
     }
 
-    public void setY(double y){
+    public void setY(float y){
         this.y = y;
     }
 
-    public double getZ(){
+    public float getZ(){
         return z;
     }
 
-    public void setZ(double z){
+    public void setZ(float z){
         this.z = z;
     }
 

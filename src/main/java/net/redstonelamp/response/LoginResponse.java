@@ -48,8 +48,8 @@ public class LoginResponse extends Response{
         this.y = y;
         this.z = z;
 
-        spawnX = (int) x;
-        spawnY = (int) y;
-        spawnZ = (int) z;
+        spawnX = Math.round(x);
+        spawnY = Math.round(y);
+        spawnZ = Math.round(z);
     }
 }
