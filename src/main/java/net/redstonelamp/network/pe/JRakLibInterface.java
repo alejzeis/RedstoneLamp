@@ -160,6 +160,11 @@ public class JRakLibInterface implements ServerInstance, AdvancedNetworkInterfac
     }
 
     @Override
+    public void exceptionCaught(String clazz, String message) {
+        logger.warning("JRakLib caught an exception! "+clazz+": "+message);
+    }
+
+    @Override
     public void handleOption(String option, String value){
 
     }
