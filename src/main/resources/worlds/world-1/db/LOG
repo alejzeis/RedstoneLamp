@@ -1,0 +1,15 @@
+2015/09/06-17:47:50.144378 36d9f9dc Delete type=3 #1
+2015/09/06-17:48:29.747793 ebeb000 Level-0 table #5: started
+2015/09/06-17:48:29.917265 728e000 Current memtable full; waiting...
+2015/09/06-17:48:30.357954 ebeb000 Level-0 table #5: 211366 bytes OK
+2015/09/06-17:48:30.363898 ebeb000 Delete type=0 #3
+2015/09/06-17:48:30.407943 ebeb000 Level-0 table #7: started
+2015/09/06-17:48:30.555477 728e000 Current memtable full; waiting...
+2015/09/06-17:48:30.998798 ebeb000 Level-0 table #7: 224027 bytes OK
+2015/09/06-17:48:31.003690 ebeb000 Delete type=0 #4
+2015/09/06-17:48:31.067488 ebeb000 Level-0 table #9: started
+2015/09/06-17:48:31.217340 728e000 Current memtable full; waiting...
+2015/09/06-17:48:31.678440 ebeb000 Level-0 table #9: 226074 bytes OK
+2015/09/06-17:48:31.683437 ebeb000 Delete type=0 #6
+2015/09/06-17:48:31.755384 ebeb000 Level-0 table #11: started
+2015/09/06-17:48:32.331842 ebeb000 Level-0 table #11: 220088 bytes OK
