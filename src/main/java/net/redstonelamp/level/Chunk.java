@@ -31,6 +31,7 @@ public class Chunk{
     private byte[] blocklight;
     private byte[] heightmap;
     private byte[] biomeColors;
+    private byte[] extraData = new byte[0];
 
     public Chunk(ChunkPosition position){
         this.position = position;
@@ -44,6 +45,10 @@ public class Chunk{
         this.blocklight = blocklight;
         this.heightmap = heightmap;
         this.biomeColors = biomeColors;
+    }
+
+    public byte[] getExtraData() {
+        return extraData;
     }
 
     public byte[] getBiomeColors(){
@@ -106,6 +111,10 @@ public class Chunk{
 
     public void setBiomeColors(byte[] biomeColors){
         this.biomeColors = biomeColors;
+    }
+
+    public void setExtraData(byte[] extraData) {
+        this.extraData = extraData;
     }
 
     public ChunkPosition getPosition(){

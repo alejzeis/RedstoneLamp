@@ -30,8 +30,7 @@ import net.redstonelamp.response.BlockPlaceResponse;
 import net.redstonelamp.response.RemoveBlockResponse;
 import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -114,22 +113,19 @@ public class Level{
         String dbDir = path+"/db";
         String lvlData = path+"/level.dat";
 
-        URI uri = Level.class.getResource(path+"/db").toURI();
-        Path myPath;
-        if (uri.getScheme().equals("jar")) {
-            FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
-            myPath = fileSystem.getPath(path+"/db");
-        } else {
-            myPath = Paths.get(uri);
+        List<String> mappings = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(path+"/"+"dbMappings.txt")));
+        String line;
+        while((line = reader.readLine()) != null) {
+            mappings.add(line);
         }
-        Stream<Path> walk = Files.walk(myPath, 1);
-        for (Iterator<Path> it = walk.iterator(); it.hasNext();){
-            Path p = it.next();
-            if(p.toFile().isDirectory()) continue;
-            FileUtils.copyFileToDirectory(p.toFile(), new File("worlds/"+name+"/db"));
-        }
-        FileUtils.copyInputStreamToFile(getClass().getResourceAsStream(lvlData), new File("worlds/"+name+"/level.dat"));
+        reader.close();
 
+        for(String mapping : mappings) {
+            FileUtils.copyInputStreamToFile(getClass().getResourceAsStream(dbDir+"/"+mapping), new File("worlds/"+name+"/"+mapping));
+        }
+
+        FileUtils.copyInputStreamToFile(getClass().getResourceAsStream(lvlData), new File("worlds/"+name+"/level.dat"));
     }
 
     public void tick() {

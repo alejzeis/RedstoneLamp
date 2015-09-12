@@ -150,18 +150,19 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
         } else if(response instanceof ChunkResponse) {
             ChunkResponse cr = (ChunkResponse) response;
 
-            BinaryBuffer ordered = BinaryBuffer.newInstance(83200, ByteOrder.BIG_ENDIAN);
+            BinaryBuffer ordered = BinaryBuffer.newInstance(83204, ByteOrder.BIG_ENDIAN);
             ordered.put(cr.chunk.getBlockIds());
             ordered.put(cr.chunk.getBlockMeta());
             ordered.put(cr.chunk.getSkylight());
             ordered.put(cr.chunk.getBlocklight());
             ordered.put(cr.chunk.getHeightmap());
             ordered.put(cr.chunk.getBiomeColors());
+            ordered.putInt(cr.chunk.getExtraData().length);
+            ordered.put(cr.chunk.getExtraData());
 
             byte[] orderedData = ordered.toArray();
-//            ordered = null;
 
-            bb = BinaryBuffer.newInstance(83214, ByteOrder.BIG_ENDIAN);
+            bb = BinaryBuffer.newInstance(83218, ByteOrder.BIG_ENDIAN);
             bb.putByte(FULL_CHUNK_DATA_PACKET);
             bb.putInt(cr.chunk.getPosition().getX());
             bb.putInt(cr.chunk.getPosition().getZ());
@@ -169,7 +170,7 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb.putInt(orderedData.length);
             bb.put(orderedData);
 
-            packets.add(new UniversalPacket(Arrays.copyOf(bb.toArray(), bb.getPosition()), ByteOrder.BIG_ENDIAN, address));
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         } else if(response instanceof SpawnResponse) {
             SpawnResponse sr = (SpawnResponse) response;
 
@@ -226,19 +227,27 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
         }
 
         //Compress packets
-        packets.stream().filter(packet -> packet.getBuffer().length >= 512 && packet.getBuffer()[0] != BATCH_PACKET).forEach(packet -> { //Compress packets
-            BinaryBuffer packetC = BinaryBuffer.newInstance(packet.getBuffer().length + 4, ByteOrder.BIG_ENDIAN);
-            packetC.putInt(packet.getBuffer().length);
-            packetC.put(packet.getBuffer());
-            byte[] compressed = CompressionUtils.zlibDeflate(packetC.toArray(), 7);
-            BinaryBuffer batch = BinaryBuffer.newInstance(9 + compressed.length, ByteOrder.BIG_ENDIAN);
-            batch.putByte(BATCH_PACKET);
-            batch.putInt(compressed.length);
-            batch.put(compressed);
 
+        List<UniversalPacket> toBeCompressed = new CopyOnWriteArrayList<>();
+        packets.stream().filter(packet -> packet.getBuffer().length >= 512 && packet.getBuffer()[0] != BATCH_PACKET).forEach(packet -> {
+            toBeCompressed.add(packet);
             packets.remove(packet);
-            packets.add(new UniversalPacket(batch.toArray(), ByteOrder.BIG_ENDIAN, address));
         });
+
+        BinaryBuffer batch = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN); //Batch PAYLOAD
+        for(UniversalPacket packet : toBeCompressed) {
+            batch.putInt(packet.getBuffer().length);
+            batch.put(packet.getBuffer());
+        }
+        if(batch.toArray().length > 1) {
+            byte[] compressedPayload = CompressionUtils.zlibDeflate(batch.toArray(), 7);
+            bb = BinaryBuffer.newInstance(compressedPayload.length + 5, ByteOrder.BIG_ENDIAN);
+            bb.putByte(BATCH_PACKET);
+            bb.putInt(compressedPayload.length);
+            bb.put(compressedPayload);
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        }
+
         return packets.toArray(new UniversalPacket[packets.size()]);
     }
 
