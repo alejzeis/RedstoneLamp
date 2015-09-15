@@ -40,7 +40,7 @@ public class AnimateRequest extends Request{
      *
      * @author RedstoneLamp Team
      */
-    public static enum ActionType{
+    public enum ActionType{
         /**
          * This action is when the player's arm swings towards a
          * block or entity.
