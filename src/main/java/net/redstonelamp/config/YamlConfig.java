@@ -58,7 +58,7 @@ public class YamlConfig{
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> getMapInMap(String key, Map<String, Object> map) throws ConfigException {
+    private Map<String, Object> getMapInMap(String key, Map<String, Object> map) throws ConfigException{
         Object value = map.get(key);
         if(!(value instanceof Map)){
             throw new ConfigException("Value is not in map!");
@@ -82,9 +82,9 @@ public class YamlConfig{
         Map<String, Object> map = this.map;
         for(int i = 0; i < splitPath.length - 1; i++){
             String element = splitPath[i];
-            try {
+            try{
                 map = getMapInMap(element, map);
-            } catch(ConfigException e) {
+            }catch(ConfigException e){
                 return null;
             }
         }
@@ -102,9 +102,9 @@ public class YamlConfig{
         Map[] maps = new Map[splitPath.length];
         for(int i = 0; i < splitPath.length - 1; i++){
             String element = splitPath[i];
-            try {
+            try{
                 map = getMapInMap(element, map);
-            } catch (ConfigException e) {
+            }catch(ConfigException e){
                 e.printStackTrace();
             }
         }

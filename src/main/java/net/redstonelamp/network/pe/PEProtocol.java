@@ -120,12 +120,12 @@ public class PEProtocol extends Protocol{
     }
 
     @Override
-    protected UniversalPacket[] _sendQueuedResponses(Response[] responses, Player player) {
+    protected UniversalPacket[] _sendQueuedResponses(Response[] responses, Player player){
         if(addressToSubprotocols.containsKey(player.getAddress().toString())){
             UniversalPacket[] packets = addressToSubprotocols.get(player.getAddress().toString()).translateQueuedResponse(responses, player);
-            if(packets == null) {
+            if(packets == null){
                 List<UniversalPacket> combinedPackets = new ArrayList<>();
-                for(Response r : responses) {
+                for(Response r : responses){
                     combinedPackets.addAll(Arrays.asList(_sendResponse(r, player)));
                 }
                 return combinedPackets.toArray(new UniversalPacket[combinedPackets.size()]);
@@ -148,11 +148,11 @@ public class PEProtocol extends Protocol{
         }
     }
 
-    protected void sendImmediatePacket(UniversalPacket packet) {
-        try {
+    protected void sendImmediatePacket(UniversalPacket packet){
+        try{
             _interface.sendPacket(packet, true);
-        } catch (LowLevelNetworkException e) {
-            getServer().getLogger().error(e.getClass().getName()+" while sending packet immediately: "+e.getMessage());
+        }catch(LowLevelNetworkException e){
+            getServer().getLogger().error(e.getClass().getName() + " while sending packet immediately: " + e.getMessage());
             getServer().getLogger().trace(e);
         }
     }

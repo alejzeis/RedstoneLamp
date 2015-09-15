@@ -17,7 +17,6 @@
 package net.redstonelamp.inventory;
 
 import net.redstonelamp.Player;
-import net.redstonelamp.item.Item;
 
 /**
  * Represents an Inventory used by a Player that can be saved.
@@ -28,6 +27,7 @@ public interface PlayerInventory extends Inventory, SavableInventory{
 
     /**
      * Returns the Player this inventory belongs to.
+     *
      * @return The Player the inventory belongs to.
      */
     Player getPlayer();

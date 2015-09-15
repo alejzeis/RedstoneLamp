@@ -86,7 +86,7 @@ public class FlatGenerator implements Generator{
             colors.put((byte) 0x4A);
         }
         c.setBiomeColors(colors.array());
-        
+
         return c;
     }
 }

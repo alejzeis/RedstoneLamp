@@ -23,10 +23,10 @@ import net.redstonelamp.item.Item;
  *
  * @author RedstoneLamp Team
  */
-public class PlayerEquipmentResponse extends Response {
+public class PlayerEquipmentResponse extends Response{
     public Item item;
 
-    public PlayerEquipmentResponse(Item item) {
+    public PlayerEquipmentResponse(Item item){
         this.item = item;
     }
 }

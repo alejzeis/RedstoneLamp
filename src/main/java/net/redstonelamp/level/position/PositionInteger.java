@@ -24,7 +24,7 @@ import net.redstonelamp.level.Level;
  *
  * @author RedstoneLamp Team
  */
-public class PositionInteger {
+public class PositionInteger{
     private int x;
     private int y;
     private int z;

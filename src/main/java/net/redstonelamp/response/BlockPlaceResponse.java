@@ -31,7 +31,7 @@ public class BlockPlaceResponse extends Response{
     public Block block;
     public BlockPosition position;
 
-    public BlockPlaceResponse(Block block, BlockPosition position) {
+    public BlockPlaceResponse(Block block, BlockPosition position){
         this.block = block;
         this.position = position;
     }

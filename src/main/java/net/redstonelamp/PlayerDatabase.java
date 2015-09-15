@@ -28,7 +28,7 @@ import java.util.UUID;
  *
  * @author RedstoneLamp Team
  */
-public interface PlayerDatabase {
+public interface PlayerDatabase{
 
     /**
      * Loads this database from a location.
@@ -36,8 +36,9 @@ public interface PlayerDatabase {
      * The location can be a file if the implementation depends on a
      * single file, or a directory where each player has their
      * own file.
+     *
      * @param location The location where the database is stored.
-     * @throws java.io.IOException If there is an exception while loading the database.
+     * @throws IOException If there is an exception while loading the database.
      */
     void loadFrom(File location) throws IOException;
 
@@ -47,19 +48,22 @@ public interface PlayerDatabase {
      * The location can be a file if the implementation depends on a
      * single file, or a directory where each player has their
      * own file.
+     *
      * @param location The location where the database is stored.
-     * @throws java.io.IOException If there is an exception while saving the database.
+     * @throws IOException If there is an exception while saving the database.
      */
     void saveTo(File location) throws IOException;
 
     /**
      * Updates an entry in the database.
+     *
      * @param data The PlayerData to be updated.
      */
     void updateData(PlayerData data);
 
     /**
      * Gets an entry in the PlayerDatabase by the player's UUID.
+     *
      * @param uuid The UUID of the player.
      * @return The PlayerData if found, null if not.
      */
@@ -71,50 +75,50 @@ public interface PlayerDatabase {
      *
      * @author RedstoneLamp Team
      */
-    public static class PlayerData {
+    public static class PlayerData{
         private UUID uuid;
         private Position position;
         private PlayerInventory inventory;
         private int health;
         private int gamemode;
 
-        public UUID getUuid() {
+        public UUID getUuid(){
             return uuid;
         }
 
-        public void setUuid(UUID uuid) {
+        public void setUuid(UUID uuid){
             this.uuid = uuid;
         }
 
-        public Position getPosition() {
+        public Position getPosition(){
             return position;
         }
 
-        public void setPosition(Position position) {
+        public void setPosition(Position position){
             this.position = position;
         }
 
-        public int getHealth() {
+        public int getHealth(){
             return health;
         }
 
-        public void setHealth(int health) {
+        public void setHealth(int health){
             this.health = health;
         }
 
-        public PlayerInventory getInventory() {
+        public PlayerInventory getInventory(){
             return inventory;
         }
 
-        public void setInventory(PlayerInventory inventory) {
+        public void setInventory(PlayerInventory inventory){
             this.inventory = inventory;
         }
 
-        public int getGamemode() {
+        public int getGamemode(){
             return gamemode;
         }
 
-        public void setGamemode(int gamemode) {
+        public void setGamemode(int gamemode){
             this.gamemode = gamemode;
         }
     }

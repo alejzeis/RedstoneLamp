@@ -175,13 +175,13 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
         }
         UniversalPacket up = (UniversalPacket) message;
         int id;
-        if(up.getBuffer().length < 1) { //Ignore "empty" packets
+        if(up.getBuffer().length < 1){ //Ignore "empty" packets
             return;
         }
-        try {
+        try{
             id = up.bb().getVarInt();
-        } catch (BufferUnderflowException e) {
-            logger.warning(e.getClass().getName()+" while reading ID, Dump: "+up.bb().singleLineHexDump());
+        }catch(BufferUnderflowException e){
+            logger.warning(e.getClass().getName() + " while reading ID, Dump: " + up.bb().singleLineHexDump());
             throw new LowLevelNetworkException("BufferUnderflowException while reading ID");
         }
         if(!states.containsKey(session.getRemoteAddress().toString())){
@@ -197,7 +197,7 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
                             BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
                             bb.putVarInt(PCNetworkConst.LOGIN_DISCONNECT);
                             System.out.println("Sent!");
-                            bb.putVarString(ChatSerializer.toChat("Outdated Client! I'm on: " + PCNetworkConst.MC_VERSION + " " + PCNetworkConst.MC_PROTOCOL + ". You are on: "+protocol));
+                            bb.putVarString(ChatSerializer.toChat("Outdated Client! I'm on: " + PCNetworkConst.MC_VERSION + " " + PCNetworkConst.MC_PROTOCOL + ". You are on: " + protocol));
                             sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, session.getRemoteAddress()), true);
                             block.add(session.getRemoteAddress().toString());
                             final String a = session.getRemoteAddress().toString();

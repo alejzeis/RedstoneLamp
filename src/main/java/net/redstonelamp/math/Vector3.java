@@ -21,97 +21,98 @@ package net.redstonelamp.math;
  *
  * @author RedstoneLamp Team
  */
-public class Vector3 {
+public class Vector3{
     public int x = 0;
     public int y = 0;
     public int z = 0;
 
-    public Vector3() {}
+    public Vector3(){
+    }
 
-    public Vector3(int x, int y, int z) {
+    public Vector3(int x, int y, int z){
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    public int getX() {
+    public int getX(){
         return x;
     }
 
-    public int getY() {
+    public int getY(){
         return y;
     }
 
-    public int getZ() {
+    public int getZ(){
         return z;
     }
 
-    public int getFloorX() {
+    public int getFloorX(){
         return (int) Math.floor(x);
     }
 
-    public int getFloorY() {
+    public int getFloorY(){
         return (int) Math.floor(y);
     }
 
-    public int getFloorZ() {
+    public int getFloorZ(){
         return (int) Math.floor(z);
     }
 
-    public int getRight() {
+    public int getRight(){
         return x;
     }
 
-    public int getUp() {
+    public int getUp(){
         return y;
     }
 
-    public int getForward() {
+    public int getForward(){
         return z;
     }
 
-    public int getSouth() {
+    public int getSouth(){
         return x;
     }
 
-    public int getWest() {
+    public int getWest(){
         return z;
     }
 
-    public Vector3 add(int x, int y, int z) {
+    public Vector3 add(int x, int y, int z){
         return new Vector3(this.x + x, this.y + y, this.z + z);
     }
 
-    public Vector3 subtract(int x, int y, int z) {
+    public Vector3 subtract(int x, int y, int z){
         return add(-x, -y, -z);
     }
 
-    public Vector3 multiply(int number) {
+    public Vector3 multiply(int number){
         return new Vector3(x * number, y * number, z * number);
     }
 
-    public Vector3 divide(int number) {
+    public Vector3 divide(int number){
         return new Vector3(x / number, y / number, z / number);
     }
 
-    public Vector3 ceil() {
+    public Vector3 ceil(){
         return new Vector3((int) Math.ceil(x), (int) Math.ceil(y), (int) Math.ceil(z));
     }
 
-    public Vector3 floor() {
+    public Vector3 floor(){
         return new Vector3((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z));
     }
 
-    public Vector3 round() {
-        return new Vector3((int) Math.round(x), (int) Math.round(y), (int) Math.round(z));
+    public Vector3 round(){
+        return new Vector3(Math.round(x), Math.round(y), Math.round(z));
     }
 
-    public Vector3 abs() {
+    public Vector3 abs(){
         return new Vector3(Math.abs(x), Math.abs(y), Math.abs(z));
     }
 
-    public Vector3 getSide(int side, int step) {
-        switch((int) side) {
+    public Vector3 getSide(int side, int step){
+        switch(side){
             case Side.DOWN:
                 return new Vector3(x, y - step, z);
             case Side.UP:
@@ -129,8 +130,8 @@ public class Vector3 {
         }
     }
 
-    public static int getOppositeSide(int side) {
-        switch((int) side){
+    public static int getOppositeSide(int side){
+        switch(side){
             case Side.DOWN:
                 return Side.UP;
             case Side.UP:
@@ -148,38 +149,38 @@ public class Vector3 {
         }
     }
 
-    public double distance(Vector3 pos) {
+    public double distance(Vector3 pos){
         return Math.sqrt(distanceSquared(pos));
     }
 
-    public double distanceSquared(Vector3 pos) {
+    public double distanceSquared(Vector3 pos){
         return Math.pow(x - pos.x, 2) + Math.pow(y - pos.y, 2) + Math.pow(z - pos.z, 2);
     }
 
-    public int maxPlainDistance(int x, int z) {
+    public int maxPlainDistance(int x, int z){
         return Math.max(Math.abs(this.x - x), Math.abs(this.z - z));
     }
 
-    public double length() {
+    public double length(){
         return Math.sqrt(lengthSquared());
     }
 
-    public int lengthSquared() {
+    public int lengthSquared(){
         return x * x + y * y + z * z;
     }
 
-    public Vector3 normalize() {
+    public Vector3 normalize(){
         int len = lengthSquared();
         if(len > 0)
             return divide((int) Math.sqrt(len));
         return new Vector3(0, 0, 0);
     }
 
-    public int dot(Vector3 v) {
+    public int dot(Vector3 v){
         return x * v.x + y * v.y + z * v.z;
     }
 
-    public Vector3 cross(Vector3 v) {
+    public Vector3 cross(Vector3 v){
         return new Vector3(
                 y * v.z - z * v.y,
                 z * v.x - x * v.z,
@@ -187,15 +188,15 @@ public class Vector3 {
         );
     }
 
-    public boolean equals(Vector3 v) {
+    public boolean equals(Vector3 v){
         return x == v.x && y == v.y && z == v.z;
     }
 
-    public Vector3 getIntermediateWithXValue(Vector3 v, int x) {
+    public Vector3 getIntermediateWithXValue(Vector3 v, int x){
         int xDiff = v.x - this.x;
         int yDiff = v.y - y;
         int zDiff = v.z - z;
-        if((xDiff * xDiff) < 0.0000001)
+        if(xDiff * xDiff < 0.0000001)
             return null;
         int f = (x - this.x) / xDiff;
         if(f < 0 || f > 1)
@@ -204,11 +205,11 @@ public class Vector3 {
             return new Vector3(this.x + xDiff * f, y + yDiff * f, z + zDiff * f);
     }
 
-    public Vector3 getIntermediateWithYValue(Vector3 v, int y) {
+    public Vector3 getIntermediateWithYValue(Vector3 v, int y){
         int xDiff = v.x - x;
         int yDiff = v.y - this.y;
         int zDiff = v.z - z;
-        if((yDiff * yDiff) < 0.0000001)
+        if(yDiff * yDiff < 0.0000001)
             return null;
         int f = (y - this.y) / yDiff;
         if(f < 0 || f > 1)
@@ -221,7 +222,7 @@ public class Vector3 {
         int xDiff = v.x - x;
         int yDiff = v.y - y;
         int zDiff = v.z - this.z;
-        if((zDiff * zDiff) < 0.0000001)
+        if(zDiff * zDiff < 0.0000001)
             return null;
         int f = (z - this.z) / zDiff;
         if(f < 0 || f > 1)

@@ -87,7 +87,7 @@ public class UniversalPacket{
     }
 
     @Override
-    public String toString() {
-        return "UniversalPacket ("+address.toString()+"): "+bb.singleLineHexDump();
+    public String toString(){
+        return "UniversalPacket (" + address.toString() + "): " + bb.singleLineHexDump();
     }
 }

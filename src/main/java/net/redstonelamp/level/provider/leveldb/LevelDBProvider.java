@@ -108,7 +108,7 @@ public class LevelDBProvider implements LevelProvider{
     }
 
     @Override
-    public void putChunk(ChunkPosition position, Chunk c) {
+    public void putChunk(ChunkPosition position, Chunk c){
         byte[] key = Key.TYPE_TERRAIN_DATA.assembleKey(position);
         ByteBuffer bb = ByteBuffer.allocate(83200);
         bb.put(c.getBlockIds());

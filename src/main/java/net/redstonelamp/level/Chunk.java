@@ -47,7 +47,7 @@ public class Chunk{
         this.biomeColors = biomeColors;
     }
 
-    public byte[] getExtraData() {
+    public byte[] getExtraData(){
         return extraData;
     }
 
@@ -75,17 +75,17 @@ public class Chunk{
         return blockIds;
     }
 
-    public void setBlockId(byte id, int x, int y, int z) {
-        blockIds[(x << 11) | (z << 7) | y] = id;
+    public void setBlockId(byte id, int x, int y, int z){
+        blockIds[x << 11 | z << 7 | y] = id;
     }
 
-    public void setBlockMeta(byte meta, int x, int y, int z) {
-        int location = (x << 10) | (z << 6) | (y >> 1);
+    public void setBlockMeta(byte meta, int x, int y, int z){
+        int location = x << 10 | z << 6 | y >> 1;
         byte oldMeta = blockMeta[location];
         if((y & 1) == 0){
-            blockMeta[location] = (byte) ((oldMeta & 0xf0) | (meta & 0x0f));
+            blockMeta[location] = (byte) (oldMeta & 0xf0 | meta & 0x0f);
         }else{
-            blockMeta[location] = (byte) (((meta & 0x0f) << 4) | (oldMeta & 0x0f));
+            blockMeta[location] = (byte) ((meta & 0x0f) << 4 | oldMeta & 0x0f);
         }
     }
 
@@ -113,7 +113,7 @@ public class Chunk{
         this.biomeColors = biomeColors;
     }
 
-    public void setExtraData(byte[] extraData) {
+    public void setExtraData(byte[] extraData){
         this.extraData = extraData;
     }
 

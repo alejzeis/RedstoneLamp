@@ -22,15 +22,15 @@ package net.redstonelamp.request;
  *
  * @author RedstoneLamp Team
  */
-public class AnimateRequest extends Request {
+public class AnimateRequest extends Request{
     public ActionType actionType;
 
-    public AnimateRequest(ActionType actionType) {
+    public AnimateRequest(ActionType actionType){
         this.actionType = actionType;
     }
 
     @Override
-    public void execute() {
+    public void execute(){
 
     }
 
@@ -40,7 +40,7 @@ public class AnimateRequest extends Request {
      *
      * @author RedstoneLamp Team
      */
-    public static enum ActionType {
+    public static enum ActionType{
         /**
          * This action is when the player's arm swings towards a
          * block or entity.

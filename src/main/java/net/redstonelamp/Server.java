@@ -29,10 +29,8 @@ import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.response.ChatResponse;
 import net.redstonelamp.response.Response;
 import net.redstonelamp.ticker.RedstoneTicker;
-import net.redstonelamp.ticker.Task;
 import net.redstonelamp.ui.Log4j2ConsoleOut;
 import net.redstonelamp.ui.Logger;
-import org.apache.logging.log4j.core.async.AsyncLogger;
 
 import java.io.File;
 import java.io.IOException;
@@ -105,16 +103,16 @@ public class Server implements Runnable{
 
         logger.info("Loading player data...");
         playerDatabase = new SimplePlayerDatabase(this); //TODO: Correct database
-        try {
+        try{
             playerDatabase.loadFrom(new File("players.dat"));
             ticker.addDelayedRepeatingTask(tick -> {
-                try {
+                try{
                     playerDatabase.saveTo(new File("players.dat"));
-                } catch (IOException e) {
-                    logger.warning("Exception while auto-saving PlayerDatabase: "+e.getClass().getName()+": "+e.getMessage());
+                }catch(IOException e){
+                    logger.warning("Exception while auto-saving PlayerDatabase: " + e.getClass().getName() + ": " + e.getMessage());
                 }
             }, 40, serverYamlConfig.getInt("players.playerdata-save-interval") * 20);
-        } catch (IOException e) {
+        }catch(IOException e){
             logger.fatal("FAILED TO LOAD PLAYER DATABASE! " + e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace();
         }
@@ -122,10 +120,10 @@ public class Server implements Runnable{
 
         addShutdownTask(pluginSystem::disablePlugins);
         addShutdownTask(() -> {
-            try {
+            try{
                 playerDatabase.saveTo(new File("players.dat"));
-            } catch (IOException e) {
-                logger.fatal("FAILED TO SAVE PLAYER DATABASE! "+e.getClass().getName()+": "+e.getMessage());
+            }catch(IOException e){
+                logger.fatal("FAILED TO SAVE PLAYER DATABASE! " + e.getClass().getName() + ": " + e.getMessage());
             }
         });
 
@@ -162,7 +160,7 @@ public class Server implements Runnable{
      * @param loginRequest
      * @return
      */
-    public Player openSession(SocketAddress address, Protocol protocol, LoginRequest loginRequest) {
+    public Player openSession(SocketAddress address, Protocol protocol, LoginRequest loginRequest){
         logger.debug("Opened Session: " + address.toString());
         Player player = new Player(protocol, address);
         players.add(player);
@@ -195,11 +193,12 @@ public class Server implements Runnable{
 
     /**
      * Broadcasts a response to a <code>Stream</code> of players.
+     *
      * @param players A <code>Stream</code> of players for which the response will be
      *                broadcasted to.
-     * @param r The Response to be broadcasted.
+     * @param r       The Response to be broadcasted.
      */
-    public void broadcastResponse(Stream<Player> players, Response r) {
+    public void broadcastResponse(Stream<Player> players, Response r){
         players.forEach(player -> player.sendResponse(r));
     }
 
@@ -207,9 +206,10 @@ public class Server implements Runnable{
      * Broadcasts an array of responses to all players on the server. This method
      * attempts to combine the responses into one or more packets, depending on each
      * player's protocol.
+     *
      * @param responses The responses to be broadcasted.
      */
-    public void broadcastResponses(Response[] responses) {
+    public void broadcastResponses(Response[] responses){
         players.forEach(player -> player.getProtocol().sendQueuedResponses(responses, player));
     }
 
@@ -220,7 +220,7 @@ public class Server implements Runnable{
         }
     }
 
-    public void broadcastMessage(ChatResponse.ChatTranslation translation) {
+    public void broadcastMessage(ChatResponse.ChatTranslation translation){
         logger.info("[Chat]: " + translation.message.replaceAll("%", "") + " " + Arrays.toString(translation.params));
         ChatResponse cr = new ChatResponse(translation.message);
         cr.translation = translation;
@@ -229,10 +229,10 @@ public class Server implements Runnable{
         }
     }
 
-    public void savePlayerData() {
-        try {
+    public void savePlayerData(){
+        try{
             playerDatabase.saveTo(new File("players.dat"));
-        } catch (IOException e) {
+        }catch(IOException e){
             e.printStackTrace();
         }
     }
@@ -296,11 +296,11 @@ public class Server implements Runnable{
         return yamlConfig;
     }
 
-    public boolean isStopped() {
+    public boolean isStopped(){
         return stopped;
     }
 
-    public PlayerDatabase getPlayerDatabase() {
+    public PlayerDatabase getPlayerDatabase(){
         return playerDatabase;
     }
 
@@ -313,7 +313,7 @@ public class Server implements Runnable{
 
         @Override
         public void run(){
-            if(!server.isStopped()) {
+            if(!server.isStopped()){
                 server.getLogger().warning("Server is not shut-down, did the server crash!?");
             }
             server.getLogger().info("Running shutdown tasks!");

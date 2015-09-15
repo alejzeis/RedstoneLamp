@@ -21,52 +21,52 @@ package net.redstonelamp.entity.ai;
  *
  * @author RedstoneLamp Team
  */
-public interface AI {
+public interface AI{
     /**
      * Changes the range that a mob can see
-     * 
+     *
      * @param range
      */
     public void setRange(int range);
-    
+
     /**
      * Returns the mobs range
-     * 
+     *
      * @return
      */
     public int getRange();
-    
+
     /**
      * Returns true if the mob is busy doing something
-     * 
+     *
      * @return
      */
     public boolean isOccupied();
-    
+
     /**
      * Sets if the mob is busy or not
-     * 
+     *
      * @param occupied
      */
     public void setOccupied(boolean occupied);
-    
+
     /**
      * Calculates if a player is within the mobs range
-     * 
+     *
      * @return
      */
     public boolean playerInRange();
-    
+
     /**
      * Returns true if a player is close enough to attack
-     * 
+     *
      * @return
      */
     public boolean canAttack();
-    
+
     /**
      * Calculates if the player is at a position
-     * 
+     *
      * @param x
      * @param y
      * @param z

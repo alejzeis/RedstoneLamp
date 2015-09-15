@@ -23,10 +23,10 @@ import net.redstonelamp.level.position.BlockPosition;
  *
  * @author RedstoneLamp Team
  */
-public class RemoveBlockResponse extends Response {
+public class RemoveBlockResponse extends Response{
     public BlockPosition position;
 
-    public RemoveBlockResponse(BlockPosition position) {
+    public RemoveBlockResponse(BlockPosition position){
         this.position = position;
     }
 

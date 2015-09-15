@@ -23,14 +23,12 @@ import net.redstonelamp.inventory.PlayerInventory;
 import net.redstonelamp.item.Item;
 import net.redstonelamp.level.ChunkPosition;
 import net.redstonelamp.level.position.BlockPosition;
-import net.redstonelamp.level.position.Position;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.request.*;
 import net.redstonelamp.response.*;
 
 import java.net.SocketAddress;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 /**
  * <strong>Protocol-independent</strong> Player class. Represents a Player on the server
@@ -89,8 +87,8 @@ public class Player extends PlayerEntity{
 
     private void loadPlayerData(){
         PlayerDatabase.PlayerData data = server.getPlayerDatabase().getData(uuid);
-        if(data == null) {
-            server.getLogger().info("Couldn't find PlayerData for player "+getNametag()+" ("+uuid+")");
+        if(data == null){
+            server.getLogger().info("Couldn't find PlayerData for player " + getNametag() + " (" + uuid + ")");
             data = new PlayerDatabase.PlayerData();
             data.setUuid(uuid);
             data.setPosition(server.getLevelManager().getMainLevel().getSpawnPosition());
@@ -102,7 +100,7 @@ public class Player extends PlayerEntity{
             server.getPlayerDatabase().updateData(data);
         }
         if(!data.getUuid().toString().equals(uuid.toString()))
-            server.getLogger().warning("[Loading data] UUID does not match: "+data.getUuid()+", "+uuid);
+            server.getLogger().warning("[Loading data] UUID does not match: " + data.getUuid() + ", " + uuid);
         setPosition(data.getPosition());
         setHealth(data.getHealth());
         gamemode = data.getGamemode();
@@ -183,7 +181,7 @@ public class Player extends PlayerEntity{
             });
 
             server.getLogger().debug("Player " + username + " spawned (took " + (System.currentTimeMillis() - startLogin) + " ms)");
-            server.broadcastMessage(new ChatResponse.ChatTranslation("%multiplayer.player.joined", new String[] {username}));
+            server.broadcastMessage(new ChatResponse.ChatTranslation("%multiplayer.player.joined", new String[]{username}));
         }else if(request instanceof ChatRequest){
             ChatRequest cr = (ChatRequest) request;
             server.broadcastMessage("<" + username + "> " + cr.message);
@@ -194,19 +192,19 @@ public class Player extends PlayerEntity{
                 setPosition(pmr.position);
                 server.broadcastResponse(server.getPlayers().stream().filter(player -> player != this), response);
             } //TODO: Check movement if in survival
-        } else if (request instanceof PlayerEquipmentRequest) {
+        }else if(request instanceof PlayerEquipmentRequest){
             PlayerEquipmentRequest er = (PlayerEquipmentRequest) request;
             PlayerEquipmentResponse response = new PlayerEquipmentResponse(er.item);
             server.broadcastResponse(server.getPlayers().stream().filter(player -> player != this), response);
-        } else if (request instanceof AnimateRequest) {
+        }else if(request instanceof AnimateRequest){
             AnimateRequest ar = (AnimateRequest) request;
             AnimateResponse response = new AnimateResponse(ar.actionType);
             server.broadcastResponse(server.getPlayers().stream().filter(player -> player != this), response);
-        } else if(request instanceof BlockPlaceRequest) {
+        }else if(request instanceof BlockPlaceRequest){
             BlockPlaceRequest bpr = (BlockPlaceRequest) request;
-            System.out.println("Request to place at: "+bpr.blockPosition);
+            System.out.println("Request to place at: " + bpr.blockPosition);
             BlockPlaceResponse response = new BlockPlaceResponse(bpr.block, BlockPosition.fromVector3(bpr.blockPosition, getPosition().getLevel()));
-            if (!getPosition().getLevel().isChunkLoaded(new ChunkPosition(bpr.blockPosition.getX() / 16, bpr.blockPosition.getZ() / 16))) {
+            if(!getPosition().getLevel().isChunkLoaded(new ChunkPosition(bpr.blockPosition.getX() / 16, bpr.blockPosition.getZ() / 16))){
                 server.getLogger().warning(username + " attempted to place block in an unloaded chunk");
                 sendMessage("Attempted to place block in unloaded chunk, hacking?");
                 response.block = new Block(0, (short) 0, 1); //AIR
@@ -216,11 +214,11 @@ public class Player extends PlayerEntity{
             }
             //TODO: Check last place time as to prevent speed placing
             getPosition().getLevel().setBlock(BlockPosition.fromVector3(bpr.blockPosition, getPosition().getLevel()), bpr.block);
-        } else if(request instanceof RemoveBlockRequest) {
+        }else if(request instanceof RemoveBlockRequest){
             RemoveBlockRequest rbr = (RemoveBlockRequest) request;
-            System.out.println("Request to remove at: "+rbr.position);
+            System.out.println("Request to remove at: " + rbr.position);
             RemoveBlockResponse response = new RemoveBlockResponse(rbr.position);
-            if(!getPosition().getLevel().isChunkLoaded(new ChunkPosition(rbr.position.getX() / 16, rbr.position.getZ() / 16))) {
+            if(!getPosition().getLevel().isChunkLoaded(new ChunkPosition(rbr.position.getX() / 16, rbr.position.getZ() / 16))){
                 server.getLogger().warning(username + " attempted to remove block in an unloaded chunk");
                 sendMessage("Attempted to remove block in unloaded chunk, hacking?");
                 sendBlockChange(getPosition().getLevel().getBlock(rbr.position), rbr.position);
@@ -232,7 +230,7 @@ public class Player extends PlayerEntity{
         }
     }
 
-    public void sendBlockChange(Block block, BlockPosition position) {
+    public void sendBlockChange(Block block, BlockPosition position){
         BlockPlaceResponse bpr = new BlockPlaceResponse(block, position);
         sendResponse(bpr);
     }

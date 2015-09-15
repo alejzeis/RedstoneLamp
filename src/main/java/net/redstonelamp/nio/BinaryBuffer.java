@@ -206,7 +206,7 @@ public class BinaryBuffer{
         return new String(get(getVarInt()));
     }
 
-    public UUID getUUID() {
+    public UUID getUUID(){
         return new UUID(bb.getLong(), bb.getLong());
     }
 
@@ -248,7 +248,7 @@ public class BinaryBuffer{
         put(s.getBytes());
     }
 
-    public void putUUID(UUID uuid) {
+    public void putUUID(UUID uuid){
         putLong(uuid.getMostSignificantBits());
         putLong(uuid.getLeastSignificantBits());
     }
@@ -325,9 +325,10 @@ public class BinaryBuffer{
      * Get the remaining bytes in the buffer.
      * <br>
      * NOTE: This DOES increase the position in the buffer.
+     *
      * @return The reamaining bytes in the buffer.
      */
-    public byte[] remainingBytes() {
+    public byte[] remainingBytes(){
         return get(remaining());
     }
 

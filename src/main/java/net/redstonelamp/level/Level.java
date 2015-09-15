@@ -24,22 +24,22 @@ import net.redstonelamp.level.position.BlockPosition;
 import net.redstonelamp.level.position.Position;
 import net.redstonelamp.level.provider.LevelLoadException;
 import net.redstonelamp.level.provider.LevelProvider;
-import net.redstonelamp.math.Vector3;
-import net.redstonelamp.metadata.EntityMetadata;
 import net.redstonelamp.response.BlockPlaceResponse;
 import net.redstonelamp.response.RemoveBlockResponse;
 import org.apache.commons.io.FileUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 /**
  * Represents a Level in a World
@@ -64,16 +64,14 @@ public class Level{
         this.manager = manager;
         name = params.name;
 
-        if(generatorName.equalsIgnoreCase("default") && !(new File(params.levelDir + "/" + "db").isDirectory())) {
+        if(generatorName.equalsIgnoreCase("default") && !new File(params.levelDir + "/" + "db").isDirectory()){
             manager.getServer().getLogger().info("Default worlds have no generator yet, using packaged world.");
             int num = new Random().nextInt(2);
             if(num == 0) num = num + 1;
-            manager.getServer().getLogger().debug("Using world "+num);
-            try {
+            manager.getServer().getLogger().debug("Using world " + num);
+            try{
                 setupDefaultWorld(num);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (URISyntaxException e) {
+            }catch(IOException | URISyntaxException e){
                 e.printStackTrace();
             }
         }
@@ -88,9 +86,9 @@ public class Level{
             throw new LevelLoadException(e);
         }
         try{
-            if(!generatorName.equalsIgnoreCase("default")) {
+            if(!generatorName.equalsIgnoreCase("default")){
                 generator = manager.getGenerator(generatorName).newInstance(this, params);
-            } else
+            }else
                 generator = new FlatGenerator(this, params);
         }catch(NullPointerException e){
             throw new LevelLoadException("Unknown level generator " + generatorName);
@@ -108,36 +106,36 @@ public class Level{
         entityManager = new EntityManager(this);
     }
 
-    private void setupDefaultWorld(int num) throws IOException, URISyntaxException { //TODO: Support providers other than LevelDB
-        String path = "/worlds/world-"+num;
-        String dbDir = path+"/db";
-        String lvlData = path+"/level.dat";
+    private void setupDefaultWorld(int num) throws IOException, URISyntaxException{ //TODO: Support providers other than LevelDB
+        String path = "/worlds/world-" + num;
+        String dbDir = path + "/db";
+        String lvlData = path + "/level.dat";
 
         List<String> mappings = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(path+"/"+"dbMappings.txt")));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(path + "/" + "dbMappings.txt")));
         String line;
-        while((line = reader.readLine()) != null) {
+        while((line = reader.readLine()) != null){
             mappings.add(line);
         }
         reader.close();
 
-        for(String mapping : mappings) {
-            FileUtils.copyInputStreamToFile(getClass().getResourceAsStream(dbDir+"/"+mapping), new File("worlds/"+name+"/"+mapping));
+        for(String mapping : mappings){
+            FileUtils.copyInputStreamToFile(getClass().getResourceAsStream(dbDir + "/" + mapping), new File("worlds/" + name + "/" + mapping));
         }
 
-        FileUtils.copyInputStreamToFile(getClass().getResourceAsStream(lvlData), new File("worlds/"+name+"/level.dat"));
+        FileUtils.copyInputStreamToFile(getClass().getResourceAsStream(lvlData), new File("worlds/" + name + "/level.dat"));
     }
 
-    public void tick() {
+    public void tick(){
         sendBlockQueues();
     }
 
-    private void sendBlockQueues() {
-        if(!blockPlaceQueue.isEmpty()) {
+    private void sendBlockQueues(){
+        if(!blockPlaceQueue.isEmpty()){
             manager.getServer().broadcastResponses(blockPlaceQueue.toArray(new BlockPlaceResponse[blockPlaceQueue.size()]));
             blockPlaceQueue.clear();
         }
-        if(!removeBlockQueue.isEmpty()) {
+        if(!removeBlockQueue.isEmpty()){
             manager.getServer().broadcastResponses(removeBlockQueue.toArray(new RemoveBlockResponse[removeBlockQueue.size()]));
             removeBlockQueue.clear();
         }
@@ -171,44 +169,44 @@ public class Level{
         });
     }
 
-    public void save() {
-        for(Chunk c : loadedChunks) {
+    public void save(){
+        for(Chunk c : loadedChunks){
             provider.putChunk(c.getPosition(), c);
         }
     }
 
-    public boolean isChunkLoaded(ChunkPosition position) {
-        for(Chunk c : loadedChunks) {
-            if(c.getPosition().equals(position)) {
+    public boolean isChunkLoaded(ChunkPosition position){
+        for(Chunk c : loadedChunks){
+            if(c.getPosition().equals(position)){
                 return true;
             }
         }
         return false;
     }
 
-    public void setBlock(BlockPosition position, Block block) {
+    public void setBlock(BlockPosition position, Block block){
         Chunk c = getChunkAt(new ChunkPosition(position.getX() / 16, position.getZ() / 16));
         c.setBlockId((byte) block.getId(), position.getX() & 0xf, position.getY() & 0x7f, position.getZ() & 0xf);
         c.setBlockMeta((byte) block.getMeta(), position.getX() & 0xf, position.getY() & 0x7f, position.getZ() & 0xf);
-        if(!blockPlaceQueue.offer(new BlockPlaceResponse(block, position))) {
+        if(!blockPlaceQueue.offer(new BlockPlaceResponse(block, position))){
             //Queue is full, send immediately then
             sendBlockQueues();
             blockPlaceQueue.add(new BlockPlaceResponse(block, position));
         }
     }
 
-    public void removeBlock(BlockPosition position) {
+    public void removeBlock(BlockPosition position){
         Chunk c = getChunkAt(new ChunkPosition(position.getX() / 16, position.getZ() / 16));
         c.setBlockId((byte) 0, position.getX() & 0xf, position.getY() & 0x7f, position.getZ() & 0xf); //Set block to AIR
         c.setBlockMeta((byte) 0, position.getX() & 0xf, position.getY() & 0x7f, position.getZ() & 0xf);
-        if(!removeBlockQueue.offer(new RemoveBlockResponse(position))) {
+        if(!removeBlockQueue.offer(new RemoveBlockResponse(position))){
             //Queue is full, send immediately then
             sendBlockQueues();
             removeBlockQueue.add(new RemoveBlockResponse(position));
         }
     }
 
-    public Block getBlock(BlockPosition position) {
+    public Block getBlock(BlockPosition position){
         Chunk c = getChunkAt(new ChunkPosition(position.getX() / 16, position.getZ() / 16));
         byte id = c.getBlockId(position.getX() & 0xf, position.getY() & 0x7f, position.getZ() & 0xf);
         byte meta = c.getBlockMeta(position.getX() & 0xf, position.getY() & 0x7f, position.getZ() & 0xf);
@@ -251,7 +249,7 @@ public class Level{
         return spawnPosition;
     }
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager(){
         return entityManager;
     }
 

@@ -21,7 +21,7 @@ package net.redstonelamp.math;
  *
  * @author RedstoneLamp Team
  */
-public final class Side {
+public final class Side{
     public static final int DOWN = 0;
     public static final int UP = 1;
     public static final int NORTH = 2;

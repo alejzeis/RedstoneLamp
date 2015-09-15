@@ -21,7 +21,7 @@ package net.redstonelamp.network.pe.sub.v27;
  *
  * @author RedstoneLamp Team
  */
-public class UpdateBlockPacketRecordV27 {
+public class UpdateBlockPacketRecordV27{
     public final int x;
     public final int y;
     public final int z;
@@ -29,7 +29,7 @@ public class UpdateBlockPacketRecordV27 {
     public final byte meta;
     public final byte flags;
 
-    public UpdateBlockPacketRecordV27(int x, int y, int z, byte id, byte meta, byte flags) {
+    public UpdateBlockPacketRecordV27(int x, int y, int z, byte id, byte meta, byte flags){
         this.x = x;
         this.y = y;
         this.z = z;

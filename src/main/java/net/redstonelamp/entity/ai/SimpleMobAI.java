@@ -26,53 +26,58 @@ import net.redstonelamp.level.position.Position;
  *
  * @author RedstoneLamp Team
  */
-public class SimpleMobAI implements AI {
+public class SimpleMobAI implements AI{
     public static Entity MOB;
     public static int RANGE;
     public static boolean OCCUPIED = false;
     public static Position POSITION;
-    
+
     /**
      * Creates an instance of Mob AI with a set view range
-     * 
+     *
      * NOTE:
-     *     - Passive Mobs: 0 Blocks
-     *     - Most Monsters: 16 Blocks
-     *     - Enderman: 64 Blocks
-     *     - Ghast: 100 Blocks
-     * 
+     * - Passive Mobs: 0 Blocks
+     * - Most Monsters: 16 Blocks
+     * - Enderman: 64 Blocks
+     * - Ghast: 100 Blocks
+     *
      * @param range
      */
-    public SimpleMobAI(Entity mob, int range, Position position) {
+    public SimpleMobAI(Entity mob, int range, Position position){
         MOB = mob;
         RANGE = range;
         POSITION = position;
     }
-    
-    public void setRange(int range) {
+
+    @Override
+    public void setRange(int range){
         RANGE = range;
     }
-    
-    public int getRange() {
+
+    @Override
+    public int getRange(){
         return RANGE;
     }
-    
-    public boolean isOccupied() {
+
+    @Override
+    public boolean isOccupied(){
         return OCCUPIED;
     }
-    
-    public void setOccupied(boolean occupied) {
+
+    @Override
+    public void setOccupied(boolean occupied){
         OCCUPIED = occupied;
     }
-    
-    public boolean playerInRange() {
+
+    @Override
+    public boolean playerInRange(){
         if(playerAt(MOB.getPosition().getX(), MOB.getPosition().getY(), MOB.getPosition().getZ()))
             return true;
-        for(double x = 0; x < RANGE + 1; x++) {
+        for(double x = 0; x < RANGE + 1; x++){
             x = POSITION.getX() + x;
             if(playerAt(x, MOB.getPosition().getY(), MOB.getPosition().getZ()))
                 return true;
-            for(double z = 0; z < RANGE + 1; z++) {
+            for(double z = 0; z < RANGE + 1; z++){
                 z = POSITION.getX() + z;
                 if(playerAt(x, MOB.getPosition().getY(), z))
                     return true;
@@ -80,8 +85,9 @@ public class SimpleMobAI implements AI {
         }
         return false;
     }
-    
-    public boolean canAttack() {
+
+    @Override
+    public boolean canAttack(){
         if(playerAt(MOB.getPosition().getX(), MOB.getPosition().getY(), MOB.getPosition().getZ()))
             return true;
         else if(playerAt(MOB.getPosition().getX(), MOB.getPosition().getY(), MOB.getPosition().getZ() + 1))
@@ -92,9 +98,10 @@ public class SimpleMobAI implements AI {
             return true;
         return false;
     }
-    
-    public boolean playerAt(double x, double y, double z) {
-        for(Player p : RedstoneLamp.SERVER.getPlayers()) {
+
+    @Override
+    public boolean playerAt(double x, double y, double z){
+        for(Player p : RedstoneLamp.SERVER.getPlayers()){
             if(p.getPosition().getX() == x)
                 if(p.getPosition().getY() == y)
                     if(p.getPosition().getZ() == z)

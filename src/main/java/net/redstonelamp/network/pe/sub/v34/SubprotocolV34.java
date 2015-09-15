@@ -81,11 +81,11 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
         List<UniversalPacket> packets = new CopyOnWriteArrayList<>();
         SocketAddress address = player.getAddress();
         BinaryBuffer bb;
-        if(response instanceof LoginResponse) {
-            LoginResponse lr  = (LoginResponse) response;
-            if(!lr.loginAllowed) {
+        if(response instanceof LoginResponse){
+            LoginResponse lr = (LoginResponse) response;
+            if(!lr.loginAllowed){
                 String message;
-                switch (lr.loginNotAllowedReason) {
+                switch(lr.loginNotAllowedReason){
                     case LoginResponse.DEFAULT_loginNotAllowedReason:
                         message = "disconnectionScreen.noReason";
                         break;
@@ -100,7 +100,7 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
                 bb.putByte(DISCONNECT_PACKET);
                 bb.putString(message);
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
-            } else {
+            }else{
                 bb = BinaryBuffer.newInstance(5, ByteOrder.BIG_ENDIAN);
                 bb.putByte(PLAY_STATUS_PACKET);
                 bb.putInt(0); //LOGIN_SUCCESS
@@ -147,7 +147,7 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
 
                 getProtocol().getChunkSender().registerChunkRequests(getProtocol().getServer().getPlayer(address), 96);
             }
-        } else if(response instanceof ChunkResponse) {
+        }else if(response instanceof ChunkResponse){
             ChunkResponse cr = (ChunkResponse) response;
 
             BinaryBuffer ordered = BinaryBuffer.newInstance(83204, ByteOrder.BIG_ENDIAN);
@@ -171,7 +171,7 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb.put(orderedData);
 
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
-        } else if(response instanceof SpawnResponse) {
+        }else if(response instanceof SpawnResponse){
             SpawnResponse sr = (SpawnResponse) response;
 
             int flags = 0;
@@ -211,11 +211,11 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb.putByte(PLAY_STATUS_PACKET);
             bb.putInt(3); //PLAY_SPAWN
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
-        } else if(response instanceof AnimateResponse) {
+        }else if(response instanceof AnimateResponse){
             AnimateResponse ar = (AnimateResponse) response;
             bb = BinaryBuffer.newInstance(10, ByteOrder.LITTLE_ENDIAN);
             bb.putByte(ANIMATE_PACKET);
-            switch (ar.actionType) {
+            switch(ar.actionType){
                 case SWING_ARM:
                     bb.putByte((byte) 1);
                     break;
@@ -235,11 +235,11 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
         });
 
         BinaryBuffer batch = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN); //Batch PAYLOAD
-        for(UniversalPacket packet : toBeCompressed) {
+        for(UniversalPacket packet : toBeCompressed){
             batch.putInt(packet.getBuffer().length);
             batch.put(packet.getBuffer());
         }
-        if(batch.toArray().length > 1) {
+        if(batch.toArray().length > 1){
             byte[] compressedPayload = CompressionUtils.zlibDeflate(batch.toArray(), 7);
             bb = BinaryBuffer.newInstance(compressedPayload.length + 5, ByteOrder.BIG_ENDIAN);
             bb.putByte(BATCH_PACKET);
@@ -252,7 +252,7 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
     }
 
     @Override
-    public UniversalPacket[] translateQueuedResponse(Response[] responses, Player player) {
+    public UniversalPacket[] translateQueuedResponse(Response[] responses, Player player){
         return null;
     }
 

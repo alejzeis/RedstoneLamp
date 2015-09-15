@@ -60,8 +60,8 @@ public class RedstoneLamp{
         }
     }
 
-    public static String getBuildInformation() {
-        return SOFTWARE + " build #" + SOFTWARE_BUILD + ", commit: " + SOFTWARE_COMMIT + ", built on: "+SOFTWARE_BUILD_DATE;
+    public static String getBuildInformation(){
+        return SOFTWARE + " build #" + SOFTWARE_BUILD + ", commit: " + SOFTWARE_COMMIT + ", built on: " + SOFTWARE_BUILD_DATE;
     }
 
     private void getDefaultResources(){
@@ -93,18 +93,18 @@ public class RedstoneLamp{
             }
         }
         InputStream is = getClass().getResourceAsStream("/buildInformation.properties");
-        if(is != null) {
+        if(is != null){
             Properties prop = new Properties();
-            try {
+            try{
                 prop.load(is);
                 SOFTWARE_BUILD = Integer.parseInt(prop.getProperty("buildNum"));
                 SOFTWARE_COMMIT = prop.getProperty("buildCommit");
                 SOFTWARE_BUILD_DATE = prop.getProperty("buildDate");
-            } catch (Exception e) {
-                System.err.println(e.getClass().getName()+" while attempting to get build info: "+e.getMessage());
+            }catch(Exception e){
+                System.err.println(e.getClass().getName() + " while attempting to get build info: " + e.getMessage());
                 e.printStackTrace();
             }
-        } else {
+        }else{
             SOFTWARE_BUILD = -1;
             SOFTWARE_COMMIT = "not available";
             SOFTWARE_BUILD_DATE = "not available";

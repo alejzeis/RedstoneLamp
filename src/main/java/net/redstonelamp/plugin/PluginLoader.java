@@ -118,8 +118,8 @@ public abstract class PluginLoader{
      * Gets a resource as input stream
      *
      * @param path: Path to the resource requested
-     * @throws Exception
      * @return InputStream
+     * @throws Exception
      */
     public abstract InputStream getResourceAsStream(String path) throws Exception;
 }

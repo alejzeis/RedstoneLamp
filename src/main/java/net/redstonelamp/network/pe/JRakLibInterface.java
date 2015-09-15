@@ -28,7 +28,6 @@ import net.redstonelamp.network.LowLevelNetworkException;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.netInterface.AdvancedNetworkInterface;
 import net.redstonelamp.ticker.CallableTask;
-import net.redstonelamp.ticker.Task;
 import net.redstonelamp.ui.ConsoleOut;
 import net.redstonelamp.ui.Log4j2ConsoleOut;
 
@@ -63,10 +62,10 @@ public class JRakLibInterface implements ServerInstance, AdvancedNetworkInterfac
         setupLogger();
         startupInterface();
 
-        logger.info("Started JRakLib Interface on "+server.getConfig().getString("server-ip") + ":" + server.getConfig().getInt("mcpe-port"));
+        logger.info("Started JRakLib Interface on " + server.getConfig().getString("server-ip") + ":" + server.getConfig().getInt("mcpe-port"));
     }
 
-    private void startupInterface() {
+    private void startupInterface(){
         String ip = server.getConfig().getString("server-ip");
         int port = server.getConfig().getInt("mcpe-port");
 
@@ -160,8 +159,8 @@ public class JRakLibInterface implements ServerInstance, AdvancedNetworkInterfac
     }
 
     @Override
-    public void exceptionCaught(String clazz, String message) {
-        logger.warning("JRakLib caught an exception! "+clazz+": "+message);
+    public void exceptionCaught(String clazz, String message){
+        logger.warning("JRakLib caught an exception! " + clazz + ": " + message);
     }
 
     @Override

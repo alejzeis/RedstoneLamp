@@ -37,14 +37,14 @@ public abstract class Entity{
 
     protected void initEntity(){
         initialized = true;
-        if(position != null && position.getLevel() != null) {
+        if(position != null && position.getLevel() != null){
             position.getLevel().getEntityManager().addEntity(this);
         }
     }
 
-    protected void destroyEntity() {
+    protected void destroyEntity(){
         initialized = false;
-        if(position != null && position.getLevel() != null) {
+        if(position != null && position.getLevel() != null){
             position.getLevel().getEntityManager().removeEntity(this);
         }
     }
@@ -108,7 +108,7 @@ public abstract class Entity{
         this.nametag = nametag;
     }
 
-    public int getHealth() {
+    public int getHealth(){
         return health;
     }
 
@@ -116,9 +116,10 @@ public abstract class Entity{
      * Sets the health of this entity.
      * <br>
      * NOTE: This sets the health to an absolute value, it does not increase the health.
+     *
      * @param health The amount of health points to set this entity to.
      */
-    public void setHealth(int health) {
+    public void setHealth(int health){
         this.health = health;
     }
 }

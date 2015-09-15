@@ -28,13 +28,13 @@ public class BlockPlaceRequest extends Request{
     public Block block;
     public Vector3 blockPosition;
 
-    public BlockPlaceRequest(Block block, Vector3 blockPosition) {
+    public BlockPlaceRequest(Block block, Vector3 blockPosition){
         this.block = block;
         this.blockPosition = blockPosition;
     }
 
     @Override
-    public void execute() {
+    public void execute(){
 
     }
 }

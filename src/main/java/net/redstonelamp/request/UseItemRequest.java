@@ -25,28 +25,28 @@ import net.redstonelamp.math.Vector3;
  * @author RedstoneLamp Team
  */
 @Deprecated
-public class UseItemRequest extends Request {
+public class UseItemRequest extends Request{
 
     public Vector3 blockVector;
     public byte face;
     public Position fPosition;
 
-    public UseItemRequest(Vector3 blockVector, byte face, Position fPosition) {
+    public UseItemRequest(Vector3 blockVector, byte face, Position fPosition){
         this.blockVector = blockVector;
         this.face = face;
         this.fPosition = fPosition;
     }
 
     @Override
-    public void execute() {
+    public void execute(){
 
     }
 
     @Override
-    public String toString() {
+    public String toString(){
         return "UseItemRequest{" +
                 blockVector.toString() + ", " +
-                "face: "+face + ", " +
+                "face: " + face + ", " +
                 fPosition.toString() +
                 '}';
     }

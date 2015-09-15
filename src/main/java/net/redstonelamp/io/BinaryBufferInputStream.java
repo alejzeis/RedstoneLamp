@@ -27,25 +27,24 @@ import java.nio.BufferUnderflowException;
  *
  * @author RedstoneLamp Team
  */
-public class BinaryBufferInputStream extends InputStream {
+public class BinaryBufferInputStream extends InputStream{
     private BinaryBuffer bb;
 
-    public BinaryBufferInputStream(BinaryBuffer bb) {
+    public BinaryBufferInputStream(BinaryBuffer bb){
         this.bb = bb;
     }
 
     @Override
-    public int read() throws IOException {
-        try {
-            int i = bb.getUnsignedByte();
-            return i;
-        } catch(BufferUnderflowException e) {
+    public int read() throws IOException{
+        try{
+            return (int) bb.getUnsignedByte();
+        }catch(BufferUnderflowException e){
             return -1;
         }
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() throws IOException{
         super.close();
         bb = null;
     }

@@ -29,7 +29,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -71,13 +70,13 @@ public class LevelManager{
         String format = autoDetectFormat(levelDir, server.getConfig().getString("level-default-format"));
         //String gen = autoDetectGenerator(levelDir, server.getConfig().getString("level-default-generator"));
         String gen = autoDetectGenerator(levelDir, server.getConfig().getString("level-type").toLowerCase());
-        synchronized (levels) {
+        synchronized(levels){
             levels.clear();
             levels.put(name, new Level(this, format, gen, params)); //TODO: correct provider
         }
     }
 
-    public void tick(long tick) {
+    public void tick(long tick){
         levels.values().stream().forEach(Level::tick);
     }
 
@@ -160,14 +159,14 @@ public class LevelManager{
         return levels.get(server.getConfig().getString("level-name"));
     }
 
-    public Level getLevelByName(String name) {
-        if(levels.containsKey(name)) {
+    public Level getLevelByName(String name){
+        if(levels.containsKey(name)){
             return levels.get(name);
         }
         return null;
     }
 
-    public Collection<Level> getLevels() {
+    public Collection<Level> getLevels(){
         return levels.values();
     }
 }

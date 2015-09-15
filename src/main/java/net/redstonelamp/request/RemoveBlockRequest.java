@@ -26,12 +26,12 @@ import net.redstonelamp.level.position.BlockPosition;
 public class RemoveBlockRequest extends Request{
     public BlockPosition position;
 
-    public RemoveBlockRequest(BlockPosition position) {
+    public RemoveBlockRequest(BlockPosition position){
         this.position = position;
     }
 
     @Override
-    public void execute() {
+    public void execute(){
 
     }
 }

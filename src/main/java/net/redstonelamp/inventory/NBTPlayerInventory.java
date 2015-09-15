@@ -17,9 +17,7 @@
 package net.redstonelamp.inventory;
 
 import net.redstonelamp.Player;
-import net.redstonelamp.io.BinaryBufferInputStream;
 import net.redstonelamp.item.Item;
-import net.redstonelamp.nio.BinaryBuffer;
 import org.spout.nbt.*;
 import org.spout.nbt.stream.NBTInputStream;
 import org.spout.nbt.stream.NBTOutputStream;
@@ -27,7 +25,6 @@ import org.spout.nbt.stream.NBTOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteOrder;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -42,75 +39,75 @@ public class NBTPlayerInventory implements PlayerInventory{
     private Player player;
     private int maxStackSize = MAX_STACK;
 
-    public static PlayerInventory createFromBytes(byte[] bytes) {
+    public static PlayerInventory createFromBytes(byte[] bytes){
         NBTPlayerInventory inv = new NBTPlayerInventory();
         inv.loadFromBytes(bytes);
         return inv;
     }
 
     @Override
-    public Item getItemInHand() {
+    public Item getItemInHand(){
         return inHand;
     }
 
     @Override
-    public void setItemInHand(Item item) {
+    public void setItemInHand(Item item){
         inHand = item;
     }
 
     @Override
-    public Player getPlayer() {
+    public Player getPlayer(){
         return player;
     }
 
     @Override
-    public int getSize() {
+    public int getSize(){
         int i = 0;
-        for(Stack<Item> stack : inventory.values()) {
+        for(Stack<Item> stack : inventory.values()){
             i = i + stack.size();
         }
         return i;
     }
 
     @Override
-    public void setMaxStackSize(int size) {
+    public void setMaxStackSize(int size){
         maxStackSize = size;
     }
 
     @Override
-    public int getMaxStackSize() {
+    public int getMaxStackSize(){
         return maxStackSize;
     }
 
     @Override
-    public Stack<Item> getStackAt(int index) {
+    public Stack<Item> getStackAt(int index){
         return inventory.get(index);
     }
 
     @Override
-    public Item popItemFromStack(int index) {
+    public Item popItemFromStack(int index){
         Stack<Item> stack = inventory.get(index);
-        if(stack != null) {
+        if(stack != null){
             return stack.pop();
         }
         return null;
     }
 
     @Override
-    public Item getItemFromStack(int index) {
+    public Item getItemFromStack(int index){
         Stack<Item> stack = inventory.get(index);
-        if(stack != null) {
+        if(stack != null){
             return stack.get(0);
         }
         return null;
     }
 
     @Override
-    public void addItemToStack(Item item, int index) {
+    public void addItemToStack(Item item, int index){
         Stack<Item> stack = inventory.get(index);
-        if(stack != null) {
+        if(stack != null){
             stack.push(item);
-        } else {
+        }else{
             stack = new Stack<>();
             stack.push(item);
             setStackAt(stack, index);
@@ -118,35 +115,35 @@ public class NBTPlayerInventory implements PlayerInventory{
     }
 
     @Override
-    public void setStackAt(Stack<Item> stack, int index) {
+    public void setStackAt(Stack<Item> stack, int index){
         inventory.put(index, stack);
     }
 
     @Override
-    public byte[] saveToBytes() {
+    public byte[] saveToBytes(){
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        try {
+        try{
             NBTOutputStream out = new NBTOutputStream(bout, true, false);
             List<Tag> rootTags = getTags();
             out.writeTag(new CompoundTag("inventory", rootTags));
             out.close();
-        } catch (IOException e) {
+        }catch(IOException e){
             e.printStackTrace();
         }
         return bout.toByteArray();
     }
 
     @Override
-    public void loadFromBytes(byte[] bytes) {
-        try {
+    public void loadFromBytes(byte[] bytes){
+        try{
             NBTInputStream in = new NBTInputStream(new ByteArrayInputStream(bytes), true, false);
             Tag t = in.readTag();
-            if(!(t instanceof CompoundTag)) {
+            if(!(t instanceof CompoundTag)){
                 throw new IOException("First Tag is not Compound!");
             }
             CompoundTag tag = (CompoundTag) t;
-            for(Tag insideTag : tag.getValue()) {
-                if(!(insideTag instanceof CompoundTag)) {
+            for(Tag insideTag : tag.getValue()){
+                if(!(insideTag instanceof CompoundTag)){
                     throw new IOException("Tag is not Compound!");
                 }
                 CompoundTag ct = (CompoundTag) insideTag;
@@ -161,14 +158,14 @@ public class NBTPlayerInventory implements PlayerInventory{
                 setStackAt(stack, index.getValue());
             }
             in.close();
-        } catch (IOException e) {
+        }catch(IOException e){
             e.printStackTrace();
         }
     }
 
-    private List<Tag> getTags() {
+    private List<Tag> getTags(){
         List<Tag> tags = new ArrayList<>();
-        for(int i = 0; i < inventory.keySet().size(); i++) { //For Each stack
+        for(int i = 0; i < inventory.keySet().size(); i++){ //For Each stack
             Stack<Item> stack = inventory.get(i);
             List<Tag> stackTags = new ArrayList<>();
             stackTags.add(new ByteTag("inventoryIndex", (byte) i));
@@ -176,12 +173,12 @@ public class NBTPlayerInventory implements PlayerInventory{
             Item item = stack.get(0); //Assume all items in the stack are the same (they should be)
             stackTags.add(new IntTag("itemId", item.getId()));
             stackTags.add(new ShortTag("itemMeta", item.getMeta()));
-            tags.add(new CompoundTag("stack-"+i, stackTags));
+            tags.add(new CompoundTag("stack-" + i, stackTags));
         }
         return tags;
     }
 
-    protected void setPlayer(Player player) {
+    protected void setPlayer(Player player){
         this.player = player;
     }
 }

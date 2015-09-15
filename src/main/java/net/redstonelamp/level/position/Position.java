@@ -60,7 +60,7 @@ public class Position{
         pitch = 0;
     }
 
-    public Position(float x, float y, float z, float yaw, float pitch, Level level) {
+    public Position(float x, float y, float z, float yaw, float pitch, Level level){
         this.level = level;
 
         this.x = x;
@@ -117,7 +117,7 @@ public class Position{
     }
 
     @Override
-    public String toString() {
-        return "Position{x: "+getX()+", y: "+getY()+", z: "+getZ()+", yaw: "+getYaw()+", pitch: "+pitch+"}";
+    public String toString(){
+        return "Position{x: " + getX() + ", y: " + getY() + ", z: " + getZ() + ", yaw: " + getYaw() + ", pitch: " + pitch + "}";
     }
 }

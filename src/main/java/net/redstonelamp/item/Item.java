@@ -24,32 +24,32 @@ import java.util.List;
  *
  * @author RedstoneLamp Team
  */
-public class Item {
+public class Item{
     private static final List<Item> implementedItems = new ArrayList<>();
     private final int id;
     private final short meta;
     private final int count;
 
-    public Item(int id, short meta, int count) {
+    public Item(int id, short meta, int count){
         this.id = id;
         this.meta = meta;
         this.count = count;
     }
 
-    public static void init() {
+    public static void init(){
         implementedItems.clear();
         //TODO: register implemented items
     }
 
-    public int getId() {
+    public int getId(){
         return id;
     }
 
-    public short getMeta() {
+    public short getMeta(){
         return meta;
     }
 
-    public int getCount() {
+    public int getCount(){
         return count;
     }
 }

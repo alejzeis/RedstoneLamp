@@ -23,10 +23,10 @@ import net.redstonelamp.request.AnimateRequest;
  *
  * @author RedstoneLamp Team
  */
-public class AnimateResponse extends Response {
+public class AnimateResponse extends Response{
     public AnimateRequest.ActionType actionType;
 
-    public AnimateResponse(AnimateRequest.ActionType actionType) {
+    public AnimateResponse(AnimateRequest.ActionType actionType){
         this.actionType = actionType;
     }
 }

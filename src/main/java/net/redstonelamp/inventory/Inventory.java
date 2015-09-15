@@ -25,7 +25,7 @@ import java.util.Stack;
  *
  * @author RedstoneLamp Team
  */
-public interface Inventory {
+public interface Inventory{
     /**
      * The maximum amount of items/blocks in a stack.
      */
@@ -33,12 +33,14 @@ public interface Inventory {
 
     /**
      * Get the size of the inventory.
+     *
      * @return The amount of items in this inventory.
      */
     int getSize();
 
     /**
      * Returns the maximum amount of items/blocks in a stack for this Inventory.
+     *
      * @return The Max Stack Size for this Inventory.
      */
     default int getMaxStackSize(){
@@ -47,12 +49,14 @@ public interface Inventory {
 
     /**
      * Set the max stack size for this inventory.
+     *
      * @param size The size.
      */
     void setMaxStackSize(int size);
 
     /**
      * Get the Stack stored at the specified index. This does NOT remove the stack from the inventory.
+     *
      * @param index The index where the stack is.
      * @return The stack if found, null if not.
      */
@@ -60,6 +64,7 @@ public interface Inventory {
 
     /**
      * "pops" an Item from the stack. This removes the Item from the stack, and returns it. The Item will be removed from the top of the Stack.
+     *
      * @param index The index where the stack is.
      * @return The Item if the stack contains Items, null if not.
      */
@@ -67,6 +72,7 @@ public interface Inventory {
 
     /**
      * Same as <code>Inventory::popItemFromStack(int index)</code> except the item is not removed from the Stack.
+     *
      * @param index The index where the stack is.
      * @return
      */
@@ -74,13 +80,15 @@ public interface Inventory {
 
     /**
      * Adds an Item to the stack at the specified index. If the index is empty, a new stack will be created to fill that index, and the item will be added to that.
-     * @param item The Item to be added.
+     *
+     * @param item  The Item to be added.
      * @param index The index where the Item should be added.
      */
     void addItemToStack(Item item, int index);
 
     /**
      * Sets the Stack at the specified index to the Stack given.
+     *
      * @param stack The stack to be set.
      * @param index The index where the stack will be set.
      */
@@ -88,12 +96,14 @@ public interface Inventory {
 
     /**
      * Gets the Item in the Entity's hand.
+     *
      * @return The Item in the hand.
      */
     Item getItemInHand();
 
     /**
      * Sets the Item in the Entity's hand.
+     *
      * @param item The Item to be set in the entity's hand.
      */
     void setItemInHand(Item item);

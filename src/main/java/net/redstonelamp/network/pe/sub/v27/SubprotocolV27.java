@@ -123,7 +123,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             case ANIMATE_PACKET:
                 byte actionId = up.bb().getByte();
                 up.bb().skip(8); //Skip entity ID
-                switch (actionId) {
+                switch(actionId){
                     case 1:
                         requests.add(new AnimateRequest(AnimateRequest.ActionType.SWING_ARM));
                         break;
@@ -144,7 +144,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                 float py = up.bb().getFloat();
                 float pz = up.bb().getFloat();
 
-                if (face >= 0 && face <= 5) { //Use item on, Block Place
+                if(face >= 0 && face <= 5){ //Use item on, Block Place
                     //TODO: Implement Item use, (pickaxe, sword, etc)
                     Block block = new Block(item2, meta2, 1);
                     requests.add(new BlockPlaceRequest(block, new Vector3(ax, ay, az).getSide(face, 1)));
@@ -325,14 +325,14 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             ChatResponse cr = (ChatResponse) response;
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN); //Self-expand
             bb.putByte(TEXT_PACKET);
-            if(cr.translation != ChatResponse.DEFAULT_translation) {
+            if(cr.translation != ChatResponse.DEFAULT_translation){
                 bb.putByte(TEXT_TRANSLATION); //TYPE_TRANSLATION
                 bb.putString(cr.translation.message);
                 bb.putByte((byte) cr.translation.params.length);
-                for(String param : cr.translation.params) {
+                for(String param : cr.translation.params){
                     bb.putString(param);
                 }
-            } else if(!cr.source.isEmpty()){
+            }else if(!cr.source.isEmpty()){
                 bb.putByte(TEXT_CHAT); //TYPE_CHAT
                 bb.putString(cr.source);
                 bb.putString(cr.message);
@@ -394,7 +394,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             bb.putByte((byte) 0); //MODE_NORMAL
             bb.putByte((byte) (pmr.onGround ? 1 : 0));
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
-        }else if(response instanceof PlayerEquipmentResponse) {
+        }else if(response instanceof PlayerEquipmentResponse){
             PlayerEquipmentResponse er = (PlayerEquipmentResponse) response;
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
             bb.putByte(PLAYER_EQUIPMENT_PACKET);
@@ -404,11 +404,11 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             bb.putByte((byte) 0); //slot
             bb.putByte((byte) 0); //selectedSlot
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
-        } else if(response instanceof AnimateResponse) {
+        }else if(response instanceof AnimateResponse){
             AnimateResponse ar = (AnimateResponse) response;
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
             bb.putByte(ANIMATE_PACKET);
-            switch (ar.actionType) {
+            switch(ar.actionType){
                 case SWING_ARM:
                     bb.putByte((byte) 1);
                     break;
@@ -418,7 +418,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             }
             bb.putLong(player.getEntityID());
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
-        } else if(response instanceof BlockPlaceResponse) {
+        }else if(response instanceof BlockPlaceResponse){
             BlockPlaceResponse bpr = (BlockPlaceResponse) response;
             bb = BinaryBuffer.newInstance(16, ByteOrder.BIG_ENDIAN);
             bb.putByte(UPDATE_BLOCK_PACKET);
@@ -429,7 +429,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             bb.putByte((byte) bpr.block.getId());
             bb.putByte((byte) ((UpdateBlockPacketFlagsV27.FLAG_ALL_PRIORITY << 4) | (byte) bpr.block.getMeta()));
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
-        } else if(response instanceof RemoveBlockResponse) {
+        }else if(response instanceof RemoveBlockResponse){
             RemoveBlockResponse rbr = (RemoveBlockResponse) response;
             bb = BinaryBuffer.newInstance(16, ByteOrder.BIG_ENDIAN);
             bb.putByte(UPDATE_BLOCK_PACKET);
@@ -457,19 +457,19 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
     }
 
     @Override
-    public UniversalPacket[] translateQueuedResponse(Response[] responses, Player player) {
+    public UniversalPacket[] translateQueuedResponse(Response[] responses, Player player){
         List<UniversalPacket> packets = new CopyOnWriteArrayList<>();
         BinaryBuffer bb;
-        if(responses[0] instanceof BlockPlaceResponse) {
+        if(responses[0] instanceof BlockPlaceResponse){
             List<UpdateBlockPacketRecordV27> records = new ArrayList<>();
-            for(Response r : responses) {
+            for(Response r : responses){
                 BlockPlaceResponse bpr = (BlockPlaceResponse) r;
                 records.add(new UpdateBlockPacketRecordV27(bpr.position.getX(), bpr.position.getY(), bpr.position.getZ(), (byte) bpr.block.getId(), (byte) bpr.block.getMeta(), UpdateBlockPacketFlagsV27.FLAG_ALL_PRIORITY));
             }
             bb = BinaryBuffer.newInstance(5 + (11 * records.size()), ByteOrder.BIG_ENDIAN);
             bb.putByte(UPDATE_BLOCK_PACKET);
             bb.putInt(records.size());
-            for(UpdateBlockPacketRecordV27 record : records) {
+            for(UpdateBlockPacketRecordV27 record : records){
                 bb.putInt(record.x);
                 bb.putInt(record.z);
                 bb.putByte((byte) record.y);
@@ -477,16 +477,16 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                 bb.putByte((byte) ((record.flags << 4) | (byte) record.meta));
             }
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, player.getAddress()));
-        } else if(responses[0] instanceof RemoveBlockResponse) {
+        }else if(responses[0] instanceof RemoveBlockResponse){
             List<UpdateBlockPacketRecordV27> records = new ArrayList<>();
-            for(Response r : responses) {
+            for(Response r : responses){
                 RemoveBlockResponse rbr = (RemoveBlockResponse) r;
                 records.add(new UpdateBlockPacketRecordV27(rbr.position.getX(), rbr.position.getY(), rbr.position.getZ(), (byte) 0, (byte) 0, UpdateBlockPacketFlagsV27.FLAG_ALL_PRIORITY));
             }
             bb = BinaryBuffer.newInstance(5 + (11 * records.size()), ByteOrder.BIG_ENDIAN);
             bb.putByte(UPDATE_BLOCK_PACKET);
             bb.putInt(records.size());
-            for(UpdateBlockPacketRecordV27 record : records) {
+            for(UpdateBlockPacketRecordV27 record : records){
                 bb.putInt(record.x);
                 bb.putInt(record.z);
                 bb.putByte((byte) record.y);
