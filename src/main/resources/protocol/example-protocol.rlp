@@ -1,0 +1,16 @@
+ProtocolName example protocol V01
+ProtocolDescription this is an example protocol.\
+  In this way you can\
+  spread your line into multiple lines.\
+    And it can be \
+   of any number of spaces!
+# In this way you can make comments with the # sign
+  # Just indent this file in any sizes and we still accept it!
+# Note that you may not use # as the comment sign at the middle of a line!
+
+DeclarePacket x01
+  PacketName LoginPacket
+  PacketField STRING username
+  PacketField SKIP 4
+EndPacket
+
