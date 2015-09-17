@@ -46,10 +46,26 @@ public class ScriptLoader {
             scriptManager.engine.eval(reader);
             Invocable inv = (Invocable) scriptManager.engine;
             scriptManager.getScripts().add(inv);
+            inv.invokeFunction("onEnable");
         } catch (FileNotFoundException e) {
             scriptManager.server.getLogger().info("Unable to locate script file " + name + "!");
         } catch (ScriptException e) {
             e.printStackTrace();
-        }
+        } catch (NoSuchMethodException e) {}
+    }
+    
+    public void disableScript(Invocable script) {
+        if(!scriptManager.scriptDir.isDirectory())
+            scriptManager.scriptDir.mkdirs();
+        try {
+            for(int i = 0; i < scriptManager.getScripts().size() + 1; i++) {
+                Invocable inv = scriptManager.getScripts().get(i);
+                if(inv.equals(script))
+                    scriptManager.getScripts().remove(i);
+            }
+            script.invokeFunction("onDisable");
+        } catch (ScriptException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {}
     }
 }
