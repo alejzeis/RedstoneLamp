@@ -16,6 +16,16 @@
  */
 package net.redstonelamp;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
+
+import lombok.Getter;
 import net.redstonelamp.config.ServerConfig;
 import net.redstonelamp.config.YamlConfig;
 import net.redstonelamp.level.Level;
@@ -28,18 +38,10 @@ import net.redstonelamp.plugin.PluginSystem;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.response.ChatResponse;
 import net.redstonelamp.response.Response;
+import net.redstonelamp.script.ScriptManager;
 import net.redstonelamp.ticker.RedstoneTicker;
 import net.redstonelamp.ui.Log4j2ConsoleOut;
 import net.redstonelamp.ui.Logger;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Stream;
 
 /**
  * The base RedstoneLamp server, which handles the ticker.
@@ -55,8 +57,9 @@ public class Server implements Runnable{
     private final NetworkManager network;
     private final List<Player> players = new CopyOnWriteArrayList<>();
     private final PluginSystem pluginSystem;
+    @Getter private final ScriptManager scriptManager;
     private final PlayerDatabase playerDatabase;
-
+    
     private String motd;
     private int maxPlayers;
     private LevelManager levelManager;
@@ -83,11 +86,16 @@ public class Server implements Runnable{
 
         network.registerProtocol(new PEProtocol(network));
         network.registerProtocol(new PCProtocol(network));
-
+        
+        scriptManager = new ScriptManager(this);
+        
         pluginSystem = new PluginSystem();
         pluginSystem.init(this, new Logger(new Log4j2ConsoleOut("PluginSystem")));
         pluginSystem.loadPlugins();
         pluginSystem.enablePlugins();
+        
+        scriptManager.initScriptAPI();
+        scriptManager.loadScripts();
 
         network.setName(motd); //Set the name after plugins, as some plugins may add protocols
 
