@@ -25,7 +25,7 @@ public class JavaPluginManager extends PluginManager{
     /**
      * Directory all the java plugins are located in
      */
-    public static final File PLUGINS_DIR = new File("java-plugins");
+    public static final File PLUGINS_DIR = new File("plugins");
 
     @Override
     public void loadPlugins(){

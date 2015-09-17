@@ -17,6 +17,8 @@
 package net.redstonelamp.script;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import javax.script.Invocable;
@@ -26,6 +28,8 @@ import javax.script.ScriptEngineManager;
 import lombok.Getter;
 import lombok.Setter;
 import net.redstonelamp.Server;
+import net.redstonelamp.ui.ConsoleOut;
+import net.redstonelamp.ui.Logger;
 
 public class ScriptManager {
     @Getter public File scriptDir = new File("./scripts");
@@ -43,6 +47,20 @@ public class ScriptManager {
         this.server = server;
         manager = new ScriptEngineManager();
         engine = manager.getEngineByName("JavaScript");
+        try {
+            Constructor c = server.getLogger().getConsoleOutClass().getConstructor(String.class);
+            engine.put("api", new DefaultScriptAPI(server, new Logger((ConsoleOut) c.newInstance("Script"))));
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {}
         loader = new ScriptLoader(this);
     }
     

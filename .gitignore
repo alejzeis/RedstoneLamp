@@ -6,6 +6,7 @@
 /.idea/
 /*.iml
 /plugins/
+/scripts/
 /worlds/
 /players/
 /server.properties

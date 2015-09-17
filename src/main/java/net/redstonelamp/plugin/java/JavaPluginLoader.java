@@ -82,7 +82,7 @@ public class JavaPluginLoader extends PluginLoader{
         try{
             mainClass = Class.forName(getProperties().getMain());
             if(!JavaPlugin.class.isAssignableFrom(mainClass)){
-                PluginSystem.getLogger().error(name + " is in folder java-plugins, but does not extend JavaPlugin. Disabling!");
+                PluginSystem.getLogger().error(name + " is in the plugins folder, but does not extend JavaPlugin. Disabling!");
                 setState(PluginState.UNLOADED);
                 return;
             }
