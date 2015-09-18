@@ -21,6 +21,7 @@ import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
 import net.redstonelamp.nio.BinaryBuffer;
+import net.redstonelamp.request.ChatRequest;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.request.Request;
 import net.redstonelamp.response.*;
@@ -71,6 +72,30 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
                 lr.slim = slim;
                 lr.skin = skin;
                 requests.add(lr);
+                break;
+
+            case TEXT_PACKET:
+                ChatRequest cr = new ChatRequest((byte) 0);
+                switch (up.bb().getByte()) {
+                    case TEXT_POPUP:
+                    case TEXT_CHAT:
+                        cr.source = up.bb().getString();
+                    case TEXT_RAW:
+                    case TEXT_TIP:
+                    case TEXT_SYSTEM:
+                        cr.message = up.bb().getString();
+                        break;
+
+                    case TEXT_TRANSLATION:
+                        cr.message = up.bb().getString();
+                        int count = up.bb().getByte();
+                        cr.parameters = new String[count];
+                        for(int i = 0; i < count; i++) {
+                            cr.parameters[i] = up.bb().getString();
+                        }
+                        break;
+                }
+                requests.add(cr);
                 break;
         }
         return requests.toArray(new Request[requests.size()]);

@@ -89,5 +89,12 @@ public interface ProtocolConst34{
     //public static final byte SET_PLAYER_GAMETYPE_PACKET = (byte) 0xc2;
     public static final byte PLAYER_LIST_PACKET = (byte) 0xc3;
     //public static final byte TELEMETRY_EVENT_PACKET = (byte) 0xc4;
+
+    public static final byte TEXT_RAW = (byte) 0x00;
+    public static final byte TEXT_CHAT = (byte) 0x01;
+    public static final byte TEXT_TRANSLATION = (byte) 0x02;
+    public static final byte TEXT_POPUP = (byte) 0x03;
+    public static final byte TEXT_TIP = (byte) 0x04;
+    public static final byte TEXT_SYSTEM = (byte) 0x05;
 }
 
