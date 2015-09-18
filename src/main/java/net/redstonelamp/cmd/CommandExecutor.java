@@ -9,7 +9,7 @@ import net.redstonelamp.Server;
 import net.redstonelamp.cmd.exception.InvalidCommandSenderException;
 
 public class CommandExecutor {
-    public static void executor(String cmd, Object sender) throws InvalidCommandSenderException {
+    public void executor(String cmd, Object sender) throws InvalidCommandSenderException {
         Server server = RedstoneLamp.SERVER;
         if(sender instanceof Server)
             sender = (Server) sender;

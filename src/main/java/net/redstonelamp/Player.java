@@ -17,6 +17,7 @@
 package net.redstonelamp;
 
 import net.redstonelamp.block.Block;
+import net.redstonelamp.cmd.exception.InvalidCommandSenderException;
 import net.redstonelamp.entity.PlayerEntity;
 import net.redstonelamp.inventory.NBTPlayerInventory;
 import net.redstonelamp.inventory.PlayerInventory;
@@ -184,7 +185,14 @@ public class Player extends PlayerEntity{
             server.broadcastMessage(new ChatResponse.ChatTranslation("%multiplayer.player.joined", new String[]{username}));
         }else if(request instanceof ChatRequest){
             ChatRequest cr = (ChatRequest) request;
-            server.broadcastMessage("<" + username + "> " + cr.message);
+            if(cr.message.startsWith("/")) {
+                try {
+                    server.getCommandManager().getCommandExecutor().executor(cr.message, this);
+                } catch (InvalidCommandSenderException e) {
+                    e.printStackTrace();
+                }
+            } else
+                server.broadcastMessage("<" + username + "> " + cr.message);
         }else if(request instanceof PlayerMoveRequest){
             PlayerMoveRequest pmr = (PlayerMoveRequest) request;
             if(gamemode == 1){
