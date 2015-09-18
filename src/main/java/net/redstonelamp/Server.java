@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
 import lombok.Getter;
+import net.redstonelamp.cmd.CommandManager;
 import net.redstonelamp.config.ServerConfig;
 import net.redstonelamp.config.YamlConfig;
 import net.redstonelamp.level.Level;
@@ -58,6 +59,7 @@ public class Server implements Runnable{
     private final List<Player> players = new CopyOnWriteArrayList<>();
     private final PluginSystem pluginSystem;
     @Getter private final ScriptManager scriptManager;
+    @Getter private CommandManager commandManager;
     private final PlayerDatabase playerDatabase;
     
     private String motd;
@@ -87,6 +89,7 @@ public class Server implements Runnable{
         network.registerProtocol(new PEProtocol(network));
         network.registerProtocol(new PCProtocol(network));
         
+        commandManager = new CommandManager();
         scriptManager = new ScriptManager(this);
         
         pluginSystem = new PluginSystem();
