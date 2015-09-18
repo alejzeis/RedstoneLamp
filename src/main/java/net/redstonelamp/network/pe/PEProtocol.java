@@ -104,7 +104,7 @@ public class PEProtocol extends Protocol{
             }else{
                 getManager().getServer().getLogger().info("Could not find protocol for " + packet.getAddress().toString() + ", disconnecting.");
                 defaultNoSubprotocolFoundDisconnect(packet.getAddress());
-                ((JRakLibInterface) _interface)._internalClose(packet.getAddress().toString(), "no subprotocol found");
+                ((JRakLibInterface) _interface)._internalClose(packet.getAddress(), "no subprotocol found");
                 return new Request[]{null};
             }
         }
@@ -139,7 +139,7 @@ public class PEProtocol extends Protocol{
     @Override
     protected void onClose(Player player){
         addressToSubprotocols.remove(player.getAddress().toString());
-        ((JRakLibInterface) _interface)._internalClose(player.getAddress().toString(), "server disconnect");
+        ((JRakLibInterface) _interface)._internalClose(player.getAddress(), "server disconnect");
     }
 
     protected void openSession(String session){
