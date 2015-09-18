@@ -17,8 +17,12 @@
 package net.redstonelamp.ticker;
 
 import net.redstonelamp.Server;
+import net.redstonelamp.cmd.exception.InvalidCommandSenderException;
 import net.redstonelamp.utils.AntiSpam;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +44,7 @@ public class RedstoneTicker{
     private double loadMeasure = 0D;
     private long startTime;
     private final List<RegisteredTask> tasks = new ArrayList<>();
+    private BufferedReader cli;
 
     /**
      * Create a new <code>RedstoneTicker</code> belonging to the specified <code>Server</code>
@@ -50,6 +55,7 @@ public class RedstoneTicker{
     public RedstoneTicker(Server server, int sleepNanos){
         this.server = server;
         sleep = sleepNanos;
+        cli = new BufferedReader(new InputStreamReader(System.in));
     }
 
     /**
@@ -102,6 +108,9 @@ public class RedstoneTicker{
                 task.getTask().onFinalize();
             }
         }
+        
+        
+        
         lastTickDone = true;
     }
 
@@ -114,6 +123,18 @@ public class RedstoneTicker{
         for(RegisteredTask task : taskArray){
             task.check(tick);
         }
+        
+        String line = null;
+        try {
+            if (cli.ready()) {
+                line = cli.readLine();
+                if (line != null)
+                    server.getCommandManager().getCommandExecutor().execute(line, server);
+            }
+        } catch (InvalidCommandSenderException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {}
     }
 
     /**

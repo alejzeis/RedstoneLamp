@@ -187,7 +187,7 @@ public class Player extends PlayerEntity{
             ChatRequest cr = (ChatRequest) request;
             if(cr.message.startsWith("/")) {
                 try {
-                    server.getCommandManager().getCommandExecutor().executor(cr.message, this);
+                    server.getCommandManager().getCommandExecutor().execute(cr.message, this);
                 } catch (InvalidCommandSenderException e) {
                     e.printStackTrace();
                 }
