@@ -42,11 +42,11 @@ public class CommandExecutor {
         String label = null; //TODO
         //TODO: Command Execution event
         for(CommandListener l : server.getCommandManager().getListeners()) {
-            l.onCommand(commandSender, cmd, label, params);
+            l.onCommand(commandSender, params[0], label, params);
         }
         for(Invocable i : server.getScriptManager().getScripts()) {
             try {
-                i.invokeFunction("onCommand", commandSender, cmd, label, params);
+                i.invokeFunction("onCommand", commandSender, params[0], label, params);
             } catch (ScriptException e) {
                 e.printStackTrace();
             } catch (NoSuchMethodException e) {}
