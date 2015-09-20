@@ -20,6 +20,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -35,7 +36,7 @@ public class ScriptManager {
     @Getter public File scriptDir = new File("./scripts");
     
     @Getter public ArrayList<Invocable> scripts = new ArrayList<Invocable>();
-    @Getter public ArrayList<ScriptAPI> scriptAPI = new ArrayList<ScriptAPI>();
+    @Getter public HashMap<String, ScriptAPI> scriptAPI = new HashMap<String, ScriptAPI>();
     
     @Getter @Setter public ScriptEngineManager manager;
     @Getter @Setter public ScriptEngine engine;
@@ -48,7 +49,7 @@ public class ScriptManager {
         manager = new ScriptEngineManager();
         engine = manager.getEngineByName("JavaScript");
         try {
-            Constructor c = server.getLogger().getConsoleOutClass().getConstructor(String.class);
+            Constructor<?> c = server.getLogger().getConsoleOutClass().getConstructor(String.class);
             engine.put("api", new DefaultScriptAPI(server, new Logger((ConsoleOut) c.newInstance("Script"))));
         } catch (SecurityException e) {
             e.printStackTrace();
@@ -65,11 +66,15 @@ public class ScriptManager {
     }
     
     public void addScriptAPI(ScriptAPI api) {
-        scriptAPI.add(api);
+        addScriptAPI(api.getClass().getSimpleName().toLowerCase(), api);
+    }
+    
+    public void addScriptAPI(String name, ScriptAPI api) {
+        scriptAPI.put(name, api);
     }
     
     public void initScriptAPI() {
-        for(ScriptAPI api : getScriptAPI()) {
+        for(ScriptAPI api : getScriptAPI().values()) {
             try {
                 engine.put(api.getClass().getSimpleName().toLowerCase(), api.getClass().newInstance());
             } catch (InstantiationException e) {

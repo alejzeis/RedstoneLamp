@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import lombok.Getter;
+import net.redstonelamp.cmd.defaults.*;
 
 public class CommandManager {
     @Getter private CommandExecutor commandExecutor = new CommandExecutor();
@@ -28,8 +29,16 @@ public class CommandManager {
     @Getter private HashMap<String, String> commands = new HashMap<String, String>();
     @Getter private List<CommandListener> listeners = new ArrayList<CommandListener>();
     
+    public CommandManager() {
+        registerDefaultCommands();
+    }
+    
     public void registerCommand(String cmd, String description, CommandListener listener) {
         commands.put(cmd, description);
         listeners.add(listener);
+    }
+    
+    private void registerDefaultCommands() {
+        registerCommand("help", "View a list of all commands", new HelpCommand());
     }
 }
