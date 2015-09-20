@@ -16,15 +16,18 @@
  */
 package net.redstonelamp.request;
 
+/**
+ * A request to send a chat message.
+ *
+ * @author RedstoneLamp Team
+ */
 public class ChatRequest extends Request{
 
-    public byte type;
     public String source;
     public String message;
-    public String[] parameters;
 
-    public ChatRequest(byte type){
-        this.type = type;
+    public ChatRequest(String message) {
+        this.message = message;
     }
 
     @Override

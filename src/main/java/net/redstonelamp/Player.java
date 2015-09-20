@@ -191,8 +191,9 @@ public class Player extends PlayerEntity{
                 } catch (InvalidCommandSenderException e) {
                     e.printStackTrace();
                 }
-            } else
+            } else {
                 server.broadcastMessage("<" + username + "> " + cr.message);
+            }
         }else if(request instanceof PlayerMoveRequest){
             PlayerMoveRequest pmr = (PlayerMoveRequest) request;
             if(gamemode == 1){

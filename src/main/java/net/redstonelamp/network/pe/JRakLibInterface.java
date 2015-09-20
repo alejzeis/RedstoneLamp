@@ -62,9 +62,11 @@ public class JRakLibInterface implements ServerInterface, AdvancedNetworkInterfa
         options.disconnectInvalidProtocol = false;
         options.name = "MCPE;"+server.getConfig().getString("motd")+";"+PENetworkConst.MCPE_PROTOCOL+";"+PENetworkConst.MCPE_VERSION+";"+server.getPlayers().size()+";"+server.getMaxPlayers();
 
-        rakServer = new RakNetServer(LoggerFactory.getLogger("JRakLib"), new InetSocketAddress(server.getConfig().getString("server-ip"), server.getConfig().getInt("mcpe-port")), options, this);
+        InetSocketAddress address = new InetSocketAddress(server.getConfig().getString("server-ip"), server.getConfig().getInt("mcpe-port"));
+
+        rakServer = new RakNetServer(LoggerFactory.getLogger("JRakLib"), address, options, this);
         rakServer.startup();
-        logger.debug("Started RakNetServer");
+        logger.info("Started MCPE server on "+address);
     }
 
     private void setupLogger(){
