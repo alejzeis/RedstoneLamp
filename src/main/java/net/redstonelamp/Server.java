@@ -29,6 +29,7 @@ import lombok.Getter;
 import net.redstonelamp.cmd.CommandManager;
 import net.redstonelamp.config.ServerConfig;
 import net.redstonelamp.config.YamlConfig;
+import net.redstonelamp.event.EventManager;
 import net.redstonelamp.level.Level;
 import net.redstonelamp.level.LevelManager;
 import net.redstonelamp.network.NetworkManager;
@@ -60,6 +61,7 @@ public class Server implements Runnable{
     private final PluginSystem pluginSystem;
     @Getter private final ScriptManager scriptManager;
     @Getter private CommandManager commandManager;
+    @Getter private EventManager eventManager;
     private final PlayerDatabase playerDatabase;
     
     private String motd;
@@ -89,6 +91,7 @@ public class Server implements Runnable{
         network.registerProtocol(new PEProtocol(network));
         network.registerProtocol(new PCProtocol(network));
         
+        eventManager = new EventManager();
         commandManager = new CommandManager();
         scriptManager = new ScriptManager(this);
         

@@ -16,20 +16,43 @@
  */
 package net.redstonelamp;
 
+import java.net.SocketAddress;
+import java.util.UUID;
+
 import net.redstonelamp.block.Block;
 import net.redstonelamp.cmd.exception.InvalidCommandSenderException;
 import net.redstonelamp.entity.PlayerEntity;
+import net.redstonelamp.event.EventExecutor;
+import net.redstonelamp.event.player.PlayerChatEvent;
 import net.redstonelamp.inventory.NBTPlayerInventory;
 import net.redstonelamp.inventory.PlayerInventory;
 import net.redstonelamp.item.Item;
 import net.redstonelamp.level.ChunkPosition;
 import net.redstonelamp.level.position.BlockPosition;
 import net.redstonelamp.network.Protocol;
-import net.redstonelamp.request.*;
-import net.redstonelamp.response.*;
-
-import java.net.SocketAddress;
-import java.util.UUID;
+import net.redstonelamp.request.AnimateRequest;
+import net.redstonelamp.request.BlockPlaceRequest;
+import net.redstonelamp.request.ChatRequest;
+import net.redstonelamp.request.ChunkRequest;
+import net.redstonelamp.request.LoginRequest;
+import net.redstonelamp.request.PlayerEquipmentRequest;
+import net.redstonelamp.request.PlayerMoveRequest;
+import net.redstonelamp.request.RemoveBlockRequest;
+import net.redstonelamp.request.Request;
+import net.redstonelamp.request.SpawnRequest;
+import net.redstonelamp.response.AnimateResponse;
+import net.redstonelamp.response.BlockPlaceResponse;
+import net.redstonelamp.response.ChatResponse;
+import net.redstonelamp.response.ChunkResponse;
+import net.redstonelamp.response.DisconnectResponse;
+import net.redstonelamp.response.LoginResponse;
+import net.redstonelamp.response.PlayerEquipmentResponse;
+import net.redstonelamp.response.PlayerMoveResponse;
+import net.redstonelamp.response.PopupResponse;
+import net.redstonelamp.response.RemoveBlockResponse;
+import net.redstonelamp.response.Response;
+import net.redstonelamp.response.SpawnResponse;
+import net.redstonelamp.response.TeleportResponse;
 
 /**
  * <strong>Protocol-independent</strong> Player class. Represents a Player on the server
@@ -192,7 +215,10 @@ public class Player extends PlayerEntity{
                     e.printStackTrace();
                 }
             } else {
-                server.broadcastMessage("<" + username + "> " + cr.message);
+                PlayerChatEvent pce = new PlayerChatEvent(this, cr.message);
+                EventExecutor.throwEvent(pce);
+                if(!pce.isCancelled())
+                    server.broadcastMessage("<" + username + "> " + cr.message);
             }
         }else if(request instanceof PlayerMoveRequest){
             PlayerMoveRequest pmr = (PlayerMoveRequest) request;
