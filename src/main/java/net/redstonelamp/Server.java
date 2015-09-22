@@ -335,4 +335,8 @@ public class Server implements Runnable{
             server.getLogger().info("Shutdown tasks complete! Halting...");
         }
     }
+
+    public void stop() {
+        //TODO
+    }
 }

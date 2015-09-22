@@ -40,5 +40,6 @@ public class CommandManager {
     
     private void registerDefaultCommands() {
         registerCommand("help", "View a list of all commands", new HelpCommand());
+        registerCommand("stop", "Stops the server", new StopCommand());
     }
 }
