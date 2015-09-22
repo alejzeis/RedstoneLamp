@@ -30,29 +30,8 @@ import net.redstonelamp.item.Item;
 import net.redstonelamp.level.ChunkPosition;
 import net.redstonelamp.level.position.BlockPosition;
 import net.redstonelamp.network.Protocol;
-import net.redstonelamp.request.AnimateRequest;
-import net.redstonelamp.request.BlockPlaceRequest;
-import net.redstonelamp.request.ChatRequest;
-import net.redstonelamp.request.ChunkRequest;
-import net.redstonelamp.request.LoginRequest;
-import net.redstonelamp.request.PlayerEquipmentRequest;
-import net.redstonelamp.request.PlayerMoveRequest;
-import net.redstonelamp.request.RemoveBlockRequest;
-import net.redstonelamp.request.Request;
-import net.redstonelamp.request.SpawnRequest;
-import net.redstonelamp.response.AnimateResponse;
-import net.redstonelamp.response.BlockPlaceResponse;
-import net.redstonelamp.response.ChatResponse;
-import net.redstonelamp.response.ChunkResponse;
-import net.redstonelamp.response.DisconnectResponse;
-import net.redstonelamp.response.LoginResponse;
-import net.redstonelamp.response.PlayerEquipmentResponse;
-import net.redstonelamp.response.PlayerMoveResponse;
-import net.redstonelamp.response.PopupResponse;
-import net.redstonelamp.response.RemoveBlockResponse;
-import net.redstonelamp.response.Response;
-import net.redstonelamp.response.SpawnResponse;
-import net.redstonelamp.response.TeleportResponse;
+import net.redstonelamp.request.*;
+import net.redstonelamp.response.*;
 
 /**
  * <strong>Protocol-independent</strong> Player class. Represents a Player on the server
