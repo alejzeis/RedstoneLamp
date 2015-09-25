@@ -247,6 +247,14 @@ public abstract class Protocol{
         return manager.getServer();
     }
 
+    /**
+     * Get the NetworkInterface this protocol uses to read and write packets.
+     * @return The NetworkInterface used by this protocol.
+     */
+    public NetworkInterface getInterface() {
+        return _interface;
+    }
+
     @Override
     public String toString(){
         return getName() + " - " + getDescription();
