@@ -108,10 +108,10 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
         int id = packet.bb().getVarInt();
         BinaryBuffer bb;
         switch(id){
-            case PLAY_KEEP_ALIVE:
+            case PLAY_SERVERBOUND_KEEP_ALIVE:
                 int keepAliveId = packet.bb().getVarInt();
                 bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
-                bb.putVarInt(PLAY_KEEP_ALIVE);
+                bb.putVarInt(PLAY_CLIENTBOUND_KEEP_ALIVE);
                 bb.putVarInt(keepAliveId);
                 sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, packet.getAddress()));
                 break;
