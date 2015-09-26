@@ -122,31 +122,33 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
                 bb.putInt(0); //LOGIN_SUCCESS
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
 
-                bb = BinaryBuffer.newInstance(48, ByteOrder.BIG_ENDIAN);
+                bb = BinaryBuffer.newInstance(50, ByteOrder.BIG_ENDIAN);
                 bb.putByte(START_GAME_PACKET);
                 bb.putInt(-1); //seed
+                bb.putByte((byte) 0); //Dimension, 0: overworld, 1: nether
                 bb.putInt(lr.generator);
                 bb.putInt(lr.gamemode);
-                bb.putLong(lr.entityID);
+                bb.putLong(0); //Use zero for actual player
                 bb.putInt(lr.spawnX);
                 bb.putInt(lr.spawnY);
                 bb.putInt(lr.spawnZ);
                 bb.putFloat(lr.x);
                 bb.putFloat(lr.y);
                 bb.putFloat(lr.z);
+                bb.putByte((byte) 0);
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
 
                 bb = BinaryBuffer.newInstance(6, ByteOrder.BIG_ENDIAN);
                 bb.putByte(SET_TIME_PACKET);
                 bb.putInt(player.getPosition().getLevel().getTime());
-                bb.putByte((byte) 1);
+                bb.putBoolean(true);
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
 
-                bb = BinaryBuffer.newInstance(10, ByteOrder.BIG_ENDIAN);
+                bb = BinaryBuffer.newInstance(13, ByteOrder.BIG_ENDIAN);
                 bb.putByte(SET_SPAWN_POSITION_PACKET);
                 bb.putInt(lr.spawnX);
+                bb.putInt(lr.spawnY);
                 bb.putInt(lr.spawnZ);
-                bb.putByte((byte) lr.spawnY);
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
 
                 bb = BinaryBuffer.newInstance(5, ByteOrder.BIG_ENDIAN);
@@ -181,8 +183,9 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             ordered.put(cr.chunk.getBlocklight());
             ordered.put(cr.chunk.getHeightmap());
             ordered.put(cr.chunk.getBiomeColors());
-            ordered.putInt(cr.chunk.getExtraData().length);
-            ordered.put(cr.chunk.getExtraData());
+            //TODO: Implement extra data
+            ordered.setOrder(ByteOrder.LITTLE_ENDIAN);
+            ordered.putInt(0);
 
             byte[] orderedData = ordered.toArray();
 
@@ -219,7 +222,7 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb = BinaryBuffer.newInstance(6, ByteOrder.BIG_ENDIAN);
             bb.putByte(SET_TIME_PACKET);
             bb.putInt(player.getPosition().getLevel().getTime());
-            bb.putByte((byte) 1);
+            bb.putBoolean(true);
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
 
             bb = BinaryBuffer.newInstance(13, ByteOrder.BIG_ENDIAN);

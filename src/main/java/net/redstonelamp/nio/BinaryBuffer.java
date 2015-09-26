@@ -295,6 +295,14 @@ public class BinaryBuffer{
     }
 
     /**
+     * Set the ByteOrder of the underlying ByteBuffer
+     * @param order The ByteOrder to be set to.
+     */
+    public void setOrder(ByteOrder order) {
+        bb.order(order);
+    }
+
+    /**
      * Set the position of the underlying ByteBuffer
      *
      * @param position The position in the buffer to be set to
