@@ -16,6 +16,9 @@
  */
 package net.redstonelamp.network.pe;
 
+import io.netty.buffer.ByteBuf;
+import static io.netty.buffer.Unpooled.copiedBuffer;
+
 import net.beaconpe.jraklib.JRakLib;
 import net.beaconpe.jraklib.protocol.EncapsulatedPacket;
 import net.beaconpe.jraklib.server.JRakLibServer;
@@ -25,7 +28,6 @@ import net.redstonelamp.Player;
 import net.redstonelamp.Server;
 import net.redstonelamp.network.LowLevelNetworkException;
 import net.redstonelamp.network.UniversalPacket;
-import net.redstonelamp.network.netInterface.AdvancedNetworkInterface;
 import net.redstonelamp.ticker.CallableTask;
 import net.redstonelamp.ui.ConsoleOut;
 import net.redstonelamp.ui.Logger;
@@ -116,8 +118,8 @@ public class JRakLibInterface implements ServerInstance, PEInterface {
         EncapsulatedPacket pk = new EncapsulatedPacket();
         pk.messageIndex = 0;
         pk.reliability = 2;
-        pk.buffer = packet.getBuffer();
-        logger.buffer("(" + packet.getAddress().toString() + ") PACKET OUT: ", pk.buffer, "");
+        pk.buffer = copiedBuffer(packet.getBuffer());
+        logger.buffer("(" + packet.getAddress().toString() + ") PACKET OUT: ", pk.buffer.array(), "");
         handler.sendEncapsulated(packet.getAddress().toString(), pk, immediate ? JRakLib.PRIORITY_IMMEDIATE : JRakLib.PRIORITY_NORMAL);
     }
 
@@ -142,20 +144,26 @@ public class JRakLibInterface implements ServerInstance, PEInterface {
 
     @Override
     public void handleEncapsulated(String identifier, EncapsulatedPacket packet, int flags) {
-        UniversalPacket pk = new UniversalPacket(packet.buffer, new JRakLibIdentifierAddress(identifier));
+
+        UniversalPacket pk = new UniversalPacket(packet.buffer.array(), new JRakLibIdentifierAddress(identifier));
         logger.buffer("(" + identifier + ") PACKET IN: ", pk.getBuffer(), "");
         packetQueue.add(pk);
     }
 
     @Override
-    public void handleRaw(String address, int port, byte[] payload) {
-        UniversalPacket packet = new UniversalPacket(payload, new InetSocketAddress(address, port));
+    public void handleRaw(String address, int port, ByteBuf payload) {
+        UniversalPacket packet = new UniversalPacket(payload.array(), new InetSocketAddress(address, port));
         packetQueue.add(packet);
     }
 
     @Override
     public void notifyACK(String identifier, int identifierACK) {
 
+    }
+
+    @Override
+    public void exceptionCaught(String s, String s1) {
+        logger.warning("Exception Caught: "+s+", "+s1);
     }
 
     @Override

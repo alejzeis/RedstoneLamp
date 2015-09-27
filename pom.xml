@@ -51,7 +51,14 @@
         <dependency>
             <groupId>net.beaconpe.jraklib</groupId>
             <artifactId>JRakLib</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>1.2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.0.31.Final</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
