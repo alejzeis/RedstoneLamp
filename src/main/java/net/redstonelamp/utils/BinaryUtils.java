@@ -17,8 +17,11 @@
 package net.redstonelamp.utils;
 
 import org.spout.nbt.CompoundTag;
+import org.spout.nbt.Tag;
+import org.spout.nbt.stream.NBTInputStream;
 import org.spout.nbt.stream.NBTOutputStream;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -36,6 +39,17 @@ public class BinaryUtils {
             out.writeTag(tag);
             out.close();
             return bytes.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Tag readNBTTag(byte[] bytes) {
+        try {
+            NBTInputStream in = new NBTInputStream(new ByteArrayInputStream(bytes));
+            Tag t = in.readTag();
+            in.close();
+            return t;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

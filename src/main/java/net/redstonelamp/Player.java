@@ -243,7 +243,7 @@ public class Player extends PlayerEntity{
             BlockPlaceRequest bpr = (BlockPlaceRequest) request;
             EventExecutor.throwEvent(bpe);
             if(!bpe.isCancelled()) {
-                System.out.println("Request to place at: " + bpr.blockPosition);
+                //System.out.println("Request to place at: " + bpr.blockPosition);
                 BlockPlaceResponse response = new BlockPlaceResponse(bpr.block, BlockPosition.fromVector3(bpr.blockPosition, getPosition().getLevel()));
                 if(!getPosition().getLevel().isChunkLoaded(new ChunkPosition(bpr.blockPosition.getX() / 16, bpr.blockPosition.getZ() / 16))){
                     server.getLogger().warning(username + " attempted to place block in an unloaded chunk");

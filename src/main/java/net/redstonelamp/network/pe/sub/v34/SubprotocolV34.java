@@ -17,10 +17,17 @@
 package net.redstonelamp.network.pe.sub.v34;
 
 import net.redstonelamp.Player;
+import net.redstonelamp.block.Block;
+import net.redstonelamp.item.Item;
+import net.redstonelamp.level.Level;
+import net.redstonelamp.level.position.BlockPosition;
 import net.redstonelamp.level.position.Position;
+import net.redstonelamp.math.Vector3;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
+import net.redstonelamp.network.pe.sub.v27.UpdateBlockPacketFlagsV27;
+import net.redstonelamp.network.pe.sub.v27.UpdateBlockPacketRecordV27;
 import net.redstonelamp.nio.BinaryBuffer;
 import net.redstonelamp.request.*;
 import net.redstonelamp.response.*;
@@ -117,6 +124,34 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
                         requests.add(new AnimateRequest(AnimateRequest.ActionType.SWING_ARM));
                         break;
                 }
+                break;
+
+            case USE_ITEM_PACKET:
+                int ax = up.bb().getInt();
+                int ay = up.bb().getInt();
+                int az = up.bb().getInt();
+                byte face = up.bb().getByte();
+                float fx = up.bb().getFloat();
+                float fy = up.bb().getFloat();
+                float fz = up.bb().getFloat();
+                float px = up.bb().getFloat();
+                float py = up.bb().getFloat();
+                float pz = up.bb().getFloat();
+                Item item = up.bb().getSlot();
+                if(face >= 0 && face <= 5){ //Use item on, Block Place
+                    //TODO: Implement Item use, (pickaxe, sword, etc)
+                    Block block = new Block(item.getId(), item.getMeta(), 1);
+                    requests.add(new BlockPlaceRequest(block, new Vector3(ax, ay, az).getSide(face, 1)));
+                }
+                break;
+
+            case REMOVE_BLOCK_PACKET:
+                up.bb().skip(8); //Skip entityID
+                int blockX = up.bb().getInt();
+                int blockZ = up.bb().getInt();
+                int blockY = up.bb().getByte();
+                Level level = getProtocol().getServer().getPlayer(up.getAddress()).getPosition().getLevel();
+                requests.add(new RemoveBlockRequest(new BlockPosition(blockX, blockY, blockZ, level)));
                 break;
         }
         return requests.toArray(new Request[requests.size()]);
@@ -300,6 +335,13 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
                 bb.putString(cr.message);
             }
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof PopupResponse) {
+            PopupResponse pr = (PopupResponse) response;
+            bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+            bb.putByte(TEXT_PACKET);
+            bb.putByte(TEXT_POPUP);
+            bb.putString(pr.message);
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         } else if(response instanceof AddPlayerResponse) {
             Player p = ((AddPlayerResponse) response).player;
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
@@ -343,6 +385,29 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb.putByte((byte) (pmr.onGround ? 1 : 0));
 
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof BlockPlaceResponse) {
+            BlockPlaceResponse bpr = (BlockPlaceResponse) response;
+            bb = BinaryBuffer.newInstance(16, ByteOrder.BIG_ENDIAN);
+            bb.putByte(UPDATE_BLOCK_PACKET);
+            bb.putInt(1);
+            bb.putInt(bpr.position.getX());
+            bb.putInt(bpr.position.getZ());
+            bb.putByte((byte) bpr.position.getY());
+            bb.putByte((byte) bpr.block.getId());
+            bb.putByte((byte) ((UpdateBlockPacketFlagsV27.FLAG_ALL_PRIORITY << 4) | (byte) bpr.block.getMeta()));
+
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof RemoveBlockResponse) {
+            RemoveBlockResponse rbr = (RemoveBlockResponse) response;
+            bb = BinaryBuffer.newInstance(16, ByteOrder.BIG_ENDIAN);
+            bb.putByte(UPDATE_BLOCK_PACKET);
+            bb.putInt(1);
+            bb.putInt(rbr.position.getX());
+            bb.putInt(rbr.position.getZ());
+            bb.putByte((byte) rbr.position.getY());
+            bb.putByte((byte) 0); //AIR
+            bb.putByte((byte) ((UpdateBlockPacketFlagsV27.FLAG_ALL_PRIORITY << 4) | (byte) 0));
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }
 
         //Compress packets
@@ -372,7 +437,66 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
 
     @Override
     public UniversalPacket[] translateQueuedResponse(Response[] responses, Player player){
-        return null;
+        List<UniversalPacket> packets = new CopyOnWriteArrayList<>();
+        BinaryBuffer bb;
+        if(responses[0] instanceof BlockPlaceResponse){
+            List<UpdateBlockPacketRecordV27> records = new ArrayList<>();
+            for(Response r : responses){
+                BlockPlaceResponse bpr = (BlockPlaceResponse) r;
+                records.add(new UpdateBlockPacketRecordV27(bpr.position.getX(), bpr.position.getY(), bpr.position.getZ(), (byte) bpr.block.getId(), (byte) bpr.block.getMeta(), UpdateBlockPacketFlagsV27.FLAG_ALL_PRIORITY));
+            }
+            bb = BinaryBuffer.newInstance(5 + (11 * records.size()), ByteOrder.BIG_ENDIAN);
+            bb.putByte(UPDATE_BLOCK_PACKET);
+            bb.putInt(records.size());
+            for(UpdateBlockPacketRecordV27 record : records){
+                bb.putInt(record.x);
+                bb.putInt(record.z);
+                bb.putByte((byte) record.y);
+                bb.putByte(record.id);
+                bb.putByte((byte) ((record.flags << 4) | (byte) record.meta));
+            }
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, player.getAddress()));
+        }else if(responses[0] instanceof RemoveBlockResponse) {
+            List<UpdateBlockPacketRecordV27> records = new ArrayList<>();
+            for (Response r : responses) {
+                RemoveBlockResponse rbr = (RemoveBlockResponse) r;
+                records.add(new UpdateBlockPacketRecordV27(rbr.position.getX(), rbr.position.getY(), rbr.position.getZ(), (byte) 0, (byte) 0, UpdateBlockPacketFlagsV27.FLAG_ALL_PRIORITY));
+            }
+            bb = BinaryBuffer.newInstance(5 + (11 * records.size()), ByteOrder.BIG_ENDIAN);
+            bb.putByte(UPDATE_BLOCK_PACKET);
+            bb.putInt(records.size());
+            for (UpdateBlockPacketRecordV27 record : records) {
+                bb.putInt(record.x);
+                bb.putInt(record.z);
+                bb.putByte((byte) record.y);
+                bb.putByte(record.id);
+                bb.putByte((byte) ((record.flags << 4) | (byte) record.meta));
+            }
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, player.getAddress()));
+        }
+
+        //Compress packets
+
+        List<UniversalPacket> toBeCompressed = new CopyOnWriteArrayList<>();
+        packets.stream().filter(packet -> packet.getBuffer().length >= 512 && packet.getBuffer()[0] != BATCH_PACKET).forEach(packet -> {
+            toBeCompressed.add(packet);
+            packets.remove(packet);
+        });
+
+        BinaryBuffer batch = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN); //Batch PAYLOAD
+        for(UniversalPacket packet : toBeCompressed){
+            batch.putInt(packet.getBuffer().length);
+            batch.put(packet.getBuffer());
+        }
+        if(batch.toArray().length > 1){
+            byte[] compressedPayload = CompressionUtils.zlibDeflate(batch.toArray(), 7);
+            bb = BinaryBuffer.newInstance(compressedPayload.length + 5, ByteOrder.BIG_ENDIAN);
+            bb.putByte(BATCH_PACKET);
+            bb.putInt(compressedPayload.length);
+            bb.put(compressedPayload);
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, player.getAddress()));
+        }
+        return packets.toArray(new UniversalPacket[packets.size()]);
     }
 
 
