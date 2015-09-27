@@ -70,6 +70,11 @@ public interface PlayerDatabase{
     PlayerData getData(UUID uuid);
 
     /**
+     * Releases any resources used by this database. This also closes the database if it is open.
+     */
+    void release() throws IOException;
+
+    /**
      * Represents an entry in the PlayerDatabase containing
      * information about a Player.
      *

@@ -178,4 +178,9 @@ public class SimplePlayerDatabase implements PlayerDatabase{
         }
         return null;
     }
+
+    @Override
+    public void release() {
+
+    }
 }
