@@ -303,6 +303,7 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
         } else if(response instanceof AddPlayerResponse) {
             Player p = ((AddPlayerResponse) response).player;
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+            bb.putByte(ADD_PLAYER_PACKET);
             bb.putUUID(p.getUuid());
             bb.putString(p.getNametag()); //TODO: getUsername()
             bb.putLong(p.getEntityID());
@@ -317,6 +318,29 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb.putFloat(p.getPosition().getPitch());
             bb.putSlot(p.getInventory().getItemInHand());
             bb.put(p.getMetadata().toBytes());
+
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof RemovePlayerResponse) {
+            Player p = ((RemovePlayerResponse) response).player;
+            bb = BinaryBuffer.newInstance(25, ByteOrder.BIG_ENDIAN);
+            bb.putByte(REMOVE_PLAYER_PACKET);
+            bb.putLong(p.getEntityID());
+            bb.putUUID(p.getUuid());
+
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof PlayerMoveResponse) {
+            PlayerMoveResponse pmr = (PlayerMoveResponse) response;
+            bb = BinaryBuffer.newInstance(35, ByteOrder.BIG_ENDIAN);
+            bb.putByte(MOVE_PLAYER_PACKET);
+            bb.putLong(pmr.entityID);
+            bb.putFloat((float) pmr.pos.getX());
+            bb.putFloat((float) pmr.pos.getY());
+            bb.putFloat((float) pmr.pos.getZ());
+            bb.putFloat(pmr.pos.getYaw());
+            bb.putFloat(pmr.bodyYaw);
+            bb.putFloat(pmr.pos.getPitch());
+            bb.putByte((byte) 0); //MODE_NORMAL
+            bb.putByte((byte) (pmr.onGround ? 1 : 0));
 
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }
