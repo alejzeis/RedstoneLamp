@@ -195,6 +195,7 @@ public class Player extends PlayerEntity{
             });
 
             server.getLogger().debug("Player " + username + " spawned (took " + (System.currentTimeMillis() - startLogin) + " ms)");
+            spawned = true;
             server.broadcastMessage(new ChatResponse.ChatTranslation("%multiplayer.player.joined", new String[]{username}));
         }else if(request instanceof ChatRequest){
             ChatRequest cr = (ChatRequest) request;
