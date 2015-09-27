@@ -117,12 +117,13 @@ public class Server implements Runnable{
 
         logger.info("Loading player data...");
         //playerDatabase = new SimplePlayerDatabase(this); //TODO: Correct database
-        playerDatabase = new LevelDBPlayerDatabase(this);
+        //playerDatabase = new LevelDBPlayerDatabase(this);
+        playerDatabase = new NBTPlayerDatabase(this);
         try{
-            playerDatabase.loadFrom(new File("players"));
+            playerDatabase.loadFrom(new File("players.dat"));
             ticker.addDelayedRepeatingTask(tick -> {
                 try{
-                    playerDatabase.saveTo(new File("players"));
+                    playerDatabase.saveTo(new File("players.dat"));
                 }catch(IOException e){
                     logger.warning("Exception while auto-saving PlayerDatabase: " + e.getClass().getName() + ": " + e.getMessage());
                 }
@@ -136,7 +137,7 @@ public class Server implements Runnable{
         addShutdownTask(pluginSystem::disablePlugins);
         addShutdownTask(() -> {
             try{
-                playerDatabase.saveTo(new File("players"));
+                playerDatabase.saveTo(new File("players.dat"));
                 playerDatabase.release();
             }catch(IOException e){
                 logger.fatal("FAILED TO SAVE PLAYER DATABASE! " + e.getClass().getName() + ": " + e.getMessage());
@@ -247,7 +248,7 @@ public class Server implements Runnable{
 
     public void savePlayerData(){
         try{
-            playerDatabase.saveTo(new File("players"));
+            playerDatabase.saveTo(new File("players.dat"));
         }catch(IOException e){
             e.printStackTrace();
         }
