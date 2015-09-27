@@ -17,6 +17,10 @@
 package net.redstonelamp.nio;
 
 
+import net.redstonelamp.item.Item;
+import net.redstonelamp.utils.BinaryUtils;
+import org.spout.nbt.stream.NBTOutputStream;
+
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -251,6 +255,20 @@ public class BinaryBuffer{
     public void putUUID(UUID uuid){
         putLong(uuid.getMostSignificantBits());
         putLong(uuid.getLeastSignificantBits());
+    }
+
+    public void putSlot(Item item) {
+        if(item.getId() == 0) {
+            putShort((short) 0);
+            return;
+        }
+        putShort((short) item.getId());
+        putByte((byte) item.getCount());
+        putShort(item.getMeta());
+
+        byte[] nbt = item.getCompoundTag() != null ? BinaryUtils.writeNBT(item.getCompoundTag()) : new byte[0];
+        putShort((short) nbt.length);
+        put(nbt);
     }
 
     /**

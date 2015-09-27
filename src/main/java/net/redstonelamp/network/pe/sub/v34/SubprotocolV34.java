@@ -17,13 +17,12 @@
 package net.redstonelamp.network.pe.sub.v34;
 
 import net.redstonelamp.Player;
+import net.redstonelamp.level.position.Position;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
 import net.redstonelamp.network.pe.sub.Subprotocol;
 import net.redstonelamp.nio.BinaryBuffer;
-import net.redstonelamp.request.ChatRequest;
-import net.redstonelamp.request.LoginRequest;
-import net.redstonelamp.request.Request;
+import net.redstonelamp.request.*;
 import net.redstonelamp.response.*;
 import net.redstonelamp.utils.CompressionUtils;
 
@@ -87,6 +86,37 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
                         break;
                 }
                 requests.add(cr);
+                break;
+
+            case MOVE_PLAYER_PACKET:
+                Position position = new Position(getProtocol().getServer().getPlayer(up.getAddress()).getPosition().getLevel());
+                up.bb().skip(8); //Skip entity ID
+                float x = up.bb().getFloat();
+                float y = up.bb().getFloat();
+                float z = up.bb().getFloat();
+                float yaw = up.bb().getFloat();
+                up.bb().skip(4); //Skip bodyYaw
+                float pitch = up.bb().getFloat();
+                up.bb().skip(1); //Skip mode
+                boolean onGround = up.bb().getByte() > 0;
+                position.setX(x);
+                position.setY(y);
+                position.setZ(z);
+                position.setYaw(yaw);
+                position.setPitch(pitch);
+
+                PlayerMoveRequest pmr = new PlayerMoveRequest(position, onGround);
+                requests.add(pmr);
+                break;
+
+            case ANIMATE_PACKET:
+                byte actionId = up.bb().getByte();
+                //entityID
+                switch(actionId){
+                    case 1:
+                        requests.add(new AnimateRequest(AnimateRequest.ActionType.SWING_ARM));
+                        break;
+                }
                 break;
         }
         return requests.toArray(new Request[requests.size()]);
@@ -269,6 +299,25 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
                 bb.putByte(TEXT_RAW);
                 bb.putString(cr.message);
             }
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof AddPlayerResponse) {
+            Player p = ((AddPlayerResponse) response).player;
+            bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+            bb.putUUID(p.getUuid());
+            bb.putString(p.getNametag()); //TODO: getUsername()
+            bb.putLong(p.getEntityID());
+            bb.putFloat(p.getPosition().getX());
+            bb.putFloat(p.getPosition().getY());
+            bb.putFloat(p.getPosition().getZ());
+            bb.putFloat(0f); //Speed x
+            bb.putFloat(0f); //Speed y TODO: work on these
+            bb.putFloat(0f); //Speed z
+            bb.putFloat(p.getPosition().getYaw());
+            bb.putFloat(p.getPosition().getYaw()); //TODO: head yaw/rot
+            bb.putFloat(p.getPosition().getPitch());
+            bb.putSlot(p.getInventory().getItemInHand());
+            bb.put(p.getMetadata().toBytes());
+
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }
 

@@ -16,6 +16,8 @@
  */
 package net.redstonelamp.item;
 
+import org.spout.nbt.CompoundTag;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,7 @@ public class Item{
     private final int id;
     private final short meta;
     private final int count;
+    private CompoundTag compoundTag;
 
     public Item(int id, short meta, int count){
         this.id = id;
@@ -51,5 +54,13 @@ public class Item{
 
     public int getCount(){
         return count;
+    }
+
+    public CompoundTag getCompoundTag() {
+        return compoundTag;
+    }
+
+    public void setCompoundTag(CompoundTag compoundTag) {
+        this.compoundTag = compoundTag;
     }
 }

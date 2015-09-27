@@ -346,4 +346,8 @@ public class Player extends PlayerEntity{
     public boolean isConnected(){
         return connected;
     }
+
+    public PlayerInventory getInventory() {
+        return inventory;
+    }
 }
