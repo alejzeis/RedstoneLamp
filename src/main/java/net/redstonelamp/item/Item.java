@@ -16,6 +16,9 @@
  */
 package net.redstonelamp.item;
 
+import net.redstonelamp.block.Dirt;
+import net.redstonelamp.block.Grass;
+import net.redstonelamp.block.Stone;
 import org.spout.nbt.CompoundTag;
 
 import java.util.ArrayList;
@@ -27,7 +30,7 @@ import java.util.List;
  * @author RedstoneLamp Team
  */
 public class Item{
-    private static final List<Item> implementedItems = new ArrayList<>();
+    private static final List<Item> creativeItems = new ArrayList<>();
     private final int id;
     private final short meta;
     private final int count;
@@ -40,8 +43,14 @@ public class Item{
     }
 
     public static void init(){
-        implementedItems.clear();
-        //TODO: register implemented items
+        creativeItems.clear();
+        creativeItems.add(new Stone((short) 0, 1));
+        creativeItems.add(new Dirt((short) 0, 1));
+        creativeItems.add(new Grass((short) 0, 1));
+    }
+    
+    public static List<Item> getCreativeItems() {
+        return creativeItems;
     }
 
     public int getId(){

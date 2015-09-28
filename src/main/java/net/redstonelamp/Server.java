@@ -30,6 +30,7 @@ import net.redstonelamp.cmd.CommandManager;
 import net.redstonelamp.config.ServerConfig;
 import net.redstonelamp.config.YamlConfig;
 import net.redstonelamp.event.EventManager;
+import net.redstonelamp.item.Item;
 import net.redstonelamp.level.Level;
 import net.redstonelamp.level.LevelManager;
 import net.redstonelamp.network.NetworkManager;
@@ -88,6 +89,8 @@ public class Server implements Runnable{
         loadProperties(config);
         logger.info(RedstoneLamp.getSoftwareVersionString() + " is licensed under the Lesser GNU General Public License version 3");
         logger.info("Build Information: " + RedstoneLamp.getBuildInformation());
+
+        Item.init();
 
         network.registerProtocol(new PEProtocol(network));
         network.registerProtocol(new PCProtocol(network));

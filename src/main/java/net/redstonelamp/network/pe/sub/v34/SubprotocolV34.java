@@ -226,7 +226,15 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
                 bb.putInt(1); //TODO: Correct difficulty
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
 
-                //TODO: If creative, send items
+                if(lr.gamemode == 1) {
+                    bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+                    bb.putByte(CONTAINER_SET_CONTENT_PACKET);
+                    bb.putByte((byte) 0x79); //SPECIAL_CREATIVE
+                    bb.putShort((short) Item.getCreativeItems().size());
+                    Item.getCreativeItems().forEach(bb::putSlot);
+                    bb.putShort((short) 0);
+                    packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+                }
 
                 getProtocol().getChunkSender().registerChunkRequests(getProtocol().getServer().getPlayer(address), 96);
             }
