@@ -133,7 +133,7 @@ public class JRakLibInterface implements ServerInstance, PEInterface {
         Player player = server.getPlayer(new JRakLibIdentifierAddress(identifier));
         if(player != null){
             if(player.isSpawned()){
-                player.close(" left the game", reason, false);
+                player.close("redstonelamp.playerLeft", reason, false);
             }else{
                 player.close("", reason, false);
             }

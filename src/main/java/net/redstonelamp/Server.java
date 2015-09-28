@@ -44,6 +44,7 @@ import net.redstonelamp.script.ScriptManager;
 import net.redstonelamp.ticker.RedstoneTicker;
 import net.redstonelamp.ui.Log4j2ConsoleOut;
 import net.redstonelamp.ui.Logger;
+import net.redstonelamp.utils.ChatFormat;
 
 /**
  * The base RedstoneLamp server, which handles the ticker.
@@ -231,14 +232,14 @@ public class Server implements Runnable{
     }
 
     public void broadcastMessage(String message){
-        logger.info("[Chat]: " + message);
+        logger.info("[Chat]: " + ChatFormat.stripColors(message));
         for(Player player : players){
             player.sendMessage(message);
         }
     }
 
     public void broadcastMessage(ChatResponse.ChatTranslation translation){
-        logger.info("[Chat]: " + translation.message.replaceAll("%", "") + " " + Arrays.toString(translation.params));
+        logger.info("[Chat]: " + ChatFormat.stripColors(translation.message.replaceAll("%", "")) + " " + ChatFormat.stripColors(Arrays.toString(translation.params)));
         ChatResponse cr = new ChatResponse(translation.message);
         cr.translation = translation;
         for(Player player : players){

@@ -135,7 +135,7 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
                 if(state != null && state == ProtocolState.STATE_LOGIN){
                     player.close("", "connection timed out", true);
                 }else if(state != null && state == ProtocolState.STATE_PLAY){
-                    player.close(" left the game", "connection timed out", true);
+                    player.close("redstonelamp.playerLeft", "connection timed out", true);
                 }
             }
         }
@@ -152,7 +152,7 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
                 return;
             }
             if(oldState != null && oldState == ProtocolState.STATE_PLAY){
-                player.close(" left the game", "connection closed", false);
+                player.close("redstonelamp.playerLeft", "connection closed", false);
             }else if(oldState != null && oldState == ProtocolState.STATE_LOGIN){
                 player.close("", "connection closed", false);
             }

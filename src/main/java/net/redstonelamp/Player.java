@@ -34,6 +34,7 @@ import net.redstonelamp.level.position.BlockPosition;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.request.*;
 import net.redstonelamp.response.*;
+import net.redstonelamp.utils.ChatFormat;
 
 /**
  * <strong>Protocol-independent</strong> Player class. Represents a Player on the server
@@ -167,7 +168,7 @@ public class Player extends PlayerEntity{
                 }
                 server.getPlayers().stream()
                         .filter(player -> player != this && player.getNametag().equals(getNametag()))
-                        .forEach(player -> player.close(" left the game", "logged in from another location", true));
+                        .forEach(player -> player.close("redstonelamp.playerLeft", "logged in from another location", true));
                 sendResponse(response);
                 initEntity();
                 server.getLogger().info(username + "[" + address + "] logged in with entity ID " + getEntityID() + " in level \"" + getPosition().getLevel().getName() + "\""
@@ -196,7 +197,7 @@ public class Player extends PlayerEntity{
 
             server.getLogger().debug("Player " + username + " spawned (took " + (System.currentTimeMillis() - startLogin) + " ms)");
             spawned = true;
-            server.broadcastMessage(new ChatResponse.ChatTranslation("%multiplayer.player.joined", new String[]{username}));
+            server.broadcastMessage(new ChatResponse.ChatTranslation(ChatFormat.YELLOW+"%multiplayer.player.joined", new String[]{username}));
         }else if(request instanceof ChatRequest){
             ChatRequest cr = (ChatRequest) request;
             if(cr.message.startsWith("/")) {
@@ -306,9 +307,15 @@ public class Player extends PlayerEntity{
         server.savePlayerData();
 
         if(!leaveMessage.isEmpty()){
-            server.broadcastMessage(username + leaveMessage);
+            switch (leaveMessage) {
+                case "redstonelamp.playerLeft":
+                    server.broadcastMessage(new ChatResponse.ChatTranslation(ChatFormat.YELLOW+"%multiplayer.player.left", new String[] {username}));
+                    break;
+                default:
+                    server.broadcastMessage(username + leaveMessage);
+                    break;
+            }
         }
-
     }
 
     public Protocol getProtocol(){
