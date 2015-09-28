@@ -370,6 +370,19 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb.put(p.getMetadata().toBytes());
 
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+
+            bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+            bb.putByte(PLAYER_LIST_PACKET);
+            bb.putByte((byte) 0);
+            bb.putInt(1);
+            bb.putUUID(p.getUuid());
+            bb.putLong(p.getEntityID());
+            bb.putString(p.getNametag());
+            bb.putBoolean(p.isSlim());
+            bb.putShort((short) p.getSkin().length);
+            bb.put(p.getSkin());
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+
         } else if(response instanceof RemovePlayerResponse) {
             Player p = ((RemovePlayerResponse) response).player;
             bb = BinaryBuffer.newInstance(25, ByteOrder.BIG_ENDIAN);
@@ -377,6 +390,13 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb.putLong(p.getEntityID());
             bb.putUUID(p.getUuid());
 
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+
+            bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+            bb.putByte(PLAYER_LIST_PACKET);
+            bb.putByte((byte) 1);
+            bb.putInt(1);
+            bb.putUUID(p.getUuid());
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         } else if(response instanceof PlayerMoveResponse) {
             PlayerMoveResponse pmr = (PlayerMoveResponse) response;
