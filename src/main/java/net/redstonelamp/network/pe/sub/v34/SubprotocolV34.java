@@ -358,7 +358,7 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb.putFloat(p.getPosition().getYaw());
             bb.putFloat(p.getPosition().getYaw()); //TODO: head yaw/rot
             bb.putFloat(p.getPosition().getPitch());
-            bb.putSlot(p.getInventory().getItemInHand() != null ? p.getInventory().getItemInHand() : new Item(0, (short), 0));
+            bb.putSlot(p.getInventory().getItemInHand() != null ? p.getInventory().getItemInHand() : new Item(0, (short) 0, 0));
             bb.put(p.getMetadata().toBytes());
 
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
