@@ -23,7 +23,7 @@ import java.util.List;
 import lombok.Getter;
 import net.redstonelamp.cmd.defaults.*;
 
-public class CommandManager {
+public class CommandManager{
     @Getter private CommandExecutor commandExecutor = new CommandExecutor();
     
     @Getter private HashMap<String, String> commands = new HashMap<String, String>();

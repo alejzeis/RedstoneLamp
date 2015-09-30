@@ -16,6 +16,8 @@
  */
 package net.redstonelamp.cmd;
 
+import java.util.Arrays;
+
 import javax.script.Invocable;
 import javax.script.ScriptException;
 
@@ -25,7 +27,7 @@ import net.redstonelamp.Server;
 import net.redstonelamp.cmd.exception.InvalidCommandSenderException;
 
 public class CommandExecutor {
-    public void execute(String cmd, Object sender) throws InvalidCommandSenderException {
+    public void execute(String cmd, CommandSender sender) throws InvalidCommandSenderException {
         Server server = RedstoneLamp.SERVER;
         if(sender instanceof Server)
             sender = (Server) sender;
@@ -37,19 +39,18 @@ public class CommandExecutor {
         if(cmd.startsWith("/"))
             cmd = cmd.substring(1);
         boolean executed = false;
-        String[] params = cmd.split(" ");
-        CommandSender commandSender = new CommandSender(sender);
-        String label = null; //TODO
+        String[] params = (String[]) Arrays.copyOfRange(cmd.split(" "), 1, cmd.split(" ").length);
+        String label = cmd.split(" ")[0];
         //TODO: Command Execution event
         for(CommandListener l : server.getCommandManager().getListeners()) {
             if(l != null) {
-                l.onCommand(commandSender, params[0], label, params);
+                l.onCommand(sender, label, label, params);
                 executed = true;
             }
         }
         for(Invocable i : server.getScriptManager().getScripts()) {
             try {
-                Object exc = i.invokeFunction("onCommand", commandSender, params[0], label, params);
+                Object exc = i.invokeFunction("onCommand", sender, params[0], label, params);
                 if(exc != null && (boolean) exc)
                     executed = true;
             } catch (ScriptException e) {
@@ -58,6 +59,6 @@ public class CommandExecutor {
         }
         
         if(!executed)
-            commandSender.sendMessage("Unknown command! For help, use \"/help\"");
+            sender.sendMessage("Unknown command! For help, use \"/help\"");
     }
 }

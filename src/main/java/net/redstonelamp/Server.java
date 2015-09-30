@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 
 import lombok.Getter;
 import net.redstonelamp.cmd.CommandManager;
+import net.redstonelamp.cmd.CommandSender;
 import net.redstonelamp.config.ServerConfig;
 import net.redstonelamp.config.YamlConfig;
 import net.redstonelamp.event.EventManager;
@@ -52,7 +53,7 @@ import net.redstonelamp.utils.ChatFormat;
  *
  * @author RedstoneLamp Team
  */
-public class Server implements Runnable{
+public class Server implements Runnable, CommandSender{
     private final List<Runnable> shutdownTasks = new ArrayList<>(); //List of tasks to be run on shutdown
     private final Logger logger;
     private final ServerConfig config;
@@ -342,8 +343,14 @@ public class Server implements Runnable{
             server.getLogger().info("Shutdown tasks complete! Halting...");
         }
     }
+    
+    @Override
+	public void sendMessage(String message) {
+    	this.getLogger().info(message);
+	}
 
     public void stop() {
         //TODO
     }
+    
 }

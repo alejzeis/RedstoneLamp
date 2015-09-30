@@ -20,20 +20,48 @@ import java.net.SocketAddress;
 import java.util.UUID;
 
 import net.redstonelamp.block.Block;
+import net.redstonelamp.cmd.CommandSender;
 import net.redstonelamp.cmd.exception.InvalidCommandSenderException;
 import net.redstonelamp.entity.PlayerEntity;
 import net.redstonelamp.event.EventExecutor;
-import net.redstonelamp.event.block.*;
-import net.redstonelamp.event.chunk.*;
-import net.redstonelamp.event.player.*;
+import net.redstonelamp.event.block.BlockBreakEvent;
+import net.redstonelamp.event.block.BlockPlaceEvent;
+import net.redstonelamp.event.chunk.ChunkRequestEvent;
+import net.redstonelamp.event.player.PlayerAnimateEvent;
+import net.redstonelamp.event.player.PlayerChatEvent;
+import net.redstonelamp.event.player.PlayerEquipmentChangeEvent;
+import net.redstonelamp.event.player.PlayerLoginEvent;
+import net.redstonelamp.event.player.PlayerMoveEvent;
+import net.redstonelamp.event.player.PlayerSpawnEvent;
 import net.redstonelamp.inventory.NBTPlayerInventory;
 import net.redstonelamp.inventory.PlayerInventory;
 import net.redstonelamp.item.Item;
 import net.redstonelamp.level.ChunkPosition;
 import net.redstonelamp.level.position.BlockPosition;
 import net.redstonelamp.network.Protocol;
-import net.redstonelamp.request.*;
-import net.redstonelamp.response.*;
+import net.redstonelamp.request.AnimateRequest;
+import net.redstonelamp.request.BlockPlaceRequest;
+import net.redstonelamp.request.ChatRequest;
+import net.redstonelamp.request.ChunkRequest;
+import net.redstonelamp.request.LoginRequest;
+import net.redstonelamp.request.PlayerEquipmentRequest;
+import net.redstonelamp.request.PlayerMoveRequest;
+import net.redstonelamp.request.RemoveBlockRequest;
+import net.redstonelamp.request.Request;
+import net.redstonelamp.request.SpawnRequest;
+import net.redstonelamp.response.AnimateResponse;
+import net.redstonelamp.response.BlockPlaceResponse;
+import net.redstonelamp.response.ChatResponse;
+import net.redstonelamp.response.ChunkResponse;
+import net.redstonelamp.response.DisconnectResponse;
+import net.redstonelamp.response.LoginResponse;
+import net.redstonelamp.response.PlayerEquipmentResponse;
+import net.redstonelamp.response.PlayerMoveResponse;
+import net.redstonelamp.response.PopupResponse;
+import net.redstonelamp.response.RemoveBlockResponse;
+import net.redstonelamp.response.Response;
+import net.redstonelamp.response.SpawnResponse;
+import net.redstonelamp.response.TeleportResponse;
 import net.redstonelamp.utils.ChatFormat;
 
 /**
@@ -41,7 +69,7 @@ import net.redstonelamp.utils.ChatFormat;
  *
  * @author RedstoneLamp Team
  */
-public class Player extends PlayerEntity{
+public class Player extends PlayerEntity implements CommandSender{
     private final Protocol protocol;
     private final Server server;
     private final SocketAddress address;
