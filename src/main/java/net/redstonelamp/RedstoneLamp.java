@@ -16,18 +16,19 @@
  */
 package net.redstonelamp;
 
-import net.redstonelamp.config.ServerConfig;
-import net.redstonelamp.config.YamlConfig;
-import net.redstonelamp.ui.Log4j2ConsoleOut;
-import net.redstonelamp.ui.Logger;
-import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+
+import net.redstonelamp.config.ServerConfig;
+import net.redstonelamp.config.YamlConfig;
+import net.redstonelamp.ui.Log4j2ConsoleOut;
+import net.redstonelamp.ui.Logger;
 
 /**
  * Main Startup file for RedstoneLamp.
@@ -47,7 +48,6 @@ public class RedstoneLamp{
     public static void main(String[] args){
         RedstoneLamp main = new RedstoneLamp();
         main.getDefaultResources();
-
         try{
             ServerConfig config = new ServerConfig(new File("server.properties"));
             YamlConfig conf = new YamlConfig("redstonelamp.yml");

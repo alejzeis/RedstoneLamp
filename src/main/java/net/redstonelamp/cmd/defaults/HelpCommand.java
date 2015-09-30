@@ -16,23 +16,54 @@
  */
 package net.redstonelamp.cmd.defaults;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.Arrays;
 
-import net.redstonelamp.RedstoneLamp;
-import net.redstonelamp.cmd.CommandListener;
+import net.redstonelamp.cmd.Command;
+import net.redstonelamp.cmd.CommandExecutor;
 import net.redstonelamp.cmd.CommandSender;
 
-public class HelpCommand implements CommandListener {
-    @Override
-    public void onCommand(CommandSender sender, String cmd, String label, String[] params) {
-        switch(cmd) {
-            case "help":
-                HashMap<String, String> commands = RedstoneLamp.SERVER.getCommandManager().getCommands();
-                for(Entry<String, String> command : commands.entrySet()) {
-                    sender.sendMessage("/" + command.getKey() + " - " + command.getValue());
-                }
-            break;
-        }
-    }
+public class HelpCommand implements CommandExecutor {
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if(label.equalsIgnoreCase("help")) {
+			int page = 1;
+			if(args.length >= 1)
+				page = Integer.parseInt(args[0]);
+			page--;
+			Command[] commands = getCommands(page);
+			if(commands != null) {
+				sender.sendMessage("Commands (" + (page+1) + "/" + getPages() + ")");
+				for (Command command : commands) {
+					if(command != null)
+						sender.sendMessage("/" + command.getLabel() + " - " + command.getDescription());
+				}
+			} else {
+				sender.sendMessage("Invalid page!");
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	private Command[] getCommands(int page) {
+		try {
+			return Arrays.copyOfRange(Command.getCommands(), page*10, (page*10)+10);
+		} catch(ArrayIndexOutOfBoundsException e) {
+			return null;
+		}
+	}
+	
+	private int getPages() {
+		Command[] commands = Command.getCommands();
+		int j = 0;
+		int pages = 1;
+		for(int i = 0; i < commands.length; i++) {
+			if(j > 10) {
+				pages++;
+				j = 0;
+			}
+		}
+		return pages;
+	}
+	
 }

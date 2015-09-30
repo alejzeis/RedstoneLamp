@@ -26,8 +26,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
 import lombok.Getter;
+import net.redstonelamp.cmd.Command;
 import net.redstonelamp.cmd.CommandManager;
 import net.redstonelamp.cmd.CommandSender;
+import net.redstonelamp.cmd.exception.CommandException;
 import net.redstonelamp.config.ServerConfig;
 import net.redstonelamp.config.YamlConfig;
 import net.redstonelamp.event.EventManager;
@@ -46,7 +48,7 @@ import net.redstonelamp.script.ScriptManager;
 import net.redstonelamp.ticker.RedstoneTicker;
 import net.redstonelamp.ui.Log4j2ConsoleOut;
 import net.redstonelamp.ui.Logger;
-import net.redstonelamp.utils.ChatFormat;
+import net.redstonelamp.utils.TextFormat;
 
 /**
  * The base RedstoneLamp server, which handles the ticker.
@@ -63,8 +65,8 @@ public class Server implements Runnable, CommandSender{
     private final List<Player> players = new CopyOnWriteArrayList<>();
     private final PluginSystem pluginSystem;
     @Getter private final ScriptManager scriptManager;
-    @Getter private CommandManager commandManager;
     @Getter private EventManager eventManager;
+    @Getter private CommandManager commandManager;
     private final PlayerDatabase playerDatabase;
     
     private String motd;
@@ -92,6 +94,11 @@ public class Server implements Runnable, CommandSender{
         logger.info("Build Information: " + RedstoneLamp.getBuildInformation());
 
         Item.init();
+        try {
+			Command.init();
+		} catch (CommandException e1) {
+			e1.printStackTrace();
+		}
 
         network.registerProtocol(new PEProtocol(network));
         network.registerProtocol(new PCProtocol(network));
@@ -236,14 +243,14 @@ public class Server implements Runnable, CommandSender{
     }
 
     public void broadcastMessage(String message){
-        logger.info("[Chat]: " + ChatFormat.stripColors(message));
+        logger.info("[Chat]: " + TextFormat.stripColors(message));
         for(Player player : players){
             player.sendMessage(message);
         }
     }
 
     public void broadcastMessage(ChatResponse.ChatTranslation translation){
-        logger.info("[Chat]: " + ChatFormat.stripColors(translation.message.replaceAll("%", "")) + " " + ChatFormat.stripColors(Arrays.toString(translation.params)));
+        logger.info("[Chat]: " + TextFormat.stripColors(translation.message.replaceAll("%", "")) + " " + TextFormat.stripColors(Arrays.toString(translation.params)));
         ChatResponse cr = new ChatResponse(translation.message);
         cr.translation = translation;
         for(Player player : players){
@@ -347,6 +354,11 @@ public class Server implements Runnable, CommandSender{
     @Override
 	public void sendMessage(String message) {
     	this.getLogger().info(message);
+	}
+    
+    @Override
+	public String getName() {
+		return "Server";
 	}
 
     public void stop() {

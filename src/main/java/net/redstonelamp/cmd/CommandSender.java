@@ -18,6 +18,8 @@ package net.redstonelamp.cmd;
 
 public interface CommandSender {
 	
+	public String getName();
+	
 	public void sendMessage(String message);
 	
 }

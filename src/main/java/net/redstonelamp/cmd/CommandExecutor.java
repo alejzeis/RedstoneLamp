@@ -16,49 +16,6 @@
  */
 package net.redstonelamp.cmd;
 
-import java.util.Arrays;
-
-import javax.script.Invocable;
-import javax.script.ScriptException;
-
-import net.redstonelamp.Player;
-import net.redstonelamp.RedstoneLamp;
-import net.redstonelamp.Server;
-import net.redstonelamp.cmd.exception.InvalidCommandSenderException;
-
-public class CommandExecutor {
-    public void execute(String cmd, CommandSender sender) throws InvalidCommandSenderException {
-        Server server = RedstoneLamp.SERVER;
-        if(sender instanceof Server)
-            sender = (Server) sender;
-        else if(sender instanceof Player)
-            sender = (Player) sender;
-        else
-            throw new InvalidCommandSenderException();
-        
-        if(cmd.startsWith("/"))
-            cmd = cmd.substring(1);
-        boolean executed = false;
-        String[] params = (String[]) Arrays.copyOfRange(cmd.split(" "), 1, cmd.split(" ").length);
-        String label = cmd.split(" ")[0];
-        //TODO: Command Execution event
-        for(CommandListener l : server.getCommandManager().getListeners()) {
-            if(l != null) {
-                l.onCommand(sender, label, label, params);
-                executed = true;
-            }
-        }
-        for(Invocable i : server.getScriptManager().getScripts()) {
-            try {
-                Object exc = i.invokeFunction("onCommand", sender, params[0], label, params);
-                if(exc != null && (boolean) exc)
-                    executed = true;
-            } catch (ScriptException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {}
-        }
-        
-        if(!executed)
-            sender.sendMessage("Unknown command! For help, use \"/help\"");
-    }
+public interface CommandExecutor {
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args);
 }

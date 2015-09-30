@@ -24,7 +24,7 @@ import java.util.Map;
  *
  * @author RedstoneLamp Team
  */
-public enum ChatFormat {
+public enum TextFormat {
     BLACK('0', false),
     DARK_BLUE('1', false),
     DARK_GREEN('2', false),
@@ -50,13 +50,13 @@ public enum ChatFormat {
     RESET('p', false);
 
     public final static char ESCAPE = '\u00A7';
-    public final static Map<Character, ChatFormat> mapByChar = new HashMap<>();
+    public final static Map<Character, TextFormat> mapByChar = new HashMap<>();
 
     private final char colorCode;
     private final boolean format;
     private final String asString;
 
-    private ChatFormat(char colorCode, boolean format){
+    private TextFormat(char colorCode, boolean format){
         this.colorCode = colorCode;
         this.format = format;
         asString = new String(new char[] {ESCAPE, colorCode});
@@ -67,12 +67,12 @@ public enum ChatFormat {
         return asString;
     }
 
-    public static ChatFormat getByChar(char c){
+    public static TextFormat getByChar(char c){
         return mapByChar.get(c);
     }
 
     static {
-        for(ChatFormat format : values()){
+        for(TextFormat format : values()){
             mapByChar.put(format.colorCode, format);
         }
     }

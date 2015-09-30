@@ -21,7 +21,7 @@ import java.util.UUID;
 
 import net.redstonelamp.block.Block;
 import net.redstonelamp.cmd.CommandSender;
-import net.redstonelamp.cmd.exception.InvalidCommandSenderException;
+import net.redstonelamp.cmd.exception.CommandException;
 import net.redstonelamp.entity.PlayerEntity;
 import net.redstonelamp.event.EventExecutor;
 import net.redstonelamp.event.block.BlockBreakEvent;
@@ -62,7 +62,7 @@ import net.redstonelamp.response.RemoveBlockResponse;
 import net.redstonelamp.response.Response;
 import net.redstonelamp.response.SpawnResponse;
 import net.redstonelamp.response.TeleportResponse;
-import net.redstonelamp.utils.ChatFormat;
+import net.redstonelamp.utils.TextFormat;
 
 /**
  * <strong>Protocol-independent</strong> Player class. Represents a Player on the server
@@ -103,7 +103,7 @@ public class Player extends PlayerEntity implements CommandSender{
 
         server = protocol.getManager().getServer();
     }
-
+    
     /**
      * Construct a new Player instance belonging to the specified <code>Protocol</code> connecting from
      * <code>address</code>
@@ -122,7 +122,7 @@ public class Player extends PlayerEntity implements CommandSender{
     private void loadPlayerData(){
         PlayerDatabase.PlayerData data = server.getPlayerDatabase().getData(uuid);
         if(data == null){
-            server.getLogger().info("Couldn't find PlayerData for player " + getNametag() + " (" + uuid + ")");
+            server.getLogger().info("Couldn't find PlayerData for player " + getName() + " (" + uuid + ")");
             data = new PlayerDatabase.PlayerData();
             data.setUuid(uuid);
             data.setPosition(server.getLevelManager().getMainLevel().getSpawnPosition());
@@ -195,7 +195,7 @@ public class Player extends PlayerEntity implements CommandSender{
                     return;
                 }
                 server.getPlayers().stream()
-                        .filter(player -> player != this && player.getNametag().equals(getNametag()))
+                        .filter(player -> player != this && player.getName().equals(getName()))
                         .forEach(player -> player.close("redstonelamp.playerLeft", "logged in from another location", true));
                 sendResponse(response);
                 initEntity();
@@ -225,13 +225,13 @@ public class Player extends PlayerEntity implements CommandSender{
 
             server.getLogger().debug("Player " + username + " spawned (took " + (System.currentTimeMillis() - startLogin) + " ms)");
             spawned = true;
-            server.broadcastMessage(new ChatResponse.ChatTranslation(ChatFormat.YELLOW+"%multiplayer.player.joined", new String[]{username}));
+            server.broadcastMessage(new ChatResponse.ChatTranslation(TextFormat.YELLOW+"%multiplayer.player.joined", new String[]{username}));
         }else if(request instanceof ChatRequest){
             ChatRequest cr = (ChatRequest) request;
             if(cr.message.startsWith("/")) {
                 try {
-                    server.getCommandManager().getCommandExecutor().execute(cr.message, this);
-                } catch (InvalidCommandSenderException e) {
+                    server.getCommandManager().executeCommand(cr.message, this);
+                } catch (CommandException e) {
                     e.printStackTrace();
                 }
             } else {
@@ -337,13 +337,22 @@ public class Player extends PlayerEntity implements CommandSender{
         if(!leaveMessage.isEmpty()){
             switch (leaveMessage) {
                 case "redstonelamp.playerLeft":
-                    server.broadcastMessage(new ChatResponse.ChatTranslation(ChatFormat.YELLOW+"%multiplayer.player.left", new String[] {username}));
+                    server.broadcastMessage(new ChatResponse.ChatTranslation(TextFormat.YELLOW+"%multiplayer.player.left", new String[] {username}));
                     break;
                 default:
                     server.broadcastMessage(username + leaveMessage);
                     break;
             }
         }
+    }
+    
+    @Override
+	public String getName() {
+		return username;
+	}
+    
+    public String getDisplayName() {
+    	return username; // TODO:: Add ability to set display name
     }
 
     public Protocol getProtocol(){
@@ -386,4 +395,5 @@ public class Player extends PlayerEntity implements CommandSender{
     public PlayerInventory getInventory() {
         return inventory;
     }
+    
 }
