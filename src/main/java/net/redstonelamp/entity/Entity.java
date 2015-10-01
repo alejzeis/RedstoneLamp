@@ -29,12 +29,12 @@ public abstract class Entity{
     private int entityID;
     private int health;
     private Position position;
-    private String nametag;
+    private String name;
     private MetadataDictionary metadata;
     //private EntityMetadata metadata;
     private boolean initialized = false;
     private EntityMotion motion;
-
+    
     protected void initEntity(){
         initialized = true;
         if(position != null && position.getLevel() != null){
@@ -100,12 +100,12 @@ public abstract class Entity{
         this.position = position;
     }
 
-    public String getNametag(){
-        return nametag;
+    public String getName(){
+        return name;
     }
-
-    public void setNametag(String nametag){
-        this.nametag = nametag;
+    
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getHealth(){

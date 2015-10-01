@@ -57,6 +57,7 @@ public class Player extends PlayerEntity implements CommandSender{
     private long startLogin;
 
     private String username;
+    private String displayName;
     private UUID uuid;
     private int clientID;
     private byte[] skin;
@@ -158,7 +159,8 @@ public class Player extends PlayerEntity implements CommandSender{
             skin = lr.skin;
             slim = lr.slim;
 
-            setNametag(username);
+            setName(username);
+            displayName = username;
 
             loadPlayerData();
 
@@ -332,12 +334,16 @@ public class Player extends PlayerEntity implements CommandSender{
     }
     
     @Override
-	public String getName() {
-		return username;
-	}
+    public boolean hasOp() {
+    	return false; // TODO: Get operators working
+    }
     
     public String getDisplayName() {
-    	return username; // TODO:: Add ability to set display name
+    	return displayName;
+    }
+    
+    public void setDisplayName(String displayName) {
+    	this.displayName = displayName;
     }
 
     public Protocol getProtocol(){

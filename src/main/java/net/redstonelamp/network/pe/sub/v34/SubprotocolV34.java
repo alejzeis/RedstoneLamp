@@ -360,7 +360,7 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
             bb.putByte(ADD_PLAYER_PACKET);
             bb.putUUID(p.getUuid());
-            bb.putString(p.getNametag()); //TODO: getUsername()
+            bb.putString(p.getName()); //TODO: getUsername()
             bb.putLong(p.getEntityID());
             bb.putFloat(p.getPosition().getX());
             bb.putFloat(p.getPosition().getY());
@@ -382,7 +382,7 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb.putInt(1);
             bb.putUUID(p.getUuid());
             bb.putLong(p.getEntityID());
-            bb.putString(p.getNametag());
+            bb.putString(p.getName());
             bb.putBoolean(p.isSlim());
             bb.putShort((short) p.getSkin().length);
             bb.put(p.getSkin());

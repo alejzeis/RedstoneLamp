@@ -20,6 +20,8 @@ public interface CommandSender {
 	
 	public String getName();
 	
+	public boolean hasOp();
+	
 	public void sendMessage(String message);
 	
 }

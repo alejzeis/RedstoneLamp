@@ -342,7 +342,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
             bb.putByte(ADD_PLAYER_PACKET);
             bb.putLong(p.getEntityID()); //Prevent client from knowing the real clientID
-            bb.putString(p.getNametag());
+            bb.putString(p.getName());
             bb.putLong(p.getEntityID());
             bb.putFloat((float) p.getPosition().getX());
             bb.putFloat((float) p.getPosition().getY());

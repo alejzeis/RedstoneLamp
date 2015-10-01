@@ -283,6 +283,15 @@ public class Server implements Runnable, CommandSender{
         }
         return null;
     }
+    
+    public Player getPlayer(String name){
+    	for(Player player : players){
+    		if(player.getName().equals(name)) {
+    			return player;
+    		}
+    	}
+    	return null;
+    }
 
     /**
      * Retrieve the server's logger.
@@ -364,6 +373,11 @@ public class Server implements Runnable, CommandSender{
 	public String getName() {
 		return "Server";
 	}
+    
+    @Override
+    public boolean hasOp() {
+    	return true;
+    }
 
     public void stop() {
         //TODO

@@ -34,7 +34,7 @@ public abstract class PlayerEntity extends Entity{
         MetadataDictionary data = new MetadataDictionary();
         data.put((byte) 0, new MetadataByte((byte) 0)); //TODO: Is player on fire
         data.put((byte) 1, new MetadataShort((short) 300)); //Air
-        data.put((byte) 2, new MetadataString(getNametag()));
+        data.put((byte) 2, new MetadataString(getName()));
         data.put((byte) 3, new MetadataByte((byte) 1)); //Hide nametag (1: false, 0: true)
         data.put((byte) 4, new MetadataByte((byte) 0)); //silent
         data.put((byte) 7, new MetadataInt(0)); //Potion color
@@ -80,4 +80,5 @@ public abstract class PlayerEntity extends Entity{
             }
         }
     }
+    
 }
