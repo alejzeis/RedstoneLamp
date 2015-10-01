@@ -12,7 +12,7 @@ before_install:
 
 install: echo "Dummy thing to prevent travis from doing strange maven thing."
 
-script: 'mvn license:check package | egrep -v "^Download(ed|ing): "'
+script: 'mvn license:check package | egrep "\\[(INFO|WARNING)\\]"'
 
 after_success:
   - cd $TRAVIS_BUILD_DIR
