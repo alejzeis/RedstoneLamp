@@ -100,7 +100,7 @@ public class JRakLibInterface implements ServerInstance, PEInterface {
 
     @Override
     public void setName(String name) {
-        handler.sendOption("name", "MCPE;" + name + ";" + PENetworkConst.MCPE_PROTOCOL + ";" + PENetworkConst.MCPE_VERSION + ";" + server.getPlayers().size() + ";" + server.getMaxPlayers());
+        handler.sendOption("name", "MCPE;" + name.split("\n")[0] + ";" + PENetworkConst.MCPE_PROTOCOL + ";" + PENetworkConst.MCPE_VERSION + ";" + server.getPlayers().size() + ";" + server.getMaxPlayers());
     }
 
     @Override

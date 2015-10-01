@@ -48,6 +48,7 @@ import net.redstonelamp.script.ScriptManager;
 import net.redstonelamp.ticker.RedstoneTicker;
 import net.redstonelamp.ui.Log4j2ConsoleOut;
 import net.redstonelamp.ui.Logger;
+import net.redstonelamp.utils.ServerIcon;
 import net.redstonelamp.utils.TextFormat;
 
 /**
@@ -60,6 +61,7 @@ public class Server implements Runnable, CommandSender{
     private final Logger logger;
     private final ServerConfig config;
     private final YamlConfig yamlConfig;
+    private final ServerIcon serverIcon;
     private final RedstoneTicker ticker;
     private final NetworkManager network;
     private final List<Player> players = new CopyOnWriteArrayList<>();
@@ -83,22 +85,20 @@ public class Server implements Runnable, CommandSender{
      * @param config           The server's configuration
      * @param serverYamlConfig The server's YAML configuration
      */
-    Server(Logger logger, ServerConfig config, YamlConfig serverYamlConfig){
+    Server(Logger logger, ServerConfig config, YamlConfig serverYamlConfig) throws Exception{
         ticker = new RedstoneTicker(this, 50);
         this.logger = logger;
         this.config = config;
         yamlConfig = serverYamlConfig;
+        File favicon = new File("./server-icon");
+        serverIcon = (favicon.exists() ? new ServerIcon(favicon) : null);
         network = new NetworkManager(this);
         loadProperties(config);
         logger.info(RedstoneLamp.getSoftwareVersionString() + " is licensed under the Lesser GNU General Public License version 3");
         logger.info("Build Information: " + RedstoneLamp.getBuildInformation());
 
         Item.init();
-        try {
-			Command.init();
-		} catch (CommandException e1) {
-			e1.printStackTrace();
-		}
+        Command.init();
 
         network.registerProtocol(new PEProtocol(network));
         network.registerProtocol(new PCProtocol(network));
@@ -323,6 +323,10 @@ public class Server implements Runnable, CommandSender{
 
     public YamlConfig getYamlConfig(){
         return yamlConfig;
+    }
+    
+    public ServerIcon getServerIcon(){
+    	return serverIcon;
     }
 
     public boolean isStopped(){

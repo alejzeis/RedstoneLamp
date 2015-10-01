@@ -17,21 +17,21 @@
 package net.redstonelamp.nio;
 
 
-import net.redstonelamp.item.Item;
-import net.redstonelamp.utils.BinaryUtils;
-import org.spout.nbt.CompoundTag;
-import org.spout.nbt.stream.NBTOutputStream;
-
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.UUID;
 
+import org.spout.nbt.CompoundTag;
+
+import net.redstonelamp.item.Item;
+import net.redstonelamp.utils.BinaryUtils;
+
 /**
  * An NIO buffer class to wrap around a java.nio.ByteBuffer.
  * <br>
  * This buffer is dynamic, as it changes size when the allocated amount is too small.
- *
+ * 
  * @author RedstoneLamp Team
  */
 public class BinaryBuffer{
@@ -70,7 +70,7 @@ public class BinaryBuffer{
         bb.position(0);
         return new BinaryBuffer(bb);
     }
-
+    
     /**
      * Get <code>len</code> of bytes from the buffer.
      *
@@ -179,18 +179,15 @@ public class BinaryBuffer{
      * @return The VarInt, as an integer.
      */
     public int getVarInt(){
-        int i = 0;
-        int j = 0;
-        while(true){
-            int k = getByte();
-
-            i |= (k & 0x7F) << j++ * 7;
-
-            if(j > 5) throw new RuntimeException("VarInt too big");
-
-            if((k & 0x80) != 128) break;
+    	int size = 0;
+    	for (int i = 0;; i += 7) {
+            byte tmp = getByte();
+            if ((tmp & 0x80) == 0 && (i != 4 * 7 || tmp < 1 << 3)) {
+                return size | (tmp << i);
+            } else if (i < 4 * 7) {
+                size |= (tmp & 0x7f) << i;
+            }
         }
-        return i;
     }
 
     /**
@@ -299,15 +296,11 @@ public class BinaryBuffer{
      * @param i The VarInt as an Integer.
      */
     public void putVarInt(int i){
-        while(true){
-            if((i & 0xFFFFFF80) == 0){
-                putByte((byte) i);
-                return;
-            }
-
-            putByte((byte) (i & 0x7F | 0x80));
-            i >>>= 7;
+    	while (i > 0x7f) {
+    		putByte((byte) ((i & 0x7f) | 0x80));
+    		i >>= 7;
         }
+        putByte((byte) i);
     }
 
     /**

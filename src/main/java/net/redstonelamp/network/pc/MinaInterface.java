@@ -16,6 +16,31 @@
  */
 package net.redstonelamp.network.pc;
 
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.nio.BufferUnderflowException;
+import java.nio.ByteOrder;
+import java.util.Deque;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.apache.mina.core.service.IoAcceptor;
+import org.apache.mina.core.service.IoHandlerAdapter;
+import org.apache.mina.core.session.IdleStatus;
+import org.apache.mina.core.session.IoSession;
+import org.apache.mina.filter.codec.ProtocolCodecFilter;
+import org.apache.mina.filter.logging.LoggingFilter;
+import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import net.redstonelamp.Player;
 import net.redstonelamp.Server;
 import net.redstonelamp.network.LowLevelNetworkException;
@@ -27,28 +52,6 @@ import net.redstonelamp.network.pc.serializer.ChatSerializer;
 import net.redstonelamp.nio.BinaryBuffer;
 import net.redstonelamp.ui.ConsoleOut;
 import net.redstonelamp.ui.Logger;
-import org.apache.mina.core.service.IoAcceptor;
-import org.apache.mina.core.service.IoHandlerAdapter;
-import org.apache.mina.core.session.IdleStatus;
-import org.apache.mina.core.session.IoSession;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.filter.logging.LoggingFilter;
-import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
-import org.json.simple.JSONObject;
-
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.nio.BufferUnderflowException;
-import java.nio.ByteOrder;
-import java.util.Deque;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * An AdvancedNetworkInterface implementation of an Apache MINA handler for
@@ -75,7 +78,7 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
         setupLogger();
 
         acceptor = new NioSocketAcceptor();
-        acceptor.getFilterChain().addLast("logger", new LoggingFilter()); //TODO: fix the debug output
+        //acceptor.getFilterChain().addLast("logger", new LoggingFilter()); //TODO: fix the debug output
         acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new MinecraftPacketHeaderEncoder(this), new MinecraftPacketHeaderDecoder(this)));
 
         acceptor.setHandler(this);
@@ -222,10 +225,11 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
 
                 case PCNetworkConst.STATUS_PING:
                     long payload = up.bb().getLong();
-                    BinaryBuffer bb = BinaryBuffer.newInstance(9, ByteOrder.BIG_ENDIAN);
+                    System.out.println("Received ping! Payload - " + payload);
+                    BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
                     bb.putVarInt(PCNetworkConst.STATUS_PONG);
                     bb.putLong(payload);
-                    sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, session.getRemoteAddress()), false);
+                    sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, session.getRemoteAddress()), true);
                     break;
             }
         }else{
@@ -245,7 +249,16 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
         JSONObject players = new JSONObject();
         players.put("max", server.getMaxPlayers());
         players.put("online", server.getPlayers().size());
-        //TODO: put sample
+        //TODO: throw Event
+        
+        JSONArray sample = new JSONArray();
+        for(int i = 0; i < server.getPlayers().size(); i++) {
+        	JSONObject player = new JSONObject();
+        	player.put("name", server.getPlayers().get(i));
+        	player.put("id", UUID.randomUUID());
+        	sample.add(i, player);
+        }
+        players.put("sample", sample);
 
         JSONObject description = new JSONObject();
         description.put("text", name);
@@ -253,7 +266,8 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
         root.put("version", version);
         root.put("players", players);
         root.put("description", description);
-        //TODO: favicon
+        if(server.getServerIcon() != null)
+        	root.put("favicon", server.getServerIcon());
 
         BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
         bb.putVarInt(PCNetworkConst.STATUS_RESPONSE);

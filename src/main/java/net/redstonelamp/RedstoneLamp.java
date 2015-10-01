@@ -53,7 +53,7 @@ public class RedstoneLamp{
             YamlConfig conf = new YamlConfig("redstonelamp.yml");
             SERVER = new Server(new Logger(new Log4j2ConsoleOut("RedstoneLamp")), config, conf); //TODO: Correct logger
             SERVER.run();
-        }catch(IOException e){
+        }catch(Exception e){
             LogManager.getRootLogger().fatal("Could not init server! " + e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
