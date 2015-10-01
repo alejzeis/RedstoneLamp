@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
- package net.redstonelamp.cmd.defaults;
+package net.redstonelamp.cmd.defaults;
 
 import net.redstonelamp.Player;
 import net.redstonelamp.RedstoneLamp;
