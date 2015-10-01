@@ -13,7 +13,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
- */package net.redstonelamp.utils;
+ */
+package net.redstonelamp.utils;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
