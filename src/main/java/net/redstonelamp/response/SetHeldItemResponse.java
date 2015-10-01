@@ -16,19 +16,24 @@
  */
 package net.redstonelamp.response;
 
-import net.redstonelamp.request.AnimateRequest;
+import net.redstonelamp.item.Item;
 
 /**
- * A Response to an AnimateRequest
+ * A response to set a held item.
  *
  * @author RedstoneLamp Team
  */
-public class AnimateResponse extends Response{
-    public AnimateRequest.ActionType actionType;
+public class SetHeldItemResponse extends Response {
     public long entityID;
+    public Item item;
+    public int inventorySlot;
+    public int hotbarSlot;
 
-    public AnimateResponse(AnimateRequest.ActionType actionType, long entityID){
-        this.actionType = actionType;
+    public SetHeldItemResponse(long entityID, Item item, int inventorySlot, int hotbarSlot) {
         this.entityID = entityID;
+        this.item = item;
+        this.inventorySlot = inventorySlot;
+        this.hotbarSlot = hotbarSlot;
     }
+
 }

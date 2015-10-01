@@ -31,4 +31,28 @@ public interface PlayerInventory extends Inventory, SavableInventory{
      * @return The Player the inventory belongs to.
      */
     Player getPlayer();
+
+    /**
+     * Get the currently selected slot. This includes the inventory slots, not just the hotbar.
+     * @return The currently selected slot.
+     */
+    int getSelectedSlot();
+
+    /**
+     * Set the currently selected slot. This includes the inventory slots, not just the hotbar.
+     * @param slot The currently selected slot.
+     */
+    void setSelectedSlot(int slot);
+
+    /**
+     * Get the currently selected hotbar slot.
+     * @return The currently selected hotbar slot.
+     */
+    int getItemInHandSlot();
+
+    /**
+     * Set the currently selected hotbar slot.
+     * @param slot The currently selected hotbar slot.
+     */
+    void setItemInHandSlot(int slot);
 }

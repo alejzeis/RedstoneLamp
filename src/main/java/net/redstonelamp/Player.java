@@ -39,29 +39,8 @@ import net.redstonelamp.item.Item;
 import net.redstonelamp.level.ChunkPosition;
 import net.redstonelamp.level.position.BlockPosition;
 import net.redstonelamp.network.Protocol;
-import net.redstonelamp.request.AnimateRequest;
-import net.redstonelamp.request.BlockPlaceRequest;
-import net.redstonelamp.request.ChatRequest;
-import net.redstonelamp.request.ChunkRequest;
-import net.redstonelamp.request.LoginRequest;
-import net.redstonelamp.request.PlayerEquipmentRequest;
-import net.redstonelamp.request.PlayerMoveRequest;
-import net.redstonelamp.request.RemoveBlockRequest;
-import net.redstonelamp.request.Request;
-import net.redstonelamp.request.SpawnRequest;
-import net.redstonelamp.response.AnimateResponse;
-import net.redstonelamp.response.BlockPlaceResponse;
-import net.redstonelamp.response.ChatResponse;
-import net.redstonelamp.response.ChunkResponse;
-import net.redstonelamp.response.DisconnectResponse;
-import net.redstonelamp.response.LoginResponse;
-import net.redstonelamp.response.PlayerEquipmentResponse;
-import net.redstonelamp.response.PlayerMoveResponse;
-import net.redstonelamp.response.PopupResponse;
-import net.redstonelamp.response.RemoveBlockResponse;
-import net.redstonelamp.response.Response;
-import net.redstonelamp.response.SpawnResponse;
-import net.redstonelamp.response.TeleportResponse;
+import net.redstonelamp.request.*;
+import net.redstonelamp.response.*;
 import net.redstonelamp.utils.TextFormat;
 
 /**
@@ -264,7 +243,7 @@ public class Player extends PlayerEntity implements CommandSender{
             AnimateRequest ar = (AnimateRequest) request;
             EventExecutor.throwEvent(pae);
             if(!pae.isCancelled()) {
-                AnimateResponse response = new AnimateResponse(ar.actionType);
+                AnimateResponse response = new AnimateResponse(ar.actionType, getEntityID());
                 server.broadcastResponse(server.getPlayers().stream().filter(player -> player != this), response);
             }
         }else if(request instanceof BlockPlaceRequest){
@@ -302,6 +281,12 @@ public class Player extends PlayerEntity implements CommandSender{
                 //getPosition().getLevel().removeBlock(rbr.position);
                 getPosition().getLevel().setBlock(rbr.position, new Block(0, (short) 0, 1));
             }
+        } else if(request instanceof SetHeldItemRequest) {
+            SetHeldItemRequest shir = (SetHeldItemRequest) request;
+            inventory.setItemInHand(shir.item);
+            inventory.setSelectedSlot(shir.inventorySlot);
+            inventory.setItemInHandSlot(shir.hotbarSlot);
+            server.broadcastResponse(server.getPlayers().stream().filter(player -> player != this), new SetHeldItemResponse(getEntityID(), inventory.getItemInHand(), inventory.getSelectedSlot(), inventory.getItemInHandSlot()));
         }
     }
 

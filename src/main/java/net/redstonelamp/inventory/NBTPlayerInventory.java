@@ -29,13 +29,17 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A Player Inventory that can be stored and loaded using NBT Compound Tags
+ * A Player Inventory that can be stored and loaded using NBT Compound Tags.
  *
  * @author RedstoneLamp Team
  */
+//TODO: Save item in hand's slot/index
+//TODO: Migrate Stacks to single Items to save memory (requires modification of entire inventory system classes)
 public class NBTPlayerInventory implements PlayerInventory{
     private Map<Integer, Stack<Item>> inventory = new ConcurrentHashMap<>();
-    private Item inHand;
+    private Item inHand = new Item(0, (short) 0, 0); //TODO: Item.get()
+    private int inHandSlot = 0;
+    private int inventorySlot = 0;
     private Player player;
     private int maxStackSize = MAX_STACK;
 
@@ -58,6 +62,26 @@ public class NBTPlayerInventory implements PlayerInventory{
     @Override
     public Player getPlayer(){
         return player;
+    }
+
+    @Override
+    public int getSelectedSlot() {
+        return inventorySlot;
+    }
+
+    @Override
+    public void setSelectedSlot(int slot) {
+        inventorySlot = slot;
+    }
+
+    @Override
+    public int getItemInHandSlot() {
+        return inHandSlot;
+    }
+
+    @Override
+    public void setItemInHandSlot(int index) {
+        inHandSlot = index;
     }
 
     @Override

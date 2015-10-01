@@ -14,21 +14,28 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.response;
+package net.redstonelamp.request;
 
-import net.redstonelamp.request.AnimateRequest;
+import net.redstonelamp.item.Item;
 
 /**
- * A Response to an AnimateRequest
+ * A request to set the player's held item.
  *
  * @author RedstoneLamp Team
  */
-public class AnimateResponse extends Response{
-    public AnimateRequest.ActionType actionType;
-    public long entityID;
+public class SetHeldItemRequest extends Request {
+    public Item item;
+    public int inventorySlot;
+    public int hotbarSlot;
 
-    public AnimateResponse(AnimateRequest.ActionType actionType, long entityID){
-        this.actionType = actionType;
-        this.entityID = entityID;
+    public SetHeldItemRequest(Item item, int inventorySlot, int hotbarSlot) {
+        this.item = item;
+        this.inventorySlot = inventorySlot;
+        this.hotbarSlot = hotbarSlot;
+    }
+
+    @Override
+    public void execute() {
+        //TODO: ?
     }
 }

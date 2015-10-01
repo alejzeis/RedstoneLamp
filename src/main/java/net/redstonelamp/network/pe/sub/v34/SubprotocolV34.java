@@ -153,6 +153,11 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
                 Level level = getProtocol().getServer().getPlayer(up.getAddress()).getPosition().getLevel();
                 requests.add(new RemoveBlockRequest(new BlockPosition(blockX, blockY, blockZ, level)));
                 break;
+
+            case MOB_EQUIPMENT_PACKET:
+                up.bb().skip(8); //entity ID
+                requests.add(new SetHeldItemRequest(up.bb().getSlot(), up.bb().getByte(), up.bb().getByte()));
+                break;
         }
         return requests.toArray(new Request[requests.size()]);
     }
@@ -321,7 +326,7 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
                     bb.putByte((byte) 3);
                     break;
             }
-            bb.putLong(player.getEntityID());
+            bb.putLong(ar.entityID);
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         } else if(response instanceof ChatResponse) {
             ChatResponse cr = (ChatResponse) response;
@@ -366,7 +371,7 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb.putFloat(p.getPosition().getYaw());
             bb.putFloat(p.getPosition().getYaw()); //TODO: head yaw/rot
             bb.putFloat(p.getPosition().getPitch());
-            bb.putSlot(p.getInventory().getItemInHand() != null ? p.getInventory().getItemInHand() : new Item(0, (short) 0, 0));
+            bb.putSlot(p.getInventory().getItemInHand());
             bb.put(p.getMetadata().toBytes());
 
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
@@ -435,6 +440,15 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb.putByte((byte) rbr.position.getY());
             bb.putByte((byte) 0); //AIR
             bb.putByte((byte) ((UpdateBlockPacketFlagsV27.FLAG_ALL_PRIORITY << 4) | (byte) 0));
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof SetHeldItemResponse) {
+            SetHeldItemResponse shir = (SetHeldItemResponse) response;
+            bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+            bb.putByte(MOB_EQUIPMENT_PACKET);
+            bb.putLong(shir.entityID);
+            bb.putSlot(shir.item);
+            bb.putByte((byte) shir.inventorySlot);
+            bb.putByte((byte) shir.hotbarSlot);
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }
 
