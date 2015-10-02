@@ -16,20 +16,26 @@
  */
 package net.redstonelamp.item;
 
+import net.redstonelamp.block.Block;
 import net.redstonelamp.block.Dirt;
 import net.redstonelamp.block.Grass;
 import net.redstonelamp.block.Stone;
 import org.spout.nbt.CompoundTag;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents an Item.
  *
  * @author RedstoneLamp Team
  */
-public class Item{
+public class Item implements Items {
+    private static final Map<Integer, Class<? extends Item>> items = new HashMap<>();
     private static final List<Item> creativeItems = new ArrayList<>();
     private final int id;
     private final short meta;
@@ -44,9 +50,47 @@ public class Item{
 
     public static void init(){
         creativeItems.clear();
-        creativeItems.add(new Stone((short) 0, 1));
-        creativeItems.add(new Dirt((short) 0, 1));
-        creativeItems.add(new Grass((short) 0, 1));
+        items.clear();
+        initItems();
+        initCreativeItems();
+    }
+
+    private static void initItems() {
+        items.put(DIRT, Dirt.class);
+        items.put(GRASS, Grass.class);
+        items.put(STONE, Stone.class);
+    }
+
+    private static void initCreativeItems() {
+        addCreativeItem(get(DIRT, (short) 0));
+        addCreativeItem(get(GRASS, (short) 0));
+        addCreativeItem(get(STONE, (short) 0));
+    }
+
+    public static synchronized void addCreativeItem(Item item) {
+        creativeItems.add(get(item.getId(), item.getMeta()));
+    }
+
+    public static Item get(int id) {
+        return get(id, (short) 0, 1);
+    }
+
+    public static Item get(int id, short meta) {
+        return get(id, meta, 1);
+    }
+
+    public static Item get(int id, short meta, int count) {
+        if(items.containsKey(id)) {
+            try {
+                Constructor c = items.get(id).getConstructor(int.class, short.class, int.class);
+                return (Item) c.newInstance(id, meta, count);
+            } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            return new Item(id, meta, count);
+        }
     }
     
     public static List<Item> getCreativeItems() {

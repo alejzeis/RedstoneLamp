@@ -346,6 +346,10 @@ public class Player extends PlayerEntity implements CommandSender{
     	this.displayName = displayName;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
     public Protocol getProtocol(){
         return protocol;
     }
