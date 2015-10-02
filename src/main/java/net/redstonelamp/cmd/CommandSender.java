@@ -22,6 +22,10 @@ public interface CommandSender {
 	
 	public boolean hasOp();
 	
+	public default boolean hasPermission(String permission) {
+		return this.hasOp();
+	}
+	
 	public void sendMessage(String message);
 	
 }

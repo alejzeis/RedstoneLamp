@@ -23,6 +23,7 @@ import java.util.Iterator;
 import lombok.Getter;
 import net.redstonelamp.cmd.defaults.HelpCommand;
 import net.redstonelamp.cmd.defaults.KickCommand;
+import net.redstonelamp.cmd.defaults.PermissionTest;
 import net.redstonelamp.cmd.defaults.SayCommand;
 import net.redstonelamp.cmd.defaults.StopCommand;
 import net.redstonelamp.cmd.exception.CommandException;
@@ -43,6 +44,7 @@ public class Command {
 			throw new CommandException("The defaults have already been registered!");
 		new Command("say", "/say (message)", "Broadcasts a message to the server", new SayCommand(), true);
 		new Command("kick", "/kick (player) [reason]", "Kicks a player with the specified reason", new KickCommand(), true);
+		new Command("permission", "/permission (permission) [player]", "See's if a player has a permission", new PermissionTest(), true);
 		new Command("help", "/help", "View a list of all commands", new HelpCommand(), false);
 	    new Command("stop", "/stop", "Stops the server", new StopCommand(), false);
 	    registeredDefaults = true;

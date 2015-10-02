@@ -17,6 +17,8 @@
 package net.redstonelamp;
 
 import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 import net.redstonelamp.block.Block;
@@ -39,8 +41,34 @@ import net.redstonelamp.item.Item;
 import net.redstonelamp.level.ChunkPosition;
 import net.redstonelamp.level.position.BlockPosition;
 import net.redstonelamp.network.Protocol;
-import net.redstonelamp.request.*;
-import net.redstonelamp.response.*;
+import net.redstonelamp.permission.OperatorPermissions;
+import net.redstonelamp.permission.PermissionAttachment;
+import net.redstonelamp.plugin.Plugin;
+import net.redstonelamp.request.AnimateRequest;
+import net.redstonelamp.request.BlockPlaceRequest;
+import net.redstonelamp.request.ChatRequest;
+import net.redstonelamp.request.ChunkRequest;
+import net.redstonelamp.request.LoginRequest;
+import net.redstonelamp.request.PlayerEquipmentRequest;
+import net.redstonelamp.request.PlayerMoveRequest;
+import net.redstonelamp.request.RemoveBlockRequest;
+import net.redstonelamp.request.Request;
+import net.redstonelamp.request.SetHeldItemRequest;
+import net.redstonelamp.request.SpawnRequest;
+import net.redstonelamp.response.AnimateResponse;
+import net.redstonelamp.response.BlockPlaceResponse;
+import net.redstonelamp.response.ChatResponse;
+import net.redstonelamp.response.ChunkResponse;
+import net.redstonelamp.response.DisconnectResponse;
+import net.redstonelamp.response.LoginResponse;
+import net.redstonelamp.response.PlayerEquipmentResponse;
+import net.redstonelamp.response.PlayerMoveResponse;
+import net.redstonelamp.response.PopupResponse;
+import net.redstonelamp.response.RemoveBlockResponse;
+import net.redstonelamp.response.Response;
+import net.redstonelamp.response.SetHeldItemResponse;
+import net.redstonelamp.response.SpawnResponse;
+import net.redstonelamp.response.TeleportResponse;
 import net.redstonelamp.utils.TextFormat;
 
 /**
@@ -67,6 +95,8 @@ public class Player extends PlayerEntity implements CommandSender{
     private boolean spawned = false;
     private int gamemode;
     private PlayerInventory inventory;
+    
+    private HashMap<Plugin, PermissionAttachment> permissionAttachments = new HashMap<>();
 
     /**
      * Construct a new Player instance belonging to the specified <code>Protocol</code> with the <code>identifier</code>
@@ -389,6 +419,33 @@ public class Player extends PlayerEntity implements CommandSender{
 
     public PlayerInventory getInventory() {
         return inventory;
+    }
+    
+    public void addAttachment(Plugin plugin) {
+    	permissionAttachments.put(plugin, new PermissionAttachment(this, plugin));
+    }
+    
+    public PermissionAttachment getAttachment(Plugin plugin) {
+    	return permissionAttachments.get(plugin);
+    }
+    
+    public PermissionAttachment[] getAttachments() {
+    	return permissionAttachments.values().toArray(new PermissionAttachment[permissionAttachments.size()]);
+    }
+    
+    @Override
+    public boolean hasPermission(String permission) {
+    	ArrayList<String> permissions = new ArrayList<String>();
+    	for(PermissionAttachment attachment : getAttachments()) {
+    		for(String perm : attachment.getPermissions()) {
+    			if(!permissions.contains(perm))
+    				permissions.add(perm);
+    		}
+    	}
+    	if(hasOp())
+    		for(String perm : OperatorPermissions.getPermissions(RedstoneLamp.SERVER.getConfig().getInt("op-permission-level")-1))
+    			permissions.add(perm);
+    	return permissions.contains(permission);
     }
     
 }

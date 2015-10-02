@@ -16,6 +16,15 @@
  */
 package net.redstonelamp.network.pe;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 import net.beaconpe.jraklib.JRakLib;
 import net.beaconpe.jraklib.protocol.EncapsulatedPacket;
 import net.beaconpe.jraklib.server.JRakLibServer;
@@ -25,17 +34,9 @@ import net.redstonelamp.Player;
 import net.redstonelamp.Server;
 import net.redstonelamp.network.LowLevelNetworkException;
 import net.redstonelamp.network.UniversalPacket;
-import net.redstonelamp.network.netInterface.AdvancedNetworkInterface;
 import net.redstonelamp.ticker.CallableTask;
 import net.redstonelamp.ui.ConsoleOut;
 import net.redstonelamp.ui.Logger;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * An AdvancedNetworkInterface implementation for the JRakLib library.
@@ -88,10 +89,10 @@ public class JRakLibInterface implements ServerInstance, PEInterface {
         }
         return null;
     }
-
+    
     public void tick(long tick) {
         while(handler.handlePacket());
-
+        
         if(rakLibServer.getState() == Thread.State.TERMINATED) {
             server.getTicker().cancelTask(tickTask);
             logger.fatal("JRakLib Server crashed!");
