@@ -24,11 +24,13 @@ import net.redstonelamp.cmd.CommandSender;
 import net.redstonelamp.utils.TextFormat;
 
 public class KickCommand implements CommandExecutor {
-
+	
+	private static final String kick = "net.redstonelamp.kick";
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(label.equalsIgnoreCase("kick")) {
-			if(sender.hasOp()) {
+			if(sender.hasPermission(kick)) {
 				if(args.length >= 1) {
 					Player player = RedstoneLamp.SERVER.getPlayer(args[0]);
 					if(player == null) {

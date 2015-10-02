@@ -16,11 +16,12 @@
  */
 package net.redstonelamp.level.generator;
 
+import java.nio.ByteBuffer;
+
+import net.redstonelamp.item.Items;
 import net.redstonelamp.level.Chunk;
 import net.redstonelamp.level.ChunkPosition;
 import net.redstonelamp.level.Level;
-
-import java.nio.ByteBuffer;
 
 /**
  * This Simple FlatGenerator generates an infinite world of grass.
@@ -43,12 +44,12 @@ public class FlatGenerator implements Generator{
             for(int blockZ = 0; blockZ < 16; blockZ++){
                 //Put a bedrock block on the lowest block in the column, and then loop through the rest of the
                 //127 blocks and put grass and finally air
-                bb.put((byte) 0x07); //BEDROCK Block
-                bb.put((byte) 0x03); //DIRT Block
-                bb.put((byte) 0x03); //DIRT Block
-                bb.put((byte) 0x02); //DIRT Block
+                bb.put((byte) Items.BEDROCK);
+                bb.put((byte) Items.DIRT);
+                bb.put((byte) Items.DIRT);
+                bb.put((byte) Items.GRASS);
                 for(int blockY = 0; blockY < 124; blockY++){
-                    bb.put((byte) 0x00); //AIR
+                    bb.put((byte) Items.AIR);
                 }
             }
         }
