@@ -16,16 +16,14 @@
  */
 package net.redstonelamp;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 
-import net.redstonelamp.config.ServerConfig;
+import net.redstonelamp.config.PropertiesConfig;
 import net.redstonelamp.config.YamlConfig;
 import net.redstonelamp.ui.Log4j2ConsoleOut;
 import net.redstonelamp.ui.Logger;
@@ -47,9 +45,9 @@ public class RedstoneLamp{
 
     public static void main(String[] args){
         RedstoneLamp main = new RedstoneLamp();
-        main.getDefaultResources();
         try{
-            ServerConfig config = new ServerConfig(new File("server.properties"));
+            main.getDefaultResources();
+            PropertiesConfig config = new PropertiesConfig(new File("server.properties"));
             YamlConfig conf = new YamlConfig("redstonelamp.yml");
             SERVER = new Server(new Logger(new Log4j2ConsoleOut("RedstoneLamp")), config, conf); //TODO: Correct logger
             SERVER.run();
@@ -64,14 +62,17 @@ public class RedstoneLamp{
         return SOFTWARE + " build #" + SOFTWARE_BUILD + ", commit: " + SOFTWARE_COMMIT + ", built on: " + SOFTWARE_BUILD_DATE;
     }
 
-    private void getDefaultResources(){
+    private void getDefaultResources() throws IOException {
         if(!new File("server.properties").isFile()){
-            URL url = getClass().getResource("/conf/server.properties");
-            File dest = new File("./server.properties");
-            try{
-                FileUtils.copyURLToFile(url, dest);
-            }catch(IOException e){
-                e.printStackTrace();
+            copyProperties();
+        } else {
+            BufferedReader r = new BufferedReader(new FileReader("server.properties"));
+            String header =r.readLine();
+            r.close();
+            if(!header.startsWith("#RedstoneLamp Properties")) {
+                LogManager.getRootLogger().warn("server.properties is not valid, regenerating...");
+                new File("server.properties").delete();
+                copyProperties();
             }
         }
         if(!new File("redstonelamp.yml").isFile()){
@@ -110,6 +111,16 @@ public class RedstoneLamp{
             SOFTWARE_BUILD_DATE = "not available";
         }
         System.setProperty("log4j.configurationFile", "log4j2.xml");
+    }
+
+    private void copyProperties() {
+        URL url = getClass().getResource("/conf/server.properties");
+        File dest = new File("./server.properties");
+        try{
+            FileUtils.copyURLToFile(url, dest);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
     /**

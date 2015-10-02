@@ -29,8 +29,7 @@ import lombok.Getter;
 import net.redstonelamp.cmd.Command;
 import net.redstonelamp.cmd.CommandManager;
 import net.redstonelamp.cmd.CommandSender;
-import net.redstonelamp.cmd.exception.CommandException;
-import net.redstonelamp.config.ServerConfig;
+import net.redstonelamp.config.PropertiesConfig;
 import net.redstonelamp.config.YamlConfig;
 import net.redstonelamp.event.EventManager;
 import net.redstonelamp.item.Item;
@@ -59,7 +58,7 @@ import net.redstonelamp.utils.TextFormat;
 public class Server implements Runnable, CommandSender{
     private final List<Runnable> shutdownTasks = new ArrayList<>(); //List of tasks to be run on shutdown
     private final Logger logger;
-    private final ServerConfig config;
+    private final PropertiesConfig config;
     private final YamlConfig yamlConfig;
     private final ServerIcon serverIcon;
     private final RedstoneTicker ticker;
@@ -85,7 +84,7 @@ public class Server implements Runnable, CommandSender{
      * @param config           The server's configuration
      * @param serverYamlConfig The server's YAML configuration
      */
-    Server(Logger logger, ServerConfig config, YamlConfig serverYamlConfig) throws Exception{
+    Server(Logger logger, PropertiesConfig config, YamlConfig serverYamlConfig) throws Exception{
         ticker = new RedstoneTicker(this, 50);
         this.logger = logger;
         this.config = config;
@@ -159,7 +158,7 @@ public class Server implements Runnable, CommandSender{
         Runtime.getRuntime().addShutdownHook(new ShutdownTaskExecuter(this));
     }
 
-    private void loadProperties(ServerConfig config){
+    private void loadProperties(PropertiesConfig config){
         maxPlayers = config.getInt("max-players");
         motd = config.getString("motd");
     }
@@ -314,7 +313,7 @@ public class Server implements Runnable, CommandSender{
         return maxPlayers;
     }
 
-    public ServerConfig getConfig(){
+    public PropertiesConfig getConfig(){
         return config;
     }
 

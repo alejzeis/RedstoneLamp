@@ -26,7 +26,7 @@ import java.util.Properties;
  *
  * @author RedstoneLamp Team
  */
-public class ServerConfig{
+public class PropertiesConfig {
     private Properties properties;
 
     /**
@@ -35,7 +35,7 @@ public class ServerConfig{
      * @param configLocation
      * @throws IOException If the configuration can not be loaded.
      */
-    public ServerConfig(File configLocation) throws IOException{
+    public PropertiesConfig(File configLocation) throws IOException{
         properties = new Properties();
         properties.load(new FileInputStream(configLocation));
     }
