@@ -18,8 +18,12 @@ package net.redstonelamp.item;
 
 /**
  * List of Item ids.
+ * <br>
+ * Originally from": https://github.com/PocketMine/PocketMine-MP/blob/0.12-items/src/pocketmine/item/Item.php
+ * <br>
+ * Translated from PHP to Java by RedstoneLamp Team. All credit goes to the PocketMine Team.
  *
- * @author RedstoneLamp Team
+ * @author RedstoneLamp Team and PocketMine Team
  */
 public interface Items {
     public static final int AIR = 0;
