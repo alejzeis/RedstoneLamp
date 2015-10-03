@@ -16,6 +16,8 @@
  */
 package net.redstonelamp.cmd;
 
+import net.redstonelamp.permission.Permission;
+
 public interface CommandSender {
 	
 	public String getName();
@@ -24,6 +26,10 @@ public interface CommandSender {
 	
 	public default boolean hasPermission(String permission) {
 		return this.hasOp();
+	}
+	
+	public default boolean hasPermission(Permission permission) {
+		return this.hasPermission(permission.toString());
 	}
 	
 	public void sendMessage(String message);

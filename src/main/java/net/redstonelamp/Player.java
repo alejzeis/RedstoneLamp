@@ -42,6 +42,7 @@ import net.redstonelamp.level.ChunkPosition;
 import net.redstonelamp.level.position.BlockPosition;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.permission.OperatorPermissions;
+import net.redstonelamp.permission.Permission;
 import net.redstonelamp.permission.PermissionAttachment;
 import net.redstonelamp.plugin.Plugin;
 import net.redstonelamp.request.AnimateRequest;
@@ -365,7 +366,7 @@ public class Player extends PlayerEntity implements CommandSender{
     
     @Override
     public boolean hasOp() {
-    	return false; // TODO: Get operators working
+    	return true; // TODO: Get operators working
     }
     
     public String getDisplayName() {
@@ -437,14 +438,14 @@ public class Player extends PlayerEntity implements CommandSender{
     public boolean hasPermission(String permission) {
     	ArrayList<String> permissions = new ArrayList<String>();
     	for(PermissionAttachment attachment : getAttachments()) {
-    		for(String perm : attachment.getPermissions()) {
-    			if(!permissions.contains(perm))
-    				permissions.add(perm);
+    		for(Permission perm : attachment.getPermissions()) {
+    			if(!permissions.contains(perm.toString()))
+    				permissions.add(perm.toString());
     		}
     	}
     	if(hasOp())
-    		for(String perm : OperatorPermissions.getPermissions(RedstoneLamp.SERVER.getConfig().getInt("op-permission-level")-1))
-    			permissions.add(perm);
+    		for(Permission perm : OperatorPermissions.getPermissions(RedstoneLamp.SERVER.getConfig().getInt("op-permission-level")-1))
+    			permissions.add(perm.toString());
     	return permissions.contains(permission);
     }
     

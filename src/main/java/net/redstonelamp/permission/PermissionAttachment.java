@@ -16,6 +16,7 @@
  */
 package net.redstonelamp.permission;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import lombok.Getter;
@@ -23,7 +24,7 @@ import net.redstonelamp.Player;
 import net.redstonelamp.plugin.Plugin;
 
 /**
- * Represents a permission attachment built upon by a 
+ * Represents a permission attachment hooked by a plugin
  * 
  * @author RedstoneLamp team
  */
@@ -42,22 +43,42 @@ public class PermissionAttachment {
 		this.setPermission(permission, value);
 	}
 	
+	public void setPermission(Permission permission, boolean value) {
+		this.setPermission(permission.toString(), value);
+	}
+	
 	public void unsetPermission(String permission) {
 		permissions.remove(permission);
 	}
 	
-	public String[] getPermissions() {
-		return permissions.values().toArray(new String[permissions.size()]);
+	public void unsetPermission(Permission permission) {
+		permissions.remove(permission.toString());
+	}
+	
+	public Permission[] getPermissions() {
+		ArrayList<Permission> perms = new ArrayList<Permission>();
+		for(String perm : permissions.keySet())
+			perms.add(new Permission(perm));
+		return perms.toArray(new Permission[permissions.size()]);
 	}
 	
 	public boolean registeredPermission(String permission) {
 		return permissions.values().contains(permission);
 	}
 	
+	public boolean registeredPermission(Permission permission) {
+		return this.registeredPermission(permission.toString());
+	}
+	
 	public boolean hasPermission(String permission) {
 		if(permissions.get(permission) == null)
 			return false;
-		return permissions.get(permission);
+		System.out.println(permissions.get(permission).booleanValue());
+		return permissions.get(permission).booleanValue();
+	}
+	
+	public boolean hasPermission(Permission permission) {
+		return this.hasPermission(permission.toString());
 	}
 	
 }
