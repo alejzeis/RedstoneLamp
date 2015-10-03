@@ -27,25 +27,25 @@ import java.util.ArrayList;
 public abstract class OperatorPermissions {
 
 	private static final String[] OP_1 = {
-		"net.redstonelamp.world.spawn"
+		"redstonelamp.command.world.spawn"
 	};
 	
 	private static final String[] OP_2 = {
-		"net.redstonelamp.inventory.clear", "net.redstonelamp.world.difficulty",
-		"net.redstonelamp.world.gamerule", "net.redstonelamp.world.commandblock",
-		"net.redstonelamp.player.give", "net.redstonelamp.player.gamemode",
-		"net.redstonelamp.player.tp", "net.redstonelamp.player.effect"
+		"redstonelamp.command.inventory.clear", "redstonelamp.command.world.difficulty",
+		"redstonelamp.command.world.gamerule", "redstonelamp.command.world.commandblock",
+		"redstonelamp.command.player.give", "redstonelamp.command.player.gamemode",
+		"redstonelamp.command.player.tp", "redstonelamp.command.player.effect"
 	};
 
 	private static final String[] OP_3 = {
-		"net.redstonelamp.player.op", "net.redstonelamp.player.deop",
-		"net.redstonelamp.player.kick", "net.redstonelamp.player.ban",
-		"net.redstonelamp.player.banip", "net.redstonelamp.player.pardon",
-		"net.redstonelamp.player.pardonip"
+		"redstonelamp.command.player.op", "redstonelamp.command.player.deop",
+		"redstonelamp.command.player.kick", "redstonelamp.command.player.ban",
+		"redstonelamp.command.player.banip", "redstonelamp.command.player.pardon",
+		"redstonelamp.command.player.pardonip"
 	};
 
 	private static final String[] OP_4 = {
-		"net.redstonelamp.stop"
+		"redstonelamp.command.stop"
 	};
 
 	private static final String[][] OP_LEVELS = {
@@ -55,7 +55,7 @@ public abstract class OperatorPermissions {
 	public static Permission[] getPermissions(int level) {
 		if (level > OP_LEVELS.length)
 			return null;
-		ArrayList<Permission> permissions = new ArrayList<Permission>();
+		ArrayList<Permission> permissions = new ArrayList<>();
 		for (int i = 0; i < level + 1; i++)
 			for (int j = 0; j < OP_LEVELS[i].length; j++)
 				permissions.add(new Permission(OP_LEVELS[i][j]));
