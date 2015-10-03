@@ -12,7 +12,8 @@ before_install:
 
 install: echo "Dummy thing to prevent travis from doing strange maven thing."
 
-script: 'mvn license:check package | egrep "\\[(INFO|WARNING)\\]"'
+#script: 'mvn license:check package | egrep "\\[(INFO|WARNING)\\]"' # this always exits with 0, even if the maven build fails.
+script: mvn license:check package
 
 after_success:
   - cd $TRAVIS_BUILD_DIR
