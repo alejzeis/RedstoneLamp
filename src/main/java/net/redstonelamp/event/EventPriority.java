@@ -19,7 +19,7 @@ package net.redstonelamp.event;
 public enum EventPriority {
     HIGHEST,
     HIGH,
-    DEFAULT,
+    NORMAL,
     LOW,
     LOWEST
 }

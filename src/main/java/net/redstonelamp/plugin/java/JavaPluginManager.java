@@ -16,12 +16,20 @@
  */
 package net.redstonelamp.plugin.java;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import net.redstonelamp.event.Listener;
+import net.redstonelamp.plugin.Plugin;
 import net.redstonelamp.plugin.PluginManager;
 import net.redstonelamp.plugin.PluginSystem;
 
-import java.io.File;
-
 public class JavaPluginManager extends PluginManager{
+	
+	// TODO: Implement right listener
+	private static HashMap<Plugin, ArrayList<Listener>> listeners = new HashMap<>();
+	
     /**
      * Directory all the java plugins are located in
      */
@@ -41,6 +49,28 @@ public class JavaPluginManager extends PluginManager{
                 load.loadPlugin();
             }
         }
+    }
+    
+    public void registerEvents(Plugin plugin, Listener listener) {
+    	if(listeners.get(plugin) == null)
+    		listeners.put(plugin, new ArrayList<Listener>());
+    	if(!listeners.get(plugin).contains(listener))
+    		listeners.get(plugin).add(listener);
+    }
+    
+    public void unregisterEvents(Plugin plugin, Listener listener) {
+    	if(listeners.get(plugin) == null)
+    		listeners.put(plugin, new ArrayList<Listener>());
+    	listeners.get(plugin).remove(listener);
+    }
+    
+    public Listener[] getListeners() {
+    	ArrayList<Listener> array = new ArrayList<Listener>();
+    	for(ArrayList<Listener> al : listeners.values()) {
+    		for(Listener l : al)
+    			array.add(l);
+    	}
+    	return array.toArray(new Listener[array.size()]);
     }
 
 }

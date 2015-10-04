@@ -31,7 +31,6 @@ import net.redstonelamp.cmd.CommandManager;
 import net.redstonelamp.cmd.CommandSender;
 import net.redstonelamp.config.PropertiesConfig;
 import net.redstonelamp.config.YamlConfig;
-import net.redstonelamp.event.EventManager;
 import net.redstonelamp.item.Item;
 import net.redstonelamp.level.Level;
 import net.redstonelamp.level.LevelManager;
@@ -66,7 +65,6 @@ public class Server implements Runnable, CommandSender{
     private final List<Player> players = new CopyOnWriteArrayList<>();
     private final PluginSystem pluginSystem;
     @Getter private final ScriptManager scriptManager;
-    @Getter private EventManager eventManager;
     @Getter private CommandManager commandManager;
     private final PlayerDatabase playerDatabase;
     
@@ -102,7 +100,6 @@ public class Server implements Runnable, CommandSender{
         network.registerProtocol(new PEProtocol(network));
         network.registerProtocol(new PCProtocol(network));
         
-        eventManager = new EventManager();
         commandManager = new CommandManager();
         scriptManager = new ScriptManager(this);
         

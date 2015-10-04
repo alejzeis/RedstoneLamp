@@ -21,38 +21,42 @@ import net.redstonelamp.Server;
 import net.redstonelamp.ui.Logger;
 
 public abstract class Plugin{
+	
     /**
      * The plugins name
      */
     @Getter
-    private String name;
+    private final String name;
+    
     /**
      * The plugins version
      */
     @Getter
-    private String version;
+    private final String version;
+    
     /**
      * The plugins authors
      */
     @Getter
-    private String[] authors;
+    private final String[] authors;
+    
     /**
      * The plugins website
      */
     @Getter
-    private String website;
+    private final String website;
 
     /**
      * The plugin's server
      */
     @Getter
-    private Server server;
+    private final Server server;
 
     /**
      * The plugin's logger
      */
     @Getter
-    private Logger logger;
+    private final Logger logger;
 
     public Plugin(Server server, Logger logger, String name, String version, String[] authors, String website){
         this.server = server;
@@ -62,16 +66,24 @@ public abstract class Plugin{
         this.authors = authors;
         this.website = website;
     }
+    
     /**
-     * In this function every plugin should handle the stuff it has to do on server start.
+     * In this function plugins run everything they need to do on a fresh server start.
+     * It is careful what is called within this method, as things like RedstoneLamp.SERVER
+     * may be NULL and unusable.
+     */
+    public void onLoad() {}
+    
+    /**
+     * In this function every plugin should handle the stuff it has to do on server start/reload.
      * When this method gets called, the basic structure of the server already got loaded,
      * and events and commands can already be registered in the event/command system.
      * WARNING: This method will also be called when the server is being reloaded
      */
-    public abstract void onEnable();
+    public void onEnable() {}
     /**
      * In this function every plugin should stop itself.
      * This includes removing events, commands, schedule tasks etc.
      */
-    public abstract void onDisable();
+    public void onDisable() {}
 }

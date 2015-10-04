@@ -47,6 +47,7 @@ public class FlatGenerator implements Generator{
                 bb.put((byte) Items.BEDROCK);
                 bb.put((byte) Items.DIRT);
                 bb.put((byte) Items.DIRT);
+                bb.put((byte) Items.DIRT);
                 bb.put((byte) Items.GRASS);
                 for(int blockY = 0; blockY < 124; blockY++){
                     bb.put((byte) Items.AIR);

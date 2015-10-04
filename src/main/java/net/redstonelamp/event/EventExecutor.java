@@ -16,39 +16,10 @@
  */
 package net.redstonelamp.event;
 
-import java.lang.reflect.Method;
-
-import javax.script.Invocable;
-import javax.script.ScriptException;
-
-import net.redstonelamp.RedstoneLamp;
-
 public class EventExecutor {
+	
     public static void throwEvent(Event e) {
-        for(EventListener l : RedstoneLamp.SERVER.getEventManager().getListeners()) {
-            l.onEvent(e);
-            Method[] methods = l.getClass().getDeclaredMethods();
-            for(Method method : methods) {
-                method.setAccessible(true);
-                Class<?>[] params = method.getParameterTypes();
-                if(params.length == 1) {
-                    if(params[0].equals(e.getClass())) {
-                        try {
-                            method.invoke(l, e);
-                        } catch(Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-            }
-            for(Invocable i : RedstoneLamp.SERVER.getScriptManager().getScripts()) {
-                try {
-                    String eventName = "on" + e.getClass().getSimpleName();
-                    i.invokeFunction(eventName, e.getClass());
-                } catch (NoSuchMethodException ex) {} catch (ScriptException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }
+        
     }
+    
 }
