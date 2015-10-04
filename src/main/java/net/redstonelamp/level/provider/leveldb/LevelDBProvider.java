@@ -70,7 +70,7 @@ public class LevelDBProvider implements LevelProvider{
         options.createIfMissing(true);
         options.compressionType(CompressionType.ZLIB);
         
-        File databaseDir = new File(levelDir, "db");
+        File databaseDir = new File(levelDir, "db\\MANIFEST-");
         try{
             database = Iq80DBFactory.factory.open(databaseDir, options);
         }catch(IOException e){
