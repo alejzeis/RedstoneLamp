@@ -17,6 +17,7 @@
 package net.redstonelamp.network.pe;
 
 import net.redstonelamp.Player;
+import net.redstonelamp.language.PEMessageTranslator;
 import net.redstonelamp.network.LowLevelNetworkException;
 import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
@@ -60,6 +61,8 @@ public class PEProtocol extends Protocol{
 
         subprotocols.registerSubprotocol(new SubprotocolV27(subprotocols));
         subprotocols.registerSubprotocol(new SubprotocolV34(subprotocols));
+
+        manager.getServer().getTranslationManager().registerTranslator(getClass(), new PEMessageTranslator());
     }
 
     @Override

@@ -32,6 +32,7 @@ import net.redstonelamp.nio.BinaryBuffer;
 import net.redstonelamp.request.*;
 import net.redstonelamp.response.*;
 import net.redstonelamp.utils.CompressionUtils;
+import net.redstonelamp.utils.TextFormat;
 
 import java.net.SocketAddress;
 import java.nio.ByteOrder;
@@ -333,10 +334,11 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
             bb.putByte(TEXT_PACKET);
             if(cr.translation != null) {
+                ChatResponse.ChatTranslation translation = translateTranslationToPE(cr.translation);
                 bb.putByte(TEXT_TRANSLATION);
-                bb.putString(cr.translation.message);
-                bb.putByte((byte) cr.translation.params.length);
-                for(String param : cr.translation.params) {
+                bb.putString(translation.message);
+                bb.putByte((byte) translation.params.length);
+                for(String param : translation.params) {
                     bb.putString(param);
                 }
             } else if(cr.source != null){
@@ -475,6 +477,10 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
         }
 
         return packets.toArray(new UniversalPacket[packets.size()]);
+    }
+
+    private ChatResponse.ChatTranslation translateTranslationToPE(ChatResponse.ChatTranslation translation) {
+        return getManager().getProtocol().getServer().getTranslationManager().translate(getProtocol(), translation);
     }
 
     @Override

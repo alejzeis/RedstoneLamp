@@ -19,6 +19,7 @@ package net.redstonelamp.cmd;
 import java.util.Arrays;
 
 import net.redstonelamp.cmd.exception.CommandException;
+import net.redstonelamp.response.ChatResponse;
 import net.redstonelamp.utils.TextFormat;
 
 public class CommandManager {
@@ -31,7 +32,7 @@ public class CommandManager {
         Command command= Command.getByLabel(label);
         if(command != null) {
         	if(!command.getExecutor().onCommand(sender, command, label, args))
-        		sender.sendMessage(TextFormat.RED + "Usage: " + command.getUsage());
+        		sender.sendMessage(new ChatResponse.ChatTranslation(TextFormat.RED + "redstonelamp.translation.command.usage", new String[] {command.getUsage()}));
         } else {
             sender.sendMessage("Unknown command! For help, use \"/help\"");
         }

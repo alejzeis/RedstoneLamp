@@ -167,8 +167,16 @@ public class Player extends PlayerEntity implements CommandSender{
         protocol.sendResponse(r, this);
     }
 
+    @Override
     public void sendMessage(String s){
         protocol.sendImmediateResponse(new ChatResponse(s), this);
+    }
+
+    @Override
+    public void sendMessage(ChatResponse.ChatTranslation translation) {
+        ChatResponse r = new ChatResponse("");
+        r.translation = translation;
+        protocol.sendImmediateResponse(r, this);
     }
 
     public void sendPopup(String s){
@@ -208,7 +216,7 @@ public class Player extends PlayerEntity implements CommandSender{
                 }
                 server.getPlayers().stream()
                         .filter(player -> player != this && player.getName().equals(getName()))
-                        .forEach(player -> player.close("redstonelamp.playerLeft", "logged in from another location", true));
+                        .forEach(player -> player.close("redstonelamp.translation.player.left", "logged in from another location", true));
                 sendResponse(response);
                 initEntity();
                 server.getLogger().info(username + "[" + address + "] logged in with entity ID " + getEntityID() + " in level \"" + getPosition().getLevel().getName() + "\""
@@ -237,7 +245,7 @@ public class Player extends PlayerEntity implements CommandSender{
 
             server.getLogger().debug("Player " + username + " spawned (took " + (System.currentTimeMillis() - startLogin) + " ms)");
             spawned = true;
-            server.broadcastMessage(new ChatResponse.ChatTranslation(TextFormat.YELLOW+"%multiplayer.player.joined", new String[]{username}));
+            server.broadcastMessage(new ChatResponse.ChatTranslation(TextFormat.YELLOW+"redstonelamp.translation.player.joined", new String[]{username}));
         }else if(request instanceof ChatRequest){
             ChatRequest cr = (ChatRequest) request;
             if(cr.message.startsWith("/")) {
@@ -354,8 +362,8 @@ public class Player extends PlayerEntity implements CommandSender{
 
         if(!leaveMessage.isEmpty()){
             switch (leaveMessage) {
-                case "redstonelamp.playerLeft":
-                    server.broadcastMessage(new ChatResponse.ChatTranslation(TextFormat.YELLOW+"%multiplayer.player.left", new String[] {username}));
+                case "redstonelamp.translation.player.left":
+                    server.broadcastMessage(new ChatResponse.ChatTranslation(TextFormat.YELLOW+"redstonelamp.translation.player.left", new String[] {username}));
                     break;
                 default:
                     server.broadcastMessage(username + leaveMessage);

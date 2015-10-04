@@ -14,27 +14,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.response;
+package net.redstonelamp.language;
 
-public class ChatResponse extends Response{
-    public static final String DEFAULT_source = "";
-    public static final ChatTranslation DEFAULT_translation = null;
+import net.redstonelamp.response.ChatResponse;
 
-    public String source = DEFAULT_source;
-    public String message;
-    public ChatTranslation translation = DEFAULT_translation;
+/**
+ * The server-side message translator that translates messages
+ * directly.
+ *
+ * @author RedstoneLamp Team
+ */
+public class ServerMessageTranslator implements MessageTranslator{
 
-    public ChatResponse(String message){
-        this.message = message;
-    }
-
-    public static class ChatTranslation{
-        public String message;
-        public final String[] params;
-
-        public ChatTranslation(String message, String[] params){
-            this.message = message;
-            this.params = params;
-        }
+    @Override
+    public ChatResponse.ChatTranslation translate(ChatResponse.ChatTranslation translation) {
+        //TODO
+        return translation;
     }
 }
