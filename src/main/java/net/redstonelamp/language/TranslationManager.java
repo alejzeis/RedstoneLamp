@@ -19,8 +19,12 @@ package net.redstonelamp.language;
 import net.redstonelamp.Server;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.response.ChatResponse;
+import org.ini4j.Ini;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,17 +37,42 @@ public class TranslationManager {
     private final Server server;
     private boolean forceTranslations;
     private Map<String, MessageTranslator> translators = new ConcurrentHashMap<>();
+    protected Ini.Section serverTranslations;
 
     /**
      * Creates a new TranslationManager belonging to a specified <code>server</code>
      * @param server The server this manager belongs to.
-     * @param languageFiles An array with the language file resource paths.
      */
-    public TranslationManager(Server server, String[] languageFiles) {
+    public TranslationManager(Server server) {
         this.server = server;
-        //loadLanguageFiles();
+        translators.put("server", new ServerMessageTranslator(this));
+        try {
+            loadLanguageFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         forceTranslations = server.getYamlConfig().getBoolean("language.force-server-translations");
+    }
+
+    private void loadLanguageFile() throws IOException {
+        Ini ini = new Ini();
+        InputStream stream = ClassLoader.getSystemResourceAsStream("lang/" + convertLanguageCode(server.getYamlConfig().getString("language.server-language")) + ".lang");
+        if(stream == null) {
+            server.getLogger().error("Could not find language file: "+convertLanguageCode(server.getYamlConfig().getString("language.server-language")) + ".lang, using default: \"en-US\"");
+            stream = ClassLoader.getSystemResourceAsStream("lang/en-US.lang");
+        }
+        ini.load(stream);
+        serverTranslations = ini.get("Translations");
+    }
+
+    public String convertLanguageCode(String code) {
+        switch (code) {
+            case "eng":
+                return "en-US";
+            default:
+                return code;
+        }
     }
 
     public void registerTranslator(Class<? extends Protocol> protocol, MessageTranslator translator) {

@@ -100,7 +100,7 @@ public class Server implements Runnable, CommandSender{
         Item.init();
         Command.init();
 
-        translationManager = new TranslationManager(this, null); //TODO: implement language files
+        translationManager = new TranslationManager(this);
 
         network.registerProtocol(new PEProtocol(network));
         network.registerProtocol(new PCProtocol(network));

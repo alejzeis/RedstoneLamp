@@ -42,7 +42,7 @@ public class HelpCommand implements CommandExecutor {
 						sender.sendMessage(new ChatResponse.ChatTranslation("redstonelamp.translation.command.help.listEntry", new String[] {command.getLabel(), command.getDescription()}));
 				}
 			} else {
-				sender.sendMessage("redstonelamp.translation.command.help.invalidPage");
+				sender.sendMessage(new ChatResponse.ChatTranslation("redstonelamp.translation.command.help.invalidPage", new String[] {String.valueOf(page + 1)}));
 			}
 			return true;
 		}

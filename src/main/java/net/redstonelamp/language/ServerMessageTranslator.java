@@ -17,6 +17,9 @@
 package net.redstonelamp.language;
 
 import net.redstonelamp.response.ChatResponse;
+import net.redstonelamp.utils.TextFormat;
+
+import java.util.regex.Pattern;
 
 /**
  * The server-side message translator that translates messages
@@ -25,10 +28,28 @@ import net.redstonelamp.response.ChatResponse;
  * @author RedstoneLamp Team
  */
 public class ServerMessageTranslator implements MessageTranslator{
+    private final TranslationManager mgr;
+
+    public ServerMessageTranslator(TranslationManager mgr) {
+        this.mgr = mgr;
+    }
 
     @Override
     public ChatResponse.ChatTranslation translate(ChatResponse.ChatTranslation translation) {
-        //TODO
-        return translation;
+        ChatResponse.ChatTranslation cr = new ChatResponse.ChatTranslation(translation.message, translation.params);
+        TextFormat color;
+        if(cr.message.startsWith(String.valueOf(TextFormat.ESCAPE))) {
+            char colorChar = cr.message.toCharArray()[1];
+            color = TextFormat.getByChar(colorChar);
+        } else {
+            color = TextFormat.WHITE;
+        }
+        String message = TextFormat.stripColors(cr.message);
+        String trans = mgr.serverTranslations.get(message);
+        for(int i = 0; i < cr.params.length; i++) {
+            trans = trans.replaceAll(Pattern.quote("%param-"+i), cr.params[i]);
+        }
+        cr.message = color + trans;
+        return cr;
     }
 }
