@@ -16,21 +16,14 @@
  */
 package net.redstonelamp.block;
 
-import net.redstonelamp.item.Items;
-
 /**
- * Block implementation of Stone
+ * Abstract class for transparent blocks such as tall-grass.
  *
  * @author RedstoneLamp Team
  */
-public class Stone extends Block {
-    public static final int ID = Items.STONE;
+public abstract class Transparent extends Block {
 
-    public Stone(int id, short meta, int count) {
+    public Transparent(int id, short meta, int count) {
         super(id, meta, count);
-    }
-
-    public Stone(short meta, int count) {
-        super(ID, meta, count);
     }
 }

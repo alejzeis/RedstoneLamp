@@ -18,6 +18,7 @@ package net.redstonelamp.network.pe.sub.v34;
 
 import net.redstonelamp.Player;
 import net.redstonelamp.block.Block;
+import net.redstonelamp.block.Transparent;
 import net.redstonelamp.item.Item;
 import net.redstonelamp.level.Level;
 import net.redstonelamp.level.position.BlockPosition;
@@ -141,8 +142,16 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
                 Item item = up.bb().getSlot();
                 if(face >= 0 && face <= 5){ //Use item on, Block Place
                     //TODO: Implement Item use, (pickaxe, sword, etc)
-                    Block block = new Block(item.getId(), item.getMeta(), 1);
-                    requests.add(new BlockPlaceRequest(block, new Vector3(ax, ay, az).getSide(face, 1)));
+                    Block block = (Block) Block.get(item.getId(), item.getMeta(), 1);
+                    Vector3 target = new Vector3(ax, ay, az);
+                    //System.out.print("Attempting to place: "+target+" block is: "+getProtocol().getServer().getLevelManager().getMainLevel().getBlock(BlockPosition.fromVector3(target, getProtocol().getServer().getLevelManager().getMainLevel())).getId());
+                    //System.out.print(" Face: "+face+"\n");
+                    Level l = getProtocol().getServer().getPlayer(up.getAddress()).getPosition().getLevel();
+                    if(l.getBlock(BlockPosition.fromVector3(target, l)) instanceof Transparent) {
+                        requests.add(new BlockPlaceRequest(block, target));
+                    } else {
+                        requests.add(new BlockPlaceRequest(block, target.getSide(face, 1)));
+                    }
                 }
                 break;
 

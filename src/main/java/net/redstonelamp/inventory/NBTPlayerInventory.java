@@ -176,7 +176,7 @@ public class NBTPlayerInventory implements PlayerInventory{
                 IntTag itemid = (IntTag) ct.getValue().get(2);
                 ShortTag itemMeta = (ShortTag) ct.getValue().get(3);
                 Item[] items = new Item[itemsNum.getValue()];
-                Arrays.fill(items, new Item(itemid.getValue(), itemMeta.getValue(), 1)); //TODO: Item.get()
+                Arrays.fill(items, Item.get(itemid.getValue(), itemMeta.getValue(), 1));
                 Stack<Item> stack = new Stack<>();
                 stack.addAll(Arrays.asList(items));
                 setStackAt(stack, index.getValue());

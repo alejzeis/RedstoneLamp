@@ -16,14 +16,18 @@
  */
 package net.redstonelamp.level;
 
+import net.redstonelamp.Player;
 import net.redstonelamp.block.Block;
 import net.redstonelamp.entity.EntityManager;
+import net.redstonelamp.item.Item;
+import net.redstonelamp.item.Items;
 import net.redstonelamp.level.generator.FlatGenerator;
 import net.redstonelamp.level.generator.Generator;
 import net.redstonelamp.level.position.BlockPosition;
 import net.redstonelamp.level.position.Position;
 import net.redstonelamp.level.provider.LevelLoadException;
 import net.redstonelamp.level.provider.LevelProvider;
+import net.redstonelamp.math.Vector3;
 import net.redstonelamp.response.BlockPlaceResponse;
 import net.redstonelamp.response.RemoveBlockResponse;
 import org.apache.commons.io.FileUtils;
@@ -210,7 +214,8 @@ public class Level{
         Chunk c = getChunkAt(new ChunkPosition(position.getX() >> 4, position.getZ() >> 4));
         byte id = c.getBlockId(position.getX() & 0x0f, position.getY() & 0x7f, position.getZ() & 0x0f);
         byte meta = c.getBlockMeta(position.getX() & 0x0f, position.getY() & 0x7f, position.getZ() & 0x0f);
-        return new Block(id, meta, 1);
+        //return new Block(id, meta, 1);
+        return (Block) Block.get(id, meta, 1);
     }
 
     public LevelManager getManager(){

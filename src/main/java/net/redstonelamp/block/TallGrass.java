@@ -19,18 +19,18 @@ package net.redstonelamp.block;
 import net.redstonelamp.item.Items;
 
 /**
- * Block implementation of Stone
+ * TallGrass Block implementation.
  *
  * @author RedstoneLamp Team
  */
-public class Stone extends Block {
-    public static final int ID = Items.STONE;
+public class TallGrass extends Transparent {
+    public static final int ID = Items.TALL_GRASS;
 
-    public Stone(int id, short meta, int count) {
+    public TallGrass(int id, short meta, int count) {
         super(id, meta, count);
     }
 
-    public Stone(short meta, int count) {
+    public TallGrass(short meta, int count) {
         super(ID, meta, count);
     }
 }

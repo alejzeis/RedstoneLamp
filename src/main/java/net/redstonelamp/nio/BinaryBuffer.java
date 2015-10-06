@@ -202,7 +202,7 @@ public class BinaryBuffer{
     public Item getSlot() {
         short id = getShort();
         if(id <= 0) {
-            return new Item(0, (short) 0, 0);
+            return Item.get(0, (short) 0, 0);
         }
         int count = getByte();
         short data = getShort();
@@ -211,11 +211,11 @@ public class BinaryBuffer{
         if(len > 0) {
             byte[] nbt = get(len);
 
-            Item i = new Item(id, data, count);
+            Item i = Item.get(id, data, count);
             i.setCompoundTag((CompoundTag) BinaryUtils.readNBTTag(nbt));
             return i;
         } else {
-            return new Item(id, data, count);
+            return Item.get(id, data, count);
         }
     }
 

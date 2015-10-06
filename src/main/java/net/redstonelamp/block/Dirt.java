@@ -16,13 +16,15 @@
  */
 package net.redstonelamp.block;
 
+import net.redstonelamp.item.Items;
+
 /**
  * Block implementation of Dirt.
  *
  * @author RedstoneLamp Team
  */
 public class Dirt extends Block {
-    public static final int ID = 0x03;
+    public static final int ID = Items.DIRT;
 
     public Dirt(int id, short meta, int count) {
         super(id, meta, count);

@@ -16,13 +16,15 @@
  */
 package net.redstonelamp.block;
 
+import net.redstonelamp.item.Items;
+
 /**
  * Block implementation of Grass.
  *
  * @author RedstoneLamp Team
  */
 public class Grass extends Block {
-    public static final int ID = 0x02;
+    public static final int ID = Items.GRASS;
 
     public Grass(int id, short meta, int count) {
         super(id, meta, count);

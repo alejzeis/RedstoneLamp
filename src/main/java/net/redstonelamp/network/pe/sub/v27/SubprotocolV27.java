@@ -112,7 +112,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
                 short meta = up.bb().getShort();
                 byte slot = up.bb().getByte();
                 byte selectedSlot = up.bb().getByte();
-                requests.add(new PlayerEquipmentRequest(new Item(item, meta, 1)));
+                requests.add(new PlayerEquipmentRequest(Item.get(item, meta, 1)));
                 break;
             case ANIMATE_PACKET:
                 byte actionId = up.bb().getByte();
@@ -140,7 +140,8 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
 
                 if(face >= 0 && face <= 5){ //Use item on, Block Place
                     //TODO: Implement Item use, (pickaxe, sword, etc)
-                    Block block = new Block(item2, meta2, 1);
+                    //Block block = new Block(item2, meta2, 1);
+                    Block block = (Block) Block.get(item2, meta2, 1);
                     requests.add(new BlockPlaceRequest(block, new Vector3(ax, ay, az).getSide(face, 1)));
                 }
                 break;
