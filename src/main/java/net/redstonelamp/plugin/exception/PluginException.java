@@ -14,7 +14,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.event;
+package net.redstonelamp.plugin.exception;
 
-public interface Listener {
+/**
+ * Main plugin exception, extended by exceptions that have to do with plugins
+ * 
+ * @author RedstoneLamp Team
+ */
+public class PluginException extends Exception {
+
+	private static final long serialVersionUID = -6568964250418309645L;
+
+	public PluginException(String ex) {
+		super(ex);
+	}
+
 }

@@ -14,31 +14,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.plugin.java;
-
-import lombok.Getter;
-import lombok.Setter;
-
-public class JavaPluginProperties{
-    @Getter
-    @Setter
-    private String main = null;
-    @Getter
-    @Setter
-    private String version = null;
-    @Getter
-    @Setter
-    private String name = null;
-    @Getter
-    @Setter
-    private String url = null;
-    @Getter
-    @Setter
-    private String[] authors = null;
-    @Getter
-    @Setter
-    private String[] depend = null;
-    @Getter
-    @Setter
-    private String[] softdepend = null;
-}
+ 
+/**
+ * This package contains the code to handle plugins with the extension of
+ * ".class", also known as Java class file plugins
+ *
+ * NOTE: This does not work yet but is still in the override exceptions list for plugins.
+ */
+package net.redstonelamp.plugin.clazz;

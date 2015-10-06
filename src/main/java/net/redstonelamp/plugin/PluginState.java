@@ -14,7 +14,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.event;
+package net.redstonelamp.plugin;
 
-public interface Listener {
+import lombok.Getter;
+
+public enum PluginState {
+	
+	LOADED(0), INITIALIZED(1), ENABLED(2), DISABLED(3), UNLOADED(4);
+	
+	@Getter
+	private final int stage;
+	private PluginState(int stage) {
+		this.stage = stage;
+	}
+	
 }

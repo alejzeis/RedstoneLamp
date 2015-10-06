@@ -16,44 +16,57 @@
  */
 package net.redstonelamp.plugin;
 
-import lombok.Getter;
+import java.io.IOException;
+
 import net.redstonelamp.plugin.exception.AsyncAPICallException;
+import net.redstonelamp.plugin.exception.PluginException;
 
-import java.util.ArrayList;
+public abstract class PluginManager {
+	
+	private static long THREAD_ID;
+	public PluginManager() {
+		THREAD_ID = Thread.currentThread().getId();
+	}
+	
+	/**
+	 * Gets type of file that the plugin managers work with
+	 */
+	public abstract String getFileType();
+	
+	/**
+	 * Loads all plugins managed by this plugin manager
+	 */
+	public abstract void loadPlugins() throws PluginException, IOException;
+	
+	/**
+	 * Unloads all plugins managed by this plugin manager
+	 */
+	public abstract void unloadPlugins();
+	
+	/**
+	 * Get all plugins being managed by this plugin manager
+	 */
+	public abstract Plugin[] getPlugins();
+	
+	public final Plugin getPlugin(String name) {
+		for(Plugin plugin : getPlugins()) {
+			if(plugin.getName().equals(name))
+				return plugin;
+		}
+		return null;
+	}
 
-public abstract class PluginManager{
-    /**
-     * Main thread id - to catch async access by plugins and block it
-     */
-    @Getter
-    private static long THREAD_ID = -1;
-    /**
-     * ArrayList of plugins/pluginloaders managed by this manager
-     */
-    @Getter
-    private ArrayList<PluginLoader> pluginLoaders = new ArrayList<>();
-
-    /**
-     * Sets some basic values. This method has to be called from the main thread!
-     */
-    public static void init(){
-        //Store the main thread id
-        THREAD_ID = Thread.currentThread().getId();
-    }
-
-    /**
-     * Loads all plugins managed by this plugin manager
-     */
-    public abstract void loadPlugins();
-    /**
-     * Checks if a task is running async. Throws an AsyncAPICallException when the task is async.
-     *
-     * @param msg The message to use in the AsyncAPICallException
-     * @throws AsyncAPICallException
-     */
-    public static void checkAsync(String msg) throws AsyncAPICallException{
-        if(Thread.currentThread().getId() != THREAD_ID){
-            throw new AsyncAPICallException(msg);
-        }
-    }
+	/**
+	 * Checks if a task is running async. Throws an AsyncAPICallException when
+	 * the task is async.
+	 *
+	 * @param msg
+	 *            The message to use in the AsyncAPICallException
+	 * @throws AsyncAPICallException
+	 */
+	public static void checkAsync(String msg) throws AsyncAPICallException {
+		if (Thread.currentThread().getId() != THREAD_ID) {
+			throw new AsyncAPICallException(msg);
+		}
+	}
 }

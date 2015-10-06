@@ -14,7 +14,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.event;
+package net.redstonelamp.plugin.exception;
 
-public interface Listener {
+public class PluginDescriptorException extends PluginException {
+	
+	private static final long serialVersionUID = -9070105992227008158L;
+	
+	public PluginDescriptorException(String descriptor) {
+		super("Invalid plugin desciptor \"" + descriptor + "\"");
+	}
+	
 }

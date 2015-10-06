@@ -16,61 +16,68 @@
  */
 package net.redstonelamp.plugin.java;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import net.redstonelamp.event.Listener;
 import net.redstonelamp.plugin.Plugin;
 import net.redstonelamp.plugin.PluginManager;
-import net.redstonelamp.plugin.PluginSystem;
+import net.redstonelamp.plugin.exception.PluginException;
 
-public class JavaPluginManager extends PluginManager{
+public class JavaPluginManager extends PluginManager {
 	
-	// TODO: Implement right listener
-	private static HashMap<Plugin, ArrayList<Listener>> listeners = new HashMap<>();
-	
-    /**
-     * Directory all the java plugins are located in
-     */
-    public static final File PLUGINS_DIR = new File("plugins");
+	private final JavaPluginLoader loader;
+	private final HashMap<String, JavaPlugin> plugins;
+	private final HashMap<JavaPlugin, ArrayList<Listener>> listeners;
 
-    @Override
-    public void loadPlugins(){
-        PluginSystem.getLogger().info("Loading java plugins...");
-        if(!PLUGINS_DIR.exists()){
-            PLUGINS_DIR.mkdirs();
-        }
-        //noinspection ConstantConditions
-        for(File x : PLUGINS_DIR.listFiles()){
-            if(x.getName().toLowerCase().endsWith(".jar") && x.isFile()){
-                JavaPluginLoader load = new JavaPluginLoader(this, x);
-                getPluginLoaders().add(load);
-                load.loadPlugin();
-            }
-        }
-    }
-    
-    public void registerEvents(Plugin plugin, Listener listener) {
-    	if(listeners.get(plugin) == null)
-    		listeners.put(plugin, new ArrayList<Listener>());
-    	if(!listeners.get(plugin).contains(listener))
-    		listeners.get(plugin).add(listener);
-    }
-    
-    public void unregisterEvents(Plugin plugin, Listener listener) {
-    	if(listeners.get(plugin) == null)
-    		listeners.put(plugin, new ArrayList<Listener>());
-    	listeners.get(plugin).remove(listener);
-    }
-    
-    public Listener[] getListeners() {
-    	ArrayList<Listener> array = new ArrayList<Listener>();
-    	for(ArrayList<Listener> al : listeners.values()) {
-    		for(Listener l : al)
-    			array.add(l);
-    	}
-    	return array.toArray(new Listener[array.size()]);
-    }
+	public JavaPluginManager(JavaPluginLoader loader) throws IOException {
+		this.loader = loader;
+		this.plugins = new HashMap<String, JavaPlugin>();
+		this.listeners = new HashMap<JavaPlugin, ArrayList<Listener>>();
+	}
+
+	@Override
+	public String getFileType() {
+		return ".jar";
+	}
+
+	@Override
+	public void loadPlugins() throws PluginException, IOException {
+		for (Plugin plugin : loader.loadPlugins().values())
+			plugins.put(plugin.getName(), (JavaPlugin) plugin);
+	}
+
+	@Override
+	public void unloadPlugins() {
+		loader.unloadPlugins();
+		plugins.clear();
+	}
+
+	public void registerEvents(JavaPlugin plugin, Listener listener) {
+		if (listeners.get(plugin) == null)
+			listeners.put(plugin, new ArrayList<Listener>());
+		listeners.get(plugin).add(listener);
+	}
+
+	public void unregisterEvents(JavaPlugin plugin, Listener listener) {
+		if (listeners.get(plugin) == null)
+			listeners.put(plugin, new ArrayList<Listener>());
+		listeners.get(plugin).remove(listener);
+	}
+
+	@Override
+	public Plugin[] getPlugins() {
+		return plugins.values().toArray(new Plugin[plugins.size()]);
+	}
+
+	public Listener[] getListeners() {
+		ArrayList<Listener> arr = new ArrayList<Listener>();
+		for (Plugin plugin : getPlugins()) {
+			for (Listener listener : listeners.get(plugin))
+				arr.add(listener);
+		}
+		return arr.toArray(new Listener[arr.size()]);
+	}
 
 }

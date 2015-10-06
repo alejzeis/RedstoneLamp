@@ -16,118 +16,124 @@
  */
 package net.redstonelamp.plugin.java;
 
-import com.esotericsoftware.yamlbeans.YamlException;
-import com.esotericsoftware.yamlbeans.YamlReader;
-import lombok.Getter;
-import net.redstonelamp.Server;
-import net.redstonelamp.plugin.PluginLoader;
-import net.redstonelamp.plugin.PluginManager;
-import net.redstonelamp.plugin.PluginSystem;
-import net.redstonelamp.ui.ConsoleOut;
-import net.redstonelamp.ui.Logger;
-
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.jar.JarFile;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.HashMap;
 
-public class JavaPluginLoader extends PluginLoader{
-    /**
-     * The plugin's jar file
-     */
-    @Getter
-    private File pluginFile;
-    /**
-     * Cashed properties for initialisation
-     */
-    @Getter
-    private JavaPluginProperties properties = null;
+import org.apache.commons.io.IOUtils;
 
-    public JavaPluginLoader(PluginManager mgr, File pluginFile){
-        super(mgr);
-        this.pluginFile = pluginFile;
-    }
+import com.esotericsoftware.yamlbeans.YamlReader;
 
-    @Override
-    public void loadPlugin(){
-        //Include this plugin into classpath
-        try{
-            JavaClassPath.addFile(getPluginFile());
-            YamlReader reader = new YamlReader(new InputStreamReader(getResourceAsStream("plugin.yml")));
-            JavaPluginProperties prop = reader.read(JavaPluginProperties.class);
-            if(prop.getMain() == null) throw new YamlException("plugin.yml does not contain main class");
-            if(prop.getName() == null) throw new YamlException("plugin.yml does not contain plugin name");
-            if(prop.getVersion() == null) throw new YamlException("plugin.yml does not contain plugin version");
-            if(prop.getSoftdepend() != null)
-                for(String sd : prop.getSoftdepend()) getSoftDependencies().add(sd);
-            if(prop.getDepend() != null)
-                for(String d : prop.getDepend()) getDependencies().add(d);
-            name = prop.getName();
-            version = prop.getVersion();
-            properties = prop;
-        }catch(Exception e){
-            e.printStackTrace();
-            return;
-        }
-        setState(PluginState.LOADED);
-    }
+import net.redstonelamp.RedstoneLamp;
+import net.redstonelamp.plugin.Plugin;
+import net.redstonelamp.plugin.PluginLoader;
+import net.redstonelamp.plugin.PluginState;
+import net.redstonelamp.plugin.exception.PluginDescriptorException;
+import net.redstonelamp.plugin.exception.PluginException;
 
-    @Override
-    public void initPlugin(){
-        if(getState() != PluginState.LOADED) return;
-        Class<?> mainClass;
-        try{
-            mainClass = Class.forName(getProperties().getMain());
-            if(!JavaPlugin.class.isAssignableFrom(mainClass)){
-                PluginSystem.getLogger().error(name + " is in the plugins folder, but does not extend JavaPlugin. Disabling!");
-                setState(PluginState.UNLOADED);
-                return;
-            }
+public class JavaPluginLoader extends PluginLoader {
+	
+	private final HashMap<String, Plugin> loadedPlugins = new HashMap<String, Plugin>();
+	private final File folder;
+	private boolean loaded;
 
-            Constructor<?> constructor = mainClass.getConstructor(Server.class, Logger.class, String.class, String.class, String[].class, String.class);
-            Logger l = createPluginLogger(getProperties().getName());
-            plugin = (JavaPlugin) constructor.newInstance(PluginSystem.getServer(), l, name, version, getProperties().getAuthors(), getProperties().getUrl());
-        }catch(Exception e){
-            e.printStackTrace();
-            setState(PluginState.UNLOADED);
-            return;
-        }
-        setState(PluginState.INITIALIZED);
-    }
+	public JavaPluginLoader(File folder) {
+		this.folder = folder;
+		if(!folder.exists())
+			folder.mkdirs();
+	}
 
-    private Logger createPluginLogger(String name){
-        try{
-            Constructor c = PluginSystem.getServer().getLogger().getConsoleOutClass().getConstructor(String.class);
-            return new Logger((ConsoleOut) c.newInstance(name));
-        }catch(NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e){
-            PluginSystem.getServer().getLogger().error("Exception while creating plugin logger for: " + name + ", " + e.getClass().getName() + ": " + e.getMessage());
-            throw new RuntimeException(e);
-        }
-    }
+	@SuppressWarnings({ "unchecked", "resource" }) // Java handles garbage collector from ClassLoader
+	@Override
+	public HashMap<String, Plugin> loadPlugins() throws PluginException, IOException {
+		if(loaded)
+			throw new PluginException("The plugins have already been loaded!");
+		HashMap<String, Plugin> plugins = new HashMap<String, Plugin>();
+		HashMap<Plugin, String> mains = new HashMap<Plugin, String>(); // Debugging, only for loading plugins.
+		for(File file : folder.listFiles()) {
+			if(file.getName().endsWith(".jar")) {
+				JavaPlugin plugin = null;
+				try {
+					URLClassLoader loader = new URLClassLoader(new URL[] { file.toURI().toURL() });
+					HashMap<String, Object> yaml = (HashMap<String, Object>) new YamlReader(IOUtils.toString(loader.getResource("plugin.yml").openStream())).read();
+					
+					// Make sure all needed variables are not null
+					String main = (String) yaml.get("main");
+					try {
+						if(yaml.get("name") == null)
+							throw new PluginDescriptorException("name");
+						if(yaml.get("version") == null)
+							throw new PluginDescriptorException("version");
+						if(yaml.get("author") == null)
+							throw new PluginDescriptorException("authors");
+						if(yaml.get("main") == null)
+							throw new PluginDescriptorException("main");
+						
+						plugin = (JavaPlugin) loader.loadClass(main).newInstance();
+					} catch(PluginException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+						e.printStackTrace();
+					}
+					if(plugins.get(plugin.getName()) != null)
+						throw new PluginException("A plugin with that name already exists!");
+					if(mains.get(plugin) != null)
+						throw new PluginException("A plugin with that main already exists!");
+					if(loadedPlugins.get(plugin.getName()) == null)
+						plugin.onLoad();
+				} catch(PluginException | IOException e) {
+					plugin = null; // Mandatory
+					throw e; // Still throw for optional things
+				}
+				if(plugin != null) {
+					JavaClassPath.addFile(file);
+					plugins.put(plugin.getName(), plugin);
+					mains.put(plugin, plugin.getMain());
+					plugin.setState(PluginState.LOADED);
+				}
+			}
+		}
+		// Make sure all plugins have their dependencies
+		for(Plugin plugin : plugins.values()) {
+			if(plugin.getDependencies() != null) {
+				for(String dependency : plugin.getDependencies()) {
+					if(plugins.get(dependency) == null)
+						throw new PluginException(plugin.getName() + " is missing the plugin dependency " + dependency);
+				}
+			}
+			if(plugin.getSoftDependencies() != null) {
+				for(String softDependency : plugin.getSoftDependencies()) {
+					if(plugins.get(softDependency) == null)
+						RedstoneLamp.SERVER.getLogger().warning(plugin.getName() + " is missing a recommended but not needed dependency " + softDependency);
+				}
+			}
+			loadedPlugins.put(plugin.getName(), plugin);
+			plugin.setState(PluginState.INITIALIZED);
+		}
+		return plugins;
+	}
+	
+	@Override
+	public void unloadPlugins() {
+		loadedPlugins.clear();
+	}
 
-    @Override
-    public void enablePlugin(){
-        if(getState() != PluginState.INITIALIZED) return;
-        PluginSystem.getLogger().info("Enabling " + name + " v." + version + "...");
-        plugin.onEnable();
-        setState(PluginState.ENABLED);
-    }
+	@Override
+	public void enablePlugins() {
+		for(Plugin plugin : loadedPlugins.values()) {
+			if(plugin.getState() != PluginState.ENABLED)
+				plugin.onEnable();
+			plugin.setState(PluginState.ENABLED);
+		}
+	}
 
-    @Override
-    public void disablePlugin(){
-        if(getState() != PluginState.ENABLED) return;
-        PluginSystem.getLogger().info("Disabling " + name + " v." + version + "...");
-        plugin.onDisable();
-        setState(PluginState.DISABLED);
-    }
-
-    @Override
-    public InputStream getResourceAsStream(String path) throws IOException{
-        JarFile jar = new JarFile(getPluginFile());
-        return jar.getInputStream(jar.getJarEntry(path));
-    }
+	@Override
+	public void disablePlugins() {
+		for(Plugin plugin : loadedPlugins.values()) {
+			if(plugin.getState() != PluginState.DISABLED)
+				plugin.onDisable();
+			plugin.setState(PluginState.DISABLED);
+		}
+	}
 
 }

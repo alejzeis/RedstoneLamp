@@ -16,8 +16,22 @@
  */
 package net.redstonelamp.event;
 
-public class Event {
-    public String getEventName() {
+public abstract class Event {
+	private final EventPlatform platform;
+	
+	public Event() {
+		this(EventPlatform.BOTH);
+	}
+	
+	public Event(EventPlatform platform) {
+		this.platform = platform;
+	}
+	
+    public final String getEventName() {
         return getClass().getSimpleName();
+    }
+    
+    public final EventPlatform getPlatform() {
+    	return platform;
     }
 }

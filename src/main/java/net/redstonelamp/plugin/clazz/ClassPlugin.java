@@ -14,7 +14,27 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.event;
+package net.redstonelamp.plugin.clazz;
 
-public interface Listener {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ClassPlugin {
+	
+	String name();
+	
+	String version();
+	
+	String author();
+	
+	String url() default "";
+	
+	String dependency() default "";
+	
+	String softDependency() default "";
+	
 }

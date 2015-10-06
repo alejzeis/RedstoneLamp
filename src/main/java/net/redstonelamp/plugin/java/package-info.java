@@ -14,7 +14,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.event;
 
-public interface Listener {
-}
+/**
+ * This package contains the code to handle plugins with the extension of
+ * ".jar", also known as Java jar file plugins
+ */
+package net.redstonelamp.plugin.java;

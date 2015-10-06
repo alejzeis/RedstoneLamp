@@ -17,73 +17,123 @@
 package net.redstonelamp.plugin;
 
 import lombok.Getter;
+import lombok.Setter;
 import net.redstonelamp.Server;
 import net.redstonelamp.ui.Logger;
 
-public abstract class Plugin{
+public abstract class Plugin {
 	
-    /**
-     * The plugins name
-     */
-    @Getter
-    private final String name;
-    
-    /**
-     * The plugins version
-     */
-    @Getter
-    private final String version;
-    
-    /**
-     * The plugins authors
-     */
-    @Getter
-    private final String[] authors;
-    
-    /**
-     * The plugins website
-     */
-    @Getter
-    private final String website;
+	@Setter
+	@Getter
+	public PluginState state;
+	
+	/**
+	 * The plugin's server
+	 */
+	public abstract Server getServer();
 
-    /**
-     * The plugin's server
-     */
-    @Getter
-    private final Server server;
+	/**
+	 * The plugins name
+	 */
+	public abstract String getName();
 
-    /**
-     * The plugin's logger
-     */
-    @Getter
-    private final Logger logger;
+	/**
+	 * The plugins version
+	 */
+	public abstract String getVersion();
 
-    public Plugin(Server server, Logger logger, String name, String version, String[] authors, String website){
-        this.server = server;
-        this.logger = logger;
-        this.name = name;
-        this.version = version;
-        this.authors = authors;
-        this.website = website;
+	/**
+	 * The plugins authors
+	 */
+	public abstract String[] getAuthors();
+
+	/**
+	 * The plugins website
+	 */
+	public abstract String getUrl();
+	
+	/**
+	 * The plugins required depdencies to run
+	 */
+	public abstract String[] getDependencies();
+	
+	/**
+	 * The plugins recommended depencies which aren't required to run
+	 */
+	public abstract String[] getSoftDependencies();
+
+	/**
+	 * The plugin's logger
+	 */
+	public abstract Logger getLogger();
+
+	/**
+	 * In this function plugins run everything they need to do on a fresh server
+	 * start. It is careful what is called within this method, as things like
+	 * RedstoneLamp.SERVER may be NULL and unusable.
+	 */
+	public void onLoad() {
+	}
+
+	/**
+	 * In this function every plugin should handle the stuff it has to do on
+	 * server start/reload. When this method gets called, the basic structure of
+	 * the server already got loaded, and events and commands can already be
+	 * registered in the event/command system. WARNING: This method will also be
+	 * called when the server is being reloaded
+	 */
+	public void onEnable() {
+	}
+
+	/**
+	 * In this function every plugin should stop itself. This includes removing
+	 * events, commands, schedule tasks etc.
+	 */
+	public void onDisable() {
+	}
+	
+	/**
+     * Returns if this loader's plugin depends on the dependency
+     *
+     * @param depend The dependency to check
+     * @return
+     */
+    public final boolean dependsOn(String depend){
+        for(String dependency : getDependencies()){
+            if(dependency.equalsIgnoreCase(depend))
+            	return true;
+        }
+        return false;
     }
     
     /**
-     * In this function plugins run everything they need to do on a fresh server start.
-     * It is careful what is called within this method, as things like RedstoneLamp.SERVER
-     * may be NULL and unusable.
+     * Returns if this loader's plugin soft depends on the dependency
+     *
+     * @param depend The dependency to check
+     * @return
      */
-    public void onLoad() {}
-    
-    /**
-     * In this function every plugin should handle the stuff it has to do on server start/reload.
-     * When this method gets called, the basic structure of the server already got loaded,
-     * and events and commands can already be registered in the event/command system.
-     * WARNING: This method will also be called when the server is being reloaded
-     */
-    public void onEnable() {}
-    /**
-     * In this function every plugin should stop itself.
-     * This includes removing events, commands, schedule tasks etc.
-     */
-    public void onDisable() {}
+    public final boolean softDependsOn(String depend){
+        for(String dependency : getSoftDependencies()){
+            if(dependency.equalsIgnoreCase(depend))
+            	return true;
+        }
+        return false;
+    }
+	
+	/**
+	 * Used to convert a String to a String[] easily <br>
+	 * Valid strings to split look like: {@code [foo, bar]} <br>
+	 * Invalid strings are just returned as they were presented in an array.
+	 * 
+	 * @param x
+	 * @return Split string
+	 */
+	protected final String[] yamlArray(String x) {
+		if(x == null) // Do not try to handle a null value!
+			return null;
+		if (x.startsWith("[") && x.endsWith("]"))
+			return x.substring(1, x.length() - 1).split(", ");
+		else
+			return new String[] { x };
+	}
 }
