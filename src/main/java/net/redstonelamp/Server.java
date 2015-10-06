@@ -32,6 +32,8 @@ import net.redstonelamp.cmd.CommandSender;
 import net.redstonelamp.config.PropertiesConfig;
 import net.redstonelamp.config.YamlConfig;
 import net.redstonelamp.item.Item;
+import net.redstonelamp.language.PEMessageTranslator;
+import net.redstonelamp.language.TranslationManager;
 import net.redstonelamp.level.Level;
 import net.redstonelamp.level.LevelManager;
 import net.redstonelamp.network.NetworkManager;
@@ -44,8 +46,8 @@ import net.redstonelamp.response.ChatResponse;
 import net.redstonelamp.response.Response;
 import net.redstonelamp.script.ScriptManager;
 import net.redstonelamp.ticker.RedstoneTicker;
+import net.redstonelamp.ui.Log4j2ConsoleOut;
 import net.redstonelamp.ui.Logger;
-import net.redstonelamp.ui.SystemConsoleOut;
 import net.redstonelamp.utils.ServerIcon;
 import net.redstonelamp.utils.TextFormat;
 
@@ -61,6 +63,7 @@ public class Server implements Runnable, CommandSender{
     private final YamlConfig yamlConfig;
     private final ServerIcon serverIcon;
     private final RedstoneTicker ticker;
+    @Getter private final TranslationManager translationManager;
     private final NetworkManager network;
     private final List<Player> players = new CopyOnWriteArrayList<>();
     private final PluginSystem pluginSystem;
@@ -83,11 +86,6 @@ public class Server implements Runnable, CommandSender{
      * @param serverYamlConfig The server's YAML configuration
      */
     Server(Logger logger, PropertiesConfig config, YamlConfig serverYamlConfig) throws Exception{
-    	SystemConsoleOut out = new SystemConsoleOut(logger);
-    	System.setOut(out);
-    	System.setErr(out);
-    	// TODO: Better details and colors
-    	
         ticker = new RedstoneTicker(this, 50);
         this.logger = logger;
         this.config = config;
@@ -102,12 +100,14 @@ public class Server implements Runnable, CommandSender{
         Item.init();
         Command.init();
 
+        translationManager = new TranslationManager(this);
+
         network.registerProtocol(new PEProtocol(network));
         network.registerProtocol(new PCProtocol(network));
         
         commandManager = new CommandManager();
         scriptManager = new ScriptManager(this);
-        
+
         pluginSystem = new PluginSystem(this);
         pluginSystem.init();
         pluginSystem.loadPlugins();
@@ -267,6 +267,16 @@ public class Server implements Runnable, CommandSender{
         }
     }
 
+    @Override
+    public void sendMessage(String message) {
+        this.getLogger().info(TextFormat.stripColors(message));
+    }
+
+    @Override
+    public void sendMessage(ChatResponse.ChatTranslation translation) {
+        logger.info(TextFormat.stripColors(translation.message.replaceAll("%", "")) + " " + TextFormat.stripColors(Arrays.toString(translation.params)));
+    }
+
     //All Setter/Getter methods BELOW here.
 
     /**
@@ -364,11 +374,6 @@ public class Server implements Runnable, CommandSender{
             server.getLogger().info("Shutdown tasks complete! Halting...");
         }
     }
-    
-    @Override
-	public void sendMessage(String message) {
-    	this.getLogger().info(message); // TODO: Console colors
-	}
     
     @Override
 	public String getName() {

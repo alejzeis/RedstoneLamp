@@ -29,7 +29,7 @@ public class ChatResponse extends Response{
     }
 
     public static class ChatTranslation{
-        public final String message;
+        public String message;
         public final String[] params;
 
         public ChatTranslation(String message, String[] params){

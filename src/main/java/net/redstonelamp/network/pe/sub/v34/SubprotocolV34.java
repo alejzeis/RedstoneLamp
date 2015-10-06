@@ -18,6 +18,7 @@ package net.redstonelamp.network.pe.sub.v34;
 
 import net.redstonelamp.Player;
 import net.redstonelamp.block.Block;
+import net.redstonelamp.block.Transparent;
 import net.redstonelamp.item.Item;
 import net.redstonelamp.level.Level;
 import net.redstonelamp.level.position.BlockPosition;
@@ -32,6 +33,7 @@ import net.redstonelamp.nio.BinaryBuffer;
 import net.redstonelamp.request.*;
 import net.redstonelamp.response.*;
 import net.redstonelamp.utils.CompressionUtils;
+import net.redstonelamp.utils.TextFormat;
 
 import java.net.SocketAddress;
 import java.nio.ByteOrder;
@@ -140,8 +142,16 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
                 Item item = up.bb().getSlot();
                 if(face >= 0 && face <= 5){ //Use item on, Block Place
                     //TODO: Implement Item use, (pickaxe, sword, etc)
-                    Block block = new Block(item.getId(), item.getMeta(), 1);
-                    requests.add(new BlockPlaceRequest(block, new Vector3(ax, ay, az).getSide(face, 1)));
+                    Block block = (Block) Block.get(item.getId(), item.getMeta(), 1);
+                    Vector3 target = new Vector3(ax, ay, az);
+                    //System.out.print("Attempting to place: "+target+" block is: "+getProtocol().getServer().getLevelManager().getMainLevel().getBlock(BlockPosition.fromVector3(target, getProtocol().getServer().getLevelManager().getMainLevel())).getId());
+                    //System.out.print(" Face: "+face+"\n");
+                    Level l = getProtocol().getServer().getPlayer(up.getAddress()).getPosition().getLevel();
+                    if(l.getBlock(BlockPosition.fromVector3(target, l)) instanceof Transparent) {
+                        requests.add(new BlockPlaceRequest(block, target));
+                    } else {
+                        requests.add(new BlockPlaceRequest(block, target.getSide(face, 1)));
+                    }
                 }
                 break;
 
@@ -333,10 +343,11 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
             bb.putByte(TEXT_PACKET);
             if(cr.translation != null) {
+                ChatResponse.ChatTranslation translation = translateTranslationToPE(cr.translation);
                 bb.putByte(TEXT_TRANSLATION);
-                bb.putString(cr.translation.message);
-                bb.putByte((byte) cr.translation.params.length);
-                for(String param : cr.translation.params) {
+                bb.putString(translation.message);
+                bb.putByte((byte) translation.params.length);
+                for(String param : translation.params) {
                     bb.putString(param);
                 }
             } else if(cr.source != null){
@@ -475,6 +486,10 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
         }
 
         return packets.toArray(new UniversalPacket[packets.size()]);
+    }
+
+    private ChatResponse.ChatTranslation translateTranslationToPE(ChatResponse.ChatTranslation translation) {
+        return getManager().getProtocol().getServer().getTranslationManager().translate(getProtocol(), translation);
     }
 
     @Override

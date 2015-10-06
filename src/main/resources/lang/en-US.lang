@@ -1,1 +1,10 @@
-TODO
+;Language implementation for English, United States
+[Translations]
+redstonelamp.translation.player.joined=%param-0 joined the game.
+redstonelamp.translation.player.left=%param-0 left the game.
+
+redstonelamp.translation.command.usage=Usage: %param-0
+
+redstonelamp.translation.command.help.header=-- Command Help (Page %param-0/%param-1) --
+redstonelamp.translation.command.help.listEntry=/%param-0 - %param-1
+redstonelamp.translation.command.help.invalidPage=Page %param-0 does not exist!

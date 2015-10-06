@@ -21,6 +21,8 @@ import java.util.Arrays;
 import net.redstonelamp.cmd.Command;
 import net.redstonelamp.cmd.CommandExecutor;
 import net.redstonelamp.cmd.CommandSender;
+import net.redstonelamp.response.ChatResponse;
+import net.redstonelamp.utils.TextFormat;
 
 public class HelpCommand implements CommandExecutor {
 	@Override
@@ -32,13 +34,15 @@ public class HelpCommand implements CommandExecutor {
 			page--;
 			Command[] commands = getCommands(page);
 			if(commands != null) {
-				sender.sendMessage("Commands (" + (page+1) + "/" + getPages() + ")");
+				//sender.sendMessage("Commands (" + (page+1) + "/" + getPages() + ")");
+				sender.sendMessage(new ChatResponse.ChatTranslation(TextFormat.GREEN+"redstonelamp.translation.command.help.header", new String[] {String.valueOf(page + 1), String.valueOf(getPages())}));
 				for (Command command : commands) {
 					if(command != null)
-						sender.sendMessage("/" + command.getLabel() + " - " + command.getDescription());
+						//sender.sendMessage("/" + command.getLabel() + " - " + command.getDescription());
+						sender.sendMessage(new ChatResponse.ChatTranslation("redstonelamp.translation.command.help.listEntry", new String[] {command.getLabel(), command.getDescription()}));
 				}
 			} else {
-				sender.sendMessage("Invalid page!");
+				sender.sendMessage(new ChatResponse.ChatTranslation("redstonelamp.translation.command.help.invalidPage", new String[] {String.valueOf(page + 1)}));
 			}
 			return true;
 		}

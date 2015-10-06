@@ -124,7 +124,7 @@ public class JRakLibPlusInterface implements ServerInterface, AdvancedNetworkInt
         Player player = server.getPlayer(new InetSocketAddress(session.getIpAddress(), session.getPort()));
         if(player != null){
             if(player.isSpawned()){
-                player.close("redstonelamp.playerLeft", reason, false);
+                player.close("redstonelamp.translation.player.left", reason, false);
             }else{
                 player.close("", reason, false);
             }

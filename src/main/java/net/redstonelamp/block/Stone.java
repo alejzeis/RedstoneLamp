@@ -16,13 +16,15 @@
  */
 package net.redstonelamp.block;
 
+import net.redstonelamp.item.Items;
+
 /**
  * Block implementation of Stone
  *
  * @author RedstoneLamp Team
  */
 public class Stone extends Block {
-    public static final int ID = 0x01;
+    public static final int ID = Items.STONE;
 
     public Stone(int id, short meta, int count) {
         super(id, meta, count);

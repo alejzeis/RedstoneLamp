@@ -16,10 +16,7 @@
  */
 package net.redstonelamp.item;
 
-import net.redstonelamp.block.Block;
-import net.redstonelamp.block.Dirt;
-import net.redstonelamp.block.Grass;
-import net.redstonelamp.block.Stone;
+import net.redstonelamp.block.*;
 import org.spout.nbt.CompoundTag;
 
 import java.lang.reflect.Constructor;
@@ -59,12 +56,14 @@ public class Item implements Items {
         items.put(DIRT, Dirt.class);
         items.put(GRASS, Grass.class);
         items.put(STONE, Stone.class);
+        items.put(TALL_GRASS, TallGrass.class);
     }
 
     private static void initCreativeItems() {
         addCreativeItem(get(DIRT, (short) 0));
         addCreativeItem(get(GRASS, (short) 0));
         addCreativeItem(get(STONE, (short) 0));
+        addCreativeItem(get(TALL_GRASS, (short) 0));
     }
 
     public static synchronized void addCreativeItem(Item item) {
