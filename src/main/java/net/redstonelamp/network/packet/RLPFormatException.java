@@ -1,3 +1,5 @@
+package net.redstonelamp.network.packet;
+
 /*
  * This file is part of RedstoneLamp.
  *
@@ -14,8 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with RedstoneLamp.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.redstonelamp.network.packet;
-
 public class RLPFormatException extends Exception{
     public RLPFormatException(String msg){
         super(msg);

@@ -49,7 +49,6 @@ import net.redstonelamp.network.netInterface.AdvancedNetworkInterface;
 import net.redstonelamp.network.pc.codec.MinecraftPacketHeaderDecoder;
 import net.redstonelamp.network.pc.codec.MinecraftPacketHeaderEncoder;
 import net.redstonelamp.network.pc.serializer.ChatSerializer;
-import net.redstonelamp.network.pc.serializer.PingSerializer;
 import net.redstonelamp.nio.BinaryBuffer;
 import net.redstonelamp.ui.ConsoleOut;
 import net.redstonelamp.ui.Logger;
@@ -219,15 +218,15 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
         }
 
         if(states.get(session.getRemoteAddress().toString()) == ProtocolState.STATE_STATUS){
-        	BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
-        	switch(id){
+            switch(id){
                 case PCNetworkConst.STATUS_REQUEST:
-                    bb.putVarInt(PCNetworkConst.STATUS_RESPONSE);
-                    bb.putVarString(PingSerializer.getStatusResponse(server, name));
-                    sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, session.getRemoteAddress()), true);
+                    sendStatusResponse(session.getRemoteAddress());
                     break;
+
                 case PCNetworkConst.STATUS_PING:
                     long payload = up.bb().getLong();
+                    System.out.println("Received ping! Payload - " + payload);
+                    BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
                     bb.putVarInt(PCNetworkConst.STATUS_PONG);
                     bb.putLong(payload);
                     sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, session.getRemoteAddress()), true);
@@ -237,6 +236,44 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
             up.bb().setPosition(0);
             packetQueue.add(up);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void sendStatusResponse(SocketAddress address) throws LowLevelNetworkException{
+        JSONObject root = new JSONObject();
+
+        JSONObject version = new JSONObject();
+        version.put("name", PCNetworkConst.MC_VERSION);
+        version.put("protocol", PCNetworkConst.MC_PROTOCOL);
+
+        JSONObject players = new JSONObject();
+        players.put("max", server.getMaxPlayers());
+        players.put("online", server.getPlayers().size());
+        //TODO: throw Event
+        
+        JSONArray sample = new JSONArray();
+        for(int i = 0; i < server.getPlayers().size(); i++) {
+        	JSONObject player = new JSONObject();
+        	player.put("name", server.getPlayers().get(i));
+        	player.put("id", UUID.randomUUID());
+        	sample.add(i, player);
+        }
+        players.put("sample", sample);
+
+        JSONObject description = new JSONObject();
+        description.put("text", name);
+
+        root.put("version", version);
+        root.put("players", players);
+        root.put("description", description);
+        if(server.getServerIcon() != null)
+        	root.put("favicon", server.getServerIcon());
+
+        BinaryBuffer bb = BinaryBuffer.newInstance(0, ByteOrder.BIG_ENDIAN);
+        bb.putVarInt(PCNetworkConst.STATUS_RESPONSE);
+        bb.putVarString(root.toJSONString());
+
+        sendPacket(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address), false);
     }
 
     @Override
