@@ -17,6 +17,7 @@
 package net.redstonelamp.cmd;
 
 import net.redstonelamp.permission.Permission;
+import net.redstonelamp.response.ChatResponse.ChatTranslation;
 
 public interface CommandSender {
 	
@@ -33,5 +34,9 @@ public interface CommandSender {
 	}
 	
 	public void sendMessage(String message);
+	
+	public default void sendMessage(ChatTranslation translation) {
+		this.sendMessage(translation.toString());
+	}
 	
 }
