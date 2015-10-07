@@ -10,6 +10,12 @@ settings:
     #900 is the default, which is 15 minutes
     world-save-interval: 900
 
+language:
+  # The language code this server will use for translations. Find yours at: https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes
+  server-language: "eng"
+  # Wether to force translations by the server, or let clients handle the ones they support.
+  force-server-translations: false
+
 players:
   #The amount in seconds between saving player data.
   #900 is the default, which is 15 minutes
