@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Pattern;
 import java.util.zip.DataFormatException;
 
 /**
@@ -258,7 +259,9 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             if(dr.notifyClient) {
                 bb = BinaryBuffer.newInstance(3 + dr.reason.getBytes().length, ByteOrder.BIG_ENDIAN);
                 bb.putByte(DISCONNECT_PACKET);
-                bb.putString(dr.reason);
+                if(dr.reason.startsWith("!")) {
+                    bb.putString(translateTranslationToPE(new ChatResponse.ChatTranslation(dr.reason.replaceAll(Pattern.quote("!"), ""), new String[0])).message);
+                }
                 packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
             }
         }else if(response instanceof ChunkResponse){

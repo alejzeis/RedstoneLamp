@@ -216,7 +216,7 @@ public class Player extends PlayerEntity implements CommandSender{
                 }
                 server.getPlayers().stream()
                         .filter(player -> player != this && player.getName().equals(getName()))
-                        .forEach(player -> player.close("redstonelamp.translation.player.left", "logged in from another location", true));
+                        .forEach(player -> player.close("redstonelamp.translation.player.left", "!redstonelamp.translation.player.loggedInFromOtherLocation", true));
                 sendResponse(response);
                 initEntity();
                 server.getLogger().info(username + "[" + address + "] logged in with entity ID " + getEntityID() + " in level \"" + getPosition().getLevel().getName() + "\""
@@ -336,6 +336,15 @@ public class Player extends PlayerEntity implements CommandSender{
         sendResponse(bpr);
     }
 
+    /**
+     * Notice to plugin developers: use Player.kick() instead.
+     * <br>
+     * Closes the connection to the player.
+     * @param leaveMessage Leave message to be broadcasted in chat.
+     * @param reason Reason displayed to the client. If sending a translation constant, first character must be "!"
+     * @param notifyClient If the client should be sent a disconnect notification with the reason or not.
+     */
+    //TODO: Better solution for translated reasons
     public void close(String leaveMessage, String reason, boolean notifyClient){
         DisconnectResponse dr = new DisconnectResponse(reason);
         dr.notifyClient = notifyClient;
@@ -362,8 +371,8 @@ public class Player extends PlayerEntity implements CommandSender{
 
         if(!leaveMessage.isEmpty()){
             switch (leaveMessage) {
-            case "redstonelamp.translation.player.left":
-            	server.broadcastMessage(new ChatResponse.ChatTranslation(TextFormat.YELLOW+"redstonelamp.translation.player.left", new String[] {username}));
+                case "redstonelamp.translation.player.left":
+            	    server.broadcastMessage(new ChatResponse.ChatTranslation(TextFormat.YELLOW+"redstonelamp.translation.player.left", new String[] {username}));
                     break;
                 default:
                     server.broadcastMessage(username + leaveMessage);

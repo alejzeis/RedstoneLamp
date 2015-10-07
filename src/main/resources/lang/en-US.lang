@@ -2,6 +2,7 @@
 [Translations]
 redstonelamp.translation.player.joined=%param-0 joined the game.
 redstonelamp.translation.player.left=%param-0 left the game.
+redstonelamp.translation.player.loggedInFromOtherLocation=Another user has logged in with your name!
 
 redstonelamp.translation.command.usage=Usage: %param-0
 
