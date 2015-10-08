@@ -104,6 +104,8 @@ public class Server implements Runnable, CommandSender{
 
         network.registerProtocol(new PEProtocol(network));
         network.registerProtocol(new PCProtocol(network));
+
+        addShutdownTask(network::shutdown);
         
         commandManager = new CommandManager();
         scriptManager = new ScriptManager(this);
@@ -369,9 +371,9 @@ public class Server implements Runnable, CommandSender{
             if(!server.isStopped()){
                 server.getLogger().warning("Server is not shut-down, did the server crash!?");
             }
-            server.getLogger().info("Running shutdown tasks!");
+            System.out.println("Running shutdown tasks.");
             server.shutdownTasks.forEach(Runnable::run);
-            server.getLogger().info("Shutdown tasks complete! Halting...");
+            System.out.println("Halting...");
         }
     }
     
@@ -386,7 +388,13 @@ public class Server implements Runnable, CommandSender{
     }
 
     public void stop() {
-        //TODO
+        ticker.stop();
+        stopped = true;
+        logger.info("Shutting down server...");
+        for(Player player : players) {
+            player.close("redstonelamp.translation.player.left", "Server stopped!", true); //TODO: player.kick
+        }
+        System.exit(0);
     }
     
 }

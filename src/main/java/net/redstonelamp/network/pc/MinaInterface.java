@@ -260,4 +260,9 @@ public class MinaInterface extends IoHandlerAdapter implements AdvancedNetworkIn
         }
         throw new LowLevelNetworkException("Failed to find session for: " + packet.getAddress().toString());
     }
+
+    @Override
+    public void shutdown() throws LowLevelNetworkException {
+        this.acceptor.unbind();
+    }
 }

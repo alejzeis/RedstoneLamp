@@ -39,4 +39,10 @@ public interface NetworkInterface{
      * @param immediate If the packet should be sent immediately.
      */
     void sendPacket(UniversalPacket packet, boolean immediate) throws LowLevelNetworkException;
+
+    /**
+     * Shutdown's the interface. Sessions will be closed when the server stops.
+     * @throws LowLevelNetworkException
+     */
+    void shutdown() throws LowLevelNetworkException;
 }

@@ -123,6 +123,12 @@ public class JRakLibInterface implements ServerInstance, PEInterface {
     }
 
     @Override
+    public void shutdown() throws LowLevelNetworkException {
+        handler.shutdown();
+        while(rakLibServer.getState() != Thread.State.TERMINATED);
+    }
+
+    @Override
     public void openSession(String identifier, String address, int port, long clientID) {
         logger.debug("(" + identifier + ") openSession: {clientID: " + clientID + "}");
         protocol.openSession(identifier);

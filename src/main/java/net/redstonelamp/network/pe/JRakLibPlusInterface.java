@@ -106,6 +106,11 @@ public class JRakLibPlusInterface implements ServerInterface, AdvancedNetworkInt
     }
 
     @Override
+    public void shutdown() throws LowLevelNetworkException {
+        rakServer.interrupt();
+    }
+
+    @Override
     public void handleEncapsulatedPacket(EncapsulatedPacket encapsulatedPacket, NioSession session) {
         UniversalPacket packet = new UniversalPacket(encapsulatedPacket.payload, new InetSocketAddress(session.getIpAddress(), session.getPort()));
         logger.buffer("("+session.getIpAddress()+":"+session.getPort()+") PACKET IN: ", packet.getBuffer(), "");

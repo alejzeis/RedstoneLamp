@@ -260,6 +260,23 @@ public abstract class Protocol{
         return _interface;
     }
 
+    protected void onShutdown() {
+        try {
+            _interface.shutdown();
+        } catch (LowLevelNetworkException e) {
+            e.printStackTrace();
+        } finally {
+            _shutdown();
+        }
+    }
+
+    /**
+     * Method overridden in subclasses for extra cleanup when shutting down.
+     */
+    protected void _shutdown() {
+
+    }
+
     @Override
     public String toString(){
         return getName() + " - " + getDescription();

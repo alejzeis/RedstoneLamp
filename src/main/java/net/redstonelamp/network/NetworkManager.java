@@ -92,4 +92,8 @@ public class NetworkManager{
     public Server getServer(){
         return server;
     }
+
+    public void shutdown() {
+        protocols.forEach(Protocol::onShutdown);
+    }
 }
