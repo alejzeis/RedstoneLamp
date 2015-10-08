@@ -356,7 +356,11 @@ public class Player extends PlayerEntity implements CommandSender{
         destroyEntity();
 
         server.closeSession(this);
-        server.getLogger().info(username + "[" + identifier + "] logged out with reason: " + reason);
+        if(reason.startsWith("!")) { // Check if reason is a translation constant
+            server.getLogger().info(username + "[" + identifier + "] logged out with reason: " + server.getTranslationManager().translateServerSide(new ChatResponse.ChatTranslation(reason.replaceAll("!", ""), new String[0])));
+        } else {
+            server.getLogger().info(username + "[" + identifier + "] logged out with reason: " + reason);
+        }
         connected = false;
         protocol.close(this);
 

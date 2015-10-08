@@ -251,7 +251,7 @@ public class Server implements Runnable, CommandSender{
     }
 
     public void broadcastMessage(ChatResponse.ChatTranslation translation){
-        logger.info("[Chat]: " + TextFormat.stripColors(translation.message.replaceAll("%", "")) + " " + TextFormat.stripColors(Arrays.toString(translation.params)));
+        logger.info("[Chat]: " + TextFormat.stripColors(translationManager.translateServerSide(new ChatResponse.ChatTranslation(translation.message, translation.params)).toString()));
         ChatResponse cr = new ChatResponse(translation.message);
         cr.translation = translation;
         for(Player player : players){

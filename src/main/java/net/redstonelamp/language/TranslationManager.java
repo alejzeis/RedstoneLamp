@@ -91,23 +91,28 @@ public class TranslationManager {
      */
     public ChatResponse.ChatTranslation translate(Protocol protocol, ChatResponse.ChatTranslation translation) {
         if(forceTranslations) {
-            ChatResponse.ChatTranslation t = translators.get("server").translate(translation);
-            if(t != null) return t;
-            else return translation;
+            return translateServerSide(translation);
         }
         if(translators.containsKey(protocol.getClass().getName())) {
             MessageTranslator translator = translators.get(protocol.getClass().getName());
             ChatResponse.ChatTranslation t = translator.translate(translation);
             if(t != null) return t;
             else {
-                t = translators.get("server").translate(translation);
-                if(t != null) return t;
-                else return translation;
+                return translateServerSide(translation);
             }
         } else {
-            ChatResponse.ChatTranslation t = translators.get("server").translate(translation);
-            if(t != null) return t;
-            else return translation;
+           return translateServerSide(translation);
         }
+    }
+
+    /**
+     * Translates a RedstoneLamp constant translation to a protocol specific one.
+     * @param translation The original RedstoneLamp constant translation.
+     * @return A server-side translation for the constant.
+     */
+    public ChatResponse.ChatTranslation translateServerSide(ChatResponse.ChatTranslation translation) {
+        ChatResponse.ChatTranslation t = translators.get("server").translate(translation);
+        if(t != null) return t;
+        else return translation;
     }
 }

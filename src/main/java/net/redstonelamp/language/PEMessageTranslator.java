@@ -53,6 +53,8 @@ public class PEMessageTranslator implements MessageTranslator {
             case "redstonelamp.translation.command.help.listEntry":
                 cr.message = color + "/"+cr.params[0]+" - "+cr.params[1];
                 break;
+            default:
+                return null; //Signal manager to use server-side translation.
         }
         return cr;
     }
