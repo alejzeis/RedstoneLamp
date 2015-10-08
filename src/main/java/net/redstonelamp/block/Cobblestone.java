@@ -19,18 +19,22 @@ package net.redstonelamp.block;
 import net.redstonelamp.item.Items;
 
 /**
- * Block implementation of Stone
+ * Cobblestone block implementation.
  *
  * @author RedstoneLamp Team
  */
-public class Stone extends Block {
-    public static final int ID = Items.STONE;
+public class Cobblestone extends Block {
+    public static final int ID = Items.COBBLESTONE;
 
-    public Stone(int id, short meta, int count) {
+    public Cobblestone(int id, short meta, int count) {
         super(id, meta, count);
     }
 
-    public Stone(int count) {
+    public Cobblestone(int count) {
         super(ID, (short) 0, count);
+    }
+
+    public Cobblestone() {
+        super(ID, (short) 0, 1);
     }
 }

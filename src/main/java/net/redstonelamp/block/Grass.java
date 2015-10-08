@@ -30,7 +30,7 @@ public class Grass extends Block {
         super(id, meta, count);
     }
 
-    public Grass(short meta, int count) {
-        super(ID, meta, count);
+    public Grass(int count) {
+        super(ID, (short) 0, count);
     }
 }

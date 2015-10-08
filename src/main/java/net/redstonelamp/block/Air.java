@@ -19,18 +19,14 @@ package net.redstonelamp.block;
 import net.redstonelamp.item.Items;
 
 /**
- * Block implementation of Stone
+ * Air block implementation.
  *
  * @author RedstoneLamp Team
  */
-public class Stone extends Block {
-    public static final int ID = Items.STONE;
+public class Air extends Block {
+    public static final int ID = Items.AIR;
 
-    public Stone(int id, short meta, int count) {
-        super(id, meta, count);
-    }
-
-    public Stone(int count) {
-        super(ID, (short) 0, count);
+    public Air() {
+        super(ID, (short) 0, 1);
     }
 }

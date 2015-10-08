@@ -30,7 +30,7 @@ public class Dirt extends Block {
         super(id, meta, count);
     }
 
-    public Dirt(short meta, int count) {
-        super(ID, meta, count);
+    public Dirt(int count) {
+        super(ID, (short) 0, count);
     }
 }

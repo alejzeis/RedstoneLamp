@@ -30,7 +30,7 @@ public class TallGrass extends Transparent {
         super(id, meta, count);
     }
 
-    public TallGrass(short meta, int count) {
-        super(ID, meta, count);
+    public TallGrass(int count) {
+        super(ID, (short) 0, count);
     }
 }

@@ -57,13 +57,20 @@ public class Item implements Items {
         items.put(GRASS, Grass.class);
         items.put(STONE, Stone.class);
         items.put(TALL_GRASS, TallGrass.class);
+        items.put(WOODEN_PLANKS, WoodPlanks.class);
     }
 
     private static void initCreativeItems() {
         addCreativeItem(get(DIRT, (short) 0));
         addCreativeItem(get(GRASS, (short) 0));
         addCreativeItem(get(STONE, (short) 0));
-        addCreativeItem(get(TALL_GRASS, (short) 0));
+        addCreativeItem(get(COBBLESTONE, (short) 0));
+        addCreativeItem(get(WOODEN_PLANKS, (short) WoodPlanks.PlankType.OAK.getMetaId()));
+        addCreativeItem(get(WOODEN_PLANKS, (short) WoodPlanks.PlankType.SPRUCE.getMetaId()));
+        addCreativeItem(get(WOODEN_PLANKS, (short) WoodPlanks.PlankType.ACACIA.getMetaId()));
+        addCreativeItem(get(WOODEN_PLANKS, (short) WoodPlanks.PlankType.JUNGLE.getMetaId()));
+        addCreativeItem(get(WOODEN_PLANKS, (short) WoodPlanks.PlankType.BIRCH.getMetaId()));
+        addCreativeItem(get(WOODEN_PLANKS, (short) WoodPlanks.PlankType.DARK_OAK.getMetaId()));
     }
 
     public static synchronized void addCreativeItem(Item item) {

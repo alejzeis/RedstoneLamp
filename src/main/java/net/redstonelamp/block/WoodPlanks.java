@@ -16,21 +16,39 @@
  */
 package net.redstonelamp.block;
 
+import lombok.Getter;
 import net.redstonelamp.item.Items;
 
 /**
- * Block implementation of Stone
+ * Wooden planks block implementation.
  *
  * @author RedstoneLamp Team
  */
-public class Stone extends Block {
-    public static final int ID = Items.STONE;
+public class WoodPlanks extends Block {
+    public static final int ID = Items.WOODEN_PLANKS;
+    @Getter private PlankType type;
 
-    public Stone(int id, short meta, int count) {
+    public WoodPlanks(int id, short meta, int count) {
         super(id, meta, count);
+        this.type = PlankType.OAK;
     }
 
-    public Stone(int count) {
-        super(ID, (short) 0, count);
+    public WoodPlanks(PlankType type, int count) {
+        super(ID, (short) type.getMetaId(), count);
+    }
+
+    public static enum PlankType {
+        OAK(0),
+        SPRUCE(1),
+        BIRCH(2),
+        JUNGLE(3),
+        ACACIA(4),
+        DARK_OAK(5);
+
+        @Getter private int metaId;
+
+        PlankType(int metaId) {
+            this.metaId = metaId;
+        }
     }
 }
