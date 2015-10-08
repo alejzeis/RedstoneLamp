@@ -16,3 +16,9 @@ RedstoneLamp Forums - http://forums.RedstoneLamp.net
 RedstoneLamp Documentation - http://docs.RedstoneLamp.net
 
 Get Plugins - http://forums.RedstoneLamp.net/resources/
+
+#Developer twitter feed
+<html>
+<a class="twitter-timeline" href="https://twitter.com/search?q=jython234%20OR%20ComedyMan937%20OR%20PEMapModder%20OR%20MarfGamer%20OR%20RedstoneLamp" data-widget-id="651917019504316416">Tweets about jython234 OR ComedyMan937 OR PEMapModder OR MarfGamer OR RedstoneLamp</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</html>
