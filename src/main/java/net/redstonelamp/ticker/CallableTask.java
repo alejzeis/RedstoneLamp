@@ -46,4 +46,9 @@ public class CallableTask implements Task{
             e.getCause().printStackTrace();
         }
     }
+
+    @Override
+    public String toString() {
+        return "CallableTask{instance: "+instance.getClass()+", method: "+method+"}";
+    }
 }

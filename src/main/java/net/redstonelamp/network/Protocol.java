@@ -260,7 +260,7 @@ public abstract class Protocol{
         return _interface;
     }
 
-    protected void onShutdown() {
+    protected final void onShutdown() {
         try {
             _interface.shutdown();
         } catch (LowLevelNetworkException e) {

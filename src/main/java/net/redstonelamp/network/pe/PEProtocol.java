@@ -144,7 +144,13 @@ public class PEProtocol extends Protocol{
     @Override
     protected void onClose(Player player){
         addressToSubprotocols.remove(player.getAddress().toString());
+        sender.clearData(player);
         ((PEInterface) _interface)._internalClose(player.getAddress(), "server disconnect");
+    }
+
+    @Override
+    protected void _shutdown() {
+        sender.onShutdown();
     }
 
     protected void openSession(String session){
