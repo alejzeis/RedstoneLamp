@@ -23,6 +23,7 @@ import net.redstonelamp.request.SpawnRequest;
 import net.redstonelamp.ticker.CallableTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,7 +42,7 @@ public class PeChunkSender {
 
     private PEProtocol protocol;
     private ExecutorService pool = Executors.newFixedThreadPool(2);
-    private final Map<Player, List<ChunkPosition>> loaded = new ConcurrentHashMap<>();
+    private final Map<Player, List<ChunkPosition>> loaded = new HashMap<>();
     private final Map<Player, Long> lastSent = new ConcurrentHashMap<>();
     private final Map<Player, List<ChunkPosition>> requestChunks = new ConcurrentHashMap<>();
 
@@ -104,7 +105,7 @@ public class PeChunkSender {
         return false;
     }
 
-    private void unloadChunk(Player player, ChunkPosition pos) {
+    private synchronized void unloadChunk(Player player, ChunkPosition pos) {
         for(ChunkPosition loaded : this.loaded.get(player)) {
             if(loaded.equals(pos)) {
                 this.loaded.remove(loaded);
@@ -113,34 +114,44 @@ public class PeChunkSender {
         }
     }
 
-    private void checkChunks(Player player) {
-        if(!loaded.containsKey(player)) {
-            loaded.put(player, new ArrayList<>());
-        }
-        List<ChunkPosition> chunks = new CopyOnWriteArrayList<>();
-        List<ChunkPosition> positions = loaded.get(player);
-        int chunkX = (int) player.getPosition().getX() / 16;
-        int chunkZ = (int) player.getPosition().getZ() / 16;
-        for (int distance = 6; distance >= 0; distance--) {
-            for (int x = chunkX - distance; x < chunkX + distance; x++) {
-                for (int z = chunkZ - distance; z < chunkZ + distance; z++) {
-                    if (Math.sqrt((chunkX - x) * (chunkX - x) + (chunkZ - z) * (chunkZ - z)) < 5) {
-                        if(!checkChunk(player, new ChunkPosition(x, z))) {
-                            chunks.add(new ChunkPosition(x, z));
-                        } else {
-                            unloadChunk(player, new ChunkPosition(x, z));
+    private synchronized void checkChunks(Player player) {
+        synchronized (loaded) {
+            if (!loaded.containsKey(player)) {
+                loaded.put(player, new ArrayList<>());
+            }
+            List<ChunkPosition> oldPositions = new ArrayList<>(loaded.get(player));
+            List<ChunkPosition> chunks = new CopyOnWriteArrayList<>();
+            List<ChunkPosition> positions = new CopyOnWriteArrayList<>();
+            int chunkX = (int) player.getPosition().getX() / 16;
+            int chunkZ = (int) player.getPosition().getZ() / 16;
+            int sent = 0;
+            for (int distance = 6; distance >= 0; distance--) {
+                for (int x = chunkX - distance; x < chunkX + distance; x++) {
+                    for (int z = chunkZ - distance; z < chunkZ + distance; z++) {
+                        if (Math.sqrt((chunkX - x) * (chunkX - x) + (chunkZ - z) * (chunkZ - z)) < 8) {
+                            if (!checkChunk(player, new ChunkPosition(x, z))) {
+                                chunks.add(new ChunkPosition(x, z));
+                                sent++;
+                            } else {
+                                positions.add(new ChunkPosition(x, z));
+                            }
                         }
                     }
                 }
             }
+            requestChunks.put(player, chunks);
+            positions.addAll(chunks);
+            oldPositions.stream().filter(pos -> !positions.contains(pos)).forEach(pos -> {
+                unloadChunk(player, pos);
+            });
+            System.out.println("Sent: " + sent);
+            loaded.put(player, positions);
         }
-        requestChunks.put(player, chunks);
-        positions.addAll(chunks);
-        loaded.put(player, positions);
     }
 
     public void clearData(Player player) {
         loaded.get(player).forEach(chunk -> unloadChunk(player, chunk));
+        loaded.remove(player);
         lastSent.remove(player);
         requestChunks.remove(player);
     }
