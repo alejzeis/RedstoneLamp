@@ -104,11 +104,21 @@ public class PeChunkSender {
         return false;
     }
 
+    private void unloadChunk(Player player, ChunkPosition pos) {
+        for(ChunkPosition loaded : this.loaded.get(player)) {
+            if(loaded.equals(pos)) {
+                this.loaded.remove(loaded);
+                player.getPosition().getLevel().unloadChunk(pos);
+            }
+        }
+    }
+
     private void checkChunks(Player player) {
         if(!loaded.containsKey(player)) {
             loaded.put(player, new ArrayList<>());
         }
         List<ChunkPosition> chunks = new CopyOnWriteArrayList<>();
+        List<ChunkPosition> positions = loaded.get(player);
         int chunkX = (int) player.getPosition().getX() / 16;
         int chunkZ = (int) player.getPosition().getZ() / 16;
         for (int distance = 6; distance >= 0; distance--) {
@@ -117,19 +127,20 @@ public class PeChunkSender {
                     if (Math.sqrt((chunkX - x) * (chunkX - x) + (chunkZ - z) * (chunkZ - z)) < 5) {
                         if(!checkChunk(player, new ChunkPosition(x, z))) {
                             chunks.add(new ChunkPosition(x, z));
+                        } else {
+                            unloadChunk(player, new ChunkPosition(x, z));
                         }
                     }
                 }
             }
         }
         requestChunks.put(player, chunks);
-        List<ChunkPosition> positions = loaded.get(player);
         positions.addAll(chunks);
         loaded.put(player, positions);
     }
 
     public void clearData(Player player) {
-        loaded.remove(player);
+        loaded.get(player).forEach(chunk -> unloadChunk(player, chunk));
         lastSent.remove(player);
         requestChunks.remove(player);
     }
