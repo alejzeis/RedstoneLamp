@@ -276,7 +276,8 @@ public class Server implements Runnable, CommandSender{
 
     @Override
     public void sendMessage(ChatResponse.ChatTranslation translation) {
-        logger.info(TextFormat.stripColors(translation.message.replaceAll("%", "")) + " " + TextFormat.stripColors(Arrays.toString(translation.params)));
+        ChatResponse.ChatTranslation ct = translationManager.translateServerSide(translation);
+        logger.info(TextFormat.stripColors(ct.message));
     }
 
     //All Setter/Getter methods BELOW here.

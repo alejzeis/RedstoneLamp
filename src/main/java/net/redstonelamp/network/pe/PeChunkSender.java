@@ -141,10 +141,8 @@ public class PeChunkSender {
             }
             requestChunks.put(player, chunks);
             positions.addAll(chunks);
-            oldPositions.stream().filter(pos -> !positions.contains(pos)).forEach(pos -> {
-                unloadChunk(player, pos);
-            });
-            System.out.println("Sent: " + sent);
+            oldPositions.stream().filter(pos -> !positions.contains(pos)).forEach(pos -> unloadChunk(player, pos));
+            //System.out.println("Sent: " + sent);
             loaded.put(player, positions);
         }
     }
