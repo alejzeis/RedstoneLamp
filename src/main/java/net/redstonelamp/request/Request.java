@@ -16,11 +16,14 @@
  */
 package net.redstonelamp.request;
 
+import java.net.SocketAddress;
+
 /**
  * This class represents a protocol-independent request, which is then responded with a Response.
  *
  * @author RedstoneLamp Team
  */
 public abstract class Request{
+    public SocketAddress from;
     public abstract void execute();
 }

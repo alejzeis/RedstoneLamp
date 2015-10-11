@@ -16,8 +16,6 @@
  */
 package net.redstonelamp.network.pe;
 
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
@@ -34,7 +32,6 @@ import net.redstonelamp.Player;
 import net.redstonelamp.Server;
 import net.redstonelamp.network.LowLevelNetworkException;
 import net.redstonelamp.network.UniversalPacket;
-import net.redstonelamp.ticker.CallableTask;
 import net.redstonelamp.ui.ConsoleOut;
 import net.redstonelamp.ui.Logger;
 
@@ -48,8 +45,8 @@ public class JRakLibInterface implements ServerInstance, PEInterface {
     private final PEProtocol protocol;
     private final JRakLibServer rakLibServer;
     private final ServerHandler handler;
+    private final JRakLibPacketHandler packetHandler;
     private Logger logger;
-    private CallableTask tickTask = new CallableTask("tick", this);
 
     private Queue<UniversalPacket> packetQueue = new ConcurrentLinkedQueue<>();
 
@@ -64,8 +61,8 @@ public class JRakLibInterface implements ServerInstance, PEInterface {
 
         rakLibServer = new JRakLibServer(new JRakLibLogger(setupLibraryLogger()), port, ip);
         handler = new ServerHandler(rakLibServer, this);
-
-        server.getTicker().addRepeatingTask(tickTask, 1);
+        packetHandler = new JRakLibPacketHandler(this);
+        packetHandler.start();
 
         logger.info("MCPE server started on "+ip+":"+port);
     }
@@ -88,15 +85,6 @@ public class JRakLibInterface implements ServerInstance, PEInterface {
             e.printStackTrace();
         }
         return null;
-    }
-    
-    public void tick(long tick) {
-        while(handler.handlePacket());
-        
-        if(rakLibServer.getState() == Thread.State.TERMINATED) {
-            server.getTicker().cancelTask(tickTask);
-            logger.fatal("JRakLib Server crashed!");
-        }
     }
 
     @Override
@@ -125,6 +113,7 @@ public class JRakLibInterface implements ServerInstance, PEInterface {
     @Override
     public void shutdown() throws LowLevelNetworkException {
         handler.shutdown();
+        packetHandler.shutdown();
         while(rakLibServer.getState() != Thread.State.TERMINATED);
     }
 
@@ -228,6 +217,42 @@ public class JRakLibInterface implements ServerInstance, PEInterface {
 
         public String getIdentifier(){
             return identifier;
+        }
+    }
+
+    /**
+     * A Thread that handles Thread-To-Main packets from JRakLib.
+     *
+     * @author RedstoneLamp Team
+     */
+    public static class JRakLibPacketHandler extends Thread {
+        private boolean running = false;
+        private JRakLibInterface jRakLibInterface;
+
+        public JRakLibPacketHandler(JRakLibInterface jRakLibInterface) {
+            this.jRakLibInterface = jRakLibInterface;
+        }
+
+        @Override
+        public void run() {
+            setName("JRakLib-ServerHandler");
+            while(running) {
+                jRakLibInterface.handler.handlePacket();
+                if(jRakLibInterface.rakLibServer.getState() == State.TERMINATED) {
+                    jRakLibInterface.logger.fatal("JRakLib Server crashed!");
+                    shutdown();
+                }
+            }
+        }
+
+        @Override
+        public void start() {
+            running = true;
+            super.start();
+        }
+
+        public void shutdown() {
+            running = false;
         }
     }
 }

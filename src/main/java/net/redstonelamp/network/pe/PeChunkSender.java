@@ -41,7 +41,6 @@ public class PeChunkSender {
     public static final int REQUESTS_PER_TICK = 4; //TODO: correct this
 
     private PEProtocol protocol;
-    private ExecutorService pool = Executors.newFixedThreadPool(2);
     private final Map<Player, List<ChunkPosition>> loaded = new HashMap<>();
     private final Map<Player, Long> lastSent = new ConcurrentHashMap<>();
     private final Map<Player, List<ChunkPosition>> requestChunks = new ConcurrentHashMap<>();
@@ -79,7 +78,7 @@ public class PeChunkSender {
                 if (pSent >= pLimit) break;
 
                 ChunkRequest r = new ChunkRequest(location);
-                pool.execute(() -> player.handleRequest(r));
+                protocol.getManager().getActionPool().execute(() -> player.handleRequest(r));
                 chunks.remove(location);
                 sent++;
                 pSent++;
