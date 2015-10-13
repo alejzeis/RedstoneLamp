@@ -43,7 +43,7 @@ public class NetworkManager{
      */
     public NetworkManager(Server server){
         this.server = server;
-        actionPool = Executors.newFixedThreadPool(2, new PoolThreadFactory());
+        actionPool = Executors.newFixedThreadPool(4, new PoolThreadFactory());
         server.getTicker().addRepeatingTask(new CallableTask("tick", this), 1);
     }
 

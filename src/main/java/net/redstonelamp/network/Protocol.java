@@ -49,18 +49,21 @@ public abstract class Protocol{
 
     protected final void tick() {
         try{
-            UniversalPacket packet;
-            while((packet = _interface.readPacket()) != null){
-                final UniversalPacket otherPacket = packet;
-                manager.getActionPool().execute(() -> {
-                    Request[] requests = handlePacket(otherPacket);
-                    for(Request r : requests) {
-                        r.from = otherPacket.getAddress();
+            manager.getActionPool().execute(() -> {
+                UniversalPacket packet;
+                try {
+                    while ((packet = _interface.readPacket()) != null) {
+                        Request[] requests = handlePacket(packet);
+                        for (Request r : requests) {
+                            r.from = packet.getAddress();
+                        }
+                        Collections.addAll(requestQueue, requests);
                     }
-                    Collections.addAll(requestQueue, requests);
-                });
-            }
-            int max = 25;
+                } catch (LowLevelNetworkException e) {
+                    e.printStackTrace();
+                }
+            });
+            int max = 20;
             if(!requestQueue.isEmpty()) {
                 while(max > 0 && !requestQueue.isEmpty()) {
                     max = max - 1;
@@ -77,8 +80,9 @@ public abstract class Protocol{
                         }
                     }
                 }
+                //if(max < 25) System.out.println("processed: "+max);
             }
-        }catch(LowLevelNetworkException e){
+        }catch(Exception e){
             manager.getServer().getLogger().trace(e);
         }
     }

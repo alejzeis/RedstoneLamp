@@ -87,7 +87,7 @@ public class PeChunkSender {
                 requestChunks.put(player, chunks);
             } else if (!player.isSpawned()) {
                 System.out.println("ready!");
-                player.handleRequest(new SpawnRequest());
+                protocol.getManager().getActionPool().execute(() -> player.handleRequest(new SpawnRequest()));
                 requestChunks.remove(player);
             } else {
                 requestChunks.remove(player);
