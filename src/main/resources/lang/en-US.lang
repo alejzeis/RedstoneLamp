@@ -9,3 +9,6 @@ redstonelamp.translation.command.usage=Usage: %param-0
 redstonelamp.translation.command.help.header=-- Command Help (Page %param-0/%param-1) --
 redstonelamp.translation.command.help.listEntry=/%param-0 - %param-1
 redstonelamp.translation.command.help.invalidPage=Page %param-0 does not exist!
+
+redstonelamp.translation.command.version.line1=This server is running %param-0 %param-1 %param-2
+redstonelamp.translation.command.version.line2=Implementing MCPE: %param-0, MCPC: %param-1
