@@ -63,17 +63,19 @@ public abstract class Protocol{
                     e.printStackTrace();
                 }
             });
-            int max = 20;
+            int max = 25;
             if(!requestQueue.isEmpty()) {
                 while(max > 0 && !requestQueue.isEmpty()) {
                     max = max - 1;
                     Request r = requestQueue.remove();
                     if(players.containsKey(r.from.toString())){
+                        //manager.getActionPool().execute(() -> players.get(r.from.toString()).handleRequest(r));
                         players.get(r.from.toString()).handleRequest(r);
                     }else{
                         if(r instanceof LoginRequest){
-                            Player player = manager.getServer().openSession(r.from, this, (LoginRequest) r);
+                            final Player player = manager.getServer().openSession(r.from, this, (LoginRequest) r);
                             players.put(player.getAddress().toString(), player);
+                            //manager.getActionPool().execute(() -> player.handleRequest(r));
                             player.handleRequest(r);
                         }else{
                             manager.getServer().getLogger().warning("Failed to open session, Request: " + r.getClass().getName());
