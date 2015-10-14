@@ -21,11 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import lombok.Getter;
-import net.redstonelamp.cmd.defaults.HelpCommand;
-import net.redstonelamp.cmd.defaults.KickCommand;
-import net.redstonelamp.cmd.defaults.PermissionTest;
-import net.redstonelamp.cmd.defaults.SayCommand;
-import net.redstonelamp.cmd.defaults.StopCommand;
+import net.redstonelamp.cmd.defaults.*;
 import net.redstonelamp.cmd.exception.CommandException;
 
 public class Command {
@@ -46,6 +42,7 @@ public class Command {
 		new Command("kick", "/kick (player) [reason]", "Kicks a player with the specified reason", new KickCommand(), true);
 		new Command("permission", "/permission (permission) [player]", "See's if a player has a permission", new PermissionTest(), true);
 		new Command("help", "/help", "View a list of all commands", new HelpCommand(), false);
+		new Command("version", "/version", "Shows the version of this server", new VersionCommand(), false);
 	    new Command("stop", "/stop", "Stops the server", new StopCommand(), false);
 	    registeredDefaults = true;
 	}
