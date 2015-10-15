@@ -46,6 +46,7 @@ public class ServerMessageTranslator implements MessageTranslator{
         }
         String message = TextFormat.stripColors(cr.message);
         String trans = mgr.serverTranslations.get(message);
+        if(trans == null) trans = message;
         for(int i = 0; i < cr.params.length; i++) {
             trans = trans.replaceAll(Pattern.quote("%param-"+i), cr.params[i]);
         }

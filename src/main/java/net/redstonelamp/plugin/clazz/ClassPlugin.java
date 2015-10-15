@@ -16,25 +16,69 @@
  */
 package net.redstonelamp.plugin.clazz;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import net.redstonelamp.RedstoneLamp;
+import net.redstonelamp.Server;
+import net.redstonelamp.plugin.Plugin;
+import net.redstonelamp.ui.Log4j2ConsoleOut;
+import net.redstonelamp.ui.Logger;
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ClassPlugin {
+public abstract class ClassPlugin extends Plugin {
 	
-	String name();
+	private Logger logger;
 	
-	String version();
+	abstract String name();
+	abstract String version();
+	abstract String[] authors();
+	String url() {
+		return null;
+	}
+	String[] dependencies() {
+		return null;
+	}
+	String[] softDependencies() {
+		return null;
+	}
 	
-	String author();
+	@Override
+	public final Server getServer() {
+		return RedstoneLamp.SERVER;
+	}
 	
-	String url() default "";
+	@Override
+	public String getName() {
+		return name();
+	}
 	
-	String dependency() default "";
+	@Override
+	public final String getVersion() {
+		return version();
+	}
 	
-	String softDependency() default "";
+	@Override
+	public final String[] getAuthors() {
+		return authors();
+	}
+	
+	@Override
+	public final String getUrl() {
+		return url();
+	}
+	
+	@Override
+	public final String[] getDependencies() {
+		return dependencies();
+	}
+
+	@Override
+	public final String[] getSoftDependencies() {
+		return softDependencies();
+	}
+
+	@Override
+	public final Logger getLogger() {
+		if(logger == null)
+			logger = new Logger(new Log4j2ConsoleOut(getName()));
+		return logger;
+	}
 	
 }

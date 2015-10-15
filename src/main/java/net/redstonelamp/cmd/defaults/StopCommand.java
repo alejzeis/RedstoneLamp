@@ -25,7 +25,6 @@ public class StopCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if(label.equalsIgnoreCase("stop")) {
-        	RedstoneLamp.SERVER.getLogger().info("Sorry but the stop command doesn't work yet!");
             RedstoneLamp.SERVER.stop();
         	return true;
         }

@@ -4,11 +4,15 @@ redstonelamp.translation.player.joined=%param-0 joined the game.
 redstonelamp.translation.player.left=%param-0 left the game.
 redstonelamp.translation.player.loggedInFromOtherLocation=Another user has logged in with your name!
 
-redstonelamp.translation.command.usage=Usage: %param-0
+redstonelamp.translation.command.usage=Usage: %param-0.
 
 redstonelamp.translation.command.help.header=-- Command Help (Page %param-0/%param-1) --
 redstonelamp.translation.command.help.listEntry=/%param-0 - %param-1
 redstonelamp.translation.command.help.invalidPage=Page %param-0 does not exist!
 
-redstonelamp.translation.command.version.line1=This server is running %param-0 %param-1 %param-2
-redstonelamp.translation.command.version.line2=Implementing MCPE: %param-0, MCPC: %param-1
+redstonelamp.translation.command.version.line1=This server is running %param-0 %param-1 %param-2.
+redstonelamp.translation.command.version.line2=Implementing MCPE: %param-0, MCPC: %param-1.
+
+redstonelamp.translation.command.list.noPlayers=There are no players online.
+redstonelamp.translation.command.list.onePlayer=There is 1 player online: %param-0
+redstonelamp.translation.command.list.multiple=There are %param-0 players online:
