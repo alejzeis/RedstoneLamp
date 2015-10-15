@@ -26,8 +26,6 @@ import net.redstonelamp.cmd.CommandSender;
 import net.redstonelamp.response.ChatResponse;
 import net.redstonelamp.utils.TextFormat;
 
-import javax.xml.soap.Text;
-
 public class ListCommand implements CommandExecutor {
 
 	@Override
