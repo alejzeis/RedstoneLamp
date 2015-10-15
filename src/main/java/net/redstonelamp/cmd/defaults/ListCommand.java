@@ -23,6 +23,10 @@ import net.redstonelamp.RedstoneLamp;
 import net.redstonelamp.cmd.Command;
 import net.redstonelamp.cmd.CommandExecutor;
 import net.redstonelamp.cmd.CommandSender;
+import net.redstonelamp.response.ChatResponse;
+import net.redstonelamp.utils.TextFormat;
+
+import javax.xml.soap.Text;
 
 public class ListCommand implements CommandExecutor {
 
@@ -30,7 +34,16 @@ public class ListCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(label.equalsIgnoreCase("list")) {
 			List<Player> players = RedstoneLamp.SERVER.getPlayers();
-			String list = new String("Players (" + players.size() + ")\n");
+			if(players.size() > 1) {
+				sender.sendMessage(new ChatResponse.ChatTranslation(TextFormat.GOLD + "redstonelamp.translation.command.list.multiple", new String[] {String.valueOf(players.size())}));
+			} else if(players.size() == 0) {
+				sender.sendMessage(new ChatResponse.ChatTranslation(TextFormat.GOLD + "redstonelamp.translation.command.list.noPlayers", new String[0]));
+			} else {
+				sender.sendMessage(new ChatResponse.ChatTranslation(TextFormat.GOLD + "redstonelamp.translation.command.list.onePlayer", new String[] {players.get(0).getDisplayName()}));
+			}
+			if(players.size() < 2) return true;
+
+			String list = "";
 			for(int i = 0; i < players.size(); i++)
 				list += (" - " + players.get(i).getDisplayName() + (i+1 < players.size() ? "\n" : ""));
 			sender.sendMessage(list);
