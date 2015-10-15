@@ -310,7 +310,7 @@ public class Player extends PlayerEntity implements CommandSender{
             RemoveBlockRequest rbr = (RemoveBlockRequest) request;
             EventExecutor.throwEvent(bbe);
             if(!bbe.isCancelled()) {
-                System.out.println("Request to remove at: " + rbr.position);
+                //System.out.println("Request to remove at: " + rbr.position);
                 RemoveBlockResponse response = new RemoveBlockResponse(rbr.position);
                 if(!getPosition().getLevel().isChunkLoaded(new ChunkPosition(rbr.position.getX() / 16, rbr.position.getZ() / 16))){
                     server.getLogger().warning(username + " attempted to remove block in an unloaded chunk");
