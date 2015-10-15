@@ -53,8 +53,8 @@ public abstract class OperatorPermissions {
 	};
 
 	public static Permission[] getPermissions(int level) {
-		if (level > OP_LEVELS.length)
-			return null;
+		while(level > OP_LEVELS.length)
+			level--;
 		ArrayList<Permission> permissions = new ArrayList<>();
 		for (int i = 0; i < level + 1; i++)
 			for (int j = 0; j < OP_LEVELS[i].length; j++)

@@ -38,18 +38,17 @@ public class Command {
 	public static void init() throws CommandException {
 		if(registeredDefaults)
 			throw new CommandException("The defaults have already been registered!");
-		new Command("say", "/say (message)", "Broadcasts a message to the server", new SayCommand(), true);
-		new Command("kick", "/kick (player) [reason]", "Kicks a player with the specified reason", new KickCommand(), true);
-		new Command("permission", "/permission (permission) [player]", "See's if a player has a permission", new PermissionTest(), true);
-		new Command("help", "/help", "View a list of all commands", new HelpCommand(), false);
-		new Command("version", "/version", "Shows the version of this server", new VersionCommand(), false);
-	    new Command("stop", "/stop", "Stops the server", new StopCommand(), false);
+		registerCommand(new Command("say", "/say (message)", "Broadcasts a message to the server", new SayCommand(), true));
+		registerCommand(new Command("list", "/list", "Shows all of the online players to the sender", new ListCommand(), true));
+		registerCommand(new Command("kick", "/kick (player) [reason]", "Kicks a player with the specified reason", new KickCommand(), true));
+		registerCommand(new Command("permission", "/permission (permission) [player]", "See's if a player has a permission", new PermissionTest(), true));
+		registerCommand(new Command("help", "/help", "View a list of all commands", new HelpCommand(), false));
+	    registerCommand(new Command("version", "/version", "Shows the version of this server", new VersionCommand(), false));
+		registerCommand(new Command("stop", "/stop", "Stops the server", new StopCommand(), false));
 	    registeredDefaults = true;
 	}
 	
-	private Command(String label, String usage, String description, CommandExecutor executor, boolean overridable) throws CommandException {
-		if(cmds.containsKey(label))
-			throw new CommandException("A command with that label already exists!");
+	private Command(String label, String usage, String description, CommandExecutor executor, boolean overridable) {
 		this.label = label;
 		if(usage == null)
 			this.usage = ("/" + label);
@@ -58,7 +57,6 @@ public class Command {
 		this.description = description;
 		this.overridable = overridable;
 		this.executor = executor;
-		cmds.put(label, this);
 	}
 	
 	public Command(String label, String usage, String description) throws CommandException {
@@ -67,6 +65,22 @@ public class Command {
 	
 	public Command(String label, String usage, String description, CommandExecutor executor) throws CommandException {
 		this(label, usage, description, executor, true);
+	}
+	
+	public static void registerCommand(Command command) throws CommandException {
+		String label = command.getLabel().toLowerCase();
+		if(cmds.containsKey(label))
+			throw new CommandException("A command with that label already exists!");
+		cmds.put(label, command);
+	}
+	
+	public static void unregisterCommand(Command command) throws CommandException {
+		String label = command.getLabel().toLowerCase();
+		if(cmds.get(label) != null) {
+			if(!cmds.get(label).isOverridable())
+				throw new CommandException("Cannot remove a un-overridable command!");
+		}
+		cmds.remove(label);
 	}
 	
 	public static Command[] getCommands() {
@@ -78,7 +92,7 @@ public class Command {
 	}
 	
 	public static Command getByLabel(String label) {
-		return cmds.get(label);
+		return cmds.get(label.toLowerCase());
 	}
 	
 	public void setExecutor(CommandExecutor executor) throws CommandException {

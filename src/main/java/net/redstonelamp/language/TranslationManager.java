@@ -67,6 +67,7 @@ public class TranslationManager {
     }
 
     public String convertLanguageCode(String code) {
+    	code = (code == null ? "eng" : code);
         switch (code) {
             case "eng":
                 return "en-US";
