@@ -69,14 +69,14 @@ public abstract class Protocol{
                     max = max - 1;
                     Request r = requestQueue.remove();
                     if(players.containsKey(r.from.toString())){
-                        //manager.getActionPool().execute(() -> players.get(r.from.toString()).handleRequest(r));
-                        players.get(r.from.toString()).handleRequest(r);
+                        manager.getActionPool().execute(() -> players.get(r.from.toString()).handleRequest(r));
+                        //players.get(r.from.toString()).handleRequest(r);
                     }else{
                         if(r instanceof LoginRequest){
                             final Player player = manager.getServer().openSession(r.from, this, (LoginRequest) r);
                             players.put(player.getAddress().toString(), player);
-                            //manager.getActionPool().execute(() -> player.handleRequest(r));
-                            player.handleRequest(r);
+                            manager.getActionPool().execute(() -> player.handleRequest(r));
+                            //player.handleRequest(r);
                         }else{
                             manager.getServer().getLogger().warning("Failed to open session, Request: " + r.getClass().getName());
                         }
@@ -185,17 +185,15 @@ public abstract class Protocol{
      * @param player   The Player the response is being sent from
      */
     public void sendImmediateResponse(Response response, Player player){
-        manager.getActionPool().execute(() -> {
-            UniversalPacket[] packets = _sendResponse(response, player);
-            for (UniversalPacket packet : packets) {
-                try {
-                    _interface.sendPacket(packet, true);
-                } catch (LowLevelNetworkException e) {
-                    manager.getServer().getLogger().error(e.getClass().getName() + " while sending response " + response.getClass().getName() + ": " + e.getMessage());
-                    manager.getServer().getLogger().trace(e);
-                }
+        UniversalPacket[] packets = _sendResponse(response, player);
+        for (UniversalPacket packet : packets) {
+            try {
+                _interface.sendPacket(packet, true);
+            } catch (LowLevelNetworkException e) {
+                manager.getServer().getLogger().error(e.getClass().getName() + " while sending response " + response.getClass().getName() + ": " + e.getMessage());
+                manager.getServer().getLogger().trace(e);
             }
-        });
+        }
     }
 
     /**

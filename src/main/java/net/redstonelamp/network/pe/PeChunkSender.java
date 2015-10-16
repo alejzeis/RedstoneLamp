@@ -151,6 +151,7 @@ public class PeChunkSender {
         loaded.remove(player);
         lastSent.remove(player);
         requestChunks.remove(player);
+        System.out.println("data cleared.");
     }
 
     public void onShutdown() {
