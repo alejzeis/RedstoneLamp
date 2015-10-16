@@ -145,7 +145,7 @@ public class PeChunkSender {
             requestChunks.put(player, chunks);
             positions.addAll(chunks);
             oldPositions.stream().filter(pos -> !positions.contains(pos)).forEach(pos -> unloadChunk(player, pos));
-            System.out.println("Sent: " + sent);
+            //System.out.println("Sent: " + sent);
             loaded.put(player, positions);
         }
     }
@@ -155,7 +155,7 @@ public class PeChunkSender {
         loaded.remove(player);
         lastSent.remove(player);
         requestChunks.remove(player);
-        System.out.println("data cleared.");
+        //System.out.println("data cleared.");
     }
 
     public void onShutdown() {
