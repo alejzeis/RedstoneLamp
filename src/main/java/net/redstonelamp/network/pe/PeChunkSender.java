@@ -62,6 +62,7 @@ public class PeChunkSender {
         if (requestChunks.keySet().isEmpty()) {
             return;
         }
+
         int pLimit = REQUESTS_PER_TICK;
         if (requestChunks.keySet().size() > 1) {
             pLimit = REQUESTS_PER_TICK / requestChunks.keySet().size();
@@ -69,6 +70,7 @@ public class PeChunkSender {
                 pLimit = 1;
             }
         }
+
         for (Player player : requestChunks.keySet()) {
             if (sent >= REQUESTS_PER_TICK) break;
 
@@ -105,12 +107,14 @@ public class PeChunkSender {
     }
 
     private synchronized void unloadChunk(Player player, ChunkPosition pos) {
+        List<ChunkPosition> l = loaded.get(player);
         for(ChunkPosition loaded : this.loaded.get(player)) {
             if(loaded.equals(pos)) {
-                this.loaded.remove(loaded);
+                l.remove(loaded);
                 player.getPosition().getLevel().unloadChunk(pos);
             }
         }
+        this.loaded.put(player, l);
     }
 
     private synchronized void checkChunks(Player player) {
@@ -141,7 +145,7 @@ public class PeChunkSender {
             requestChunks.put(player, chunks);
             positions.addAll(chunks);
             oldPositions.stream().filter(pos -> !positions.contains(pos)).forEach(pos -> unloadChunk(player, pos));
-            //System.out.println("Sent: " + sent);
+            System.out.println("Sent: " + sent);
             loaded.put(player, positions);
         }
     }
