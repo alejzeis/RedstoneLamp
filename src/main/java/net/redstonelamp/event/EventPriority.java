@@ -17,9 +17,10 @@
 package net.redstonelamp.event;
 
 public enum EventPriority {
-    HIGHEST,
-    HIGH,
-    NORMAL,
-    LOW,
-    LOWEST
+    LOWEST,  // Not significant at all
+    LOW,     // Not significant
+    NORMAL,  // Not important but also not insignificant
+    HIGH,    // Significant
+    HIGHEST, // Very significant, must have last say.
+    MONITOR; // Meant for seeing the outcome of an event, not supposed to change data.
 }

@@ -32,8 +32,8 @@ public class PlayerChatEvent extends Event implements Cancellable {
     }
     
     @Override
-    public void cancel() {
-        cancelled = true;
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 
     @Override

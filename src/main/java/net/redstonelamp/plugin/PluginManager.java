@@ -18,6 +18,8 @@ package net.redstonelamp.plugin;
 
 import java.io.IOException;
 
+import net.redstonelamp.event.Event;
+import net.redstonelamp.event.EventPlatform;
 import net.redstonelamp.plugin.exception.AsyncAPICallException;
 import net.redstonelamp.plugin.exception.PluginException;
 
@@ -47,6 +49,21 @@ public abstract class PluginManager {
 	 * Get all plugins being managed by this plugin manager
 	 */
 	public abstract Plugin[] getPlugins();
+	
+	/**
+	 * Call event for the specified platforms
+	 * @param platform
+	 * @param event
+	 */
+	public abstract void callEvent(EventPlatform platform, Event event);
+	
+	/**
+	 * Call event for both platforms
+	 * @param event
+	 */
+	public final void callEvent(Event event) {
+		this.callEvent(EventPlatform.BOTH, event);
+	}
 	
 	public final Plugin getPlugin(String name) {
 		for(Plugin plugin : getPlugins()) {

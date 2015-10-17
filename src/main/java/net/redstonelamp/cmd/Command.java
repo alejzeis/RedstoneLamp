@@ -44,7 +44,8 @@ public class Command {
 		registerCommand(new Command("permission", "/permission (permission) [player]", "See's if a player has a permission", new PermissionTest(), true));
 		registerCommand(new Command("help", "/help", "View a list of all commands", new HelpCommand(), false));
 	    registerCommand(new Command("version", "/version", "Shows the version of this server", new VersionCommand(), false));
-		registerCommand(new Command("stop", "/stop", "Stops the server", new StopCommand(), false));
+		registerCommand(new Command("reload", "/reload", "Reloads all the server data and plugins", new ReloadCommand(), false));
+	    registerCommand(new Command("stop", "/stop", "Stops the server", new StopCommand(), false));
 	    registeredDefaults = true;
 	}
 	

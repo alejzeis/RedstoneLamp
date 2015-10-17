@@ -17,9 +17,14 @@
 package net.redstonelamp.plugin.java;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import net.redstonelamp.event.Cancellable;
+import net.redstonelamp.event.Event;
+import net.redstonelamp.event.EventHandler;
+import net.redstonelamp.event.EventPlatform;
+import net.redstonelamp.event.EventPriority;
 import net.redstonelamp.event.Listener;
 import net.redstonelamp.plugin.Plugin;
 import net.redstonelamp.plugin.PluginManager;
@@ -29,12 +34,12 @@ public class JavaPluginManager extends PluginManager {
 	
 	private final JavaPluginLoader loader;
 	private final HashMap<String, JavaPlugin> plugins;
-	private final HashMap<JavaPlugin, ArrayList<Listener>> listeners;
+	private final HashMap<Listener, JavaPlugin> listeners;
 
 	public JavaPluginManager(JavaPluginLoader loader) throws IOException {
 		this.loader = loader;
 		this.plugins = new HashMap<String, JavaPlugin>();
-		this.listeners = new HashMap<JavaPlugin, ArrayList<Listener>>();
+		this.listeners = new HashMap<Listener, JavaPlugin>();
 	}
 
 	@Override
@@ -53,31 +58,61 @@ public class JavaPluginManager extends PluginManager {
 		loader.unloadPlugins();
 		plugins.clear();
 	}
-
-	public void registerEvents(JavaPlugin plugin, Listener listener) {
-		if (listeners.get(plugin) == null)
-			listeners.put(plugin, new ArrayList<Listener>());
-		listeners.get(plugin).add(listener);
-	}
-
-	public void unregisterEvents(JavaPlugin plugin, Listener listener) {
-		if (listeners.get(plugin) == null)
-			listeners.put(plugin, new ArrayList<Listener>());
-		listeners.get(plugin).remove(listener);
-	}
-
+	
 	@Override
 	public Plugin[] getPlugins() {
 		return plugins.values().toArray(new Plugin[plugins.size()]);
 	}
 
+	public void registerEvents(Listener listener, JavaPlugin plugin) {
+		listeners.put(listener, plugin);
+	}
+
+	public void unregisterEvents(Listener listener, JavaPlugin plugin) {
+		listeners.remove(listener, plugin);
+	}
+
 	public Listener[] getListeners() {
-		ArrayList<Listener> arr = new ArrayList<Listener>();
-		for (Plugin plugin : getPlugins()) {
-			for (Listener listener : listeners.get(plugin))
-				arr.add(listener);
+		return listeners.values().toArray(new Listener[listeners.size()]);
+	}
+	
+	@Override
+	public void callEvent(EventPlatform platform, Event event) {
+		HashMap<Method, Listener> handlers = new HashMap<Method, Listener>();
+		
+		// Add methods and their instances
+		for(Listener listener : getListeners()) {
+			for(Method method : listener.getClass().getDeclaredMethods()) {
+				// Make sure the method has the EventHandler annotation and the method has only one parameter
+				if(method.isAnnotationPresent(EventHandler.class) && method.getParameters().length == 1) {
+					if(method.getParameterTypes()[0].equals(event.getClass())) {
+						EventHandler data = (EventHandler) method.getAnnotation(EventHandler.class);
+						if(platform.equals(data.platform()) || data.platform().equals(EventPlatform.BOTH)) {
+							handlers.put(method, listener);
+						}
+					}
+				}
+			}
 		}
-		return arr.toArray(new Listener[arr.size()]);
+		
+		// Now invoke them in the correct order
+		for(EventPriority priority : EventPriority.values()) {
+			for(Method method : handlers.keySet()) {
+				EventHandler data = (EventHandler) method.getAnnotation(EventHandler.class);
+				if(data.priority().equals(priority)) {
+					boolean cancelled = false;
+					if(event instanceof Cancellable)
+						cancelled = (((Cancellable) event).isCancelled() && data.ignoreCancelled() == false);
+					if(!cancelled) {
+						try {
+							method.invoke(handlers.get(method), event);
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
+					}
+				}
+			}
+		}
 	}
 
 }

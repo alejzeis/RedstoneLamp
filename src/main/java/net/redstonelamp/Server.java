@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
@@ -31,8 +30,9 @@ import net.redstonelamp.cmd.CommandManager;
 import net.redstonelamp.cmd.CommandSender;
 import net.redstonelamp.config.PropertiesConfig;
 import net.redstonelamp.config.YamlConfig;
+import net.redstonelamp.event.Event;
+import net.redstonelamp.event.EventPlatform;
 import net.redstonelamp.item.Item;
-import net.redstonelamp.language.PEMessageTranslator;
 import net.redstonelamp.language.TranslationManager;
 import net.redstonelamp.level.Level;
 import net.redstonelamp.level.LevelManager;
@@ -40,13 +40,14 @@ import net.redstonelamp.network.NetworkManager;
 import net.redstonelamp.network.Protocol;
 import net.redstonelamp.network.pc.PCProtocol;
 import net.redstonelamp.network.pe.PEProtocol;
+import net.redstonelamp.plugin.PluginManager;
 import net.redstonelamp.plugin.PluginSystem;
+import net.redstonelamp.plugin.java.JavaPluginManager;
 import net.redstonelamp.request.LoginRequest;
 import net.redstonelamp.response.ChatResponse;
 import net.redstonelamp.response.Response;
 import net.redstonelamp.script.ScriptManager;
 import net.redstonelamp.ticker.RedstoneTicker;
-import net.redstonelamp.ui.Log4j2ConsoleOut;
 import net.redstonelamp.ui.Logger;
 import net.redstonelamp.utils.ServerIcon;
 import net.redstonelamp.utils.TextFormat;
@@ -67,6 +68,7 @@ public class Server implements Runnable, CommandSender{
     private final NetworkManager network;
     private final List<Player> players = new CopyOnWriteArrayList<>();
     private final PluginSystem pluginSystem;
+    @Getter private final JavaPluginManager pluginManager;
     @Getter private final ScriptManager scriptManager;
     @Getter private CommandManager commandManager;
     private final PlayerDatabase playerDatabase;
@@ -112,8 +114,8 @@ public class Server implements Runnable, CommandSender{
 
         pluginSystem = new PluginSystem(this);
         pluginSystem.init();
-        pluginSystem.loadPlugins();
-        pluginSystem.enablePlugins();
+        pluginManager = (JavaPluginManager) pluginSystem.getPluginManager("jar"); // Default PluginManager
+        pluginSystem.loadPlugins(); // Load plugins so they can do internal java code, but they can't access the Redstone API yet
         
         scriptManager.initScriptAPI();
         scriptManager.loadScripts();
@@ -338,6 +340,15 @@ public class Server implements Runnable, CommandSender{
 
     public PluginSystem getPluginSystem(){
         return pluginSystem;
+    }
+    
+    public void callEvent(EventPlatform platform, Event event) {
+    	for(PluginManager manager : pluginSystem.getPluginManagers())
+    		manager.callEvent(platform, event);
+    }
+    
+    public void callEvent(Event event) {
+    	this.callEvent(EventPlatform.BOTH, event);
     }
 
     protected int getNextEntityID(){

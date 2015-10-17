@@ -23,8 +23,8 @@ public class BlockBreakEvent extends Event implements Cancellable {
     private boolean cancelled = false;
     
     @Override
-    public void cancel() {
-        cancelled = true;
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 
     @Override

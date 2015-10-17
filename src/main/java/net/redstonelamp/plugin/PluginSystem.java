@@ -64,7 +64,13 @@ public final class PluginSystem {
 		managers.remove(manager.getFileType(), manager);
 	}
 	
+	public PluginManager[] getPluginManagers() {
+		return managers.values().toArray(new PluginManager[managers.size()]);
+	}
+	
 	public PluginManager getPluginManager(String filetype) {
+		if(!filetype.startsWith("."))
+			filetype = ("." + filetype);
 		return managers.get(filetype);
 	}
 	
@@ -79,10 +85,14 @@ public final class PluginSystem {
 			manager.loadPlugins();
 	}
 	
+	/**
+	 * Used to tell all PluginManagers to unload their plugins
+	 */
 	public final void unloadPlugins() {
 		for(PluginManager manager : managers.values())
 			manager.unloadPlugins();
 	}
+	
 	
 	/**
 	 * Used to enable all plugins no matter their PluginManager
@@ -104,9 +114,11 @@ public final class PluginSystem {
 	 * @throws IOException
 	 */
 	public final void disablePlugins() {
-		for(PluginManager manager : managers.values()) {
+		for(String key : managers.keySet()) {
+			PluginManager manager = managers.get(key);
 			for(Plugin plugin : manager.getPlugins())
 				plugin.onDisable();
+			managers.remove(key);
 		}
 	}
 	

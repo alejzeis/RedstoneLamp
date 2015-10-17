@@ -28,10 +28,10 @@ public class PlayerAnimateEvent extends Event implements Cancellable {
     public PlayerAnimateEvent(Player player) {
         this.player = player;
     }
-
+    
     @Override
-    public void cancel() {
-        cancelled = true;
+    public void setCancelled(boolean cancelled) {
+    	this.cancelled = cancelled;
     }
 
     @Override

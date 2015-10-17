@@ -30,8 +30,8 @@ public class PlayerMoveEvent extends Event implements Cancellable {
     }
 
     @Override
-    public void cancel() {
-        cancelled = true;
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 
     @Override
