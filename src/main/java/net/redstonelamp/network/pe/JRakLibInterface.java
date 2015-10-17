@@ -34,6 +34,7 @@ import net.redstonelamp.event.EventPlatform;
 import net.redstonelamp.event.server.ServerReceivePacketEvent;
 import net.redstonelamp.event.server.ServerSendPacketEvent;
 import net.redstonelamp.network.LowLevelNetworkException;
+import net.redstonelamp.network.PacketType;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.ticker.CallableTask;
 import net.redstonelamp.ui.ConsoleOut;

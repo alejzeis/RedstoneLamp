@@ -20,7 +20,7 @@ import java.net.SocketAddress;
 
 import net.redstonelamp.event.Cancellable;
 import net.redstonelamp.event.Event;
-import net.redstonelamp.network.pe.PacketType;
+import net.redstonelamp.network.PacketType;
 
 public class ServerSendPacketEvent extends Event implements Cancellable {
 	
