@@ -45,31 +45,8 @@ import net.redstonelamp.permission.OperatorPermissions;
 import net.redstonelamp.permission.Permission;
 import net.redstonelamp.permission.PermissionAttachment;
 import net.redstonelamp.plugin.Plugin;
-import net.redstonelamp.request.AnimateRequest;
-import net.redstonelamp.request.BlockPlaceRequest;
-import net.redstonelamp.request.ChatRequest;
-import net.redstonelamp.request.ChunkRequest;
-import net.redstonelamp.request.LoginRequest;
-import net.redstonelamp.request.PlayerEquipmentRequest;
-import net.redstonelamp.request.PlayerMoveRequest;
-import net.redstonelamp.request.RemoveBlockRequest;
-import net.redstonelamp.request.Request;
-import net.redstonelamp.request.SetHeldItemRequest;
-import net.redstonelamp.request.SpawnRequest;
-import net.redstonelamp.response.AnimateResponse;
-import net.redstonelamp.response.BlockPlaceResponse;
-import net.redstonelamp.response.ChatResponse;
-import net.redstonelamp.response.ChunkResponse;
-import net.redstonelamp.response.DisconnectResponse;
-import net.redstonelamp.response.LoginResponse;
-import net.redstonelamp.response.PlayerEquipmentResponse;
-import net.redstonelamp.response.PlayerMoveResponse;
-import net.redstonelamp.response.PopupResponse;
-import net.redstonelamp.response.RemoveBlockResponse;
-import net.redstonelamp.response.Response;
-import net.redstonelamp.response.SetHeldItemResponse;
-import net.redstonelamp.response.SpawnResponse;
-import net.redstonelamp.response.TeleportResponse;
+import net.redstonelamp.request.*;
+import net.redstonelamp.response.*;
 import net.redstonelamp.utils.TextFormat;
 
 /**
@@ -94,6 +71,9 @@ public class Player extends PlayerEntity implements CommandSender{
 
     private boolean connected = true;
     private boolean spawned = false;
+    private boolean sprinting = false;
+    private boolean sneaking = false;
+
     private int gamemode;
     private PlayerInventory inventory;
     
@@ -328,6 +308,15 @@ public class Player extends PlayerEntity implements CommandSender{
             inventory.setSelectedSlot(shir.inventorySlot);
             inventory.setItemInHandSlot(shir.hotbarSlot);
             server.broadcastResponse(server.getPlayers().stream().filter(player -> player != this), new SetHeldItemResponse(getEntityID(), inventory.getItemInHand(), inventory.getSelectedSlot(), inventory.getItemInHandSlot()));
+        } else if(request instanceof SprintRequest) {
+            boolean starting = ((SprintRequest) request).starting;
+            if(!isSprinting() && starting) {
+                sprinting = true;
+            }
+            if(isSprinting() && !starting) {
+                sprinting = false;
+            }
+            server.broadcastResponse(new SprintResponse(starting, this));
         }
     }
 
@@ -469,5 +458,12 @@ public class Player extends PlayerEntity implements CommandSender{
     			permissions.add(perm.toString());
     	return permissions.contains(permission);
     }
-    
+
+    public boolean isSprinting() {
+        return sprinting;
+    }
+
+    public boolean isSneaking() {
+        return sneaking;
+    }
 }

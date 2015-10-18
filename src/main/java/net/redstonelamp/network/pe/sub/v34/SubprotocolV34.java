@@ -23,6 +23,7 @@ import net.redstonelamp.item.Item;
 import net.redstonelamp.level.Level;
 import net.redstonelamp.level.position.BlockPosition;
 import net.redstonelamp.level.position.Position;
+import net.redstonelamp.math.Side;
 import net.redstonelamp.math.Vector3;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.network.pe.sub.PESubprotocolManager;
@@ -168,6 +169,20 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             case MOB_EQUIPMENT_PACKET:
                 up.bb().skip(8); //entity ID
                 requests.add(new SetHeldItemRequest(up.bb().getSlot(), up.bb().getByte(), up.bb().getByte()));
+                break;
+
+            case PLAYER_ACTION_PACKET:
+                up.bb().skip(8); //entity ID
+                int action = up.bb().getInt();
+                switch (action) {
+                    case PlayerActionsV34.ACTION_START_SPRINT:
+                        requests.add(new SprintRequest(true));
+                        break;
+
+                    case PlayerActionsV34.ACTION_STOP_SPRINT:
+                        requests.add(new SprintRequest(false));
+                        break;
+                }
                 break;
         }
         return requests.toArray(new Request[requests.size()]);
@@ -465,6 +480,17 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
             bb.putSlot(shir.item);
             bb.putByte((byte) shir.inventorySlot);
             bb.putByte((byte) shir.hotbarSlot);
+            packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
+        } else if(response instanceof SprintResponse) {
+            SprintResponse sr = (SprintResponse) response;
+            bb = BinaryBuffer.newInstance(29, ByteOrder.BIG_ENDIAN);
+            bb.putByte(PLAYER_ACTION_PACKET);
+            bb.putLong(sr.player.getEntityID());
+            bb.putInt(sr.starting ? PlayerActionsV34.ACTION_START_SPRINT : PlayerActionsV34.ACTION_STOP_SPRINT);
+            bb.putInt(Math.round(sr.player.getPosition().getX()));
+            bb.putInt(Math.round(sr.player.getPosition().getY()));
+            bb.putInt(Math.round(sr.player.getPosition().getZ()));
+            bb.putInt(Side.UP);
             packets.add(new UniversalPacket(bb.toArray(), ByteOrder.BIG_ENDIAN, address));
         }
 
