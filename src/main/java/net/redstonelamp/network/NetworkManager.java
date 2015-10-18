@@ -22,6 +22,9 @@ import net.redstonelamp.ticker.CallableTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Handler class for all Network protocols.
@@ -30,6 +33,7 @@ import java.util.List;
  */
 public class NetworkManager{
     private final Server server;
+    private final ExecutorService actionPool;
     private final List<Protocol> protocols = new ArrayList<>();
 
     /**
@@ -39,6 +43,7 @@ public class NetworkManager{
      */
     public NetworkManager(Server server){
         this.server = server;
+        actionPool = Executors.newFixedThreadPool(4, new PoolThreadFactory());
         server.getTicker().addRepeatingTask(new CallableTask("tick", this), 1);
     }
 
@@ -64,7 +69,7 @@ public class NetworkManager{
      * @param name The name to be set to
      */
     public void setName(String name){
-        protocols.stream().filter(protocol -> protocol._interface instanceof AdvancedNetworkInterface).forEach(protocol -> ((AdvancedNetworkInterface) protocol._interface).setName(name));
+        actionPool.execute(() -> protocols.stream().filter(protocol -> protocol._interface instanceof AdvancedNetworkInterface).forEach(protocol -> ((AdvancedNetworkInterface) protocol._interface).setName(name)));
     }
 
     /**
@@ -93,7 +98,23 @@ public class NetworkManager{
         return server;
     }
 
+    public ExecutorService getActionPool() {
+        return actionPool;
+    }
+
     public void shutdown() {
         protocols.forEach(Protocol::onShutdown);
+        actionPool.shutdown();
+    }
+
+    private static class PoolThreadFactory implements ThreadFactory {
+        private int currentThread = 0;
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(r);
+            t.setName("NetworkProcessor-"+currentThread++);
+            return t;
+        }
     }
 }

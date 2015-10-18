@@ -78,7 +78,7 @@ public class JavaPluginLoader extends PluginLoader {
 						if (yaml.get("version") == null)
 							throw new PluginDescriptorException("version");
 						if (yaml.get("author") == null)
-							throw new PluginDescriptorException("authors");
+							throw new PluginDescriptorException("author");
 						if (yaml.get("main") == null)
 							throw new PluginDescriptorException("main");
 

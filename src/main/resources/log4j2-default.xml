@@ -12,6 +12,10 @@ If you are looking for the debug options, look at the comments below in the file
         <Console name="console-log" target="SYSTEM_OUT">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%level] [%logger]: %msg%n"/>
         </Console>
+        <File name="file-log" fileName="logs/redstonelamp.log">
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%level] [%logger]: %msg%n"/>
+        </File>
+        <!--
         <RollingFile name="file-log" fileName="${log-path}/latest.log"
                      filePattern="${log-path}/redstonelamp-info-%d{yyyy-MM-dd}.log">
             <PatternLayout>
@@ -21,6 +25,7 @@ If you are looking for the debug options, look at the comments below in the file
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
             </Policies>
         </RollingFile>
+        -->
     </Appenders>
     <Loggers>
         <!-- TO ACTIVATE DEBUG LOGGING:

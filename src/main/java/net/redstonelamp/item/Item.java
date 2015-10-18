@@ -94,6 +94,8 @@ public class Item implements Items {
                 e.printStackTrace();
                 return null;
             }
+        } else if(id < 256) {
+            return new Block(id, meta, count);
         } else {
             return new Item(id, meta, count);
         }

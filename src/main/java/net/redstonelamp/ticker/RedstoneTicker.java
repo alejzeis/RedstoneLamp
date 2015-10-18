@@ -121,10 +121,10 @@ public class RedstoneTicker{
             tasks.toArray(taskArray);
         }
         for(RegisteredTask task : taskArray){
-            //long start = System.currentTimeMillis();
+            long start = System.currentTimeMillis();
             task.check(tick);
-            //long elapsed = System.currentTimeMillis() - start;
-            //if(elapsed >= 20) server.getLogger().debug("Task took "+elapsed+"ms, "+task.getTask());
+            long elapsed = System.currentTimeMillis() - start;
+            if(elapsed >= 20) server.getLogger().debug("Task took "+elapsed+"ms, "+task.getTask());
         }
         
         String line = null;

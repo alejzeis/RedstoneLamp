@@ -41,7 +41,6 @@ public class PeChunkSender {
     public static final int REQUESTS_PER_TICK = 4; //TODO: correct this
 
     private PEProtocol protocol;
-    private ExecutorService pool = Executors.newFixedThreadPool(2);
     private final Map<Player, List<ChunkPosition>> loaded = new HashMap<>();
     private final Map<Player, Long> lastSent = new ConcurrentHashMap<>();
     private final Map<Player, List<ChunkPosition>> requestChunks = new ConcurrentHashMap<>();
@@ -63,6 +62,7 @@ public class PeChunkSender {
         if (requestChunks.keySet().isEmpty()) {
             return;
         }
+
         int pLimit = REQUESTS_PER_TICK;
         if (requestChunks.keySet().size() > 1) {
             pLimit = REQUESTS_PER_TICK / requestChunks.keySet().size();
@@ -70,6 +70,7 @@ public class PeChunkSender {
                 pLimit = 1;
             }
         }
+
         for (Player player : requestChunks.keySet()) {
             if (sent >= REQUESTS_PER_TICK) break;
 
@@ -79,7 +80,7 @@ public class PeChunkSender {
                 if (pSent >= pLimit) break;
 
                 ChunkRequest r = new ChunkRequest(location);
-                pool.execute(() -> player.handleRequest(r));
+                protocol.getManager().getActionPool().execute(() -> player.handleRequest(r));
                 chunks.remove(location);
                 sent++;
                 pSent++;
@@ -88,7 +89,7 @@ public class PeChunkSender {
                 requestChunks.put(player, chunks);
             } else if (!player.isSpawned()) {
                 System.out.println("ready!");
-                player.handleRequest(new SpawnRequest());
+                protocol.getManager().getActionPool().execute(() -> player.handleRequest(new SpawnRequest()));
                 requestChunks.remove(player);
             } else {
                 requestChunks.remove(player);
@@ -106,12 +107,14 @@ public class PeChunkSender {
     }
 
     private synchronized void unloadChunk(Player player, ChunkPosition pos) {
+        List<ChunkPosition> l = loaded.get(player);
         for(ChunkPosition loaded : this.loaded.get(player)) {
             if(loaded.equals(pos)) {
-                this.loaded.remove(loaded);
+                l.remove(loaded);
                 player.getPosition().getLevel().unloadChunk(pos);
             }
         }
+        this.loaded.put(player, l);
     }
 
     private synchronized void checkChunks(Player player) {
@@ -152,6 +155,7 @@ public class PeChunkSender {
         loaded.remove(player);
         lastSent.remove(player);
         requestChunks.remove(player);
+        //System.out.println("data cleared.");
     }
 
     public void onShutdown() {
