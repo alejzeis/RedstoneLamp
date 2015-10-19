@@ -77,7 +77,7 @@ public class SubprotocolV34 extends Subprotocol implements ProtocolConst34{
                 boolean slim = up.bb().getBoolean();
                 byte[] skin = up.bb().get(up.bb().getUnsignedShort());
 
-                LoginRequest lr = new LoginRequest(username, clientUUid);
+                LoginRequest lr = new LoginRequest(username, "minecraft.pocket-012", clientUUid);
                 lr.clientId = clientId;
                 lr.slim = slim;
                 lr.skin = skin;

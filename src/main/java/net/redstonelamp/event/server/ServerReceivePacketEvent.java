@@ -16,39 +16,20 @@
  */
 package net.redstonelamp.event.server;
 
-import java.net.SocketAddress;
 
 import net.redstonelamp.event.Cancellable;
 import net.redstonelamp.event.Event;
-import net.redstonelamp.network.PacketType;
+import net.redstonelamp.network.UniversalPacket;
+
+import java.net.SocketAddress;
 
 public class ServerReceivePacketEvent extends Event implements Cancellable {
 	
 	private boolean cancelled = false;
-	private byte[] buffer;
-	private final PacketType type;
-	private final SocketAddress sender;
+	private UniversalPacket packet;
 	
-	public ServerReceivePacketEvent(byte[] buffer, PacketType type, SocketAddress sender) {
-		this.buffer = buffer;
-		this.type = type;
-		this.sender = sender;
-	}
-	
-	public byte[] getBuffer() {
-		return buffer;
-	}
-	
-	public void setBuffer(byte[] buffer) {
-		this.buffer = buffer;
-	}
-	
-	public PacketType getType() {
-		return type;
-	}
-	
-	public SocketAddress getSender() {
-		return sender;
+	public ServerReceivePacketEvent(UniversalPacket packet) {
+		this.packet = packet;
 	}
 
 	@Override
@@ -60,5 +41,16 @@ public class ServerReceivePacketEvent extends Event implements Cancellable {
 	public boolean isCancelled() {
 		return cancelled;
 	}
-	
+
+	public UniversalPacket getPacket() {
+		return packet;
+	}
+
+	public void setPacket(UniversalPacket packet) {
+		this.packet = packet;
+	}
+
+	public SocketAddress getOriginAddress() {
+		return packet.getAddress();
+	}
 }

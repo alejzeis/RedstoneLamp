@@ -30,7 +30,8 @@ public abstract class Event {
     public final String getEventName() {
         return getClass().getSimpleName();
     }
-    
+
+
     public final EventPlatform getPlatform() {
     	return platform;
     }

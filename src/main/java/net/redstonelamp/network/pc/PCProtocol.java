@@ -94,7 +94,7 @@ public class PCProtocol extends Protocol implements PCNetworkConst{
             case LOGIN_LOGIN_START:
                 //TODO: Implementing encryption: move login request to EncryptionResponse handle
                 String name = packet.bb().getVarString();
-                LoginRequest lr = new LoginRequest(name, UUID.nameUUIDFromBytes(name.getBytes()));
+                LoginRequest lr = new LoginRequest(name, "minecraft.desktop-19", UUID.nameUUIDFromBytes(name.getBytes()));
                 lr.skin = new byte[64 * 64 * 4];
                 requests.add(lr);
                 break;

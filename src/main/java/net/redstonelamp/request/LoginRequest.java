@@ -25,14 +25,16 @@ import java.util.UUID;
  */
 public class LoginRequest extends Request{
     public String username;
+    public String userAgent;
     public UUID uuid;
     public long clientId;
     public long authid;
     public byte[] skin;
     public boolean slim;
 
-    public LoginRequest(String username, UUID uuid){
+    public LoginRequest(String username, String userAgent, UUID uuid){
         this.username = username;
+        this.userAgent = userAgent;
         this.uuid = uuid;
     }
 

@@ -56,6 +56,7 @@ import net.redstonelamp.utils.TextFormat;
  */
 public class Player extends PlayerEntity implements CommandSender{
     private final Protocol protocol;
+    private final String userAgent;
     private final Server server;
     private final SocketAddress address;
     private final String identifier;
@@ -90,6 +91,7 @@ public class Player extends PlayerEntity implements CommandSender{
     public Player(Protocol protocol, String identifier){
         this.protocol = protocol;
         this.identifier = identifier;
+        this.userAgent = "unknown";
         address = null;
 
         server = protocol.getManager().getServer();
@@ -100,11 +102,13 @@ public class Player extends PlayerEntity implements CommandSender{
      * <code>address</code>
      *
      * @param protocol The protocol this player belongs to
+     * @param userAgent The user-agent, or platform this player is connecting from.
      * @param address  The SocketAddress this player is connecting from
      */
-    public Player(Protocol protocol, SocketAddress address){
+    public Player(Protocol protocol, String userAgent, SocketAddress address){
         this.protocol = protocol;
         this.address = address;
+        this.userAgent = userAgent;
 
         identifier = address.toString();
         server = protocol.getManager().getServer();
@@ -465,5 +469,9 @@ public class Player extends PlayerEntity implements CommandSender{
 
     public boolean isSneaking() {
         return sneaking;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
     }
 }

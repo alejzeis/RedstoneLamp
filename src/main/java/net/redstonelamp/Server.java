@@ -196,7 +196,7 @@ public class Server implements Runnable, CommandSender{
      */
     public Player openSession(SocketAddress address, Protocol protocol, LoginRequest loginRequest){
         logger.debug("Opened Session: " + address.toString());
-        Player player = new Player(protocol, address);
+        Player player = new Player(protocol, loginRequest.userAgent, address);
         players.add(player);
         network.setName(motd); //Update the amount of players online
         return player;

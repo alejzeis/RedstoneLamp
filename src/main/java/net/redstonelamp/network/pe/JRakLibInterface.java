@@ -20,6 +20,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.nio.ByteOrder;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -34,7 +35,6 @@ import net.redstonelamp.event.EventPlatform;
 import net.redstonelamp.event.server.ServerReceivePacketEvent;
 import net.redstonelamp.event.server.ServerSendPacketEvent;
 import net.redstonelamp.network.LowLevelNetworkException;
-import net.redstonelamp.network.PacketType;
 import net.redstonelamp.network.UniversalPacket;
 import net.redstonelamp.ui.ConsoleOut;
 import net.redstonelamp.ui.Logger;
@@ -109,9 +109,8 @@ public class JRakLibInterface implements ServerInstance, PEInterface {
         EncapsulatedPacket pk = new EncapsulatedPacket();
         pk.messageIndex = 0;
         pk.reliability = 2;
-        ServerSendPacketEvent event = new ServerSendPacketEvent(packet.getBuffer(), PacketType.UNIVERSAL, packet.getAddress());
+        ServerSendPacketEvent event = new ServerSendPacketEvent(packet);
         server.callEvent(EventPlatform.POCKET, event);
-        pk.buffer = event.getBuffer();
         if(!event.isCancelled()) {
         	logger.buffer("(" + packet.getAddress().toString() + ") PACKET OUT: ", pk.buffer, "");
         	handler.sendEncapsulated(packet.getAddress().toString(), pk, immediate ? JRakLib.PRIORITY_IMMEDIATE : JRakLib.PRIORITY_NORMAL);
@@ -146,9 +145,9 @@ public class JRakLibInterface implements ServerInstance, PEInterface {
 
     @Override
     public void handleEncapsulated(String identifier, EncapsulatedPacket packet, int flags) {
-    	ServerReceivePacketEvent event = new ServerReceivePacketEvent(packet.buffer, PacketType.ENCAPSULATED, new JRakLibIdentifierAddress(identifier));
+        UniversalPacket pk = new UniversalPacket(packet.buffer, ByteOrder.BIG_ENDIAN, new JRakLibIdentifierAddress(identifier));
+    	ServerReceivePacketEvent event = new ServerReceivePacketEvent(pk);
         server.callEvent(EventPlatform.POCKET, event);
-    	UniversalPacket pk = new UniversalPacket(event.getBuffer(), event.getSender());
         logger.buffer("(" + identifier + ") PACKET IN: ", pk.getBuffer(), "");
         if(!event.isCancelled()) {
         	packetQueue.add(pk);
@@ -157,9 +156,9 @@ public class JRakLibInterface implements ServerInstance, PEInterface {
 
     @Override
     public void handleRaw(String address, int port, byte[] payload) {
-    	ServerReceivePacketEvent event = new ServerReceivePacketEvent(payload, PacketType.RAW, new InetSocketAddress(address, port));
+        UniversalPacket packet = new UniversalPacket(payload, new InetSocketAddress(address, port));
+    	ServerReceivePacketEvent event = new ServerReceivePacketEvent(packet);
         server.callEvent(EventPlatform.POCKET, event);
-    	UniversalPacket packet = new UniversalPacket(event.getBuffer(), event.getSender());
         if(!event.isCancelled()) {
         	packetQueue.add(packet);
         }

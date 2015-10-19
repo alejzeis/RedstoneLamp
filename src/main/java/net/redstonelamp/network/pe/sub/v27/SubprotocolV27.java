@@ -63,7 +63,7 @@ public class SubprotocolV27 extends Subprotocol implements ProtocolConst27{
             case LOGIN_PACKET:
                 getProtocol().getServer().getLogger().debug("Got Login packet!");
                 String username = up.bb().getString();
-                LoginRequest lr = new LoginRequest(username, UUID.nameUUIDFromBytes(username.getBytes()));
+                LoginRequest lr = new LoginRequest(username, "minecraft.pocket-011", UUID.nameUUIDFromBytes(username.getBytes()));
                 up.bb().skip(8); //Skip protocol1, protocol 2 (int, int)
                 lr.clientId = up.bb().getInt();
                 lr.slim = up.bb().getByte() > 0;
