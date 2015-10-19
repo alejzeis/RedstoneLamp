@@ -109,6 +109,7 @@ public class JRakLibInterface implements ServerInstance, PEInterface {
         EncapsulatedPacket pk = new EncapsulatedPacket();
         pk.messageIndex = 0;
         pk.reliability = 2;
+        pk.buffer = packet.getBuffer();
         ServerSendPacketEvent event = new ServerSendPacketEvent(packet);
         server.callEvent(EventPlatform.POCKET, event);
         if(!event.isCancelled()) {
