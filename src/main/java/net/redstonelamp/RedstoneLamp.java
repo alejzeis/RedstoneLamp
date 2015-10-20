@@ -20,13 +20,12 @@ import java.io.*;
 import java.net.URL;
 import java.util.Properties;
 
+import net.redstonelamp.ui.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 
 import net.redstonelamp.config.PropertiesConfig;
 import net.redstonelamp.config.YamlConfig;
-import net.redstonelamp.ui.Log4j2ConsoleOut;
-import net.redstonelamp.ui.Logger;
 
 /**
  * Main Startup file for RedstoneLamp.
@@ -49,7 +48,7 @@ public class RedstoneLamp{
             main.getDefaultResources();
             PropertiesConfig config = new PropertiesConfig(new File("server.properties"));
             YamlConfig conf = new YamlConfig("redstonelamp.yml");
-            SERVER = new Server(new Logger(new Log4j2ConsoleOut("RedstoneLamp")), config, conf); //TODO: Correct logger
+            SERVER = new Server(getLogger(args), config, conf); //TODO: Correct logger
             SERVER.getPluginSystem().enablePlugins();
             SERVER.run();
         }catch(Exception e){
@@ -61,6 +60,20 @@ public class RedstoneLamp{
 
     public static String getBuildInformation(){
         return SOFTWARE + " build #" + SOFTWARE_BUILD + ", commit: " + SOFTWARE_COMMIT + ", built on: " + SOFTWARE_BUILD_DATE;
+    }
+
+    public static Logger getLogger(String[] args) {
+        if(args.length > 0) {
+            String option = args[0];
+            if(option.startsWith("-")) {
+                if(option.equalsIgnoreCase("--silent") || option.equalsIgnoreCase("-s")) {
+                    Logger logger = new Logger(new SilentConsoleOut("RedstoneLamp"));
+                    System.setOut(new SystemConsoleOut(logger));
+                    return logger;
+                }
+            }
+        }
+        return new Logger(new Log4j2ConsoleOut("RedstoneLamp"));
     }
 
     private void getDefaultResources() throws IOException {
