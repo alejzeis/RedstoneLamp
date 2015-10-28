@@ -24,7 +24,7 @@ import net.redstonelamp.item.Items;
  * @author RedstoneLamp Team
  */
 public class LapisLazuliBlock extends Block {
-    public static final int ID = Items.LAPIS_LAZULI_BLOCK;
+    public static final int ID = Items.LAPIS_BLOCK;
 
     public LapisLazuliBlock(int id, short meta, int count) {
         super(id, meta, count);
